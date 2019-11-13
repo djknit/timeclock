@@ -30,4 +30,4 @@ function startServer() {
 
 module.exports = {
   start: startServer
-}
+};
