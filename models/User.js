@@ -31,6 +31,10 @@ const UserSchema = new Schema({
     },
     required: true
   },
+  jobs: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Job'
+  }],
   passwordResetToken: String,
   resetTokenExpiration: Number,
   verifyEmailToken: String,
