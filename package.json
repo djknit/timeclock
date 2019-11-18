@@ -10,7 +10,8 @@
     "heroku-postbuild": "npm run build",
     "install": "cd client && npm install",
     "dev": "cd client && npm start",
-    "serve": "nodemon app.js"
+    "serve": "cd client && npm run build && cd .. && nodemon app.js",
+    "api": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,8 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.27",
     "mongoose": "^5.7.10",
     "morgan": "^1.9.1",
     "passport": "^0.4.0",
