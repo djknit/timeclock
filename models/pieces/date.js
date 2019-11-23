@@ -4,6 +4,8 @@ const dateSchema = new mongoose.Schema({
   year: intTypeFactory(),
   month: intTypeFactory(),
   day: intTypeFactory()
+}, {
+  _id: false
 }); 
 
 const intTypeFactory = () => ({
