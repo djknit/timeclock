@@ -8,20 +8,26 @@ passport.use(new LocalStrategy(
     usernameField: 'usernameOrEmail'
   },
   function verify(usernameOrEmail, password, done) {
-    UserController.findByUsernameOrEmail(usernameOrEmail, result => {
-      const { user, error } = result;
-      if (error) return done(error);
-      if (!user) {
-        return done(null, false, { message: 'user' });
-      }
-      user.comparePassword(password, (err, isMatch) => {
-        if (isMatch) {
-          const { _id, username, email } = user;
-          return done(null, { _id, username, email });
+    UserController.findByUsernameOrEmail(usernameOrEmail)
+      .then(result => {
+        const { user, error } = result;
+        if (error) return done(error);
+        if (!user) {
+          return done(null, false, { message: 'user' });
         }
-        else return done(null, false, { message: 'password' });
+        user.comparePassword(password, (err, isMatch) => {
+          if (isMatch) {
+            const { _id, username, email } = user;
+            return done(null, { _id, username, email });
+          }
+          else return done(null, false, { message: 'password' });
+        });
+      })
+      .catch(err => {
+        console.log('*-*-* '.repeat(4));
+        console.log(error);
+        done(null, false, { message: err.message });
       });
-    });
   }
 ));
 
@@ -29,7 +35,9 @@ passport.use(new LocalStrategy(
 passport.serializeUser((user, done) => done(null, user._id));
 
 passport.deserializeUser((id, done) => {
-  UserController.findById(id, done);
+  UserController.findById(id)
+  .then(user => done(null, user))
+  .catch(done);
 });
 
 const middleware = [
