@@ -1,14 +1,11 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  email: {
-    type: String,
-    // from bootcamp week 18 activity 15
-    match: [/.+@.+\..+/, 'Please enter a valid e-mail address.']
-  },
+  email: Object.assign(emailSubdocFactory(), { unique: true }),
+  lowercaseEmail: Object.assign(emailSubdocFactory(), { unique: true }),
   username: {
     type: String,
     validate: {
@@ -39,22 +36,30 @@ const UserSchema = new Schema({
   resetTokenExpiration: Number,
   verifyEmailToken: String,
   verifyEmailTokenExpiration: Number,
-  unverifiedEmail: String
+  unverifiedEmail: emailSubdocFactory()
 });
 
-// source (for using Bcrypt w/ Mongoose): http://sahatyalkabov.com/how-to-implement-password-reset-in-nodejs/
+function emailSubdocFactory() {
+  return {
+    type: String,
+    // from bootcamp week 18 activity 15
+    match: [/.+@.+\..+/, 'Please enter a valid e-mail address.']
+  };
+}
+
+// source (for using Bcryptjs w/ Mongoose): http://sahatyalkabov.com/how-to-implement-password-reset-in-nodejs/
 UserSchema.pre('save', function(next) {
   const user = this;
   const SALT_FACTOR = 5;
 
   if (!user.isModified('password')) return next();
 
-  bcrypt.genSalt(
+  bcryptjs.genSalt(
     SALT_FACTOR,
     function(err, salt) {
       if (err) return next(err);
 
-      bcrypt.hash(user.password, salt, function(err, hash) {
+      bcryptjs.hash(user.password, salt, function(err, hash) {
         if (err) return next(err);
         user.password = hash;
         next();
@@ -64,7 +69,7 @@ UserSchema.pre('save', function(next) {
 });
 
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-  bcrypt.compare(
+  bcryptjs.compare(
     candidatePassword,
     this.password,
     function(err, isMatch) {
