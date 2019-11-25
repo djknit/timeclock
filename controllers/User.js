@@ -4,6 +4,9 @@ module.exports = {
   createAccount: newUser => new Promise(
     (resolve, reject) => {
       const { email, username, password } = newUser;
+      console.log('\nNEW USER TO CREATE\n\n')
+      console.log(newUser);
+      console.log()
       if (!username && !email) {
         return reject({
           message: 'You must supply a username or email address.',
@@ -16,16 +19,13 @@ module.exports = {
           problems: { password: true }
         });
       }
-      if (typeof(email) !== 'string' && email !== undefined) {
-        return reject({
-          message: 'Bad email type.',
-          problems: { email: true }
-        });
-      }
-      const lowercaseEmail = email.toLowerCase();
-      createAccount({ email, username, password, lowercaseEmail })
-      .then(result => resolve(result))
-      .catch(err => reject(err));
+      console.log('passed checks round 1')
+      const lowercaseEmail = (typeof(email) === 'string') ? email.toLowerCase() : undefined;
+      console.log(' 2 2 2')
+      const processedNewUser = lowercaseEmail ? { lowercaseEmail, ...newUser } : newUser
+      _createAccount(processedNewUser)
+      .then(resolve)
+      .catch(reject);
     }
   ),
   findByUsernameOrEmail: usernameOrEmail => new Promise(
@@ -59,7 +59,8 @@ module.exports = {
   )
 }
 
-function createAccount(newUser, callback) {
+function _createAccount(newUser, callback) {
+  console.log('inside CREATE ACCOUNT ...........');
   const user = new User(newUser);
   return new Promise((resolve, reject) => {
     user.save((err, user) => {
@@ -69,12 +70,14 @@ function createAccount(newUser, callback) {
       console.log(user);
       if (err) return reject({
         message: err.code === 11000 ? 'Username or email taken' : 'Unknown server error.',
-        problems: err.code === 11000 ? { username: true, email: true } : {}
+        problems: err.code === 11000 ? { username: true, email: true } : { unknown: true }
       });
       else if (user) {
+        console.log('RESOLVING')
         return resolve(cleanUser(user));
       }
-      reject({message: 'Unexpected outcome. Reason unknown.', problems: {}});
+      console.log('RESOLVING')
+      reject({message: 'Unexpected outcome. Reason unknown.', problems: { unknown: true }});
     });
   });
 }

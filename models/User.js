@@ -4,8 +4,16 @@ const bcryptjs = require('bcryptjs');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  email: Object.assign(emailSubdocFactory(), { unique: true }),
-  lowercaseEmail: Object.assign(emailSubdocFactory(), { unique: true }),
+  email: emailSubdocFactory(),
+  lowercaseEmail: Object.assign(
+    emailSubdocFactory(),
+    {
+      index: {
+        unique: true,
+        partialFilterExpression: { lowercaseEmail: { $type: 'string' } }
+      }
+    }
+  ),
   username: {
     type: String,
     validate: {
@@ -15,7 +23,10 @@ const UserSchema = new Schema({
       },
       message: 'Usernames must be at least 4 characters long.'
     },
-    unique: true
+    index: {
+      unique: true,
+      partialFilterExpression: { username: { $type: 'string' } }
+    }
   },
   password: {
     type: String,
