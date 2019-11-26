@@ -8,7 +8,7 @@ const UserSchema = new Schema({
   lowercaseEmail: Object.assign(
     emailSubdocFactory(),
     {
-      index: {
+      index: { // source: https://stackoverflow.com/questions/7955040/mongodb-mongoose-unique-if-not-null
         unique: true,
         partialFilterExpression: { lowercaseEmail: { $type: 'string' } }
       }
@@ -54,7 +54,7 @@ function emailSubdocFactory() {
   return {
     type: String,
     // from bootcamp week 18 activity 15
-    match: [/.+@.+\..+/, 'Please enter a valid e-mail address.']
+    match: [/.+@.+\..+/, 'Invalid e-mail address.']
   };
 }
 

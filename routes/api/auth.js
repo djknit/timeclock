@@ -81,11 +81,12 @@ router.get('/fail', (req, res) => {
 module.exports = router;
 
 function cleanUser(user, propsToKeep) {
-  if (!propsToKeep) propsToKeep = {};
+  if (!propsToKeep) propsToKeep = { _id: true };
   const { username, email, jobs, _id } = user;
-  if (propsToKeep.username === false) username = undefined;
-  if (propsToKeep.email === false) email = undefined;
-  if (propsToKeep.jobs === false) jobs = undefined;
-  if (propsToKeep._id !== true) _id = undefined;
-  return { username, email, jobs, _id };
+  return {
+    username,
+    email,
+    jobs,
+    _id: propsToKeep._id === true ? _id : undefined
+  };
 }

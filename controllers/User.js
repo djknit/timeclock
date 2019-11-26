@@ -4,9 +4,6 @@ module.exports = {
   createAccount: newUser => new Promise(
     (resolve, reject) => {
       const { email, username, password } = newUser;
-      console.log('\nNEW USER TO CREATE\n\n')
-      console.log(newUser);
-      console.log()
       if (!username && !email) {
         return reject({
           message: 'You must supply a username or email address.',
@@ -19,9 +16,7 @@ module.exports = {
           problems: { password: true }
         });
       }
-      console.log('passed checks round 1')
       const lowercaseEmail = (typeof(email) === 'string') ? email.toLowerCase() : undefined;
-      console.log(' 2 2 2')
       const processedNewUser = lowercaseEmail ? { lowercaseEmail, ...newUser } : newUser
       _createAccount(processedNewUser)
       .then(resolve)
@@ -60,23 +55,13 @@ module.exports = {
 }
 
 function _createAccount(newUser, callback) {
-  console.log('inside CREATE ACCOUNT ...........');
   const user = new User(newUser);
   return new Promise((resolve, reject) => {
     user.save((err, user) => {
-      console.log('CREATE USER-----------------------------------\nerror:');
-      console.log(err);
-      console.log('-----\nnew user:')
-      console.log(user);
-      if (err) return reject({
-        message: err.code === 11000 ? 'Username or email taken' : 'Unknown server error.',
-        problems: err.code === 11000 ? { username: true, email: true } : { unknown: true }
-      });
+      if (err) return reject(determineCreateAccountError(err));
       else if (user) {
-        console.log('RESOLVING')
         return resolve(cleanUser(user));
       }
-      console.log('RESOLVING')
       reject({message: 'Unexpected outcome. Reason unknown.', problems: { unknown: true }});
     });
   });
@@ -85,4 +70,46 @@ function _createAccount(newUser, callback) {
 function cleanUser(user) {
   const { _id, username, email, jobs } = user;
   return { _id, username, email, jobs };
+}
+
+function determineCreateAccountError(err) {
+  const { code, errors } = err;
+  if (code === 11000) {
+    if (err.errmsg.indexOf('username') > -1) return {
+      message: 'That username is unavailable.',
+      roblems: { username: true }
+    };
+    if (err.errmsg.indexOf('lowercaseEmail') > -1) return {
+      message: 'There is already an account for that email address.',
+      roblems: { email: true }
+    };
+    return {
+      message: 'Username or email taken',
+      problems: { username: true, email: true }
+    };
+  }
+  if (!errors) {
+    return {
+      message: 'An unknown problem was encountered.',
+      problems: { unknown: true }
+    };
+  }
+  if (errors.password) {
+    return {
+      message: errors.password.message,
+      problems: { password: true }
+    };
+  }
+  if (errors.username) {
+    return {
+      message: errors.username.message,
+      problems: { username: true }
+    };
+  }
+  if (errors.lowercaseEmail) {
+    return {
+      message: errors.lowercaseEmail.message.replace('lowercaseEmail', 'email'),
+      problems: { email: true }
+    };
+  }
 }
