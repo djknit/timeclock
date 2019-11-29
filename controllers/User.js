@@ -51,6 +51,11 @@ module.exports = {
       })
       .catch(reject);
     }
+  ),
+  deleteAccount: (_id, password) => new Promise(
+    (resolve, reject) => {
+      
+    }
   )
 }
 
@@ -82,10 +87,6 @@ function determineCreateAccountError(err) {
     if (err.errmsg.indexOf('lowercaseEmail') > -1) return {
       message: 'There is already an account for that email address.',
       roblems: { email: true }
-    };
-    return {
-      message: 'Username or email taken',
-      problems: { username: true, email: true }
     };
   }
   if (!errors) {

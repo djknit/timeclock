@@ -9,9 +9,7 @@ passport.use(new LocalStrategy(
   },
   function verify(usernameOrEmail, password, done) {
     UserController.findByUsernameOrEmail(usernameOrEmail)
-      .then(result => {
-        const { user, error } = result;
-        if (error) return done(error);
+      .then(user => {
         if (!user) {
           return done(null, false, { message: 'user' });
         }
@@ -24,8 +22,6 @@ passport.use(new LocalStrategy(
         });
       })
       .catch(err => {
-        console.log('*-*-* '.repeat(4));
-        console.log(error);
         done(null, false, { message: err.message });
       });
   }
@@ -44,7 +40,7 @@ const middleware = [
   require('cookie-parser')(),
   require('connect-flash')(),
   require('express-session')({
-    secret: "cats",
+    secret: process.env.CONNECT_SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     maxAge: 240000

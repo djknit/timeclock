@@ -4,17 +4,6 @@ const router = require('express').Router();
 
 const UserController = require('../../controllers/User');
 
-router.get(
-  '/test',
-  require('connect-ensure-login').ensureLoggedIn('/api/auth/fail'),
-  (req, res) => {
-    res.json({
-      message: 'You are logged in',
-      user: cleanUser(req.user)
-    });
-  }
-);
-
 router.post(
   '/create-account',
   (req, res) => {
@@ -31,7 +20,6 @@ router.post(
       
     })
     .catch(err => {
-      console.log('\n\nCATCH create route\n\n')
       if (!err.problems || err.problems.unknown) res.status(500);
       else res.status(422);
       res.json(err);
@@ -77,6 +65,37 @@ router.get('/fail', (req, res) => {
   res.status(401);
   res.json(response);
 });
+
+router.post(
+  '/logout',
+  require('connect-ensure-login').ensureLoggedIn('/api/auth/fail'),
+  (req, res) => {
+    console.log(req.logout());
+    res.json({
+      success: true,
+      message: 'Account logout was successful.'
+    });
+  }
+);
+
+router.get(
+  '/test',
+  require('connect-ensure-login').ensureLoggedIn('/api/auth/fail'),
+  (req, res) => {
+    res.json({
+      message: 'You are logged in',
+      user: cleanUser(req.user)
+    });
+  }
+);
+
+router.post(
+  '/delete-account',
+  require('connect-ensure-login').ensureLoggedIn('/api/auth/fail'),
+  (req, res) => {
+    
+  }
+);
 
 module.exports = router;
 
