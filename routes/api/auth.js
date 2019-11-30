@@ -17,7 +17,6 @@ router.post(
           res.json(cleanUser(req.user));
         }
       );
-      
     })
     .catch(err => {
       if (!err.problems || err.problems.unknown) res.status(500);
@@ -70,7 +69,7 @@ router.post(
   '/logout',
   require('connect-ensure-login').ensureLoggedIn('/api/auth/fail'),
   (req, res) => {
-    console.log(req.logout());
+    req.logout();
     res.json({
       success: true,
       message: 'Account logout was successful.'
@@ -82,10 +81,16 @@ router.get(
   '/test',
   require('connect-ensure-login').ensureLoggedIn('/api/auth/fail'),
   (req, res) => {
-    res.json({
-      message: 'You are logged in',
-      user: cleanUser(req.user)
-    });
+    const { user } = req;
+    if (user) {
+      res.json({
+        message: 'You are logged in.',
+        user: cleanUser(user)
+      });
+    }
+    else {
+      res.status(401).json({ message: 'User not found.'});
+    }
   }
 );
 
@@ -93,7 +98,22 @@ router.post(
   '/delete-account',
   require('connect-ensure-login').ensureLoggedIn('/api/auth/fail'),
   (req, res) => {
-    
+    const { password } = req.body;
+    const { user } = req;
+    user.comparePassword(password)
+    .then(({ isMatch }) => {
+      if (isMatch) return UserController.deleteAccount(user._id);
+      throw new Error('An unknown error has occurred.');
+    })
+    .then(result => {
+      res.json(result)
+    })
+    .catch(err => {
+      res.status(500).json({
+        message: err && err.message || 'An unknown error has occurred.',
+        problems: err && err.problems || {}
+      });
+    });
   }
 );
 

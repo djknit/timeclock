@@ -9,21 +9,24 @@ passport.use(new LocalStrategy(
   },
   function verify(usernameOrEmail, password, done) {
     UserController.findByUsernameOrEmail(usernameOrEmail)
-      .then(user => {
-        if (!user) {
-          return done(null, false, { message: 'user' });
-        }
-        user.comparePassword(password, (err, isMatch) => {
-          if (isMatch) {
-            const { _id, username, email } = user;
-            return done(null, { _id, username, email });
-          }
-          else return done(null, false, { message: 'password' });
-        });
-      })
-      .catch(err => {
-        done(null, false, { message: err.message });
-      });
+    .catch(err => {
+      done(null, false, { message: err.message });
+    })
+    .then(user => {
+      if (!user) {
+        return done(null, false, { message: 'user' });
+      }
+      console.log('hit aA')
+      return user.comparePassword(password);
+    })
+    .then(({ user, isMatch }) => {
+      if (isMatch) {
+        const { _id, username, email } = user;
+        return done(null, { _id, username, email });
+      }
+      else return done(null, false, { message: 'password' });
+    })
+    .catch(err => done(null, false, { message: 'password' }));
   }
 ));
 

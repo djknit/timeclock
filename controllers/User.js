@@ -52,9 +52,21 @@ module.exports = {
       .catch(reject);
     }
   ),
-  deleteAccount: (_id, password) => new Promise(
+  deleteAccount: (id) => new Promise(
     (resolve, reject) => {
-      
+      User.findByIdAndDelete(id)
+      .then(result => {
+        if (result === null) {
+          return reject({ message: 'User not found.' });
+        }
+        else if (result._id) {
+          return resolve({ message: 'Account deletion was successful.' });
+        }
+        reject({ message: 'An unknown error was encountered.' });
+      })
+      .catch(err => {
+        reject(err)
+      });
     }
   )
 }
@@ -82,11 +94,11 @@ function determineCreateAccountError(err) {
   if (code === 11000) {
     if (err.errmsg.indexOf('username') > -1) return {
       message: 'That username is unavailable.',
-      roblems: { username: true }
+      problems: { username: true }
     };
     if (err.errmsg.indexOf('lowercaseEmail') > -1) return {
       message: 'There is already an account for that email address.',
-      roblems: { email: true }
+      problems: { email: true }
     };
   }
   if (!errors) {

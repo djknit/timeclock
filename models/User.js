@@ -79,16 +79,20 @@ UserSchema.pre('save', function(next) {
   );
 });
 
-UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-  bcryptjs.compare(
-    candidatePassword,
-    this.password,
-    function(err, isMatch) {
-      if (err) {
-        console.log(err);
-        return cb(err);
-      }
-      cb(null, isMatch);
+UserSchema.methods.comparePassword = function(candidatePassword) {
+  const self = this;
+  return new Promise(
+    (resolve, reject) => {
+      bcryptjs.compare(
+        candidatePassword,
+        self.password,
+        function(err, isMatch) {
+          if (err) {
+            return reject(err);
+          }
+          resolve({ isMatch, user: self });
+        }
+      );
     }
   );
 };
