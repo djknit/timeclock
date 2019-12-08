@@ -4,6 +4,8 @@ const router = require('express').Router();
 
 const UserController = require('../../controllers/User');
 
+const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
+
 router.post(
   '/create-account',
   (req, res) => {
@@ -67,7 +69,7 @@ router.get('/fail', (req, res) => {
 
 router.post(
   '/logout',
-  require('connect-ensure-login').ensureLoggedIn('/api/auth/fail'),
+  verifyLogin,
   (req, res) => {
     req.logout();
     res.json({
@@ -79,7 +81,7 @@ router.post(
 
 router.get(
   '/test',
-  require('connect-ensure-login').ensureLoggedIn('/api/auth/fail'),
+  verifyLogin,
   (req, res) => {
     const { user } = req;
     if (user) {
@@ -96,7 +98,7 @@ router.get(
 
 router.post(
   '/delete-account',
-  require('connect-ensure-login').ensureLoggedIn('/api/auth/fail'),
+  verifyLogin,
   (req, res) => {
     const { password } = req.body;
     const { user } = req;
@@ -114,6 +116,25 @@ router.post(
         problems: err && err.problems || {}
       });
     });
+  }
+);
+
+router.post(
+  'edit-info',
+  verifyLogin,
+  (req, res) => {
+    const { oldPassword, password, username, email } = req.body;
+    if (!password && !username && !email) {
+      throw new Error('No valid account info properties provided.');
+    }
+    const { user } = req;
+    user.comparePassword(oldPassword)
+    .then(({ isMatch }) => {
+      if (isMatch) {
+        return UserController.editAccountInfo({ password, username, email });
+      }
+      throw new Error('An unknown error has occurred.');
+    })
   }
 );
 
