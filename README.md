@@ -5,6 +5,7 @@
 ## Contents
 * [Links](#links)
 * [Project Goals](#project-goals)
+* [Action Plan](#action-plan)
 * [Project Features](#project-features)
 * [Technologies Used](#technologies-used)
 * [Instructions for Use](#instructions-for-use)
@@ -30,6 +31,8 @@
 
 ## Action Plan
 Items in italics are currently being worked on.
+
+This plan is not complete. Future steps will be expanded on in the plan before they are developed. 
 
 * [x] Create bare-bones project structure and set up automatic deployment
   * [x] Create repository; initialize node in repo; run create-react-app to create front-end structure.
