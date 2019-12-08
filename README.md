@@ -25,8 +25,34 @@
   * User authentication
   * Server and database
   * Proper security measures on backend to prevent unauthorized data access.
-* Get working MVP as quickly as possible.
+* Get working MVP before adding optional features.
 * After MVP, add timeclock feature to allow user to "punch in" and "punch out" so that they don't have to write down their time and enter it later.
+
+## Action Plan
+Items in italics are currently being worked on.
+
+* [x] Create bare-bones project structure and set up automatic deployment
+  * [x] Create repository; initialize node in repo; run create-react-app to create front-end structure.
+  * [x] Create express server and configure to serve front-end
+  * [x] Add configuration for Mongoose (MongoDB ODM)
+  * [x] Add Bash scripts (to package.json) needed for Heroku to install + build
+  * [x] Set up automatic deployment to Heroku from github repo.
+    * [x] Create 2 Heroku projects. Deploy `dev` branch to 1 project and `master` branch to another.
+    * [x] Provision database for both project.
+* [ ] _Develop back-end for all MVP features_
+  * [ ] _Develop code necessary for user authentication._
+    * [x] Create User database model
+    * [x] Configure passport. Create controller functions needed to create account and login.
+    * [x] Create api routes and remaining controller functions needed for authentication.
+      * [x] Create account
+      * [x] Test login
+      * [x] Login and logout
+      * [x] Delete account
+      * [ ] _Edit account information_
+  * [ ] Develop code necessary for time management
+* [ ] Develop front-end to complete MVP
+* [ ] Review code for bugs and code organization/readability
+* [ ] Work on additional features
 
 ## Project Features
 (Coming soon...)
