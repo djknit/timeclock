@@ -9,7 +9,27 @@ const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fa
 router.post(
   '/create-account',
   (req, res) => {
-    const { password } = req.body;
+    const { password, username, email } = req.body;
+    let hasProblem = false;
+    let problems = {};
+    let problemMessages = [];
+    if (typeof(password) !== 'string') {
+      hasProblem = true;
+      problems.password = true;
+      problemMessages.push('You must create a password.');
+    }
+    if (typeof(username) !== 'string' && typeof(email) !== 'string') {
+      hasProblem = true;
+      problems.username = true;
+      problems.email = true;
+      problemMessages.push('You must create a username or provide an email address.')
+    };
+    if (hasProblem) {
+      return res.status(400).json({
+        message: problemMessages.join(' '),
+        problems
+      });
+    }
     UserController.createAccount(req.body)
     .then(result => {
       req.login(
@@ -20,11 +40,7 @@ router.post(
         }
       );
     })
-    .catch(err => {
-      if (!err.problems || err.problems.unknown) res.status(500);
-      else res.status(422);
-      res.json(err);
-    });
+    .catch(routeErrorHandlerFactory(res));
   }
 );
 
@@ -45,6 +61,14 @@ router.post(
 router.get('/fail', (req, res) => {
   let response = {};
   const message = req.flash();
+  console.log(message);
+  console.log('fuck nuggets')
+  if (message.error && message.error[0] === 'Missing credentials') {
+    return res.status(400).json({
+      message: 'Missing or improperly formatted credentials.',
+      problems: { unknown: true }
+    });
+  }
   if (message.error && message.error[0] === 'user') {
     response = {
       message: 'Username or email address not found.',
@@ -63,8 +87,7 @@ router.get('/fail', (req, res) => {
       problems: { unknown: true }
     }
   }
-  res.status(401);
-  res.json(response);
+  res.status(401).json(response);
 });
 
 router.post(
@@ -101,21 +124,26 @@ router.post(
   verifyLogin,
   (req, res) => {
     const { password } = req.body;
+    if (!password) res.status(400).json({
+      message: 'You must enter your password.',
+      problems: {
+        password: true
+      }
+    });
     const { user } = req;
     user.comparePassword(password)
     .then(({ isMatch }) => {
       if (isMatch) return UserController.deleteAccount(user._id);
-      throw new Error('An unknown error has occurred.');
+      else throw {
+        message: 'Invalid password.',
+        problems: { password: true },
+        status: 401
+      };
     })
     .then(result => {
       res.json(result)
     })
-    .catch(err => {
-      res.status(500).json({
-        message: err && err.message || 'An unknown error has occurred.',
-        problems: err && err.problems || {}
-      });
-    });
+    .catch(routeErrorHandlerFactory(res));
   }
 );
 
@@ -124,8 +152,21 @@ router.post(
   verifyLogin,
   (req, res) => {
     const { oldPassword, password, username, email } = req.body;
-    if (!password && !username && !email) {
-      throw new Error('No valid account info properties provided.');
+    const isMissingOldPassword = !oldPassword;
+    const isMissingProps = !password && !username && !email;
+    if (isMissingOldPassword || isMissingProps) {
+      const message = (
+        isMissingOldPassword ? 'You must provide your current password.' : '' +
+        isMissingOldPassword && isMissingProps ? ' ' : '' +
+        isMissingProps ? 'No valid account info properties provided.' : ''
+      );
+      return res.status(400).json({
+        message,
+        problems: {
+          missingProps: isMissingProps,
+          missingPassword: isMissingOldPassword
+        }
+      });
     }
     const { user } = req;
     user.comparePassword(oldPassword)
@@ -133,20 +174,29 @@ router.post(
       if (isMatch) {
         return UserController.editAccountInfo({ password, username, email });
       }
-      throw new Error('An unknown error has occurred.');
+      else throw {
+        message: 'Invalid password.',
+        problems: { password: true },
+        status: 401
+      };
     })
+    .then()
+    .catch(routeErrorHandlerFactory(res));
   }
 );
 
 module.exports = router;
 
-function cleanUser(user, propsToKeep) {
-  if (!propsToKeep) propsToKeep = { _id: true };
-  const { username, email, jobs, _id } = user;
-  return {
-    username,
-    email,
-    jobs,
-    _id: propsToKeep._id === true ? _id : undefined
+function routeErrorHandlerFactory(responseObj) {
+  return err => {
+    responseObj.status(err && err.status || 500).json({
+      message: err && err.message || 'An unknown error has occurred.',
+      problems: err && err.problems || {}
+    });
   };
+}
+
+function cleanUser(user, propsToKeep) {
+  const { username, email } = user;
+  return { username, email };
 }

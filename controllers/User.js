@@ -7,13 +7,15 @@ module.exports = {
       if (!username && !email) {
         return reject({
           message: 'You must supply a username or email address.',
-          problems: { username: true, email: true }
+          problems: { username: true, email: true },
+          status: 400
         });
       }
       if (!password) {
         return reject({
           message: 'You must supply a password.',
-          problems: { password: true }
+          problems: { password: true },
+          status: 400
         });
       }
       const lowercaseEmail = (typeof(email) === 'string') ? email.toLowerCase() : undefined;
@@ -46,13 +48,13 @@ module.exports = {
     (resolve, reject) => {
       User.findById(id)
       .then(user => {
-        if (!user) return reject(new Error('User not found by ID.'));
+        if (!user) throw new Error('User not found by ID.');
         resolve(user);
       })
       .catch(reject);
     }
   ),
-  deleteAccount: (id) => new Promise(
+  deleteAccount: id => new Promise(
     (resolve, reject) => {
       User.findByIdAndDelete(id)
       .then(result => {
@@ -64,9 +66,12 @@ module.exports = {
         }
         reject({ message: 'An unknown error was encountered.' });
       })
-      .catch(err => {
-        reject(err)
-      });
+      .catch(reject);
+    }
+  ),
+  editAccountInfo: (id, updatedProps) => new Promise(
+    (resolve, reject) => {
+
     }
   )
 }
@@ -94,11 +99,13 @@ function determineCreateAccountError(err) {
   if (code === 11000) {
     if (err.errmsg.indexOf('username') > -1) return {
       message: 'That username is unavailable.',
-      problems: { username: true }
+      problems: { username: true },
+      status: 422
     };
     if (err.errmsg.indexOf('lowercaseEmail') > -1) return {
       message: 'There is already an account for that email address.',
-      problems: { email: true }
+      problems: { email: true },
+      status: 422
     };
   }
   if (!errors) {
@@ -110,19 +117,22 @@ function determineCreateAccountError(err) {
   if (errors.password) {
     return {
       message: errors.password.message,
-      problems: { password: true }
+      problems: { password: true },
+      status: 422
     };
   }
   if (errors.username) {
     return {
       message: errors.username.message,
-      problems: { username: true }
+      problems: { username: true },
+      status: 422
     };
   }
   if (errors.lowercaseEmail) {
     return {
       message: errors.lowercaseEmail.message.replace('lowercaseEmail', 'email'),
-      problems: { email: true }
+      problems: { email: true },
+      status: 422
     };
   }
 }

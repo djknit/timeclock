@@ -8,6 +8,8 @@ passport.use(new LocalStrategy(
     usernameField: 'usernameOrEmail'
   },
   function verify(usernameOrEmail, password, done) {
+    if (typeof(usernameOrEmail) !== 'string') return  done(null, false, { message: 'user' });
+    if (typeof(password) !== 'string') return  done(null, false, { message: 'password' });
     UserController.findByUsernameOrEmail(usernameOrEmail)
     .then(user => {
       if (!user) throw new Error('user');

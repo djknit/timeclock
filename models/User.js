@@ -87,6 +87,9 @@ UserSchema.methods.comparePassword = function(candidatePassword) {
         candidatePassword,
         self.password,
         function(err, isMatch) {
+          console.log(err);
+          console.log('^v'.repeat(15))
+          console.log(isMatch)
           if (err) {
             return reject(err);
           }
