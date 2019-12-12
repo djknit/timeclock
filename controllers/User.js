@@ -4,41 +4,41 @@ module.exports = {
   createAccount: newUser => new Promise(
     (resolve, reject) => {
       const { email, username, password } = newUser;
-      if (!username && !email) {
-        return reject({
-          message: 'You must supply a username or email address.',
-          problems: { username: true, email: true },
-          status: 400
-        });
-      }
-      if (!password) {
-        return reject({
-          message: 'You must supply a password.',
-          problems: { password: true },
-          status: 400
-        });
+      if ((!username && !email) || !password) {
+        const error = new Error('Missing credentials.');
+        reject(error);
+        throw error;
       }
       const lowercaseEmail = (typeof(email) === 'string') ? email.toLowerCase() : undefined;
-      const processedNewUser = lowercaseEmail ? { lowercaseEmail, ...newUser } : newUser
-      _createAccount(processedNewUser)
-      .then(resolve)
-      .catch(reject);
+      const processedNewUser = lowercaseEmail ? { lowercaseEmail, ...newUser } : newUser;
+      const user = new User(processedNewUser);
+      user.save((err, user) => {
+        if (err) {
+          return reject(determineUserInfoError(err));
+        }
+        else if (user) {
+          return resolve(cleanUser(user));
+        }
+        const unexpectedErr = new Error('Unexpected outcome. Reason unknown.');
+        reject(unexpectedErr);
+        throw unexpectedErr;
+      });
     }
   ),
   findByUsernameOrEmail: usernameOrEmail => new Promise(
     (resolve, reject) => {
       if (typeof(usernameOrEmail) !== 'string') {
-        reject(new Error('Bad query type.'))
+        throw new Error('Bad query type.');
       }
       else {
         User.findOne({ username: usernameOrEmail })
         .then(user => {
-          if (user) {
-            resolve(user);
-          }
-          else {
-            resolve(User.findOne({ lowercaseEmail: usernameOrEmail.toLowerCase() }));
-          }
+          if (user) return user;
+          else return User.findOne({ lowercaseEmail: usernameOrEmail.toLowerCase() });
+        })
+        .then(user => {
+          if (!user) return reject({ message: 'user' });
+          resolve(user);
         })
         .catch(reject);
       }
@@ -59,34 +59,58 @@ module.exports = {
       User.findByIdAndDelete(id)
       .then(result => {
         if (result === null) {
-          return reject({ message: 'User not found.' });
+          throw new Error('User not found by ID.');
         }
         else if (result._id) {
-          return resolve({ message: 'Account deletion was successful.' });
+          return resolve({ success: true });
         }
-        reject({ message: 'An unknown error was encountered.' });
+        throw new Error('An unknown error was encountered.');
       })
       .catch(reject);
     }
   ),
-  editAccountInfo: (id, updatedProps) => new Promise(
+  editAccountInfo: (user, updatedProps) => new Promise(
     (resolve, reject) => {
-
+      let { username, password, email } = updatedProps;
+      if (password === null) {
+        const err = new Error('Can\'t set password to null.');
+        reject(err);
+        throw err;
+      }
+      if (username === null && email === null) {
+        const err = new Error('Can\'t set both username and email to null.');
+        reject(err);
+        throw(err);
+      }
+      // let _updates = {};
+      if (typeof(username) === 'string' || username === null) user.username = username;
+      // else if (username === null) _updates.username = undefined;
+      if (typeof(email) === 'string') {
+        user.email = email;
+        user.lowercaseEmail = email.toLowerCase();
+      }
+      else if (email === null) {
+        user.email = null;
+        user.lowercaseEmail = undefined
+      }
+      if (typeof(password) === 'string') user.password = password;
+      if (username === undefined && email === undefined && password === undefined) {
+        throw new Error('No valid info properties.');
+      }
+      user.save((err, user) => {
+        if (err) {
+          return reject(determineUserInfoError(err));
+        }
+        else if (user) {
+          console.log(user)
+          return resolve(cleanUser(user));
+        }
+        const unexpectedErr = new Error('Unexpected outcome. Reason unknown.');
+        reject(unexpectedErr);
+        throw unexpectedErr;
+      });
     }
   )
-}
-
-function _createAccount(newUser, callback) {
-  const user = new User(newUser);
-  return new Promise((resolve, reject) => {
-    user.save((err, user) => {
-      if (err) return reject(determineCreateAccountError(err));
-      else if (user) {
-        return resolve(cleanUser(user));
-      }
-      reject({message: 'Unexpected outcome. Reason unknown.', problems: { unknown: true }});
-    });
-  });
 }
 
 function cleanUser(user) {
@@ -94,25 +118,22 @@ function cleanUser(user) {
   return { _id, username, email, jobs };
 }
 
-function determineCreateAccountError(err) {
-  const { code, errors } = err;
+function determineUserInfoError(err) {
+  const { code, errors, errmsg } = err;
   if (code === 11000) {
-    if (err.errmsg.indexOf('username') > -1) return {
+    if (errmsg.indexOf('username') > -1) return {
       message: 'That username is unavailable.',
       problems: { username: true },
       status: 422
     };
-    if (err.errmsg.indexOf('lowercaseEmail') > -1) return {
+    if (errmsg.indexOf('lowercaseEmail') > -1) return {
       message: 'There is already an account for that email address.',
       problems: { email: true },
       status: 422
     };
   }
   if (!errors) {
-    return {
-      message: 'An unknown problem was encountered.',
-      problems: { unknown: true }
-    };
+    return new Error('An unknown problem was encountered.');
   }
   if (errors.password) {
     return {
@@ -135,4 +156,5 @@ function determineCreateAccountError(err) {
       status: 422
     };
   }
+  return new Error('An unknown problem was encountered.')
 }

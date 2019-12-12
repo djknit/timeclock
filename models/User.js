@@ -3,6 +3,8 @@ const bcryptjs = require('bcryptjs');
 
 const Schema = mongoose.Schema;
 
+const emailRegEx = /.+@.+\..+/;
+
 const UserSchema = new Schema({
   email: emailSubdocFactory(),
   lowercaseEmail: Object.assign(
@@ -17,11 +19,8 @@ const UserSchema = new Schema({
   username: {
     type: String,
     validate: {
-      validator: value => {
-        if (value.length < 4) return false;
-        return true;
-      },
-      message: 'Usernames must be at least 4 characters long.'
+      validator: value => !emailRegEx.test(value),
+      message: 'You can\'t use an email address as a username.'
     },
     index: {
       unique: true,
@@ -54,7 +53,7 @@ function emailSubdocFactory() {
   return {
     type: String,
     // from bootcamp week 18 activity 15
-    match: [/.+@.+\..+/, 'Invalid e-mail address.']
+    match: [emailRegEx, 'Invalid e-mail address.']
   };
 }
 
@@ -62,14 +61,11 @@ function emailSubdocFactory() {
 UserSchema.pre('save', function(next) {
   const user = this;
   const SALT_FACTOR = 5;
-
   if (!user.isModified('password')) return next();
-
   bcryptjs.genSalt(
     SALT_FACTOR,
     function(err, salt) {
       if (err) return next(err);
-
       bcryptjs.hash(user.password, salt, function(err, hash) {
         if (err) return next(err);
         user.password = hash;
@@ -87,9 +83,6 @@ UserSchema.methods.comparePassword = function(candidatePassword) {
         candidatePassword,
         self.password,
         function(err, isMatch) {
-          console.log(err);
-          console.log('^v'.repeat(15))
-          console.log(isMatch)
           if (err) {
             return reject(err);
           }
