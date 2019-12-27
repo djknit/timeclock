@@ -155,16 +155,16 @@ router.post(
       problems.password = true;
       problemMessages.push('You must provide your current password.');
     }
-    const hasUsername = username === null || typeof(username) === 'string';
-    const hasEmail = email === null || typeof(email) === 'string';
-    const hasPassword = typeof(password) === 'string';
+    const hasUsername = username && typeof(username) === 'string';
+    const hasEmail = email && typeof(email) === 'string';
+    const hasPassword = password && typeof(password) === 'string';
     if (!hasUsername && !hasEmail && !hasPassword) {
       problems.updatedProps.password = true;
       problems.updatedProps.username = true;
       problems.updatedProps.email = true;
       problemMessages.push('No valid account info properties provided.');
     }
-    else if (password === null) {
+    if (password === null) {
       problems.updatedProps.password = true;
       problemMessages.push('Password cannot be set to null.');
     }

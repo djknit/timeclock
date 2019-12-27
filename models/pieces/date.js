@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const intTypeFactory = require('./integer');
+
 const dateSchema = new mongoose.Schema({
   year: intTypeFactory(),
   month: intTypeFactory(),
@@ -7,13 +9,6 @@ const dateSchema = new mongoose.Schema({
 }, {
   _id: false
 }); 
-
-const intTypeFactory = () => ({
-  validator: val => {
-    if (Math.floor(val) !== val) return false;
-  },
-  message: 'Must be an integer.'
-});
 
 module.exports = () => ({
   type: dateSchema,

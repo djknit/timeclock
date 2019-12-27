@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const moment = require('moment-timezone');
+// const moment = require('moment-timezone');
 
 const valueScheduleSubdocFactory = require('./pieces/valueSchedule');
+const intSubdocFactory = require('./pieces/integer');
 const timezoneSubdocFactory = require('./pieces/timezone');
 const wageSubdocFactory = require('./pieces/wage');
 const dateSubdocFactory = require('./pieces/date');
@@ -17,7 +18,15 @@ const JobSchema = new Schema({
     min: -43200000,
     max: 43200000
   },
-  weekCutoff: String,
+  weekCutoff: intSubdocFactory({
+    validate: {
+      validator(value) {
+        if (value < 0 || value > 6) return false;
+        return true;
+      },
+      message: 'Invalid week cutoff. Must be an integer 0 - 6. Sunday is 0, Monday is 1, etc.'
+    }
+  }),
   startDate: dateSubdocFactory()
 });
 
