@@ -82,9 +82,7 @@ module.exports = {
         reject(err);
         throw(err);
       }
-      // let _updates = {};
       if (typeof(username) === 'string' || username === null) user.username = username;
-      // else if (username === null) _updates.username = undefined;
       if (typeof(email) === 'string') {
         user.email = email;
         user.lowercaseEmail = email.toLowerCase();
@@ -95,7 +93,9 @@ module.exports = {
       }
       if (typeof(password) === 'string') user.password = password;
       if (username === undefined && email === undefined && password === undefined) {
-        throw new Error('No valid info properties.');
+        const err = new Error('No valid info properties.');
+        reject(err);
+        throw err;
       }
       user.save((err, user) => {
         if (err) {

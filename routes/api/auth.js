@@ -58,8 +58,6 @@ router.post(
 router.get('/fail', (req, res) => {
   let response = {};
   const message = req.flash();
-  console.log(message);
-  console.log('chicken nuggets')
   if (message.error && message.error[0] === 'Missing credentials') {
     return res.status(400).json({
       message: 'Missing or improperly formatted credentials.',
@@ -93,7 +91,6 @@ router.post(
   (req, res) => {
     req.logout();
     res.json({
-      success: true,
       message: 'Account logout was successful.'
     });
   }
@@ -139,7 +136,6 @@ router.post(
     })
     .then(result => {
       if (result.success) return res.json({
-        success: true,
         message: 'Your account was successfully deleted.'
       });
     })
@@ -151,7 +147,6 @@ router.post(
   '/edit-info',
   verifyLogin,
   (req, res) => {
-    console.log('WTF IS GOING ON')
     const oldPassword = req.body.password;
     const { password, email, username } = req.body.updatedProps || {};
     let problems = { updatedProps: {} };
@@ -196,10 +191,8 @@ router.post(
         status: 401
       };
     })
-    .then(result => {
-      console.log(result)
-      console.log('. '.repeat(30))
-      res.json(result)
+    .then(updatedUser => {
+      res.json(cleanUser(updatedUser));
     })
     .catch(routeErrorHandlerFactory(res));
   }
