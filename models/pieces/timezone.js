@@ -5,5 +5,6 @@ module.exports =  () => ({
   validate: {
     validator: value => moment.tz.zone(value) !== null,
     message: 'Invalid timezone'
-  }
+  },
+  required: true
 });

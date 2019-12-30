@@ -10,17 +10,22 @@ const dateSchema = new mongoose.Schema({
   _id: false
 }); 
 
-module.exports = () => ({
-  type: dateSchema,
-  validate: {
-    validator: val => {
-      const { day, month, year } = val;
-      const date = new Date(year, month, day);
-      if (date.getDate !== day) return false;
-      if (date.getMonth !== month) return false;
-      if (date.getFullYear !== year) return false;
-      return true;
+module.exports = options => {
+  const required = options && options.required || undefined
+
+  return {
+    type: dateSchema,
+    validate: {
+      validator: val => {
+        const { day, month, year } = val;
+        const date = new Date(year, month, day);
+        if (date.getDate !== day) return false;
+        if (date.getMonth !== month) return false;
+        if (date.getFullYear !== year) return false;
+        return true;
+      },
+      message: 'Invalid date'
     },
-    message: 'Invalid date'
-  }
-});
+    required
+  };
+};

@@ -3,13 +3,16 @@ const mongoose = require('mongoose');
 const dateSubdocFactory = require('./date');
 
 module.exports = (valueOutline) => {
-  
-  const valDatePairsSchema = new mongoose.Schema([
-    {
-      value: valueOutline,
-      startDate: dateSubdocFactory()
-    }
-  ]);
+
+  const valDatePairsSchema = new mongoose.Schema(
+    [
+      {
+        value: valueOutline,
+        startDate: dateSubdocFactory()
+      }
+    ],
+    { _id: false }
+  );
 
   return {
     type: valDatePairsSchema,
@@ -37,7 +40,8 @@ module.exports = (valueOutline) => {
         },
         message: 'Schedule must be in chronological order.'
       }
-    ]
+    ],
+    required: true
   };
 
-}
+};

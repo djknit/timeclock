@@ -131,6 +131,11 @@ function determineUserInfoError(err) {
       problems: { email: true },
       status: 422
     };
+    if (errmsg.indexOf('test') > -1) return {
+      message: 'Missing test.',
+      problems: { test: true },
+      status: 422
+    };
   }
   if (!errors) {
     return new Error('An unknown problem was encountered.');
