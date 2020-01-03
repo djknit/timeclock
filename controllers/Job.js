@@ -9,10 +9,11 @@ module.exports = {
         reject(error);
         throw(error);
       }
+      newJob.timezone = [{
+        value: timezone
+      }];
       Job.create(newJob)
-      .then(result => {
-
-      })
+      .then(resolve)
       .catch(err => {
         reject(determineCreateJobError(err));
       });
@@ -20,6 +21,7 @@ module.exports = {
   )
 };
 
-function determineCreateJobError(error) {
-  
+function determineCreateJobError(err) {
+  // console.log(error);
+  return err;
 }

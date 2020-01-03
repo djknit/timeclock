@@ -35,7 +35,9 @@ router.post(
         { password, ...result },
         err => {
           if (err) return res.status(500).json(err);
-          res.json(cleanUser(req.user));
+          res.json({
+            user: cleanUser(req.user)
+          });
         }
       );
     })
@@ -194,7 +196,9 @@ router.post(
       };
     })
     .then(updatedUser => {
-      res.json(cleanUser(updatedUser));
+      res.json({
+        user: cleanUser(updatedUser)
+      });
     })
     .catch(routeErrorHandlerFactory(res));
   }

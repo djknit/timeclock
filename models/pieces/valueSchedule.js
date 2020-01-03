@@ -4,21 +4,20 @@ const dateSubdocFactory = require('./date');
 
 module.exports = (valueOutline) => {
 
-  const valDatePairsSchema = new mongoose.Schema(
-    [
-      {
-        value: valueOutline,
-        startDate: dateSubdocFactory()
-      }
-    ],
+  const valDatePairSchema = new mongoose.Schema(
+    {
+      value: valueOutline,
+      startDate: dateSubdocFactory()
+    },
     { _id: false }
   );
 
-  return {
-    type: valDatePairsSchema,
+  return [{
+    type: valDatePairSchema,
     validate: [
       {
         validator: vals => {
+          if (vals.length === 0) return false;
           const firstVal = vals[0];
           if (!firstVal) return false;
           if (firstVal.startDate) return false;
@@ -42,6 +41,6 @@ module.exports = (valueOutline) => {
       }
     ],
     required: true
-  };
+  }];
 
 };

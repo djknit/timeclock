@@ -12,8 +12,9 @@ function routeErrorHandlerFactory(responseObj) {
     if (!err.message) err.message = 'An unknown error has occurred.';
     responseObj.status(err.status).json({
       message: err.message,
-      problems: err.problems || { unknown: true }
+      problems: err.problems || { unknown: true },
+      err
     });
-    if (err.status === 500) throw err;
+    // if (err.status === 500) throw err;
   };
 }

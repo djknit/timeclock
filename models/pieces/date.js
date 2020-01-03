@@ -19,9 +19,9 @@ module.exports = options => {
       validator: val => {
         const { day, month, year } = val;
         const date = new Date(year, month, day);
-        if (date.getDate !== day) return false;
-        if (date.getMonth !== month) return false;
-        if (date.getFullYear !== year) return false;
+        if (date.getDate() !== day) return false;
+        if (date.getMonth() !== month) return false;
+        if (date.getFullYear() !== year) return false;
         return true;
       },
       message: 'Invalid date'

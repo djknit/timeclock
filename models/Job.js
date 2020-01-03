@@ -17,12 +17,16 @@ const JobSchema = new Schema({
   wage: valueScheduleSubdocFactory(
     wageSubdocFactory()
   ),
-  dayCutoff: {
-    type: Number,
-    min: -43200000,
-    max: 43200000,
+  dayCutoff: intSubdocFactory({
+    validate: {
+      validator(value) {
+        if (value < -43200000 || value > 43200000) return false;
+        return true;
+      },
+      message: 'Invalid day cutoff. Must be between -12 hours and 12 hours.'
+    },
     default: 0
-  },
+  }),
   weekBegins: intSubdocFactory({
     validate: {
       validator(value) {
@@ -35,6 +39,12 @@ const JobSchema = new Schema({
   }),
   startDate: dateSubdocFactory()
 });
+
+// source: http://jasonjl.me/blog/2014/10/23/adding-validation-for-embedded-objects-in-mongoose/
+JobSchema.path('timezone').validate(
+  arr => arr.length > 0,
+  'You must have at least one timezone value.'
+);
 
 const Job = mongoose.model('Job', JobSchema);
 
