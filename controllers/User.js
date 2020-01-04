@@ -116,7 +116,6 @@ module.exports = {
       User.findById(userId)
       .populate('jobs')
       .then(user => {
-        console.log(user)
         if (user.jobs.map(job => job.name).filter(name => name === jobName).length > 0) {
           return reject({
             message: 'You already have a job with that name. You must give each job a unique name.',
@@ -155,45 +154,48 @@ function cleanUser(user) {
 
 function determineUserInfoError(err) {
   const { code, errors, errmsg } = err;
+  let problemMessages = [];
+  let problems = {};
+  let status;
   if (code === 11000) {
-    if (errmsg.indexOf('username') > -1) return {
-      message: 'That username is unavailable.',
-      problems: { username: true },
-      status: 422
+    if (errmsg.indexOf('username') > -1) {
+      return {
+        message: 'That username is unavailable.',
+        problems: { username: true },
+        status: 422
+      };
     };
-    if (errmsg.indexOf('lowercaseEmail') > -1) return {
-      message: 'There is already an account for that email address.',
-      problems: { email: true },
-      status: 422
-    };
-    if (errmsg.indexOf('test') > -1) return {
-      message: 'Missing test.',
-      problems: { test: true },
-      status: 422
+    if (errmsg.indexOf('lowercaseEmail') > -1) {
+      return {
+        message: 'There is already an account for that email address.',
+        problems: { email: true },
+        status: 422
+      };
     };
   }
   if (!errors) {
     return new Error('An unknown problem was encountered.');
   }
   if (errors.password) {
-    return {
-      message: errors.password.message,
-      problems: { password: true },
-      status: 422
-    };
+    problemMessages.push(errors.password.message);
+    problems.password = true;
+    status = 422;
   }
   if (errors.username) {
-    return {
-      message: errors.username.message,
-      problems: { username: true },
-      status: 422
-    };
+    problemMessages.push(errors.username.message);
+    problems.username = true;
+    status = 422;
   }
   if (errors.lowercaseEmail) {
+    problemMessages.push(errors.lowercaseEmail.message.replace('lowercaseEmail', 'email'));
+    problems.email = true;
+    status = 422;
+  }
+  if (problemMessages.length > 0) {
     return {
-      message: errors.lowercaseEmail.message.replace('lowercaseEmail', 'email'),
-      problems: { email: true },
-      status: 422
+      message: problemMessages.join(' '),
+      problems,
+      status
     };
   }
   return new Error('An unknown problem was encountered.')

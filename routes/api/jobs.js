@@ -33,7 +33,7 @@ router.post(
         problems
       });
     }
-    console.log(user)
+    // console.log(user)
     const userId = user._id;
     UserController.checkForJobWithName(name, userId)
     .then(() => JobController.create(req.body))

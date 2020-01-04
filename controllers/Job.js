@@ -22,6 +22,25 @@ module.exports = {
 };
 
 function determineCreateJobError(err) {
-  // console.log(error);
+  if (!err) err = {};
+  const { errors } = err;
+
+  let problems = {};
+  let messages = [];
+  let status;
+
+  if (errors.startDate) {
+    problems.startDate = true;
+    messages.push('Invalid start date.');
+  }
+  if (errors['timezone.0.value']) {
+    problems.timezone = true;
+    messages.push('Invalid timezone.');
+  }
+  if (errors.weekBegins) {
+    problems.weekBegins = true;
+    messages.push('Invalid week cutoff. Must be an integer 0 - 6. Sunday is 0, Monday is 1, etc.');
+  }
+
   return err;
 }

@@ -16,6 +16,9 @@ app.use(require('morgan')('combined')); // logs http requests
 const { middleware } = require('./passport.js');
 middleware.forEach(middleware_ => app.use(middleware_));
 
+// Error handler middleware
+app.use(require('../utilities').errorHandlerMiddleware);
+
 // ----------------------
 
 const router = require('../routes');

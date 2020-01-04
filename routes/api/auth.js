@@ -206,7 +206,7 @@ router.post(
 
 module.exports = router;
 
-function cleanUser(user, propsToKeep) {
+function cleanUser(user) {
   const { username, email } = user;
   return { username, email };
 }
