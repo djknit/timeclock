@@ -1,7 +1,7 @@
 module.exports = function intTypeFactory(options) {
   const intValidate = {
     validator: val => {
-      if (Math.floor(val) !== val) return false;
+      return (Math.floor(val) === val);
     },
     message: 'Must be an integer.'
   };

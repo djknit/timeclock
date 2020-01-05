@@ -145,7 +145,7 @@ module.exports = {
       .catch(reject);
     }
   )
-}
+};
 
 function cleanUser(user) {
   const { _id, username, email, jobs } = user;
@@ -164,14 +164,14 @@ function determineUserInfoError(err) {
         problems: { username: true },
         status: 422
       };
-    };
+    }
     if (errmsg.indexOf('lowercaseEmail') > -1) {
       return {
         message: 'There is already an account for that email address.',
         problems: { email: true },
         status: 422
       };
-    };
+    }
   }
   if (!errors) {
     return new Error('An unknown problem was encountered.');
@@ -193,10 +193,10 @@ function determineUserInfoError(err) {
   }
   if (problemMessages.length > 0) {
     return {
-      message: problemMessages.join(' '),
+      messages: problemMessages,
       problems,
       status
     };
   }
-  return new Error('An unknown problem was encountered.')
+  return new Error('An unknown problem was encountered.');
 }

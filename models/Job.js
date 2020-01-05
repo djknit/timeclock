@@ -10,7 +10,10 @@ const dateSubdocFactory = require('./pieces/date');
 const Schema = mongoose.Schema;
 
 const JobSchema = new Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true
+  },
   timezone: valueScheduleSubdocFactory(
     timezoneSubdocFactory()
   ),
@@ -45,6 +48,10 @@ JobSchema.path('timezone').validate(
   arr => arr.length > 0,
   'You must have at least one timezone value.'
 );
+// JobSchema.path('wage').validate(
+//   arr => arr.length > 0,
+//   'You must have at least one wage value-date pair but the wage value can be null.'
+// );
 
 const Job = mongoose.model('Job', JobSchema);
 

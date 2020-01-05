@@ -39,8 +39,7 @@ module.exports = (valueOutline) => {
         },
         message: 'Schedule must be in chronological order.'
       }
-    ],
-    required: true
+    ]
   }];
 
 };

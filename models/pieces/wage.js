@@ -1,26 +1,15 @@
 const cc = require('currency-codes');
+const { Schema } = require('mongoose');
 
 const intSubdocFactory = require('./integer');
 
-module.exports = () => ({
-  rate: payRateSubdocFactory(this),
-  currency: {
-    type: String,
-    validate: {
-      validator(value) {
-        if (!value) return false;
-        return cc.code(value) ? true : false;
-      },
-      message: 'Invalid currency code.'
-    },
-    default: 'USD'
-  },
-  overtime: {
+const overtimeSchema = new Schema(
+  {
     isOn: {
       type: Boolean,
       default: true
     },
-    rate: payRateSubdocFactory(this),
+    rate: Number,
     rateMultiplier: {
       type: Number,
       default: 1.5,
@@ -30,35 +19,72 @@ module.exports = () => ({
       type: Boolean,
       default: true
     },
-    cutoff: {
+    cutoff: intSubdocFactory({
+      default: 144000000,
+      validate: {
+        validator(value) {
+          return (value <= 604800000) && (value >= 0);
+        },
+        message: 'Overtime cutoff cannot be greater than 7 days (604,800,000 ms) or less than 0.'
+      }
+    })
+  },
+  { _id: false }
+);
+
+const wageSchema = new Schema(
+  {
+    rate: {
       type: Number,
-      min: 0,
-      max: 604800000,
-      default: 144000000
+      required: true
+    },
+    currency: {
+      type: String,
+      validate: {
+        validator(value) {
+          if (!value) return false;
+          return cc.code(value) ? true : false;
+        },
+        message: 'Invalid currency code.'
+      },
+      default: 'USD'
+    },
+    overtime: {
+      type: overtimeSchema,
+      validate: {
+        validator(value) {
+          return value.useMultiplier === true || !!value.rate;
+        },
+        message: 'You must specify the overtime rate or rate multiplier.'
+      },
+      default: {}
     }
-  }
+  },
+  { _id: false }
+);
+
+module.exports = () => ({
+  type: wageSchema,
+  validate: [
+    {
+      validator(value) {
+        return validateDecimalDigits(value.rate, value.currency);
+      },
+      message: 'Invalid rate; too many decimal places.'
+    }, {
+      validator(value) {
+        const { overtime } = value;
+        if (!overtime || !overtime.rate) return true;
+        return validateDecimalDigits(overtime.rate, value.currency)
+      },
+      message: 'Invalid overtime rate; too many decimal places.'
+    }
+  ]
 });
 
-function payRateSubdocFactory(mainObj) {
-  console.log(mainObj)
-
-  const getAllowedDecimalDigits = () => {
-    if (!mainObj.currency) return 2;
-    cc.code(mainObj.currency).digits;
-  }
-
-  return {
-    type: Number,
-    validate: {
-      validator(value) {
-        const decimalSplitStringValue = value.toString().split('.');
-        if (decimalSplitStringValue.length < 2) return true; // no decimal. (checked array length)
-        if (decimalSplitStringValue[1].length > getAllowedDecimalDigits()) { // checked string length to right of decimal
-          return false;
-        }
-        return true;
-      },
-      message: `Only ${getAllowedDecimalDigits()} decimal places are allowed.`
-    }
-  };
+function validateDecimalDigits(rate, currency) {
+  const rateRightOfDecimalString = rate.toString().split('.')[1];
+  const digits = (rateRightOfDecimalString && rateRightOfDecimalString.length) || 0;
+  const allowedDigits = cc.code(currency).digits;
+  return (digits <= allowedDigits);
 }
