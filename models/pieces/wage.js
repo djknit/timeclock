@@ -5,10 +5,6 @@ const intSubdocFactory = require('./integer');
 
 const overtimeSchema = new Schema(
   {
-    isOn: {
-      type: Boolean,
-      default: true
-    },
     rate: Number,
     rateMultiplier: {
       type: Number,
@@ -41,10 +37,7 @@ const wageSchema = new Schema(
     currency: {
       type: String,
       validate: {
-        validator(value) {
-          if (!value) return false;
-          return cc.code(value) ? true : false;
-        },
+        validator: validateCurrencyCode,
         message: 'Invalid currency code.'
       },
       default: 'USD'
@@ -56,8 +49,7 @@ const wageSchema = new Schema(
           return value.useMultiplier === true || !!value.rate;
         },
         message: 'You must specify the overtime rate or rate multiplier.'
-      },
-      default: {}
+      }
     }
   },
   { _id: false }
@@ -68,6 +60,11 @@ module.exports = () => ({
   validate: [
     {
       validator(value) {
+        return validateCurrencyCode(value && value.currency);
+      },
+      message: 'Invalid wage currency. Must be an ISO 4217 alphabetic currency code.'
+    }, {
+      validator(value) {
         return validateDecimalDigits(value.rate, value.currency);
       },
       message: 'Invalid rate; too many decimal places.'
@@ -75,7 +72,7 @@ module.exports = () => ({
       validator(value) {
         const { overtime } = value;
         if (!overtime || !overtime.rate) return true;
-        return validateDecimalDigits(overtime.rate, value.currency)
+        return validateDecimalDigits(overtime.rate, value.currency);
       },
       message: 'Invalid overtime rate; too many decimal places.'
     }
@@ -83,8 +80,18 @@ module.exports = () => ({
 });
 
 function validateDecimalDigits(rate, currency) {
+  if (!rate && rate !== 0) return true;
   const rateRightOfDecimalString = rate.toString().split('.')[1];
   const digits = (rateRightOfDecimalString && rateRightOfDecimalString.length) || 0;
-  const allowedDigits = cc.code(currency).digits;
+  const currencyData = cc.code(currency);
+  const allowedDigits = (currencyData && currencyData.digits) || 0;
   return (digits <= allowedDigits);
+}
+
+function validateCurrencyCode(candidateValue) {
+  if (!candidateValue) return false;
+  console.log('a')
+  console.log(cc.code(candidateValue))
+  console.log('b')
+  return cc.code(candidateValue) ? true : false;
 }
