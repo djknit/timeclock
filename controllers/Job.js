@@ -1,41 +1,32 @@
 const Job = require('../models/Job');
 
 module.exports = {
-  create: newJob => new Promise(
+  create: (newJob, userId) => new Promise(
     (resolve, reject) => {
       const { name, timezone, wage, startDate, dayCutoff, weekBegins } = newJob;
       console.log(wage)
+      newJob.user = userId;
       if (!name || !timezone || !startDate) {
         const error = new Error('Missing required data properties.');
         reject(error);
         throw(error);
       }
-      newJob.timezone = [{
-        value: timezone
-      }];
+      newJob.timezone = [{ value: timezone }];
       newJob.dayCutoff = 
         dayCutoff ?
-        [{
-          value: dayCutoff
-        }] :
+        [{ value: dayCutoff }] :
         [{}];
       newJob.weekBegins = 
         weekBegins ?
-        [{
-          value: weekBegins
-        }] :
+        [{ value: weekBegins }] :
         [{}];
       if (wage) {
-        newJob.wage = [{
-          value: wage
-        }];
+        newJob.wage = [{ value: wage }];
       }
       else newJob.wage = [{ value: null }];
       Job.create(newJob)
       .then(resolve)
-      .catch(err => {
-        reject(determineCreateJobError(err));
-      });
+      .catch(err => reject(determineCreateJobError(err)));
     }
   )
 };
@@ -93,7 +84,7 @@ function determineCreateJobError(err) {
     messages.push('Invalid overtime wage.');
   }
   if (errors['wage.0.value.overtime.useMultiplier']) {
-    problems.wage.overtime.rate = true;
+    problems.wage.overtime.useMultiplier = true;
     messages.push('Invalid overtime; invalid `useMultiplier` value.');
   }
   const overtimeCutoffError = errors['wage.0.value.overtime.cutoff'];

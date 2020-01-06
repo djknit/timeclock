@@ -12,6 +12,10 @@ const weeksSubdocFactory = require('./pieces/weeks.js');
 const Schema = mongoose.Schema;
 
 const JobSchema = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    required: true
+  },
   name: {
     type: String,
     required: true

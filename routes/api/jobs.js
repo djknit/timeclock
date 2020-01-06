@@ -36,7 +36,7 @@ router.post(
     // console.log(user)
     const userId = user._id;
     UserController.checkForJobWithName(name, userId)
-    .then(() => JobController.create(body))
+    .then(() => JobController.create(body, userId))
     .then(({ _id }) => UserController.addJob(_id, userId))
     .then(({ jobs }) => res.json({ jobs: cleanJobs(jobs) }))
     .catch(routeErrorHandlerFactory(res));
