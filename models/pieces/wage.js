@@ -90,8 +90,5 @@ function validateDecimalDigits(rate, currency) {
 
 function validateCurrencyCode(candidateValue) {
   if (!candidateValue) return false;
-  console.log('a')
-  console.log(cc.code(candidateValue))
-  console.log('b')
   return cc.code(candidateValue) ? true : false;
 }

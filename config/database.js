@@ -12,7 +12,8 @@ module.exports = new Promise(function (resolve, reject) {
     schema.pre('update', setRunValidators);
   });
 
-  mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
+  mongoose.connect(MONGODB_URI, { useNewUrlParser: true, autoIndex: false });
+  
   const db = mongoose.connection;
   db.on('error', function() {
     console.error('Error connecting to MongoDB.');

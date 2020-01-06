@@ -3,7 +3,7 @@ const Job = require('../models/Job');
 module.exports = {
   create: newJob => new Promise(
     (resolve, reject) => {
-      const { name, timezone, wage, startDate } = newJob;
+      const { name, timezone, wage, startDate, dayCutoff, weekBegins } = newJob;
       console.log(wage)
       if (!name || !timezone || !startDate) {
         const error = new Error('Missing required data properties.');
@@ -13,12 +13,24 @@ module.exports = {
       newJob.timezone = [{
         value: timezone
       }];
+      newJob.dayCutoff = 
+        dayCutoff ?
+        [{
+          value: dayCutoff
+        }] :
+        [{}];
+      newJob.weekBegins = 
+        weekBegins ?
+        [{
+          value: weekBegins
+        }] :
+        [{}];
       if (wage) {
         newJob.wage = [{
           value: wage
         }];
       }
-      else newJob.wage = [{value: null}]
+      else newJob.wage = [{ value: null }];
       Job.create(newJob)
       .then(resolve)
       .catch(err => {
@@ -43,13 +55,15 @@ function determineCreateJobError(err) {
     problems.timezone = true;
     messages.push('Invalid timezone.');
   }
-  if (errors.weekBegins) {
+  const weekBeginsError = errors['weekBegins.0.value'];
+  if (weekBeginsError) {
     problems.weekBegins = true;
-    messages.push('Invalid week cutoff. Must be an integer 0 - 6. Sunday is 0, Monday is 1, etc.');
+    messages.push(weekBeginsError.message);
   }
-  if (errors.dayCutoff) {
+  const dayCutoffError = errors['dayCutoff.0.value']
+  if (dayCutoffError) {
     problems.dayCutoff = true;
-    messages.push('Invalid day cutoff. Must be between -12 hours and 12 hours.');
+    messages.push(dayCutoffError.message);
   }
   const wageError = errors['wage.0.value'];
   if (wageError) problems.wage = {};
