@@ -13,6 +13,7 @@ module.exports = function intTypeFactory(options) {
   return {
     type: Number,
     validate: otherValidate ? [intValidate, otherValidate] : intValidate,
-    default: defaultVal
+    default: defaultVal,
+    required: options && options.required
   };
 }

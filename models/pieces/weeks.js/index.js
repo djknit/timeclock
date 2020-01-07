@@ -2,14 +2,13 @@ const { Schema } = require('mongoose');
 
 const dateSubdocFactory = require('../date');
 const intSubdocFactory = require('../integer');
+const daysSubdocFactory = require('./days');
 
 const weekSchema = new Schema({
-  days: [{
-
-  }],
+  days: daysSubdocFactory(),
   firstDate: dateSubdocFactory(),
   lastDate: dateSubdocFactory(),
-  number: intSubdocFactory()
+  weekNumber: intSubdocFactory()
 });
 
 module.exports =  () => ({

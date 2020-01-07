@@ -104,7 +104,8 @@ function determineCreateJobError(err) {
     return {
       problems,
       status: 422,
-      messages
+      messages,
+      errors
     };
   }
 

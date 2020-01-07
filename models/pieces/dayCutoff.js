@@ -4,7 +4,7 @@ const intSubdocFactory = require('./integer');
 const valueScheduleSubdocFactory = require('./valueSchedule');
 
 module.exports = (useDefault) => {
-  return valueScheduleSubdocFactory(
+  let result = valueScheduleSubdocFactory(
     intSubdocFactory({
       validate: {
         validator(value) {
@@ -12,9 +12,16 @@ module.exports = (useDefault) => {
           return true;
         },
         message: 'Invalid day cutoff. Must be between -12 hours and 12 hours.'
-      },
-      default: useDefault ? 0 : undefined,
-      require: useDefault ? true : false
+      }
     })
   );
+  return useDefault ?
+    {
+      ...result,
+      default: 0
+    } :
+    {
+      ...result,
+      required: true
+    };
 };
