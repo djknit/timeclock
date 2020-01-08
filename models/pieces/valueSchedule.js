@@ -41,13 +41,14 @@ module.exports = (valueOutline, options) => {
         message: 'Missing date. All values in schedule except for the first must have a date.'
       }, {
         validator: vals => {
-          let previousDateTime = 0;
+          if (vals.length < 3) return true;
+          let previousDateTime;
           for (let i = 1; i < vals.length; i++) {
             const { startDate } = vals[i];
             if (!startDate) return false;
             const { year, month, day } = startDate;
             const valDateTime = new Date(year, month, day).getTime();
-            if (valDateTime <= previousDateTime) return false;
+            if (i > 1 && valDateTime <= previousDateTime) return false;
             previousDateTime = valDateTime;
           }
           return true;

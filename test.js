@@ -11,7 +11,23 @@ const zone = moment.tz.zone('America/Chicago');
 
 // console.log(now);
 
-// const summer = new Date(2019, 6, 10, 12);
+const summer = new Date(2020, 9, 31);
+
+const summer2 = new Date(2020, 10, 3);
+
+console.log('---TEST-------------');
+// console.log(moment(summer2).diff(moment(summer), 'days'))
+
+const today = new Date(2020, 0, 8);
+const todayMoment = moment(today);
+
+console.log(today.year)
+
+// console.log(todayMoment)
+// console.log(todayMoment.day(2))
+// console.log(todayMoment.day(3))
+// console.log(todayMoment.day(4))
+// console.log(todayMoment.month())
 
 // console.log(summer.getTime())
 
@@ -40,6 +56,6 @@ const zone = moment.tz.zone('America/Chicago');
 
 let now = new Date;
 
-console.log(now);
-console.log(now.valueOf())
-console.log(now.getTime())
+// console.log(now);
+// console.log(now.valueOf())
+// console.log(now.getTime())

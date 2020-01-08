@@ -7,7 +7,7 @@ const timezoneSubdocFactory = require('./pieces/timezone');
 const wageSubdocFactory = require('./pieces/wage');
 const dayCutoffSubdocFactory = require('./pieces/dayCutoff');
 const dateSubdocFactory = require('./pieces/date');
-const weeksSubdocFactory = require('./pieces/weeks.js');
+const weeksSubdocFactory = require('./pieces/time/weeks');
 
 const Schema = mongoose.Schema;
 

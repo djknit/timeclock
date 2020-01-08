@@ -29,7 +29,7 @@ const segmentSubdocFactory = () => ({
     }, {
       validator: value => {
         const { dayEndTime, timezone, date } = value;
-        const midnight = moment.tz(new Date(date.year, date.month, date.day, 0, 0, 0, 0), timezone).add(1, 'day').valueOf;
+        const midnight = moment.tz(new Date(date.year, date.month, date.day, 0, 0, 0, 0), timezone).add(1, 'days').valueOf;
         return midnight - 43200000 <= dayEndTime && dayEndTime <= midnight + 43200000;
       },
       message: 'Invalid `dayEndTime`. Must be within 12 hours of midnight in specified timezone.'
@@ -67,7 +67,7 @@ module.exports =  () => ({
       }
       return true;
     },
-    message: 'Invalid time segments; overlapping segments.'
+    message: 'Invalid time segments: overlapping segments.'
   },
   required: true
 });

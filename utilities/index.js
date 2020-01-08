@@ -1,6 +1,13 @@
+const moment = require('moment-timezone');
+
 module.exports = {
   routeErrorHandlerFactory,
-  errorHandlerMiddleware
+  errorHandlerMiddleware,
+  getDateTime,
+  getDate,
+  getMoment,
+  convertDateToMyDate,
+  convertMomentToMyDate
 }
 
 function routeErrorHandlerFactory(responseObj) {
@@ -37,4 +44,34 @@ function errorHandlerMiddleware(err, req, res, next) {
   }
 
   next();
+}
+
+// For converting dates from my { day, month, year } format into a timestamp.
+function getDateTime(myDate) {
+  return getDate(myDate).getTime();
+}
+
+function getDate(myDate) {
+  const { day, month, year } = myDate;
+  return (new Date(year, month, day));
+}
+
+function getMoment(myDate) {
+  return moment(getDate(myDate));
+}
+
+function convertMomentToMyDate(moment_) {
+  return {
+    day: moment_.date(),
+    year: moment_.year(),
+    month: moment_.month()
+  };
+}
+
+function convertDateToMyDate(date) {
+  return {
+    day: date.getDate(),
+    year: date.getFullYear(),
+    month: date.getMonth()
+  };
 }
