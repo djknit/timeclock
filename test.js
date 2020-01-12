@@ -11,20 +11,38 @@ const zone = moment.tz.zone('America/Chicago');
 
 // console.log(now);
 
-const summer = new Date(2020, 9, 31);
+// const summer = new Date(2020, 9, 31);
 
-const summer2 = new Date(2020, 10, 3);
+// const summer2 = new Date(2020, 10, 3);
+
+// const testholio1 = new Date(2020, 9, 1);
+// const testholio2 = new Date(2020, 9, 4);
+// const testMoment = moment(testholio1)
+// console.log(testMoment);
+// console.log(moment(testholio2));
+// console.log(testMoment.diff(moment(testholio2), 'days'));
 
 console.log('---TEST-------------');
+
+const moment1 = moment(new Date(2019, 5, 1));
+const moment2 = moment(new Date(2019, 4, 25));
+console.log(moment2.diff(moment1, 'days'))
+console.log(moment2.diff(moment1, 'weeks'))
+
+
+console.log('---------------------');
+
 // console.log(moment(summer2).diff(moment(summer), 'days'))
 
-const today = new Date(2020, 0, 8);
-const todayMoment = moment(today);
+// const today = new Date(2020, 0, 8);
+// const todayMoment = moment(today);
 
-console.log(today.year)
+// console.log(today.year)
 
 // console.log(todayMoment)
 // console.log(todayMoment.day(2))
+// console.log(todayMoment)
+
 // console.log(todayMoment.day(3))
 // console.log(todayMoment.day(4))
 // console.log(todayMoment.month())

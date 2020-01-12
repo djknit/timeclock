@@ -40,7 +40,8 @@ const JobSchema = new Schema({
     })
   ),
   weeks: weeksSubdocFactory(),
-  startDate: dateSubdocFactory()
+  startDate: dateSubdocFactory(),
+  effectiveStartDate: dateSubdocFactory()
 });
 
 // source: http://jasonjl.me/blog/2014/10/23/adding-validation-for-embedded-objects-in-mongoose/

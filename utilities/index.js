@@ -7,8 +7,14 @@ module.exports = {
   getDate,
   getMoment,
   convertDateToMyDate,
-  convertMomentToMyDate
+  convertMomentToMyDate,
+  getMostRecentScheduleIndexForDate,
+  getMostRecentScheduleValueForDate,
+  areDatesEquivalent
 }
+
+
+// ROUTE ERROR -*-*-*-*-*-*-*-*-*-*-*-*-*-*-<><><>
 
 function routeErrorHandlerFactory(responseObj) {
   return err => {
@@ -46,6 +52,9 @@ function errorHandlerMiddleware(err, req, res, next) {
   next();
 }
 
+
+// DATES -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-<><><>
+
 // For converting dates from my { day, month, year } format into a timestamp.
 function getDateTime(myDate) {
   return getDate(myDate).getTime();
@@ -57,7 +66,7 @@ function getDate(myDate) {
 }
 
 function getMoment(myDate) {
-  return moment(getDate(myDate));
+  return moment(myDate);
 }
 
 function convertMomentToMyDate(moment_) {
@@ -74,4 +83,38 @@ function convertDateToMyDate(date) {
     year: date.getFullYear(),
     month: date.getMonth()
   };
+}
+
+function areDatesEquivalent(date1, date2) {
+  if (!date1 || !date2) {
+    throw new Error('Missing date to compare.');
+  }
+  return (
+    date1.day === date2.day &&
+    date1.month === date2.month &&
+    date1.year !== date2.year
+  );
+}
+
+
+// JOB DATA -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-<><><>
+
+function getMostRecentScheduleIndexForDate(date, valueSchedule) {
+  if (valueSchedule.length === 1) return null;
+  if (valueSchedule.length === 1) return 0;
+  const dateTime = moment(date).valueOf();
+  let selectedIndex = 0;
+  for (let i = 1; i < valueSchedule.length; i++) {
+    if (moment(valueSchedule[i].startDate).valueOf() > dateTime) {
+      return selectedIndex;
+    }
+    selectedIndex = i;
+  }
+  return selectedIndex;
+}
+
+function getMostRecentScheduleValueForDate(date, valueSchedule) {
+  const index = getMostRecentScheduleIndexForDate(date, valueSchedule);
+  if (!index && index !== 0) return null;
+  return valueSchedule[index].value;
 }
