@@ -1,16 +1,23 @@
 const Job = require('../models/Job');
 
+const moment = require('moment-timezone');
+
+const weeksController = require('./time/weeks');
+
+const { convertMomentToMyDate, getFirstDayOfWeekForDate } = require('../utilities');
+
 module.exports = {
   create: (newJob, userId) => new Promise(
     (resolve, reject) => {
       const { name, timezone, wage, startDate, dayCutoff, weekBegins } = newJob;
       console.log(wage)
-      newJob.user = userId;
+      // newJob.user = userId;
       if (!name || !timezone || !startDate) {
         const error = new Error('Missing required data properties.');
         reject(error);
         throw(error);
       }
+      newJob.user = userId;
       newJob.timezone = [{ value: timezone }];
       newJob.dayCutoff = 
         dayCutoff ?
@@ -20,16 +27,68 @@ module.exports = {
         weekBegins ?
         [{ value: weekBegins }] :
         [{}];
+      newJob.effectiveStartDate = getEffectiveStartDate(startDate, weekBegins || 0);
       if (wage) {
         newJob.wage = [{ value: wage }];
       }
       else newJob.wage = [{ value: null }];
+      let jobId;
       Job.create(newJob)
-      .then(resolve)
+      .then(result => {
+        console.log('new job created\n----------------------------------------')
+        // console.log(result);
+        jobId = result._id;
+        return weeksController.createWeekByDate(result.startDate, result);
+      })
+      .then(firstWeek => {
+        // console.log('first week');
+        // console.log(firstWeek);
+        // console.log(jobId)
+        return addWeek(firstWeek, jobId, userId);
+      })
+      .then(job =>resolve(job))
       .catch(err => reject(determineCreateJobError(err)));
     }
   )
 };
+
+function getEffectiveStartDate(startDate, weekBegins) {
+  const result = moment(startDate).day(weekBegins);
+  if (result.valueOf() > moment(startDate).valueOf()) {
+    result.subtract(1, 'weeks');
+  }
+  return convertMomentToMyDate(result);
+}
+
+function addWeek(week, jobId, userId) {
+  return new Promise(
+    (resolve, reject) => {
+      // Job.findById(jobId).then(result=>console.log(result))
+      console.log('adding week...')
+      // console.log(week);
+      // console.log(jobId)
+      Job.findByIdAndUpdate(
+        jobId,
+        {
+          $push: {
+            weeks: week
+          }
+        },
+        { new: true }
+      )
+      .then(resolve)
+      .catch(err => {
+        console.log('ADD WEEK ERROR');
+        console.error(err);
+        console.log('ADD WEEK ERROR');
+        console.log(('=*'.repeat(30) + '\n').repeat(3));
+        const reason = err && err.reason && err.reason.reason && err.reason.reason;
+        console.log(reason);
+        reject(err)
+      });
+    }
+  );
+}
 
 function determineCreateJobError(err) {
   if (!err) err = {};
@@ -38,6 +97,11 @@ function determineCreateJobError(err) {
   let problems = {};
   let messages = [];
 
+  if (!errors) {
+    return {
+      messages: [err.message || 'Unknown error creating job.']
+    }
+  }
   if (errors.startDate) {
     problems.startDate = true;
     messages.push('Invalid start date.');

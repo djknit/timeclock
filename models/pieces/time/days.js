@@ -10,12 +10,12 @@ const daySchema = new Schema({
   date: dateSubdocFactory({ required: true }),
   startCutoff: dayCutoffSubdocFactory(false),
   endCutoff: dayCutoffSubdocFactory(false),
-  segments: segmentsSubdocFactory(),
+  segments: [segmentsSubdocFactory()],
   timezone: timezoneSubdocFactory(),
   wage: wageSubdocFactory()
 });
 
-const daySubdocFactory = () => ({
+const daysSubdocFactory = () => ([{
   type: daySchema,
   validate: [
     {
@@ -54,24 +54,21 @@ const daySubdocFactory = () => ({
         return true;
       },
       message: 'Invalid time segment(s): segment timezone doesn\'t match day timezone on at least one segment for this day.'
+    }, {
+      validator: value => {
+        const { segments } = value;
+        let previousEndTime = 0;
+        for (let i = 0; i < segments.length; i++) {
+          const { startTime, endTime } = segments[i];
+          if (i > 0 && startTime < previousEndTime) return false;
+          previousEndTime = endTime;
+        }
+        return true;
+      },
+      message: 'Invalid time segments: overlapping segments.'
     }
   ]
-});
+}]);
 
 
-module.exports =  () => ({
-  type: [daySubdocFactory()],
-  validate: {
-    validator(vals) {
-      let previousDateTime;
-      for (let i = 0; i < vals.length; i++) {
-        const { day, month, year } = vals[i].date;
-        const dateTime = new Date(year, month, day).getTime();
-        if (i > 0 && dateTime <= previousDateTime) return false;
-        previousDateTime = dateTime;
-      }
-      return true;
-    },
-    message: 'Invalid days array. Days must be in chronological order and cannot be duplicated.'
-  }
-});
+module.exports = daysSubdocFactory;

@@ -12,7 +12,10 @@ module.exports = new Promise(function (resolve, reject) {
     schema.pre('update', setRunValidators);
   });
 
-  mongoose.connect(MONGODB_URI, { useNewUrlParser: true, autoIndex: false });
+  mongoose.connect(
+    MONGODB_URI,
+    { useNewUrlParser: true, autoIndex: false, useFindAndModify: false }
+  );
   
   const db = mongoose.connection;
   db.on('error', function() {

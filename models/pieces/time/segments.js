@@ -16,7 +16,7 @@ const segmentSchema = new Schema({
   endTime: intSubdocFactory({ required: true })
 });
 
-const segmentSubdocFactory = () => ({
+const segmentsSubdocFactory = () => ([{
   type: segmentSchema,
   validate: [
     {
@@ -53,21 +53,6 @@ const segmentSubdocFactory = () => ({
       message: 'Invalid `startTime` and `endTime` combination. `startTime` must be before `endTime`.'
     }
   ]
-});
+}]);
 
-module.exports =  () => ({
-  type: [segmentSubdocFactory()],
-  validate: {
-    validator: values => {
-      let previousEndTime = 0;
-      for (let i = 0; i < values.length; i++) {
-        const { startTime, endTime } = values[i];
-        if (i > 0 && startTime < previousEndTime) return false;
-        previousEndTime = endTime;
-      }
-      return true;
-    },
-    message: 'Invalid time segments: overlapping segments.'
-  },
-  required: true
-});
+module.exports =  segmentsSubdocFactory;

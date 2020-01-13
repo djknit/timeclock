@@ -36,7 +36,8 @@ router.post(
         err => {
           if (err) return res.status(500).json(err);
           res.json({
-            user: cleanUser(req.user)
+            user: cleanUser(req.user),
+            message: 'Account created. You are now logged in to your new account.'
           });
         }
       );

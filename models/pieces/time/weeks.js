@@ -13,7 +13,7 @@ const weekSchema = new Schema({
   weekNumber: intSubdocFactory()
 });
 
-const weekSubdocFactory = () => ({
+const weeksSubdocFactory = () => ([{
   type: weekSchema,
   validate: [
     {
@@ -34,10 +34,21 @@ const weekSubdocFactory = () => ({
         return true;
       },
       message: 'Invalid days. This week contains days that do not fall within its timespan.'
+    }, {
+      validator(val) {
+        const { days } = val;
+        let previousDateTime;
+        for (let i = 0; i < days.length; i++) {
+          const { day, month, year } = days[i].date;
+          const dateTime = new Date(year, month, day).getTime();
+          if (i > 0 && dateTime <= previousDateTime) return false;
+          previousDateTime = dateTime;
+        }
+        return true;
+      },
+      message: 'Invalid days array. Days must be in chronological order and cannot be duplicated.'
     }
   ]
-});
+}]);
 
-module.exports =  () => ({
-  type: [weekSubdocFactory()]
-});
+module.exports =  weeksSubdocFactory

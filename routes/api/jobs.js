@@ -47,7 +47,37 @@ module.exports = router;
 
 function cleanJobs(jobs) {
   return jobs.map(job => {
-    const { name, timezone, wage, dayCutoff, weekBegins, startDate } = job;
-    return { name, timezone, wage, dayCutoff, weekBegins, startDate };
+    let { name, timezone, wage, dayCutoff, weekBegins, startDate, weeks } = job;
+    weeks = cleanWeeks(weeks);
+    return { name, timezone, wage, dayCutoff, weekBegins, startDate, weeks };
   })
+}
+
+function cleanWeeks(weeks) {
+  let cleanedWeeks = [];
+  weeks.forEach(week => {
+    let { days, firstDate, lastDate, weekNumber } = week;
+    days = cleanDays(days);
+    cleanedWeeks.push({ days, firstDate, lastDate, weekNumber });
+  });
+  return cleanedWeeks;
+}
+
+function cleanDays(days) {
+  let cleanedDays = [];
+  days.forEach(day => {
+    let { date, startCutoff, endCutoff, segments, timezone, wage } = day;
+    segments = cleanSegments;
+    cleanedDays.push({ date, startCutoff, endCutoff, segments, timezone, wage });
+  });
+  return cleanedDays;
+}
+
+function cleanSegments(segments) {
+  let cleanedSegments = [];
+  segments.forEach(segment => {
+    const { startTime, endTime } = segment;
+    cleanedSegments.push({ startTime, endTime });
+  });
+  return cleanedSegments;
 }

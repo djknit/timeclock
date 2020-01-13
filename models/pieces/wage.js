@@ -60,16 +60,19 @@ module.exports = () => ({
   validate: [
     {
       validator(value) {
+        if (!value) return true;
         return validateCurrencyCode(value && value.currency);
       },
       message: 'Invalid wage currency. Must be an ISO 4217 alphabetic currency code.'
     }, {
       validator(value) {
+        if (!value) return true;
         return validateDecimalDigits(value.rate, value.currency);
       },
       message: 'Invalid rate; too many decimal places.'
     }, {
       validator(value) {
+        if (!value) return true;
         const { overtime } = value;
         if (!overtime || !overtime.rate) return true;
         return validateDecimalDigits(overtime.rate, value.currency);

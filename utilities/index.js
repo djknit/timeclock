@@ -10,7 +10,9 @@ module.exports = {
   convertMomentToMyDate,
   getMostRecentScheduleIndexForDate,
   getMostRecentScheduleValueForDate,
-  areDatesEquivalent
+  areDatesEquivalent,
+  getFirstDayOfWeekForDate,
+  findWeekBeginsSchedIndexForDate
 }
 
 
@@ -100,7 +102,7 @@ function areDatesEquivalent(date1, date2) {
 // JOB DATA -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-<><><>
 
 function getMostRecentScheduleIndexForDate(date, valueSchedule) {
-  if (valueSchedule.length === 1) return null;
+  if (valueSchedule.length === 0) return;
   if (valueSchedule.length === 1) return 0;
   const dateTime = moment(date).valueOf();
   let selectedIndex = 0;
@@ -117,4 +119,49 @@ function getMostRecentScheduleValueForDate(date, valueSchedule) {
   const index = getMostRecentScheduleIndexForDate(date, valueSchedule);
   if (!index && index !== 0) return null;
   return valueSchedule[index].value;
+}
+
+
+// Determine actual first day of the week that includes the given date. This may be different than the `weekBegins` value given by the value schedule if the value changed less than a week before the date and the corresponding day of the week does not fall between the value `startDate` and the given `date`.
+function getFirstDayOfWeekForDate(date, weekBeginsValueSchedule, weekBeginsScheduleIndex) {
+  if (!weekBeginsScheduleIndex && weekBeginsScheduleIndex !== 0) {
+    weekBeginsScheduleIndex = findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule);
+  }
+  date = moment(date);
+  let firstDate = date.day(weekBeginsValueSchedule[weekBeginsScheduleIndex].value);
+  if (firstDate.valueOf() > date.valueOf()) firstDate.subtract(1, 'weeks');
+  return convertMomentToMyDate(firstDate);
+}
+
+function findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule) {
+  const mostRecentSheduleIndex = getMostRecentScheduleIndexForDate(date, weekBeginsValueSchedule);
+  for (let i = mostRecentSheduleIndex; i > 0; i--) {
+    if (isWeekBeginsValueActualFirstDayOfWeek(date, weekBeginsValueSchedule[i])) {
+      return i;
+    }
+  }
+  return 0;
+}
+
+// only checks if value goes in to effect by date. doesn't verify it is the most recent value.
+function isWeekBeginsValueActualFirstDayOfWeek(date, scheduleEntry) {
+  const weekBeginsStartDateMoment = moment(scheduleEntry.startDate);
+  if (moment(date).subtract(weekBeginsStartDateMoment, 'days') > 6) {
+    return true;
+  }
+  const dayIndexes = {
+    date: moment(date).day(),
+    weekBeginsValue: scheduleEntry.value,
+    weekBeginsStartDate: weekBeginsStartDateMoment.day()
+  }
+  const normalize = dayIndex => (dayIndex - dayIndexes.weekBeginsStartDate + 6) % 6;
+  const normalizedDayIndexes = {
+    date: normalize(dayIndexes.date),
+    weekBeginsValue: normalize(dayIndexes.weekBeginsValue),
+    weekBeginsStartDate: 0
+  };
+  return (
+    normalizedDayIndexes.weekBeginsStartDate <= normalizedDayIndexes.weekBeginsValue &&
+    normalizedDayIndexes.weekBeginsValue <= normalizedDayIndexes.date
+  );
 }

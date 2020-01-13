@@ -23,12 +23,45 @@ const zone = moment.tz.zone('America/Chicago');
 // console.log(testMoment.diff(moment(testholio2), 'days'));
 
 console.log('---TEST-------------');
+const testFunc = () => ([
+  {
+    a: 'a'
+  },
+  'b'
+]);
+console.log(testFunc());
 
-const moment1 = moment(new Date(2019, 5, 1));
-const moment2 = moment(new Date(2019, 4, 25));
-console.log(moment2.diff(moment1, 'days'))
-console.log(moment2.diff(moment1, 'weeks'))
+// const moment1 = moment(new Date(2019, 5, 1));
+// const moment2 = moment(new Date(2019, 4, 25));
+// console.log(moment2.diff(moment1, 'days'))
+// console.log(moment2.diff(moment1, 'weeks'))
 
+// myFunc().then(
+//   result => {
+//     console.log('1st then');
+//     console.log(result);
+//     result += ' dogs';
+//     return result;
+//   }
+// ).then(result2 => {
+//   console.log('2nd then');
+//   console.log(result2);
+//   return result2 + ' cats'
+// }).then(result3 => {
+//   console.log('3rd then');
+//   console.log(result3);
+// }).catch(err => {
+//   console.log('catch');
+//   console.log(err)
+// })
+
+// function myFunc() {
+//   return new Promise(
+//     (resolve, reject) => {
+//       resolve('cats');
+//     }
+//   )
+// }
 
 console.log('---------------------');
 
