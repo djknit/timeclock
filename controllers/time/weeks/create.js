@@ -6,7 +6,8 @@ const {
   convertMomentToMyDate,
   areDatesEquivalent,
   getFirstDayOfWeekForDate,
-  findWeekBeginsSchedIndexForDate
+  findWeekBeginsSchedIndexForDate,
+  getMoment
 } = require('../../../utilities/index');
 
 module.exports = {
@@ -91,10 +92,14 @@ function getWeekDatesForChangingWeekBegins(firstDate, weekBeginsValueSchedule) {
 }
 
 function determineWeekNumber(weekStartDate, referenceDate) {
-  const estimate = moment(weekStartDate).diff(moment(referenceDate), 'weeks') + 1;
+  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+  console.log(weekStartDate)
+  console.log(referenceDate)
+  const estimate = getMoment(weekStartDate).diff(getMoment(referenceDate), 'weeks') + 1;
+  console.log(estimate)
   for (let i = estimate - 1; i < estimate + 2; i++) {
-    const idealFirstDateOfWeek = moment(referenceDate).add(i - 1, 'weeks');
-    const weekFirstDateDiffFromIdeal = idealFirstDateOfWeek.diff(moment(weekStartDate), 'days');
+    const idealFirstDateOfWeek = getMoment(referenceDate).add(i - 1, 'weeks');
+    const weekFirstDateDiffFromIdeal = idealFirstDateOfWeek.diff(getMoment(weekStartDate), 'days');
     if (-4 < weekFirstDateDiffFromIdeal && weekFirstDateDiffFromIdeal < 4) return i;
   }
   throw new Error('Failed to determine week number.');

@@ -68,7 +68,11 @@ function getDate(myDate) {
 }
 
 function getMoment(myDate) {
-  return moment(myDate);
+  return moment({
+    date: myDate.day,
+    year: myDate.year,
+    month: myDate.month
+  });
 }
 
 function convertMomentToMyDate(moment_) {
@@ -124,12 +128,16 @@ function getMostRecentScheduleValueForDate(date, valueSchedule) {
 
 // Determine actual first day of the week that includes the given date. This may be different than the `weekBegins` value given by the value schedule if the value changed less than a week before the date and the corresponding day of the week does not fall between the value `startDate` and the given `date`.
 function getFirstDayOfWeekForDate(date, weekBeginsValueSchedule, weekBeginsScheduleIndex) {
+  console.log('--------------------------')
+  console.log(date)
+  console.log('^^^^^^^^^^^^^^^^^^^^--')
   if (!weekBeginsScheduleIndex && weekBeginsScheduleIndex !== 0) {
     weekBeginsScheduleIndex = findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule);
   }
-  date = moment(date);
-  let firstDate = date.day(weekBeginsValueSchedule[weekBeginsScheduleIndex].value);
-  if (firstDate.valueOf() > date.valueOf()) firstDate.subtract(1, 'weeks');
+  console.log(date)
+  let firstDate = getMoment(date).day(weekBeginsValueSchedule[weekBeginsScheduleIndex].value);
+  console.log(firstDate)
+  if (firstDate.valueOf() > getMoment(date).valueOf()) firstDate.subtract(1, 'weeks');
   return convertMomentToMyDate(firstDate);
 }
 

@@ -31,10 +31,10 @@ const testFunc = () => ([
 ]);
 console.log(testFunc());
 
-// const moment1 = moment(new Date(2019, 5, 1));
-// const moment2 = moment(new Date(2019, 4, 25));
-// console.log(moment2.diff(moment1, 'days'))
-// console.log(moment2.diff(moment1, 'weeks'))
+const moment1 = moment(new Date(2019, 4, 25));
+const moment2 = moment(new Date(2019, 4, 25));
+console.log(moment2.diff(moment1, 'days'))
+console.log(moment2.diff(moment1, 'weeks'))
 
 // myFunc().then(
 //   result => {

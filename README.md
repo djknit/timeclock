@@ -44,7 +44,7 @@ This plan is not complete. Future steps will be expanded on in the plan before t
     * [x] Create 2 Heroku projects. Deploy `dev` branch to 1 project and `master` branch to another.
     * [x] Provision database for both project.
 * [ ] _Develop back-end for all MVP features_
-  * [ ] _Develop code necessary for user authentication._
+  * [x] _Develop code necessary for user authentication._
     * [x] Create User database model
     * [x] Configure passport. Create controller functions needed to create account and login.
     * [x] Create api routes and remaining controller functions needed for authentication.
@@ -52,8 +52,12 @@ This plan is not complete. Future steps will be expanded on in the plan before t
       * [x] Test login
       * [x] Login and logout
       * [x] Delete account
-      * [ ] _Edit account information_
+      * [x] _Edit account information_
   * [ ] Develop code necessary for time management
+    * [x] Create job
+    * [ ] Edit job information
+    * [ ] Add weeks and days
+    * [ ] Add time segments
 * [ ] Develop front-end to complete MVP
 * [ ] Review code for bugs and code organization/readability
 * [ ] Work on additional features
