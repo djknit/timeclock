@@ -2,12 +2,13 @@ const router = require('express').Router();
 
 router.use('/auth', require('./auth'));
 router.use('/jobs', require('./jobs'));
+router.use('/time', require('./time'));
 
 router.get(
   '/test',
   (req, res) => {
     res.json({
-      message: 'This is the API speaking. HELO WORLD',
+      message: 'This is the API speaking. HELLO WORLD',
       success: true,
       hello: 'world'
     })

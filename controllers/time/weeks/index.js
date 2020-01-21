@@ -1,6 +1,6 @@
 const moment = require('moment-timezone');
 
-const { createWeekByDate } = require('./create');
+const { createWeekByDate, createNextWeek } = require('./create');
 
 const {
   getMostRecentScheduleIndexForDate,
@@ -10,21 +10,8 @@ const {
 } = require('../../../utilities');
 
 module.exports = {
-  createWeekByWeekNumber: (weekNumber, job) => new Promise(
-    (resolve, reject) => {
-    }
-  ),
   createWeekByDate,
-  createFirstWeek: () => new Promise(
-    (resolve, reject) => {
-      const { startDate, weeks, weekBegins } = job;
-      if (weeks.length !== 0) {
-        const err = new Error('Cannot add first week because the job already has week(s).');
-        reject(err);
-        throw err;
-      }
-    }
-  )
+  createNextWeek
 }
 
 

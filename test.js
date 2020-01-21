@@ -13,7 +13,7 @@ const zone = moment.tz.zone('America/Chicago');
 
 // const summer = new Date(2020, 9, 31);
 
-// const summer2 = new Date(2020, 10, 3);
+const summer2 = new Date(2020, 10, 3);
 
 // const testholio1 = new Date(2020, 9, 1);
 // const testholio2 = new Date(2020, 9, 4);
@@ -23,18 +23,31 @@ const zone = moment.tz.zone('America/Chicago');
 // console.log(testMoment.diff(moment(testholio2), 'days'));
 
 console.log('---TEST-------------');
-const testFunc = () => ([
-  {
-    a: 'a'
-  },
-  'b'
-]);
-console.log(testFunc());
 
-const moment1 = moment(new Date(2019, 4, 25));
-const moment2 = moment(new Date(2019, 4, 25));
-console.log(moment2.diff(moment1, 'days'))
-console.log(moment2.diff(moment1, 'weeks'))
+// const moment1 = moment(new Date(2019, 4, 25));
+// const moment2 = moment(new Date(2019, 6, 25));
+// console.log(moment2.diff(moment1, 'days'))
+// console.log(moment2.diff(moment1, 'weeks'))
+// console.log(moment1.diff(moment2, 'weeks'))
+
+// let m1 = moment(summer2);
+// let m2 = moment(summer2).add(1, 'days');
+
+// console.log(m1.format());
+// console.log(m2.format());
+
+// let today = moment(new Date());
+// console.log(today.format());
+
+// console.log(today.day());
+
+// today.day(6);
+// console.log(today.format());
+
+// console.log(today.day());
+
+// console.log()
+
 
 // myFunc().then(
 //   result => {

@@ -11,7 +11,8 @@ const {
 } = require('../../../utilities/index');
 
 module.exports = {
-  createWeekByDate
+  createWeekByDate,
+  createNextWeek
 };
 
 function createWeekByDate(givenDate, job) {
@@ -39,6 +40,11 @@ function createWeekByDate(givenDate, job) {
     lastDate,
     weekNumber
   };
+}
+
+function createNextWeek(currentWeek, job) {
+  const nextWeekFirstDateMoment = getMoment(currentWeek.lastDate).add(1, 'days');
+  return createWeekByDate(convertMomentToMyDate(nextWeekFirstDateMoment), job);
 }
 
 function getDatesInWeekWithDate(date, weekBeginsValueSchedule) {

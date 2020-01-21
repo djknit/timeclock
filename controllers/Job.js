@@ -4,7 +4,7 @@ const moment = require('moment-timezone');
 
 const weeksController = require('./time/weeks');
 
-const { convertMomentToMyDate, getFirstDayOfWeekForDate } = require('../utilities');
+const { convertMomentToMyDate, getFirstDayOfWeekForDate, getMoment } = require('../utilities');
 
 module.exports = {
   create: (newJob, userId) => new Promise(
@@ -36,31 +36,32 @@ module.exports = {
       Job.create(newJob)
       .then(result => {
         console.log('new job created\n----------------------------------------')
-        // console.log(result);
         jobId = result._id;
         return weeksController.createWeekByDate(result.startDate, result);
       })
       .then(firstWeek => {
-        // console.log('first week');
-        // console.log(firstWeek);
-        // console.log(jobId)
-        return addWeek(firstWeek, jobId, userId);
+        return addWeek(firstWeek, jobId);
       })
       .then(job =>resolve(job))
       .catch(err => reject(determineCreateJobError(err)));
     }
-  )
+  ),
+  addWeek
 };
 
 function getEffectiveStartDate(startDate, weekBegins) {
-  const result = moment(startDate).day(weekBegins);
-  if (result.valueOf() > moment(startDate).valueOf()) {
-    result.subtract(1, 'weeks');
+  let firstDateOfFirstWeekEstimate = moment(startDate).day(weekBegins);
+  if (firstDateOfFirstWeekEstimate.valueOf() > moment(startDate).valueOf()) {
+    firstDateOfFirstWeekEstimate.subtract(1, 'weeks');
   }
-  return convertMomentToMyDate(result);
+  let resultEstimate = firstDateOfFirstWeekEstimate;
+  if (resultEstimate.diff(getMoment(startDate), 'days') > 3) {
+    resultEstimate.add(1, 'weeks');
+  }
+  return convertMomentToMyDate(resultEstimate);
 }
 
-function addWeek(week, jobId, userId) {
+function addWeek(week, jobId) {
   return new Promise(
     (resolve, reject) => {
       // Job.findById(jobId).then(result=>console.log(result))

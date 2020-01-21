@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 // const moment = require('moment-timezone');
 
+const { getMoment } = require('../utilities');
+
 const valueScheduleSubdocFactory = require('./pieces/valueSchedule');
 const intSubdocFactory = require('./pieces/integer');
 const timezoneSubdocFactory = require('./pieces/timezone');
@@ -60,6 +62,20 @@ JobSchema.path('dayCutoff').validate(
 JobSchema.path('weekBegins').validate(
   arr => arr.length > 0,
   'You must have at least one `weekBegins` value.'
+);
+JobSchema.path('weeks').validate(
+  weeksArr => {
+    let previousEndTime = 0;
+    for (let i = 0; i < segments.length; i++) {
+      const { firstDate, lastDate } = weeksArr[i];
+      const startTime = getMoment(firstDate);
+      const endTime = getMoment(lastDate);
+      if (i > 0 && startTime < previousEndTime) return false;
+      previousEndTime = endTime;
+    }
+    return true;
+  },
+  'Invalid weeks: overlapping or incorrectly ordered weeks. Weeks must be in chronological order and cannot overlap.'
 );
 
 const Job = mongoose.model('Job', JobSchema);

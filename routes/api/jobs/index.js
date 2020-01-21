@@ -2,10 +2,10 @@ const router = require('express').Router();
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
 
-const JobController = require('../../controllers/Job');
-const UserController = require('../../controllers/User');
+const JobController = require('../../../controllers/Job');
+const UserController = require('../../../controllers/User');
 
-const { routeErrorHandlerFactory } = require('./utilities');
+const { routeErrorHandlerFactory } = require('../utilities');
 
 router.post(
   '/create',

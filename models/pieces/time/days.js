@@ -65,7 +65,7 @@ const daysSubdocFactory = () => ([{
         }
         return true;
       },
-      message: 'Invalid time segments: overlapping segments.'
+      message: 'Invalid time segments: overlapping or incorrectly ordered segments. Segments must be in chronological order and cannot overlap.'
     }
   ]
 }]);
