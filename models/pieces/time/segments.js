@@ -16,7 +16,7 @@ const segmentSchema = new Schema({
   endTime: intSubdocFactory({ required: true })
 });
 
-const segmentsSubdocFactory = () => ([{
+const segmentSubdocFactory = () => ([{
   type: segmentSchema,
   validate: [
     {
@@ -55,4 +55,4 @@ const segmentsSubdocFactory = () => ([{
   ]
 }]);
 
-module.exports =  segmentsSubdocFactory;
+module.exports =  segmentSubdocFactory;

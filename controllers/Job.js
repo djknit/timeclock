@@ -101,7 +101,7 @@ function determineCreateJobError(err) {
   if (!errors) {
     return {
       messages: [err.message || 'Unknown error creating job.']
-    }
+    };
   }
   if (errors.startDate) {
     problems.startDate = true;
