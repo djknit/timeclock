@@ -12,7 +12,8 @@ module.exports = {
   getMostRecentScheduleValueForDate,
   areDatesEquivalent,
   getFirstDayOfWeekForDate,
-  findWeekBeginsSchedIndexForDate
+  findWeekBeginsSchedIndexForDate,
+  areWagesEquivalent
 }
 
 
@@ -67,12 +68,15 @@ function getDate(myDate) {
   return (new Date(year, month, day));
 }
 
-function getMoment(myDate) {
-  return moment({
+function getMoment(myDate, timezone) {
+  const momentFriendlyDate = {
     date: myDate.day,
     year: myDate.year,
     month: myDate.month
-  });
+  };
+  return timezone ?
+    moment.tz(momentFriendlyDate, timezone) :
+    moment(momentFriendlyDate);
 }
 
 function convertMomentToMyDate(moment_) {
@@ -98,12 +102,23 @@ function areDatesEquivalent(date1, date2) {
   return (
     date1.day === date2.day &&
     date1.month === date2.month &&
-    date1.year !== date2.year
+    date1.year === date2.year
   );
 }
 
 
 // JOB DATA -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-<><><>
+
+function areWagesEquivalent(wage1, wage2) {
+  return (
+    wage1.rate === wage2.rate &&
+    wage1.currency === wage2.currency &&
+    wage1.overtime.rate === wage2.overtime.rate &&
+    wage1.overtime.rateMultiplier === wage2.overtime.rateMultiplier &&
+    wage1.overtime.useMultiplier === wage2.overtime.useMultiplier &&
+    wage1.overtime.cutoff === wage2.overtime.cutoff
+  );
+}
 
 function getMostRecentScheduleIndexForDate(date, valueSchedule) {
   if (valueSchedule.length === 0) return;

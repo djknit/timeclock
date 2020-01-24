@@ -13,11 +13,12 @@ const weekSchema = new Schema({
   weekNumber: intSubdocFactory()
 });
 
-const weeksSubdocFactory = () => ([{
+const weeksSubdocFactory = () => ({
   type: weekSchema,
   validate: [
     {
       validator(val) {
+        console.log(' pink pig -'.repeat(6));
         const { days, firstDate, lastDate } = val;
         return days.length - 1 === getMoment(lastDate).diff(getMoment(firstDate), 'days');
       },
@@ -49,6 +50,6 @@ const weeksSubdocFactory = () => ([{
       message: 'Invalid days array. Days must be in chronological order and cannot be duplicated.'
     }
   ]
-}]);
+});
 
 module.exports =  weeksSubdocFactory

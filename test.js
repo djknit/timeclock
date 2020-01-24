@@ -23,7 +23,12 @@ const summer2 = new Date(2020, 10, 3);
 // console.log(testMoment.diff(moment(testholio2), 'days'));
 
 console.log('---TEST-------------');
-
+// let arr = ['test', {test: 'two'}, 4];
+// let obj = {
+//   testing: arr
+// }
+console.log(null==null)
+console.log(null===null)
 // const moment1 = moment(new Date(2019, 4, 25));
 // const moment2 = moment(new Date(2019, 6, 25));
 // console.log(moment2.diff(moment1, 'days'))
@@ -96,6 +101,19 @@ console.log('---------------------');
 // console.log(summer.getTime())
 
 // const nowOffset = zone.utcOffset(now);
+
+// const m = moment.tz({date:5, month:4, year:2020}, 'America/Los_Angeles');
+// const m2 = moment.tz({date:5, month:4, year:2020}, 'America/Chicago');
+// console.log(m.valueOf())
+// console.log(m2.valueOf())
+// const ms = m.valueOf() - m2.valueOf();
+// console.log(ms);
+// const s = ms/1000;
+// console.log(s);
+// const min = s/60;
+// console.log(min);
+// const hr = min/60;
+// console.log(hr);
 
 // const summerOffset = zone.utcOffset(summer);
 

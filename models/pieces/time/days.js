@@ -1,74 +1,76 @@
 const { Schema } = require('mongoose');
 
+const { areDatesEquivalent, areWagesEquivalent } = require('../../../utilities');
+
+const Day = require('./Day');
 const dayCutoffSubdocFactory = require('../dayCutoff');
-const segmentSubdocFactory = require('./segments');
+const segmentsSubdocFactory = require('./segments');
 const timezoneSubdocFactory = require('../timezone');
 const wageSubdocFactory = require('../wage');
 const dateSubdocFactory = require('../date');
 
-const daySchema = new Schema({
-  date: dateSubdocFactory({ required: true }),
-  startCutoff: dayCutoffSubdocFactory(false),
-  endCutoff: dayCutoffSubdocFactory(false),
-  segments: [segmentSubdocFactory()],
-  timezone: timezoneSubdocFactory(),
-  wage: wageSubdocFactory()
-});
+// const daySchema = new Schema({
+//   date: dateSubdocFactory({ required: true }),
+//   startCutoff: dayCutoffSubdocFactory(false),
+//   endCutoff: dayCutoffSubdocFactory(false),
+//   segments: segmentsSubdocFactory(),
+//   timezone: timezoneSubdocFactory(),
+//   wage: wageSubdocFactory()
+// });
 
-const daysSubdocFactory = () => ([{
-  type: daySchema,
+// daySchema.path('segments').validate(
+//   segments => {
+//     console.log('*%*%'.repeat(20))
+//     console.log(this)
+//     console.log('*%*%'.repeat(20))
+//     let previousEndTime;
+//     for (let i = 0; i < segments.length; i++) {
+//       if (i > 0 && segments[i].startTime < previousEndTime) {
+//         return false;
+//       }
+//       previousEndTime = segments[i].endTime;
+//     }
+//     return true;
+//   },
+//   'Invalid segments: overlapping. Time segments may not overlap.'
+// );
+
+const daysSubdocFactory = () => ({
+  type: [Schema.Types.ObjectId],
+  ref: 'Day',
   validate: [
     {
-      validator: value => {
-        const { segments, date } = value
-        for (let i = 0; i < segments.length; i++) {
-          const segmentDate = segments[i].date;
-          if (
-            segmentDate.day !== date.day ||
-            segmentDate.year !== date.year ||
-            segmentDate.month !== date.month
-          ) return false;
+      validator: dayIds => {
+        for (let i = 0; i < dayIds.length; i++) {
+          Day.findById(dayIds[i])
+            .then(day => {
+              if (!day) throw new Error('day not found');
+              const { segments, date, startCutoff, endCutoff, timezone, wage } = day;
+              for (let j = 0; j < segments.length; j++) {
+                const segment = segments[j];
+                if (!areDatesEquivalent(date, segments[j].date)) return false;
+                if (segment.dayStartCutoff !== startCutoff) return false;
+                if (segment.dayEndCutoff !== endCutoff) return false;
+                if (segment.timezone !== timezone) return false;
+                if (!areWagesEquivalent(segment.wage, wage)) return false;
+              }
+            });
         }
         return true;
       },
-      message: 'Invalid time segment(s): segment date doesn\'t match day date on at least one segment for this day.'
+      message: 'Invalid time segment(s): segment data doesn\'t match day data on at least one segment for this day.'
     }, {
-      validator: value => {
-        const { startCutoff, endCutoff, timezone, date } = value;
-        const firstMidnight = moment.tz(new Date(date.year, date.month, date.day, 0, 0, 0, 0), timezone);
-        const secondMidnight = firstMidnight.add(1, 'days');
-        const startTime = firstMidnight.valueOf() + startCutoff;
-        const endTime = secondMidnight.valueOf() + endCutoff;
-        for (let i = 0; i < segments.length; i++) {
-          if (segments[i].dayStartTime !== startTime || segments[i].dayEndTime !== endTime) return false;
-        }
-        return true;
+      validator: val => {
+        console.log('7'.repeat(30));
+        console.log(val);
       },
-      message: 'Invalid time segment(s): segment `dayStartTime` and `dayEndTime` doesn\'t match day `startCutoff`/`endCutoff` and `timezone` for at least one segment for this day.'
-    }, {
-      validator: value => {
-        const { segments, timezone } = value
-        for (let i = 0; i < segments.length; i++) {
-          if (segments[i].timezone !== timezone) return false;
-        }
+      message: props => {
+        console.log(props);
         return true;
-      },
-      message: 'Invalid time segment(s): segment timezone doesn\'t match day timezone on at least one segment for this day.'
-    }, {
-      validator: value => {
-        const { segments } = value;
-        let previousEndTime = 0;
-        for (let i = 0; i < segments.length; i++) {
-          const { startTime, endTime } = segments[i];
-          if (i > 0 && startTime < previousEndTime) return false;
-          previousEndTime = endTime;
-        }
-        return true;
-      },
-      message: 'Invalid time segments: overlapping or incorrectly ordered segments. Segments must be in chronological order and cannot overlap.'
+      }
     }
   ]
-}]);
+});
 
 
 module.exports = daysSubdocFactory;

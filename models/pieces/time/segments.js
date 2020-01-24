@@ -1,6 +1,8 @@
 const { Schema } = require('mongoose');
 
-var moment = require('moment-timezone');
+const moment = require('moment-timezone');
+
+const { getMoment } = require('../../../utilities');
 
 const dayCutoffSubdocFactory = require('../dayCutoff');
 const timezoneSubdocFactory = require('../timezone');
@@ -8,51 +10,55 @@ const dateSubdocFactory = require('../date');
 const intSubdocFactory = require('../integer');
 
 const segmentSchema = new Schema({
-  dayStartTime: intSubdocFactory({ required: true }),
-  dayEndTime: intSubdocFactory({ required: true }),
+  dayStartCutoff: intSubdocFactory({ required: true }),
+  dayEndCutoff: intSubdocFactory({ required: true }),
   timezone: timezoneSubdocFactory(),
   date: dateSubdocFactory({ required: true }),
   startTime: intSubdocFactory({ required: true }),
   endTime: intSubdocFactory({ required: true })
 });
 
-const segmentSubdocFactory = () => ([{
-  type: segmentSchema,
+const segmentsSubdocFactory = () => ({
+  type: [segmentSchema],
   validate: [
     {
-      validator: value => {
-        const { dayStartTime, timezone, date } = value;
-        const midnight = moment.tz(new Date(date.year, date.month, date.day, 0, 0, 0, 0), timezone).valueOf;
-        return midnight - 43200000 <= dayStartTime && dayStartTime <= midnight + 43200000;
+      validator: segments => {
+        for (let i = 0; i < segments.length; i++) {
+          const { dayEndCutoff, dayStartCutoff, startTime, endTime, date, timezone } = segments[i];
+          const dayStartTime = getMoment(date, timezone).valueOf() + dayStartCutoff;
+          const dayEndTime = getMoment(date, timezone).valueOf() + dayEndCutoff;
+          if (
+            (dayStartTime <= startTime && startTime <= dayEndTime) ||
+            (dayStartTime <= endTime && endTime <= dayEndTime)
+          ) {
+            return false;
+          }
+        }
+        return true;
       },
-      message: 'Invalid `dayStartTime`. Must be within 12 hours of midnight in specified timezone.'
+      message: 'Invalid `startTime` or `endTime` for at least one segment. Value doesn\'t fall within the day specified.'
     }, {
-      validator: value => {
-        const { dayEndTime, timezone, date } = value;
-        const midnight = moment.tz(new Date(date.year, date.month, date.day, 0, 0, 0, 0), timezone).add(1, 'days').valueOf;
-        return midnight - 43200000 <= dayEndTime && dayEndTime <= midnight + 43200000;
+      validator: segments => {
+        for (let i = 0; i < segments.length; i++) {
+          const { startTime, endTime } = segments[i];
+          if (startTime <= endTime) return false;
+        }
+        return true;
       },
-      message: 'Invalid `dayEndTime`. Must be within 12 hours of midnight in specified timezone.'
+      message: 'Invalid `startTime` and `endTime` combination for at least one segment. `startTime` must be before `endTime`.'
     }, {
-      validator: value => {
-        const { dayEndTime, dayStartTime, startTime } = value;
-        return dayStartTime <= startTime && startTime <= dayEndTime;
+      validator: segments => {
+        let previousEndTime;
+        for (let i = 0; i < segments.length; i++) {
+          const { startTime, endTime } = segments[i];
+          if (i > 0 && startTime < previousEndTime) return false;
+          previousEndTime = endTime;
+        }
+        return true;
       },
-      message: 'Invalid `startTime`; value doesn\'t fall within the day specified.'
-    }, {
-      validator: value => {
-        const { dayEndTime, dayStartTime, endTime } = value;
-        return dayStartTime <= endTime && endTime <= dayEndTime;
-      },
-      message: 'Invalid `endTime`; value doesn\'t fall within the day specified.'
-    }, {
-      validator: value => {
-        const { startTime, endTime } = value;
-        return startTime > endTime;
-      },
-      message: 'Invalid `startTime` and `endTime` combination. `startTime` must be before `endTime`.'
+      message: 'Invalid time segments: overlapping or incorrectly ordered segments. Segments must be in chronological order and cannot overlap.'
     }
   ]
-}]);
+});
 
-module.exports =  segmentSubdocFactory;
+module.exports =  segmentsSubdocFactory;

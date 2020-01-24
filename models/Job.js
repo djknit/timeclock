@@ -44,7 +44,7 @@ const JobSchema = new Schema(
         default: 0
       })
     ),
-    weeks: weeksSubdocFactory(),
+    weeks: [weeksSubdocFactory()],
     startDate: dateSubdocFactory(),
     effectiveStartDate: dateSubdocFactory()
   }
@@ -65,8 +65,9 @@ JobSchema.path('weekBegins').validate(
 );
 JobSchema.path('weeks').validate(
   weeksArr => {
+    console.log('validating WEEKS .......................')
     let previousEndTime = 0;
-    for (let i = 0; i < segments.length; i++) {
+    for (let i = 0; i < weeksArr.length; i++) {
       const { firstDate, lastDate } = weeksArr[i];
       const startTime = getMoment(firstDate);
       const endTime = getMoment(lastDate);

@@ -1,5 +1,6 @@
 const router = require('express').Router();
 
+
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
 
 router.get(
