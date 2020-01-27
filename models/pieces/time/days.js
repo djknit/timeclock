@@ -1,76 +1,63 @@
 const { Schema } = require('mongoose');
 
-const { areDatesEquivalent, areWagesEquivalent } = require('../../../utilities');
+const {
+  areDatesEquivalent, areWagesEquivalent, getMostRecentScheduleValueForDate, convertMomentToMyDate, getMoment
+} = require('../../../utilities');
 
-const Day = require('./Day');
-const dayCutoffSubdocFactory = require('../dayCutoff');
-const segmentsSubdocFactory = require('./segments');
-const timezoneSubdocFactory = require('../timezone');
-const wageSubdocFactory = require('../wage');
-const dateSubdocFactory = require('../date');
+// const Day = require('../../Day');
+// const Job = require('../../Job');
 
-// const daySchema = new Schema({
-//   date: dateSubdocFactory({ required: true }),
-//   startCutoff: dayCutoffSubdocFactory(false),
-//   endCutoff: dayCutoffSubdocFactory(false),
-//   segments: segmentsSubdocFactory(),
-//   timezone: timezoneSubdocFactory(),
-//   wage: wageSubdocFactory()
-// });
-
-// daySchema.path('segments').validate(
-//   segments => {
-//     console.log('*%*%'.repeat(20))
-//     console.log(this)
-//     console.log('*%*%'.repeat(20))
-//     let previousEndTime;
-//     for (let i = 0; i < segments.length; i++) {
-//       if (i > 0 && segments[i].startTime < previousEndTime) {
-//         return false;
-//       }
-//       previousEndTime = segments[i].endTime;
-//     }
-//     return true;
-//   },
-//   'Invalid segments: overlapping. Time segments may not overlap.'
-// );
-
-const daysSubdocFactory = () => ({
-  type: [Schema.Types.ObjectId],
+const daysSubdocFactory = () => ([{
+  type: Schema.Types.ObjectId,
   ref: 'Day',
   validate: [
     {
-      validator: dayIds => {
-        for (let i = 0; i < dayIds.length; i++) {
-          Day.findById(dayIds[i])
+      validator: dayIds => new Promise(
+        (resolve, reject) => {
+          let daysChecked = 0;
+          for (let i = 0; i < dayIds.length; i++) {
+            const Day = require('../../Day');
+            Day.findById(dayIds[i])
             .then(day => {
-              if (!day) throw new Error('day not found');
-              const { segments, date, startCutoff, endCutoff, timezone, wage } = day;
+              const { segments, date, startCutoff, endCutoff, timezone } = day;
               for (let j = 0; j < segments.length; j++) {
                 const segment = segments[j];
-                if (!areDatesEquivalent(date, segments[j].date)) return false;
-                if (segment.dayStartCutoff !== startCutoff) return false;
-                if (segment.dayEndCutoff !== endCutoff) return false;
-                if (segment.timezone !== timezone) return false;
-                if (!areWagesEquivalent(segment.wage, wage)) return false;
+                if (!areDatesEquivalent(segment.date, date)) reject(false);
+                if (segment.dayStartCutoff !== startCutoff) reject(false);
+                if (segment.dayEndCutoff !== endCutoff) reject(false);
+                if (segment.timezone !== timezone) reject(false);
               }
+              daysChecked++;
+              if (daysChecked === dayIds.length) resolve(true);
             });
+          }
         }
-        return true;
-      },
-      message: 'Invalid time segment(s): segment data doesn\'t match day data on at least one segment for this day.'
-    }, {
-      validator: val => {
-        console.log('7'.repeat(30));
-        console.log(val);
-      },
-      message: props => {
-        console.log(props);
-        return true;
-      }
+      ),
+      message: 'Invalid time segment(s): segment data doesn\'t match day data on at least one segment for at least one day in this week.'
     }
   ]
-});
+}]);
 
 
 module.exports = daysSubdocFactory;
+
+// (resolve, reject) => {
+//   if (dayIds.length === 0) return resolve(true);
+//   Job.findById()
+//   .then(job => {
+//     let daysChecked = 0;
+//     for (let i = 0; i < dayIds.length; i++) {
+//       Day.findById(dayIds[i])
+//       .then(day => {
+//         const { date, startCutoff, endCutoff, timezone, wage } = day;
+//         if (timezone !== getMostRecentScheduleValueForDate(date, job.timezone)) reject(false);
+//         if (!areWagesEquivalent(wage, getMostRecentScheduleValueForDate(date, job.wage))) reject(false);
+//         if (endCutoff !== getMostRecentScheduleValueForDate(date, job.dayCutoff)) reject(false);
+//         const precedingDate = convertMomentToMyDate(getMoment(date).subtract(1, 'days'));
+//         if (startCutoff !== getMostRecentScheduleValueForDate(precedingDate, job.dayCutoff)) reject(false);
+//         daysChecked++;
+//         if (daysChecked === dayIds.length) resolve(true);
+//       });
+//     }
+//   });
+// }

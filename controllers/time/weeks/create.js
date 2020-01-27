@@ -1,5 +1,7 @@
 const moment = require('moment-timezone');
 
+const daysController = require('../days');
+
 const {
   getMostRecentScheduleIndexForDate,
   getMostRecentScheduleValueForDate,
@@ -16,6 +18,11 @@ module.exports = {
 };
 
 function createWeekByDate(givenDate, job) {
+  console.log('- - - CREATE WEEK BY DATE - - -')
+  console.log(givenDate);
+  console.log('_givenDate__^_^_^_^__')
+  console.log(job)
+  console.log('_job__^_^_^_^__')
   const dates = getDatesInWeekWithDate(givenDate, job.weekBegins);
   const firstDate = dates[0];
   const lastDate = dates[dates.length - 1];
@@ -27,19 +34,18 @@ function createWeekByDate(givenDate, job) {
       startCutoff: getMostRecentScheduleValueForDate(dayBeforeDate, job.dayCutoff),
       endCutoff: getMostRecentScheduleValueForDate(date, job.dayCutoff),
       timezone: getMostRecentScheduleValueForDate(date, job.timezone),
-      wage: getMostRecentScheduleValueForDate(date, job.wage)
+      wage: getMostRecentScheduleValueForDate(date, job.wage),
+      job: job._id
     });
   });
-  const referenceDate = areDatesEquivalent(job.startDate, givenDate) ?
-    job.startDate :
-    job.effectiveStartDate;
-  const weekNumber = determineWeekNumber(firstDate, referenceDate);
-  return {
+  const weekNumber = determineWeekNumber(firstDate, job.effectiveStartDate);
+  return createDayDocsForWeekDays({
     days,
     firstDate,
     lastDate,
-    weekNumber
-  };
+    weekNumber,
+    job: job._id
+  });
 }
 
 function createNextWeek(currentWeek, job) {
@@ -56,6 +62,20 @@ function getDatesInWeekWithDate(date, weekBeginsValueSchedule) {
     firstDate, weekBeginsValueSchedule, weekBeginsScheduleIndexForDate
   );
   return dates;
+}
+
+function createDayDocsForWeekDays(week) {
+  return new Promise(
+    (resolve, reject) => {
+      console.log('- - - CREATE DAY DOCS FOR WEEK DAYS - - -')
+      console.log(week)
+      daysController.createDocsForDays(week.days)
+      .then(dayDocs => {
+        week.days = dayDocs;
+        resolve(week);
+      });
+    }
+  );
 }
 
 function getRemainingDatesOfWeekFromFirstDate(
@@ -98,11 +118,11 @@ function getWeekDatesForChangingWeekBegins(firstDate, weekBeginsValueSchedule) {
 }
 
 function determineWeekNumber(weekStartDate, referenceDate) {
-  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-  console.log(weekStartDate)
-  console.log(referenceDate)
+  // console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+  // console.log(weekStartDate)
+  // console.log(referenceDate)
   const estimate = getMoment(weekStartDate).diff(getMoment(referenceDate), 'weeks') + 1;
-  console.log(estimate)
+  // console.log(estimate)
   for (let i = estimate - 1; i < estimate + 2; i++) {
     const idealFirstDateOfWeek = getMoment(referenceDate).add(i - 1, 'weeks');
     const weekFirstDateDiffFromIdeal = idealFirstDateOfWeek.diff(getMoment(weekStartDate), 'days');

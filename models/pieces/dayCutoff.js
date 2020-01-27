@@ -4,8 +4,7 @@ const intSubdocFactory = require('./integer');
 const valueScheduleSubdocFactory = require('./valueSchedule');
 
 module.exports = (useDefault) => {
-  const options = useDefault ?
-    { default: 0 } : { required: true };
+  const options = useDefault !== false ? { default: 0 } : { required: true };
   return intSubdocFactory({
     validate: {
       validator(value) {

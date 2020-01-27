@@ -48,7 +48,7 @@ function errorHandlerMiddleware(err, req, res, next) {
 
   if (err) {
     errorHandler(err);
-    console.error(err);
+    // console.error(err);
     return;
   }
 
@@ -110,6 +110,8 @@ function areDatesEquivalent(date1, date2) {
 // JOB DATA -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-<><><>
 
 function areWagesEquivalent(wage1, wage2) {
+  if (!wage1 && !wage2) return true;
+  if (!wage1 || !wage2) return false;
   return (
     wage1.rate === wage2.rate &&
     wage1.currency === wage2.currency &&
@@ -123,10 +125,10 @@ function areWagesEquivalent(wage1, wage2) {
 function getMostRecentScheduleIndexForDate(date, valueSchedule) {
   if (valueSchedule.length === 0) return;
   if (valueSchedule.length === 1) return 0;
-  const dateTime = moment(date).valueOf();
+  const dateTime = getDateTime(date);
   let selectedIndex = 0;
   for (let i = 1; i < valueSchedule.length; i++) {
-    if (moment(valueSchedule[i].startDate).valueOf() > dateTime) {
+    if (getDateTime(valueSchedule[i].startDate) > dateTime) {
       return selectedIndex;
     }
     selectedIndex = i;

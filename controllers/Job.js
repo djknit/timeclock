@@ -2,6 +2,8 @@ const Job = require('../models/Job');
 
 const moment = require('moment-timezone');
 
+const DayController = require('./Day');
+
 const weeksController = require('./time/weeks');
 
 const { convertMomentToMyDate, getFirstDayOfWeekForDate, getMoment } = require('../utilities');
@@ -10,8 +12,7 @@ module.exports = {
   create: (newJob, userId) => new Promise(
     (resolve, reject) => {
       const { name, timezone, wage, startDate, dayCutoff, weekBegins } = newJob;
-      console.log(wage)
-      // newJob.user = userId;
+      console.log('- - - CREATE JOB - - -')
       if (!name || !timezone || !startDate) {
         const error = new Error('Missing required data properties.');
         reject(error);
@@ -35,13 +36,12 @@ module.exports = {
       let jobId;
       Job.create(newJob)
       .then(result => {
-        console.log('new job created\n----------------------------------------')
+        console.log('new job -------------')
+        // console.log('new job created\n----------------------------------------')
         jobId = result._id;
         return weeksController.createWeekByDate(result.startDate, result);
       })
-      .then(firstWeek => {
-        return addWeek(firstWeek, jobId);
-      })
+      .then(firstWeek => addWeek(firstWeek, jobId))
       .then(job =>resolve(job))
       .catch(err => reject(determineCreateJobError(err)));
     }
@@ -50,8 +50,8 @@ module.exports = {
 };
 
 function getEffectiveStartDate(startDate, weekBegins) {
-  let firstDateOfFirstWeekEstimate = moment(startDate).day(weekBegins);
-  if (firstDateOfFirstWeekEstimate.valueOf() > moment(startDate).valueOf()) {
+  let firstDateOfFirstWeekEstimate = getMoment(startDate).day(weekBegins);
+  if (firstDateOfFirstWeekEstimate.valueOf() > getMoment(startDate).valueOf()) {
     firstDateOfFirstWeekEstimate.subtract(1, 'weeks');
   }
   let resultEstimate = firstDateOfFirstWeekEstimate;
@@ -61,12 +61,29 @@ function getEffectiveStartDate(startDate, weekBegins) {
   return convertMomentToMyDate(resultEstimate);
 }
 
+function createDayDocsForWeek(week) {
+  const { days } = week;
+  return new Promise(
+    (resolve, reject) => {
+      let daysProcessed = 0;
+      for (let i = 0; i < days.length; i++) {
+        
+      }
+    }
+  );
+}
+
 function addWeek(week, jobId) {
   return new Promise(
     (resolve, reject) => {
       // Job.findById(jobId).then(result=>console.log(result))
-      console.log('adding week...')
+      // console.log('adding week...')
       // console.log(week);
+      if (typeof(week.days[0]) !== 'string') {
+        // console.log(week.days)
+        // console.log("pppppppppppp")
+        week.days = week.days.map(day => day._id);
+      }
       // console.log(jobId)
       Job.findByIdAndUpdate(
         jobId,
@@ -79,10 +96,9 @@ function addWeek(week, jobId) {
       )
       .then(resolve)
       .catch(err => {
-        console.log('ADD WEEK ERROR');
-        console.error(err);
-        console.log('ADD WEEK ERROR');
-        console.log(('=*'.repeat(30) + '\n').repeat(3));
+        // console.log(('=*'.repeat(30) + '\n').repeat(3));
+        // console.error(err);
+        // console.log('ADD WEEK ERROR');
         const reason = err && err.reason && err.reason.reason && err.reason.reason;
         console.log(reason);
         reject(err)

@@ -11,7 +11,7 @@ const dateSchema = new mongoose.Schema({
 }); 
 
 module.exports = options => {
-  const required = options && options.required || undefined
+  const required = options && options.required;
 
   return {
     type: dateSchema,

@@ -27,13 +27,20 @@ console.log('---TEST-------------');
 // let obj = {
 //   testing: arr
 // }
-console.log(null==null)
-console.log(null===null)
 // const moment1 = moment(new Date(2019, 4, 25));
 // const moment2 = moment(new Date(2019, 6, 25));
 // console.log(moment2.diff(moment1, 'days'))
 // console.log(moment2.diff(moment1, 'weeks'))
 // console.log(moment1.diff(moment2, 'weeks'))
+
+function testPromise() {
+  return new Promise((resolve, reject) => {
+    resolve();
+  });
+}
+
+testPromise().then(() => console.log('one'));
+console.log('two')
 
 // let m1 = moment(summer2);
 // let m2 = moment(summer2).add(1, 'days');

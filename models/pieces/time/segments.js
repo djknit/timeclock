@@ -1,7 +1,5 @@
 const { Schema } = require('mongoose');
 
-const moment = require('moment-timezone');
-
 const { getMoment } = require('../../../utilities');
 
 const dayCutoffSubdocFactory = require('../dayCutoff');
@@ -10,8 +8,8 @@ const dateSubdocFactory = require('../date');
 const intSubdocFactory = require('../integer');
 
 const segmentSchema = new Schema({
-  dayStartCutoff: intSubdocFactory({ required: true }),
-  dayEndCutoff: intSubdocFactory({ required: true }),
+  dayStartCutoff: dayCutoffSubdocFactory({ required: true }),
+  dayEndCutoff: dayCutoffSubdocFactory({ required: true }),
   timezone: timezoneSubdocFactory(),
   date: dateSubdocFactory({ required: true }),
   startTime: intSubdocFactory({ required: true }),
@@ -26,10 +24,12 @@ const segmentsSubdocFactory = () => ({
         for (let i = 0; i < segments.length; i++) {
           const { dayEndCutoff, dayStartCutoff, startTime, endTime, date, timezone } = segments[i];
           const dayStartTime = getMoment(date, timezone).valueOf() + dayStartCutoff;
-          const dayEndTime = getMoment(date, timezone).valueOf() + dayEndCutoff;
+          const dayEndTime = getMoment(date, timezone).add(1, 'days').valueOf() + dayEndCutoff;
           if (
-            (dayStartTime <= startTime && startTime <= dayEndTime) ||
-            (dayStartTime <= endTime && endTime <= dayEndTime)
+            startTime < dayStartTime ||
+            startTime > dayEndTime ||
+            endTime < dayStartTime ||
+            endTime > dayEndTime
           ) {
             return false;
           }

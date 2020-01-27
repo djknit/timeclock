@@ -102,7 +102,7 @@ module.exports = {
           return reject(determineUserInfoError(err));
         }
         else if (user) {
-          console.log(user)
+          // console.log(user)
           return resolve(cleanUser(user));
         }
         const unexpectedErr = new Error('Unexpected outcome. Reason unknown.');
@@ -116,6 +116,7 @@ module.exports = {
       User.findById(userId)
       .populate('jobs')
       .then(user => {
+        // console.log(user)
         if (user.jobs.map(job => job.name).filter(name => name === jobName).length > 0) {
           return reject({
             message: 'You already have a job with that name. You must give each job a unique name.',
