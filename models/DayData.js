@@ -8,26 +8,17 @@ const wageSubdocFactory = require('./pieces/wage');
 const dateSubdocFactory = require('./pieces/date');
 
 const DaySchema = new Schema({
-  data: {
-    type: new Schema({
-      startCutoff: dayCutoffSubdocFactory(false),
-      endCutoff: dayCutoffSubdocFactory(false),
-      segments: segmentsSubdocFactory(),
-      timezone: timezoneSubdocFactory(),
-      wage: wageSubdocFactory()
-    }),
-    validate: {
-      validator(data) {
-        return;
-      },
-      message: ''
-    }
-  },
+  startCutoff: dayCutoffSubdocFactory(false),
+  endCutoff: dayCutoffSubdocFactory(false),
+  segments: segmentsSubdocFactory(),
+  timezone: timezoneSubdocFactory(),
+  wage: wageSubdocFactory(),
   user: {
     type: Schema.Types.ObjectId,
-    required: true,
-    ref: 'User'
-  }
+    ref: 'User',
+    required: true
+  },
+  date: dateSubdocFactory()
 });
 
 const Day = mongoose.model('Day', DaySchema);

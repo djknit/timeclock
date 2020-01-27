@@ -1,4 +1,4 @@
-const Day = require('../models/Day');
+const Day = require('../models/DayData');
 
 const { convertMomentToMyDate, getFirstDayOfWeekForDate, getMoment } = require('../utilities');
 
