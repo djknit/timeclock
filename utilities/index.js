@@ -8,6 +8,7 @@ module.exports = {
   getMoment,
   convertDateToMyDate,
   convertMomentToMyDate,
+  getUtcMoment,
   getMostRecentScheduleIndexForDate,
   getMostRecentScheduleValueForDate,
   areDatesEquivalent,
@@ -69,14 +70,22 @@ function getDate(myDate) {
 }
 
 function getMoment(myDate, timezone) {
-  const momentFriendlyDate = {
+  const momentFriendlyDate = getMomentFriendlyDate(myDate);
+  return timezone ?
+    moment.tz(momentFriendlyDate, timezone) :
+    moment(momentFriendlyDate);
+}
+
+function getMomentFriendlyDate(myDate) {
+  return {
     date: myDate.day,
     year: myDate.year,
     month: myDate.month
   };
-  return timezone ?
-    moment.tz(momentFriendlyDate, timezone) :
-    moment(momentFriendlyDate);
+}
+
+function getUtcMoment(myDate) {
+  return moment.utc(getMomentFriendlyDate(myDate));
 }
 
 function convertMomentToMyDate(moment_) {
