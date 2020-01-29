@@ -40,7 +40,7 @@ module.exports = {
         return weeksController.createWeekArrayEntryByDate(result.startDate, result);
       })
       .then(firstWeek => addWeek(firstWeek, jobId))
-      .then(job =>resolve(job))
+      .then(job => resolve(job))
       .catch(err => reject(determineCreateJobError(err)));
     }
   ),
@@ -75,13 +75,9 @@ function addWeek(week, jobId) {
   return new Promise(
     (resolve, reject) => {
       // Job.findById(jobId).then(result=>console.log(result))
-      // console.log('adding week...')
-      // console.log(week);
-      if (typeof(week.days[0]) !== 'string') {
-        // console.log(week.days)
-        // console.log("pppppppppppp")
-        week.days = week.days.map(day => day._id);
-      }
+      console.log('adding week...')
+      console.log(week);
+      console.log('+ +  +   +    +     +      +')
       // console.log(jobId)
       Job.findByIdAndUpdate(
         jobId,
@@ -92,13 +88,14 @@ function addWeek(week, jobId) {
         },
         { new: true }
       )
-      .then(resolve)
+      .populate('weeks.data.document')
+      .then(result => {console.log(result); resolve(result)})
       .catch(err => {
         // console.log(('=*'.repeat(30) + '\n').repeat(3));
         // console.error(err);
         // console.log('ADD WEEK ERROR');
         const reason = err && err.reason && err.reason.reason && err.reason.reason;
-        console.log(reason);
+        // console.log(reason);
         reject(err)
       });
     }

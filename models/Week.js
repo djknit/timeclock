@@ -57,7 +57,7 @@ const WeekSchema = new Schema({
             const day = days[i];
             const precedingDate = convertMomentToMyDate(getMoment(day.date).subtract(1, 'days'));
             if (
-              day.timezone !== getMostRecentScheduleValueForDate(date, timezone) ||
+              day.timezone !== getMostRecentScheduleValueForDate(day.date, timezone) ||
               !areWagesEquivalent(day.wage, getMostRecentScheduleValueForDate(day.date, wage)) ||
               day.startCutoff !== getMostRecentScheduleValueForDate(precedingDate, dayCutoff) ||
               day.endCutoff !== getMostRecentScheduleValueForDate(day.date, dayCutoff)
@@ -68,6 +68,9 @@ const WeekSchema = new Schema({
         message: 'Invalid day(s). Day `timezone`, `wage`, `startCutoff`, and/or `endCutoff` value does not match value schedule for at least one day.'
       }, {
         validator(data) {
+          // console.log('% '.repeat(30))
+          // console.log(data)
+          console.log('% '.repeat(30))
           // Only checks that week has correct number of days and that those days fall within the week timespan. The days subdoc validates that the days are chronological and not duplicated.
           const { days, firstDate, lastDate } = data;
           const expectedNumberOfDays = getMoment(lastDate).diff(getMoment(firstDate), 'days') + 1;

@@ -7,12 +7,7 @@ const daysController = require('../../days');
 const { getDatesInWeekWithDate } = require('./getDates');
 
 const {
-  getMostRecentScheduleIndexForDate,
-  getMostRecentScheduleValueForDate,
   convertMomentToMyDate,
-  areDatesEquivalent,
-  getFirstDayOfWeekForDate,
-  findWeekBeginsSchedIndexForDate,
   getMoment,
   getUtcMoment
 } = require('../../../../utilities/index');
@@ -42,12 +37,10 @@ function createWeekArrayEntryByDate(givenDate, job) {
         wage: job.wage,
         dayCutoff: job.dayCutoff
       };
-      WeekController.create({
-        data: newWeekData,
-        jobId: job._id,
-        userId: job.user
-      })
+      WeekController.create(newWeekData, job._id, job.user)
       .then(weekDoc => {
+        console.log('#*#*#*#* - -')
+        // console.log(weekDoc)
         return resolve({
           data: {
             document: weekDoc._id,

@@ -11,7 +11,7 @@ const { getDateTime, getMoment, getUtcMoment } = require('../../../utilities');
 const weekDataSchema = new Schema({
   document: {
     type: Schema.Types.ObjectId,
-    ref: 'WeekData',
+    ref: 'Week',
     required: true
   },
   firstDateUtcTime: intSubdocFactory({ required: true }),
@@ -47,7 +47,6 @@ const weekSchema = new Schema({
 
 const weeksSubdocFactory = () => ({
   type: [weekSchema],
-  ref: 'Week',
   validate: {
     validator(weeks) {
       let previousLastDateTime;

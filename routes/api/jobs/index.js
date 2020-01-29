@@ -39,7 +39,7 @@ router.post(
     .then(() => JobController.create(body, userId))
     .then(({ _id }) => UserController.addJob(_id, userId))
     .then()
-    .then(({ jobs }) => res.json({ jobs: cleanJobs(jobs) }))
+    .then(({ jobs }) => res.json({ jobs }))
     .catch(routeErrorHandlerFactory(res));
   }
 );
