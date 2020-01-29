@@ -1,37 +1,23 @@
 const moment = require('moment-timezone');
 
-const DayController = require('../Day');
-
 const {
-  getMostRecentScheduleIndexForDate,
   getMostRecentScheduleValueForDate,
   convertMomentToMyDate,
-  areDatesEquivalent,
-  getFirstDayOfWeekForDate,
-  findWeekBeginsSchedIndexForDate,
   getMoment
 } = require('../../utilities');
 
 module.exports = {
-  createDocsForDays: days => new Promise(
-    (resolve, reject) => {
-    console.log('- - - CREATE DOCS FOR DAYS - - -')
-    console.log(days)
-    console.log('days ^ ^ ^')
-    if (days.length === 0) return resolve([]);
-      let daysProcessed = 0;
-      days.forEach((day, index, arr) => {
-        DayController.create(day)
-        .then(dayDoc => {
-          arr[index] = dayDoc;
-          daysProcessed++;
-          if (daysProcessed === days.length) {
-            // console.log('--------(------(-----------')
-            // console.log(arr);
-            return resolve(arr);
-          }
-        });
-      });
-    }
-  )
+  createDaysForDates: (dates, job) => {
+    return dates.map(date => {
+      const dayBeforeDate = convertMomentToMyDate(getMoment(date).subtract(1, 'days'));
+      return {
+        date,
+        startCutoff: getMostRecentScheduleValueForDate(dayBeforeDate, job.dayCutoff),
+        endCutoff: getMostRecentScheduleValueForDate(date, job.dayCutoff),
+        timezone: getMostRecentScheduleValueForDate(date, job.timezone),
+        wage: getMostRecentScheduleValueForDate(date, job.wage),
+        job: job._id
+      };
+    });
+  }
 };

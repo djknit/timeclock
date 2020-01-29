@@ -2,8 +2,6 @@ const Job = require('../models/Job');
 
 const moment = require('moment-timezone');
 
-const DayController = require('./Day');
-
 const weeksController = require('./time/weeks');
 
 const { convertMomentToMyDate, getFirstDayOfWeekForDate, getMoment } = require('../utilities');
@@ -39,7 +37,7 @@ module.exports = {
         console.log('new job -------------')
         // console.log('new job created\n----------------------------------------')
         jobId = result._id;
-        return weeksController.createWeekByDate(result.startDate, result);
+        return weeksController.createWeekArrayEntryByDate(result.startDate, result);
       })
       .then(firstWeek => addWeek(firstWeek, jobId))
       .then(job =>resolve(job))

@@ -1,7 +1,7 @@
 const { Schema } = require('mongoose');
 
 const {
-  areDatesEquivalent, areWagesEquivalent, getMostRecentScheduleValueForDate, convertMomentToMyDate, getMoment
+  areDatesEquivalent, getDateTime
 } = require('../../../utilities');
 
 const dayCutoffSubdocFactory = require('../dayCutoff');
@@ -19,7 +19,7 @@ const daySchema = new Schema({
   date: dateSubdocFactory()
 });
 
-const daysSubdocFactory = () => ([{
+const daysSubdocFactory = () => ({
   type: [daySchema],
   validate: [
     {
@@ -41,11 +41,17 @@ const daysSubdocFactory = () => ([{
       message: 'Segment data does not match day data for at least one segment on at least one day for this week.'
     }, {
       validator(days) {
-
+        let previousDateTime;
+        for (let i = 0; i < days.length; i++) {
+          const dateTime = getDateTime(days[i].date);
+          if (i > 0 && dateTime <= previousDateTime) return false;
+          previousDateTime = dateTime;
+        }
+        return true;
       },
-      message: ''
+      message: 'Invalid days. Days must be in chronological order and dates cannot be duplicated.'
     }
   ]
-}]);
+});
 
 module.exports = daysSubdocFactory;

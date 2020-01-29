@@ -38,6 +38,7 @@ router.post(
     UserController.checkForJobWithName(name, userId)
     .then(() => JobController.create(body, userId))
     .then(({ _id }) => UserController.addJob(_id, userId))
+    .then()
     .then(({ jobs }) => res.json({ jobs: cleanJobs(jobs) }))
     .catch(routeErrorHandlerFactory(res));
   }

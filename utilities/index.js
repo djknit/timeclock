@@ -158,7 +158,9 @@ function getFirstDayOfWeekForDate(date, weekBeginsValueSchedule, weekBeginsSched
     weekBeginsScheduleIndex = findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule);
   }
   let firstDate = getMoment(date).day(weekBeginsValueSchedule[weekBeginsScheduleIndex].value);
-  if (firstDate.valueOf() > getMoment(date).valueOf()) firstDate.subtract(1, 'weeks');
+  if (firstDate.valueOf() > getMoment(date).valueOf()) {
+    firstDate.subtract(1, 'weeks');
+  }
   return convertMomentToMyDate(firstDate);
 }
 
@@ -172,25 +174,22 @@ function findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule) {
   return 0;
 }
 
-// only checks if value goes in to effect by date. doesn't verify it is the most recent value.
+// only checks if value goes in to effect by date; doesn't verify that it is the most recent value; also doesn't work if value startDate is less than 1 week before given date.
 function isWeekBeginsValueActualFirstDayOfWeek(date, scheduleEntry) {
-  const weekBeginsStartDateMoment = moment(scheduleEntry.startDate);
-  if (moment(date).subtract(weekBeginsStartDateMoment, 'days') > 6) {
+  const weekBeginsStartDateMoment = getMoment(scheduleEntry.startDate);
+  if (getMoment(date).diff(weekBeginsStartDateMoment, 'days') > 6) {
     return true;
   }
   const dayIndexes = {
-    date: moment(date).day(),
+    date: getMoment(date).day(),
     weekBeginsValue: scheduleEntry.value,
     weekBeginsStartDate: weekBeginsStartDateMoment.day()
-  }
+  };
   const normalize = dayIndex => (dayIndex - dayIndexes.weekBeginsStartDate + 6) % 6;
   const normalizedDayIndexes = {
     date: normalize(dayIndexes.date),
     weekBeginsValue: normalize(dayIndexes.weekBeginsValue),
     weekBeginsStartDate: 0
   };
-  return (
-    normalizedDayIndexes.weekBeginsStartDate <= normalizedDayIndexes.weekBeginsValue &&
-    normalizedDayIndexes.weekBeginsValue <= normalizedDayIndexes.date
-  );
+  return normalizedDayIndexes.weekBeginsValue <= normalizedDayIndexes.date;
 }

@@ -14,8 +14,8 @@ const weekDataSchema = new Schema({
     ref: 'WeekData',
     required: true
   },
-  firstDateUtcTime: intSubdocFactory(),
-  lastDateUtcTime: intSubdocFactory()
+  firstDateUtcTime: intSubdocFactory({ required: true }),
+  lastDateUtcTime: intSubdocFactory({ required: true })
 }, {
   _id: false
 });
@@ -34,8 +34,9 @@ const weekSchema = new Schema({
               getUtcMoment(firstDate).valueOf() !== firstDateUtcTime ||
               getUtcMoment(lastDate).valueOf() !== lastDateUtcTime
             ) {
-              return resolve(false);
+              return reject(false);
             }
+            return resolve(true);
           });
         }
       ),
