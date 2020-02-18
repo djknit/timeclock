@@ -53,7 +53,7 @@ function getEffectiveStartDate(startDate, weekBegins) {
     firstDateOfFirstWeekEstimate.subtract(1, 'weeks');
   }
   let resultEstimate = firstDateOfFirstWeekEstimate;
-  if (resultEstimate.diff(getMoment(startDate), 'days') > 3) {
+  if (Math.abs(resultEstimate.diff(getMoment(startDate), 'days')) > 3) {
     resultEstimate.add(1, 'weeks');
   }
   return convertMomentToMyDate(resultEstimate);

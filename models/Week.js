@@ -17,6 +17,7 @@ const weekDataSchema = new Schema({
   days: daysSubdocFactory(),
   firstDate: dateSubdocFactory({ required: true }),
   lastDate: dateSubdocFactory({ required: true }),
+  // probably unnecessary (next 2)
   firstDateUtcTime: intSubdocFactory({ required: true }),
   lastDateUtcTime: intSubdocFactory({ required: true }),
   weekNumber: intSubdocFactory({ required: true }),
