@@ -1,4 +1,5 @@
 const Week = require('../models/Week');
+const Job = require('../models/Job');
 
 const { getUtcMoment } = require('../utilities');
 
@@ -15,8 +16,6 @@ module.exports = {
         reject(err);
         throw(err);
       }
-      newWeek.firstDateUtcTime = getUtcMoment(firstDate).valueOf();
-      newWeek.lastDateUtcTime = getUtcMoment(lastDate).valueOf();
       Week.create({
         data: newWeek,
         job: jobId,
@@ -25,9 +24,27 @@ module.exports = {
       .then(resolve)
       .catch(err => reject(determineCreateWeekError(err)));
     }
-  )
+  ),
+  // findByDate: (date, jobId) => new Promise(
+  //   (resolve, reject) => {
+  //     if (!date || !jobId) {
+  //       return reject(new Error('Missing required parameters.'));
+  //     }
+  //     Job.findById(jobId)
+  //     .then(job => {
+  //       if (!job) return reject(new Error('Job not found.'));
+        
+  //     })
+  //     .catch(reject);
+  //   }
+  // )
+  
 }
 
 function determineCreateWeekError(err) {
   return err;
 }
+
+function determineFindError(err) {
+  return err; 
+;}

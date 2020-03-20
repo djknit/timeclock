@@ -17,9 +17,6 @@ const weekDataSchema = new Schema({
   days: daysSubdocFactory(),
   firstDate: dateSubdocFactory({ required: true }),
   lastDate: dateSubdocFactory({ required: true }),
-  // probably unnecessary (next 2)
-  firstDateUtcTime: intSubdocFactory({ required: true }),
-  lastDateUtcTime: intSubdocFactory({ required: true }),
   weekNumber: intSubdocFactory({ required: true }),
   timezone: valueScheduleSubdocFactory(
     timezoneSubdocFactory({ required: true })
@@ -42,15 +39,6 @@ const WeekSchema = new Schema({
           return getDateTime(data.firstDate) <= getDateTime(data.lastDate);
         },
         message: 'Invalid `firstDate`/`lastDate` combination for this week. First date must not come after last date.'
-      }, {
-        validator(data) {
-          const { firstDate, lastDate, firstDateUtcTime, lastDateUtcTime } = data;
-          return (
-            getUtcMoment(firstDate).valueOf() === firstDateUtcTime &&
-            getUtcMoment(lastDate).valueOf() === lastDateUtcTime
-          );
-        },
-        message: 'Invalid week. `firstDate` does not match `firstDateUtcTime`, and/or `lastDate` does not match `lastDateUtcTime`.'
       }, {
         validator(data) {
           const { timezone, wage, dayCutoff, days } = data;

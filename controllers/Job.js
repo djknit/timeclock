@@ -44,7 +44,8 @@ module.exports = {
       .catch(err => reject(determineCreateJobError(err)));
     }
   ),
-  addWeek
+  addWeek,
+  getWeekWithDate
 };
 
 function getEffectiveStartDate(startDate, weekBegins) {
@@ -57,18 +58,6 @@ function getEffectiveStartDate(startDate, weekBegins) {
     resultEstimate.add(1, 'weeks');
   }
   return convertMomentToMyDate(resultEstimate);
-}
-
-function createDayDocsForWeek(week) {
-  const { days } = week;
-  return new Promise(
-    (resolve, reject) => {
-      let daysProcessed = 0;
-      for (let i = 0; i < days.length; i++) {
-        
-      }
-    }
-  );
 }
 
 function addWeek(week, jobId) {
@@ -98,6 +87,24 @@ function addWeek(week, jobId) {
         // console.log(reason);
         reject(err)
       });
+    }
+  );
+}
+
+function getWeekWithDate(date, jobId) {
+  return new Promise(
+    (resolve, reject) => {
+      if (!date || !jobId) {
+        return reject(new Error('Missing required parameters.'));
+      }
+      Job.findById(jobId)
+      .then(job => {
+        if (!job) return reject(new Error('Job not found.'));
+        const weekId = weeksController.checkForWeekWithDate(date, jobId);
+        if (!weekId) return resolve(addWeek(weeksController.createWeekArrayEntryByDate(date), jobId));
+        else return resolve()
+      })
+      .catch(reject);
     }
   );
 }

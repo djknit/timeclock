@@ -14,7 +14,8 @@ const {
 
 module.exports = {
   createWeekArrayEntryByDate,
-  createNextWeek
+  createNextWeek,
+
 };
 
 function createWeekArrayEntryByDate(givenDate, job) {
@@ -54,17 +55,21 @@ function createWeekArrayEntryByDate(givenDate, job) {
   );
 }
 
+function checkForWeekWithDate() {
+
+}
+
+function createWeekByDate() {
+  
+}
+
 function createNextWeek(currentWeek, job) {
   const nextWeekFirstDateMoment = getMoment(currentWeek.lastDate).add(1, 'days');
   return createWeekByDate(convertMomentToMyDate(nextWeekFirstDateMoment), job);
 }
 
 function determineWeekNumber(weekStartDate, referenceDate) {
-  // console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-  // console.log(weekStartDate)
-  // console.log(referenceDate)
   const estimate = getMoment(weekStartDate).diff(getMoment(referenceDate), 'weeks') + 1;
-  // console.log(estimate)
   for (let i = estimate - 1; i < estimate + 2; i++) {
     const idealFirstDateOfWeek = getMoment(referenceDate).add(i - 1, 'weeks');
     const weekFirstDateDiffFromIdeal = idealFirstDateOfWeek.diff(getMoment(weekStartDate), 'days');
