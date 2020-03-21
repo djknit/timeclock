@@ -1,5 +1,7 @@
 const router = require('express').Router();
 
+const { routeErrorHandlerFactory } = require('../utilities');
+
 const JobController = require('../../../controllers/Job');
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
@@ -8,7 +10,7 @@ router.post(
   '/get-by-date',
   verifyLogin,
   (req, res) => {
-    const user = req.user._id;
+    const user = req.user;
     const { jobId, date } = req.body;
     console.log(user);
     // see if user has jobs and then check that jobId belongs to user.
@@ -27,7 +29,11 @@ router.post(
     // then lookup job and check if week with date exists
     // then create week
     // then add week to job (possible combined with previous step)
-    JobController.checkForWeekWithDate
+    JobController.getWeekWithDate(date, jobId)
+    .then(weekDoc => {
+      res.json(weekDoc);
+    })
+    .catch(routeErrorHandlerFactory(res));
   }
 );
 

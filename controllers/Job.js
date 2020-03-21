@@ -85,7 +85,7 @@ function addWeek(week, jobId) {
         // console.log('ADD WEEK ERROR');
         const reason = err && err.reason && err.reason.reason && err.reason.reason;
         // console.log(reason);
-        reject(err)
+        reject(err);
       });
     }
   );
@@ -98,11 +98,11 @@ function getWeekWithDate(date, jobId) {
         return reject(new Error('Missing required parameters.'));
       }
       Job.findById(jobId)
+      .populate('weeks.data.document')
       .then(job => {
         if (!job) return reject(new Error('Job not found.'));
-        const weekId = weeksController.checkForWeekWithDate(date, jobId);
-        if (!weekId) return resolve(addWeek(weeksController.createWeekArrayEntryByDate(date), jobId));
-        else return resolve()
+        const weekDoc = weeksController.checkForWeekWithDate(date, job.weeks);
+        return resolve(weekDoc || weeksController.createWeekArrayEntryByDate(date, job));
       })
       .catch(reject);
     }

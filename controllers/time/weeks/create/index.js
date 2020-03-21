@@ -44,7 +44,7 @@ function createWeekArrayEntryByDate(givenDate, job) {
         // console.log(weekDoc)
         return resolve({
           data: {
-            document: weekDoc._id,
+            document: weekDoc,
             firstDateUtcTime: getUtcMoment(firstDate).valueOf(),
             lastDateUtcTime: getUtcMoment(lastDate).valueOf()
           }
