@@ -208,6 +208,14 @@ router.post(
 module.exports = router;
 
 function cleanUser(user) {
-  const { username, email } = user;
-  return { username, email };
+  const { username, email, jobs } = user;
+  return {
+    username,
+    email,
+    jobs: jobs.map(job => ({
+      name: job.name,
+      _id: job._id,
+      startDate: job.startDate
+    }))
+  };
 }

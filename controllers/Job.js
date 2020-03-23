@@ -45,8 +45,14 @@ module.exports = {
     }
   ),
   addWeek,
-  getWeekWithDate
+  getWeekWithDate,
+  getJobById
 };
+
+function getJobById(jobId, userId) {
+  return Job.findOne({ _id: jobId, user: userId })
+  .populate('weeks.data.document');
+}
 
 function getEffectiveStartDate(startDate, weekBegins) {
   let firstDateOfFirstWeekEstimate = getMoment(startDate).day(weekBegins);

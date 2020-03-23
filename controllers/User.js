@@ -148,6 +148,15 @@ module.exports = {
       .then(resolve)
       .catch(reject);
     }
+  ),
+  getWithJobBasics: (userId) => new Promise(
+    (resolve, reject) => {
+      User.findById(userId)
+      .populate('jobs')
+      .then(user => {
+        return resolve(user);
+      });
+    }
   )
 };
 

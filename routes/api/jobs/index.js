@@ -44,8 +44,22 @@ router.post(
   }
 );
 
+router.get(
+  '/:_id',
+  verifyLogin,
+  (req, res) => {
+    const { _id } = req.params;
+    JobController.getJobById(req.params._id, req.user._id)
+    .then(job => {
+      return res.json({_id, hell: 'yeah', job});
+    })
+    .catch(routeErrorHandlerFactory(res));
+  }
+);
+
 module.exports = router;
 
+// Probably don't need to clean jobs; _ids are necessary for some things. Maybe look at removing unused props, but it's not necessary.
 function cleanJobs(jobs) {
   return jobs.map(job => {
     let { name, timezone, wage, dayCutoff, weekBegins, startDate, weeks } = job;
@@ -68,7 +82,7 @@ function cleanDays(days) {
   let cleanedDays = [];
   days.forEach(day => {
     let { date, startCutoff, endCutoff, segments, timezone, wage } = day;
-    segments = cleanSegments;
+    segments = cleanSegments(segments);
     cleanedDays.push({ date, startCutoff, endCutoff, segments, timezone, wage });
   });
   return cleanedDays;
