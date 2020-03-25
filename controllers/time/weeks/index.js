@@ -13,7 +13,7 @@ const {
 module.exports = {
   createWeekArrayEntryByDate,
   createNextWeek,
-  checkForWeekWithDate(date, weeksArray) {
+  findWeekWithDate(date, weeksArray) {
     const dateUtcTime = getUtcMoment(date).valueOf();
     for (let i = 0; i < weeksArray.length; i++) {
       const { firstDateUtcTime, lastDateUtcTime, document } = weeksArray[i];

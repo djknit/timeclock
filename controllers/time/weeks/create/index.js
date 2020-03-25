@@ -14,8 +14,7 @@ const {
 
 module.exports = {
   createWeekArrayEntryByDate,
-  createNextWeek,
-
+  createNextWeek
 };
 
 function createWeekArrayEntryByDate(givenDate, job) {
