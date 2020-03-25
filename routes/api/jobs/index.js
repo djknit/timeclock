@@ -50,9 +50,7 @@ router.get(
   (req, res) => {
     const { _id } = req.params;
     JobController.getJobById(req.params._id, req.user._id)
-    .then(job => {
-      return res.json({_id, hell: 'yeah', job});
-    })
+    .then(job => res.json({ _id, job }))
     .catch(routeErrorHandlerFactory(res));
   }
 );

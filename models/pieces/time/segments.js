@@ -8,11 +8,12 @@ const dateSubdocFactory = require('../date');
 const intSubdocFactory = require('../integer');
 
 const segmentSchema = new Schema({
-  // probably all except startTime and endTime are unnecessary
-  dayStartCutoff: dayCutoffSubdocFactory({ required: true }),
-  dayEndCutoff: dayCutoffSubdocFactory({ required: true }),
-  timezone: timezoneSubdocFactory(),
-  date: dateSubdocFactory({ required: true }),
+  // ** probably all except startTime and endTime are unnecessary **
+
+  // dayStartCutoff: dayCutoffSubdocFactory({ required: true }),
+  // dayEndCutoff: dayCutoffSubdocFactory({ required: true }),
+  // timezone: timezoneSubdocFactory(),
+  // date: dateSubdocFactory({ required: true }),
   startTime: intSubdocFactory({ required: true }),
   endTime: intSubdocFactory({ required: true })
 });
