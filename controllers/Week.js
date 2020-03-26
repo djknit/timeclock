@@ -42,7 +42,7 @@ module.exports = {
           $push: {
             'data.days.$.segments': {
               $each: [segment],
-              $sort: { startCutoff: 1 }
+              $sort: { startTime: 1 }
             }
           }
         },

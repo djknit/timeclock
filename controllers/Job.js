@@ -45,13 +45,37 @@ module.exports = {
     }
   ),
   addWeek,
+  addSegment: (segment, jobId, userId) => new Promise(
+    (resolve, reject) => {
+      getJobBasicsById(jobId, userId)
+      .then(job => {
+        // return segmentsController.getDayAndWeekIdsForNewSegment(segment, jobId);
+      })
+      .then(result => {
+        const { dayId, weekId } = result;
+        // return WeekController.addSegmentToDay(segment, dayId, weekId, userId);
+      })
+      .then(resolve)
+      .catch(err => reject({
+        message: 'Job not found.',
+        problems: { jobId: true },
+        status: 404 // ???
+      }));
+    }
+  ),
+  // getJobById,
   getWeekWithDate,
-  getJobById
+  // getJobByIdAndGetWeekWithDate,
+  // getJobBasicsById
 };
 
 function getJobById(jobId, userId) {
   return Job.findOne({ _id: jobId, user: userId })
   .populate('weeks.data.document');
+}
+
+function getJobBasicsById(jobId, userId) {
+  return Job.findOne({ _id: jobId, user: userId });
 }
 
 function getEffectiveStartDate(startDate, weekBegins) {
@@ -97,20 +121,16 @@ function addWeek(week, jobId) {
   );
 }
 
-function getWeekWithDate(date, jobId) {
+function getWeekWithDate(date, job) {
   return new Promise(
     (resolve, reject) => {
-      if (!date || !jobId) {
-        return reject(new Error('Missing required parameters.'));
+      const weekDoc = weeksController.findWeekWithDate(date, job.weeks);
+      if (weekDoc) return resolve(weekDoc);
+      else {
+        weeksController.createWeekArrayEntryByDate(date, job)
+        .then(weekArrayEntry => addWeek(weekArrayEntry, job._id))
+        .then(result => resolve(weekArrayEntry.data.document));
       }
-      Job.findById(jobId)
-      .populate('weeks.data.document')
-      .then(job => {
-        if (!job) return reject(new Error('Job not found.'));
-        const weekDoc = weeksController.checkForWeekWithDate(date, job.weeks);
-        return resolve(weekDoc || weeksController.createWeekArrayEntryByDate(date, job));
-      })
-      .catch(reject);
     }
   );
 }

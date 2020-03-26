@@ -15,11 +15,7 @@ router.post(
   '/add-segment-to-day',
   verifyLogin,
   (req, res) => {
-    checkRequiredProps(
-      req.body,
-      ['segment', 'dayId', 'weekId'],
-      res
-    );
+    checkRequiredProps(req.body, ['segment', 'dayId', 'weekId'], res);
     checkRequiredProps(req.body, ['segment.startTime', 'segment.endTime'], res);
     const { segment, dayId, weekId } = req.body;
     WeekController.addSegmentToDay(segment, dayId, weekId, req.user._id)
@@ -40,7 +36,7 @@ router.post(
     checkRequiredProps(req.body, ['segment', 'jobId'], res);
     checkRequiredProps(req.body, ['segment.startTime', 'segment.endTime'], res);
     // before getting week with date, need to determine date segment is in
-      // user functions already made hopefully
+      // use functions already made hopefully
     
     // JobConrtoller.getWeekWithDate(date, jobId)
   }
@@ -62,10 +58,10 @@ function checkRequiredProps(props, requiredPropNames, res) {
   requiredPropNames.forEach(name => {
     if (!props[name]) {
       problems[name] = true;
-      problemMessages.push(`Missing '${name}'.`);
+      problemMessages.push('Missing `' + name + '`.');
     }
   });
-  if (problemMessages.length) {
+  if (problemMessages.length > 0) {
     return res.status(400).json({
       message: problemMessages.join(' '),
       problems

@@ -1,5 +1,7 @@
 const moment = require('moment-timezone');
 
+const { areDatesEquivalent } = require('../../utilities');
+
 const {
   getMostRecentScheduleValueForDate,
   convertMomentToMyDate,
@@ -19,5 +21,12 @@ module.exports = {
         job: job._id
       };
     });
+  },
+  findDayForDate: (date, days) => {
+    for (let i = 0; i < days.length; i++) {
+      if (areDatesEquivalent(date, days[i].date)) {
+        return days[i];
+      }
+    }
   }
 };
