@@ -25,6 +25,12 @@ module.exports = {
       .catch(err => reject(determineCreateWeekError(err)));
     }
   ),
+  getById: (weekId, userId) => {
+    return Week.findOne({
+      _id: weekId,
+      user: userId
+    });
+  },
   addSegmentToDay: (segment, dayId, weekId, userId) => new Promise(
     (resolve, reject) => {
       // make sure week belongs to user
@@ -48,24 +54,41 @@ module.exports = {
         },
         { new: true }
       )
-      .then(week => resolve(week))
-      .catch(determineAddSegmentToDayError);
+      .then(resolve)
+      .catch(err => reject(determineAddSegmentToDayError(err)));
     }
   ),
-  // findByDate: (date, jobId) => new Promise(
-  //   (resolve, reject) => {
-  //     if (!date || !jobId) {
-  //       return reject(new Error('Missing required parameters.'));
-  //     }
-  //     Job.findById(jobId)
-  //     .then(job => {
-  //       if (!job) return reject(new Error('Job not found.'));
-        
-  //     })
-  //     .catch(reject);
-  //   }
-  // )
-  
+  removeSegment: (segmentId, dayId, weekId, userId) => new Promise(
+    (resolve, reject) => {
+      Week.findOneAndUpdate(
+        {
+          _id: weekId,
+          user: userId,
+          'data.days._id': dayId
+        },
+        {
+          $pull: {
+            'data.days.$.segments': {
+              _id: segmentId
+            }
+          }
+        },
+        { new: true }
+      )
+      .then(resolve)
+      .catch(err => reject(determineAddSegmentToDayError(err)));
+    }
+  ),
+  removeAllSegments: () => new Promise(
+    (resolve, reject) => {
+
+    }
+  ),
+  removeSegmentsFromDays: () => new Promise(
+    (resolve, reject) => {
+      
+    }
+  )
 }
 
 function determineCreateWeekError(err) {

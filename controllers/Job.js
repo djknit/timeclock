@@ -63,10 +63,9 @@ module.exports = {
       }));
     }
   ),
-  // getJobById,
+  getJobById,
   getWeekWithDate,
-  // getJobByIdAndGetWeekWithDate,
-  // getJobBasicsById
+  deleteSegmentsInDateRange
 };
 
 function getJobById(jobId, userId) {
@@ -76,6 +75,34 @@ function getJobById(jobId, userId) {
 
 function getJobBasicsById(jobId, userId) {
   return Job.findOne({ _id: jobId, user: userId });
+}
+
+function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
+  return new Promise((resolve, reject) => {
+    const firstDateTime = getUtcMoment(firstDate).valueOf();
+    const lastDateTime = getUtcMoment(lastDate).valueOf();
+    if (firstDateTime > lastDateTime) {
+      let err = new Error('Invalid date range; `firstDate` is later than `lastDate`.');
+      err.status = 400;
+      err.problems = {
+        firstDate: true,
+        lastDate: true
+      };
+      return reject(err);
+    }
+    getJobById(jobId, userId)
+  // find weeks affected
+  // update each week
+  // return updated job
+    .then(job => {
+      const affectedWeeks = weeksController.findWeeksInDateRange(firstDateTime, lastDateTime, job);
+      let numWeeksCompleted = 0;
+      for (let i = 0; i < affectedWeeks.length; i++) {
+        
+      }
+    })
+    .catch(reject);
+  });
 }
 
 function getEffectiveStartDate(startDate, weekBegins) {

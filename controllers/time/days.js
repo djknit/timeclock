@@ -24,8 +24,21 @@ module.exports = {
   },
   findDayForDate: (date, days) => {
     for (let i = 0; i < days.length; i++) {
-      if (areDatesEquivalent(date, days[i].date)) {
-        return days[i];
+      const day = days[i];
+      if (areDatesEquivalent(date, day.date)) {
+        return day;
+      }
+    }
+  },
+  findDayWithId: (dayId, days) => {
+    console.log('findDayWithId');
+    console.log(dayId);
+    console.log(days);
+    for (let i = 0; i < days.length; i++) {
+      const day = days[i];
+      if (day._id.toString() === dayId) {
+        console.log('HIT HIT HIT  eowpf afp')
+        return day;
       }
     }
   }

@@ -22,5 +22,30 @@ module.exports = {
       }
     }
     return null;
+  },
+  findWeekWithId: (weekId, job) => new Promise(
+    (resolve, reject) => {
+      const { weeks } = job;
+      for (let i = 0; i < weeks.length; i++) {
+        const { document } = weeks[i].data;
+        if (document._id === weekId) {
+          return resolve(document);
+        }
+      }
+      let err = new Error('No week found with `weekId`.');
+      reject(err);
+      throw err;
+    }
+  ),
+  findWeeksInDateRange: (firstDateUtcTime, lastDateUtcTime, job) => {
+    return job.weeks.map(arrayEntry => arrayEntry.data.document)
+    .filter(weekDoc => {
+      const weekFirstDateTime = getUtcMoment(weekDoc.firstDate).valueOf();
+      const weekLastDateTime = getUtcMoment(weekDoc.lastDate).valueOf();
+      return (
+        (firstDateUtcTime <= weekFirstDateTime && weekFirstDateTime <= lastDateUtcTime) ||
+        (firstDateUtcTime <= weekLastDateTime && weekLastDateTime <= lastDateUtcTime)
+      );
+    });
   }
 }

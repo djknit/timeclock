@@ -41,7 +41,7 @@ const segmentsSubdocFactory = () => ({
       validator: segments => {
         for (let i = 0; i < segments.length; i++) {
           const { startTime, endTime } = segments[i];
-          if (startTime <= endTime) return false;
+          if (startTime >= endTime) return false;
         }
         return true;
       },

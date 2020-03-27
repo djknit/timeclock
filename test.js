@@ -88,7 +88,25 @@ console.log('two')
 //   )
 // }
 
-console.log('---------------------');
+console.log('* * * \n* * * \n---------------------');
+// const { getMoment } = require('./utilities');
+// const date = {
+//   "day": 8,
+//   "year": 2020,
+//   "month": 2
+// };
+// const timezone = 'America/Chicago';
+// const dayStartCutoff = 999;
+// console.log(getMoment(date, timezone).valueOf() + dayStartCutoff);
+const a = {
+  a: {
+    b: 4
+  }
+}
+
+console.log(a['a'])
+console.log(a['a.b'])
+
 
 // console.log(moment(summer2).diff(moment(summer), 'days'))
 

@@ -50,26 +50,29 @@ router.get(
   (req, res) => {
     const { _id } = req.params;
     JobController.getJobById(req.params._id, req.user._id)
-    .then(job => res.json({ _id, job }))
+    .then(job => res.json(cleanJob(job)))
     .catch(routeErrorHandlerFactory(res));
   }
 );
 
 module.exports = router;
 
-// Probably don't need to clean jobs; _ids are necessary for some things. Maybe look at removing unused props, but it's not necessary.
 function cleanJobs(jobs) {
-  return jobs.map(job => {
-    let { name, timezone, wage, dayCutoff, weekBegins, startDate, weeks } = job;
-    weeks = cleanWeeks(weeks);
-    return { name, timezone, wage, dayCutoff, weekBegins, startDate, weeks };
-  })
+  return jobs.map(cleanJob);
 }
 
+function cleanJob(job) {
+  let { name, timezone, wage, dayCutoff, weekBegins, startDate, weeks } = job;
+  // weeks = cleanWeeks(weeks);
+  return { name, timezone, wage, dayCutoff, weekBegins, startDate, weeks };
+}
+
+// Probably don't need to clean weeks & days; _ids are necessary for some things. Maybe look at removing unused props, but it's not necessary.
 function cleanWeeks(weeks) {
   let cleanedWeeks = [];
   weeks.forEach(week => {
-    let { days, firstDate, lastDate, weekNumber } = week;
+    console.log('af wef awfawef')
+    let { days, firstDate, lastDate, weekNumber } = week.data.document.data;
     days = cleanDays(days);
     cleanedWeeks.push({ days, firstDate, lastDate, weekNumber });
   });
