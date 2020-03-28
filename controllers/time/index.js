@@ -3,11 +3,20 @@ const JobController = require('../Job');
 const segmentsController = require('./segments');
 const weeksController = require('./weeks');
 
+const { getUtcMoment } = require('../../utilities');
+
 module.exports = {
   days: require('./days'),
   segments: require('./segments'),
   weeks: require('./weeks'),
-  addSegmentToDay: (segment, dayId, weekId, userId) => new Promise(
+  addSegmentToDay,
+  addSegment,
+  deleteSegmentsInDateRange,
+  deleteSegmentsForDates
+};
+
+function addSegmentToDay(segment, dayId, weekId, userId) {
+  return new Promise(
     (resolve, reject) => {
       // get week by id
       console.log(weekId);
@@ -25,8 +34,11 @@ module.exports = {
       .then(resolve)
       .catch(reject);
     }
-  ),
-  addSegment: (segment, jobId, userId) => new Promise(
+  );
+}
+
+function addSegment(segment, jobId, userId) {
+  return new Promise(
     (resolve, reject) => {
       // get job by id (w/ weeks populated)
       let weekId, dayId, job;
@@ -59,5 +71,41 @@ module.exports = {
         }
       });
     }
-  )
-};
+  );
+}
+
+function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
+  return new Promise((resolve, reject) => {
+    const firstDateTime = getUtcMoment(firstDate).valueOf();
+    const lastDateTime = getUtcMoment(lastDate).valueOf();
+    console.log('** * * **');
+    console.log(firstDateTime)
+    console.log(lastDateTime)
+    if (firstDateTime > lastDateTime) {
+      let err = new Error('Invalid date range; `firstDate` is later than `lastDate`.');
+      err.status = 400;
+      err.problems = {
+        firstDate: true,
+        lastDate: true
+      };
+      return reject(err);
+    }
+    let job;
+    JobController.getJobById(jobId, userId)
+  // find weeks affected
+  // update each week
+  // return updated job
+    .then(_job => {
+      job = _job;
+      return weeksController.deleteSegmentsFromWeeksInDateRange(firstDateTime, lastDateTime, job, userId);
+    })
+    .then(resolve)
+    .catch(reject);
+  });
+}
+
+function deleteSegmentsForDates(dates, jobId, userId) {
+  return new Promise((resolve, reject) => {
+    dates.forEach();
+  });
+}

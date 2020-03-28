@@ -33,14 +33,14 @@ console.log('---TEST-------------');
 // console.log(moment2.diff(moment1, 'weeks'))
 // console.log(moment1.diff(moment2, 'weeks'))
 
-function testPromise() {
-  return new Promise((resolve, reject) => {
-    resolve();
-  });
-}
+// function testPromise() {
+//   return new Promise((resolve, reject) => {
+//     resolve();
+//   });
+// }
 
-testPromise().then(() => console.log('one'));
-console.log('two')
+// testPromise().then(() => console.log('one'));
+// console.log('two')
 
 // let m1 = moment(summer2);
 // let m2 = moment(summer2).add(1, 'days');
@@ -98,14 +98,30 @@ console.log('* * * \n* * * \n---------------------');
 // const timezone = 'America/Chicago';
 // const dayStartCutoff = 999;
 // console.log(getMoment(date, timezone).valueOf() + dayStartCutoff);
-const a = {
-  a: {
-    b: 4
-  }
-}
+// const a = {
+//   a: {
+//     b: 4
+//   }
+// }
 
-console.log(a['a'])
-console.log(a['a.b'])
+// console.log(a['a'])
+// console.log(a['a.b'])
+
+// function waitASec() {
+//   return new Promise((resolve, reject) => {
+//     setTimeout(resolve, 1000);
+//   });
+// }
+
+// for (let i = 0; i < 10; i++) {
+//   const _i = i;
+//   waitASec().then(
+//     () => {
+//       console.log(i);
+//       console.log(_i);
+//     }
+//   );
+// }
 
 
 // console.log(moment(summer2).diff(moment(summer), 'days'))

@@ -45,27 +45,8 @@ module.exports = {
     }
   ),
   addWeek,
-  addSegment: (segment, jobId, userId) => new Promise(
-    (resolve, reject) => {
-      getJobBasicsById(jobId, userId)
-      .then(job => {
-        // return segmentsController.getDayAndWeekIdsForNewSegment(segment, jobId);
-      })
-      .then(result => {
-        const { dayId, weekId } = result;
-        // return WeekController.addSegmentToDay(segment, dayId, weekId, userId);
-      })
-      .then(resolve)
-      .catch(err => reject({
-        message: 'Job not found.',
-        problems: { jobId: true },
-        status: 404 // ???
-      }));
-    }
-  ),
   getJobById,
   getWeekWithDate,
-  deleteSegmentsInDateRange
 };
 
 function getJobById(jobId, userId) {
@@ -75,34 +56,6 @@ function getJobById(jobId, userId) {
 
 function getJobBasicsById(jobId, userId) {
   return Job.findOne({ _id: jobId, user: userId });
-}
-
-function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
-  return new Promise((resolve, reject) => {
-    const firstDateTime = getUtcMoment(firstDate).valueOf();
-    const lastDateTime = getUtcMoment(lastDate).valueOf();
-    if (firstDateTime > lastDateTime) {
-      let err = new Error('Invalid date range; `firstDate` is later than `lastDate`.');
-      err.status = 400;
-      err.problems = {
-        firstDate: true,
-        lastDate: true
-      };
-      return reject(err);
-    }
-    getJobById(jobId, userId)
-  // find weeks affected
-  // update each week
-  // return updated job
-    .then(job => {
-      const affectedWeeks = weeksController.findWeeksInDateRange(firstDateTime, lastDateTime, job);
-      let numWeeksCompleted = 0;
-      for (let i = 0; i < affectedWeeks.length; i++) {
-        
-      }
-    })
-    .catch(reject);
-  });
 }
 
 function getEffectiveStartDate(startDate, weekBegins) {

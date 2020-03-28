@@ -79,14 +79,43 @@ module.exports = {
       .catch(err => reject(determineAddSegmentToDayError(err)));
     }
   ),
-  removeAllSegments: () => new Promise(
+  removeAllSegments: (weekId, userId) => new Promise(
     (resolve, reject) => {
-
+      Week.findOneAndUpdate(
+        {
+          _id: weekId,
+          user: userId,
+        },
+        {
+          $set: {
+            'data.days.segments': []
+          }
+        },
+        { new: true }
+      )
+      .then(resolve)
+      .catch(err => reject);
     }
   ),
-  removeSegmentsFromDays: () => new Promise(
+  removeSegmentsFromDatesWithIds: (dateIds, weekId, userId) => new Promise(
     (resolve, reject) => {
-      
+      Week.findOneAndUpdate(
+        {
+          _id: weekId,
+          user: userId,
+          'data.days._id': {
+            $in: dateIds
+          }
+        },
+        {
+          $set: {
+            'data.days.$.segments': []
+          }
+        },
+        { new: true }
+      )
+      .then(resolve)
+      .catch(err => reject);
     }
   )
 }

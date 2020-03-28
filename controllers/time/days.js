@@ -1,6 +1,6 @@
 const moment = require('moment-timezone');
 
-const { areDatesEquivalent } = require('../../utilities');
+const { areDatesEquivalent, getUtcMoment } = require('../../utilities');
 
 const {
   getMostRecentScheduleValueForDate,
@@ -41,5 +41,19 @@ module.exports = {
         return day;
       }
     }
+  },
+  getIdsOfDaysInRange: (firstDateUtcTime, lastDateUtcTime, days) => {
+    console.log('\n- -  - -  - -  - -  -')
+    console.log('getIdsOfDaysInRange')
+    console.log('- -  - -  - -  - -  -')
+
+    return days
+    .filter(day => {
+      const dayUtcDateTime = getUtcMoment(day.date).valueOf();
+      console.log(dayUtcDateTime)
+      console.log(firstDateUtcTime <= dayUtcDateTime && dayUtcDateTime <= lastDateUtcTime)
+      return firstDateUtcTime <= dayUtcDateTime && dayUtcDateTime <= lastDateUtcTime;
+    })
+    .map(day => day._id);
   }
 };
