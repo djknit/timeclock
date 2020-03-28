@@ -31,21 +31,21 @@ module.exports = {
     }
   },
   findDayWithId: (dayId, days) => {
-    console.log('findDayWithId');
-    console.log(dayId);
-    console.log(days);
+    // console.log('findDayWithId');
+    // console.log(dayId);
+    // console.log(days);
     for (let i = 0; i < days.length; i++) {
       const day = days[i];
       if (day._id.toString() === dayId) {
-        console.log('HIT HIT HIT  eowpf afp')
+        // console.log('HIT HIT HIT  eowpf afp')
         return day;
       }
     }
   },
   getIdsOfDaysInRange: (firstDateUtcTime, lastDateUtcTime, days) => {
-    console.log('\n- -  - -  - -  - -  -')
-    console.log('getIdsOfDaysInRange')
-    console.log('- -  - -  - -  - -  -')
+    // console.log('\n- -  - -  - -  - -  -')
+    // console.log('getIdsOfDaysInRange')
+    // console.log('- -  - -  - -  - -  -')
 
     return days
     .filter(day => {

@@ -2,7 +2,10 @@ const Job = require('../models/Job');
 
 const moment = require('moment-timezone');
 
+const WeekController = require('./Week');
+const UserController = require('./User');
 const weeksController = require('./time/weeks');
+
 
 const { convertMomentToMyDate, getFirstDayOfWeekForDate, getMoment } = require('../utilities');
 
@@ -47,6 +50,7 @@ module.exports = {
   addWeek,
   getJobById,
   getWeekWithDate,
+  deleteJob
 };
 
 function getJobById(jobId, userId) {
@@ -109,8 +113,32 @@ function getWeekWithDate(date, job) {
       else {
         weeksController.createWeekArrayEntryByDate(date, job)
         .then(weekArrayEntry => addWeek(weekArrayEntry, job._id))
-        .then(result => resolve(weekArrayEntry.data.document));
+        .then(result => resolve(weekArrayEntry.data.document))
+        .catch(reject);
       }
+    }
+  );
+}
+
+function deleteJob(jobId, userId) {
+  return new Promise(
+    (resolve, reject) => {
+      let userData;
+      getJobBasicsById(jobId, userId)
+      .then(job => {
+        const weekIds = job.weeks.map(ArrayEntry => ArrayEntry.data.document);
+        return WeekController.deleteWeeks(weekIds, userId);
+      })
+      .then(result => UserController.removeJob(jobId, userId))
+      .then(updatedUserData => {
+        userData = updatedUserData;
+        return Job.deleteOne({
+          _id: jobId,
+          user: user._id
+        });
+      })
+      .then(result => resolve(userData))
+      .catch(reject);
     }
   );
 }

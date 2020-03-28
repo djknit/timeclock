@@ -157,6 +157,25 @@ module.exports = {
         return resolve(user);
       });
     }
+  ),
+  removeJob: (jobId, userId) => new Promise(
+    (resolve, reject) => {
+      User.findByIdAndUpdate(
+        userId,
+        {
+          $pull: {
+            jobs: jobId
+          }
+        },
+        { new: true }
+      )
+      .populate({
+        path: 'jobs',
+        populate: 'weeks.data.document'
+      })
+      .then(resolve)
+      .catch(reject);
+    }
   )
 };
 

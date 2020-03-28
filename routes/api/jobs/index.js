@@ -11,8 +11,8 @@ router.post(
   '/create',
   verifyLogin,
   (req, res) => {
-    const { user, body } = req;
-    const { name, timezone, startDate } = body;
+    const { name, timezone, startDate } = req.body;
+    const userId = req.user._id;
     let problems = {};
     let problemMessages = [];
     if (!name) {
@@ -34,7 +34,6 @@ router.post(
       });
     }
     // console.log(user)
-    const userId = user._id;
     UserController.checkForJobWithName(name, userId)
     .then(() => JobController.create(body, userId))
     .then(({ _id }) => UserController.addJob(_id, userId))
@@ -44,11 +43,22 @@ router.post(
   }
 );
 
+router.post(
+  '/delete/:_id',
+  verifyLogin,
+  (req, res) => {
+    JobController.deleteJob(req.params._id, req.user._id)
+    .then(result => {
+      res.json({success:true,result})
+    })
+    .catch(routeErrorHandlerFactory(res));
+  }
+);
+
 router.get(
   '/:_id',
   verifyLogin,
   (req, res) => {
-    const { _id } = req.params;
     JobController.getJobById(req.params._id, req.user._id)
     .then(job => res.json(cleanJob(job)))
     .catch(routeErrorHandlerFactory(res));
