@@ -6,11 +6,19 @@ const WeekController = require('./Week');
 const UserController = require('./User');
 const weeksController = require('./time/weeks');
 
-
 const { convertMomentToMyDate, getFirstDayOfWeekForDate, getMoment } = require('../utilities');
 
 module.exports = {
-  create: (newJob, userId) => new Promise(
+  create,
+  addWeek,
+  getJobById,
+  getWeekWithDate,
+  deleteJob,
+  updateWage
+};
+
+function create(newJob, userId) {
+  return new Promise(
     (resolve, reject) => {
       const { name, timezone, wage, startDate, dayCutoff, weekBegins } = newJob;
       console.log('- - - CREATE JOB - - -')
@@ -46,20 +54,30 @@ module.exports = {
       .then(job => resolve(job))
       .catch(err => reject(determineCreateJobError(err)));
     }
-  ),
-  addWeek,
-  getJobById,
-  getWeekWithDate,
-  deleteJob
-};
+  );
+}
 
 function getJobById(jobId, userId) {
   return Job.findOne({ _id: jobId, user: userId })
-  .populate('weeks.data.document');
+  .populate('weeks.data.document')
+  .then(jobNotFoundCheckerFactory(jobId));
 }
 
 function getJobBasicsById(jobId, userId) {
-  return Job.findOne({ _id: jobId, user: userId });
+  return Job.findOne({ _id: jobId, user: userId })
+  .then(jobNotFoundCheckerFactory(jobId));
+}
+
+function jobNotFoundCheckerFactory(jobId) {
+  return function(job) {
+    if (!job) {
+      let err = new Error(`No job found for job id "${jobId}".`);
+      err.status = 400;
+      err.problems = { jobId: true };
+      throw err;
+    }
+    else return job;
+  }
 }
 
 function getEffectiveStartDate(startDate, weekBegins) {
@@ -92,6 +110,7 @@ function addWeek(week, jobId) {
         { new: true }
       )
       .populate('weeks.data.document')
+      .then(jobNotFoundCheckerFactory(jobId))
       .then(result => {console.log(result); resolve(result)})
       .catch(err => {
         // console.log(('=*'.repeat(30) + '\n').repeat(3));
@@ -134,13 +153,32 @@ function deleteJob(jobId, userId) {
         userData = updatedUserData;
         return Job.deleteOne({
           _id: jobId,
-          user: user._id
+          user: userId
         });
       })
       .then(result => resolve(userData))
       .catch(reject);
     }
   );
+}
+
+function updateWage(jobId, updatedWageSchedule, userId) {
+  return new Promise((resolve, reject) => {
+    // also need to update weeks and days
+      // consider update fxn vs. find and manually update
+    Job.findOneAndUpdate(
+      {
+        _id: jobId,
+        user: userId
+      },
+      { $set: { wage: updatedWageSchedule } },
+      { new: true }
+    )
+    .populate('weeks.data.document')
+    .then(jobNotFoundCheckerFactory(jobId))
+    .then(resolve)
+    .catch(reject);
+  });
 }
 
 function determineCreateJobError(err) {

@@ -22,7 +22,7 @@ const summer2 = new Date(2020, 10, 3);
 // console.log(moment(testholio2));
 // console.log(testMoment.diff(moment(testholio2), 'days'));
 
-console.log('---TEST-------------');
+console.log('______________________\n----TEST--------------');
 // let arr = ['test', {test: 'two'}, 4];
 // let obj = {
 //   testing: arr
@@ -60,35 +60,7 @@ console.log('---TEST-------------');
 
 // console.log()
 
-
-// myFunc().then(
-//   result => {
-//     console.log('1st then');
-//     console.log(result);
-//     result += ' dogs';
-//     return result;
-//   }
-// ).then(result2 => {
-//   console.log('2nd then');
-//   console.log(result2);
-//   return result2 + ' cats'
-// }).then(result3 => {
-//   console.log('3rd then');
-//   console.log(result3);
-// }).catch(err => {
-//   console.log('catch');
-//   console.log(err)
-// })
-
-// function myFunc() {
-//   return new Promise(
-//     (resolve, reject) => {
-//       resolve('cats');
-//     }
-//   )
-// }
-
-console.log('* * * \n* * * \n---------------------');
+console.log('* * *');
 // const { getMoment } = require('./utilities');
 // const date = {
 //   "day": 8,
@@ -177,8 +149,10 @@ console.log('* * * \n* * * \n---------------------');
 // console.log(UTCsummer.getTime());
 // console.log(UTCsummer2.getTime());
 
-let now = new Date;
+// let now = new Date;
 
 // console.log(now);
 // console.log(now.valueOf())
 // console.log(now.getTime())
+
+console.log('_______________________\n-----------------------\n');

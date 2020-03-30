@@ -1,10 +1,10 @@
 const router = require('express').Router();
 
 const WeekController = require('../../../controllers/Week');
-const JobConrtoller = require('../../../controllers/Job');
+const JobController = require('../../../controllers/Job');
 const timeController = require('../../../controllers/time');
 
-const { routeErrorHandlerFactory } = require('../utilities');
+const { routeErrorHandlerFactory, checkRequiredProps } = require('../utilities');
 
 // router.use('/weeks', require('./weeks'));
 // router.use('/days', require('./days'));
@@ -83,46 +83,3 @@ router.post(
 );
 
 module.exports = router;
-
-function checkRequiredProps(props, requiredPropNames, res) {
-  let problems = {};
-  let problemMessages = [];
-  requiredPropNames.forEach(name => {
-    checkRequiredProp(props, name, problems, problemMessages, name);
-  });
-  if (problemMessages.length > 0) {
-    return res.status(400).json({
-      message: problemMessages.join(' '),
-      problems
-    });
-  }
-}
-
-function checkRequiredProp(props, propName, problems, problemMessages, propDisplayName) {
-  const dotIndex = propName.indexOf('.');
-  if (dotIndex > -1) {
-    const parentPropName = propName.slice(0, dotIndex);
-    const childPropName = propName.slice(dotIndex + 1);
-    return checkRequiredProp(props[parentPropName], childPropName, problems, problemMessages, propDisplayName);
-  }
-  const prop = props[propName];
-  if (!prop && prop !== 0 && prop !== '') {
-    addProblem(propDisplayName, problems);
-    problemMessages.push('Missing `' + propDisplayName + '`.');
-  }
-}
-
-function addProblem(propDisplayName, problems) {
-  const propDisplayNameLevels = propDisplayName.split('.');
-  let parentProblemLevel = problems;
-  const numberOfLevels = propDisplayNameLevels.length;
-  for (let i = 0; i < numberOfLevels; i++) {
-    let currentLevelName = propDisplayNameLevels[i];
-    if (i === numberOfLevels - 1) {
-      parentProblemLevel[currentLevelName] = true;
-      return;
-    }
-    parentProblemLevel[currentLevelName] = {};
-    parentProblemLevel = parentProblemLevel[currentLevelName];
-  };
-}

@@ -5,7 +5,7 @@ const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fa
 const JobController = require('../../../controllers/Job');
 const UserController = require('../../../controllers/User');
 
-const { routeErrorHandlerFactory } = require('../utilities');
+const { routeErrorHandlerFactory, checkRequiredProps } = require('../utilities');
 
 router.post(
   '/create',
@@ -35,7 +35,7 @@ router.post(
     }
     // console.log(user)
     UserController.checkForJobWithName(name, userId)
-    .then(() => JobController.create(body, userId))
+    .then(() => JobController.create(req.body, userId))
     .then(({ _id }) => UserController.addJob(_id, userId))
     // .then()
     .then(({ jobs }) => res.json({ jobs }))
@@ -51,6 +51,18 @@ router.post(
     .then(result => {
       res.json({success:true,result})
     })
+    .catch(routeErrorHandlerFactory(res));
+  }
+);
+
+router.post(
+  '/update-wage',
+  verifyLogin,
+  (req, res) => {
+    checkRequiredProps(req.body, ['jobId', 'wage'], res);
+    const { jobId, wage } = req.body;
+    JobController.updateWage(jobId, wage, req.user._id)
+    .then(job => res.json(job))
     .catch(routeErrorHandlerFactory(res));
   }
 );
@@ -81,7 +93,6 @@ function cleanJob(job) {
 function cleanWeeks(weeks) {
   let cleanedWeeks = [];
   weeks.forEach(week => {
-    console.log('af wef awfawef')
     let { days, firstDate, lastDate, weekNumber } = week.data.document.data;
     days = cleanDays(days);
     cleanedWeeks.push({ days, firstDate, lastDate, weekNumber });

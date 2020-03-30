@@ -48,9 +48,17 @@ const segmentsSubdocFactory = () => ({
       message: 'Invalid `startTime` and `endTime` combination for at least one segment. `startTime` must be before `endTime`.'
     }, {
       validator: segments => {
+        console.log('VALIDATING SEGMENTS . .')
+        console.log(segments)
         let previousEndTime;
         for (let i = 0; i < segments.length; i++) {
           const { startTime, endTime } = segments[i];
+          console.log('##########')
+          console.log(endTime)
+          console.log(startTime);
+          console.log(previousEndTime)
+          console.log(i)
+          console.log(i > 0 && startTime < previousEndTime)
           if (i > 0 && startTime < previousEndTime) return false;
           previousEndTime = endTime;
         }
