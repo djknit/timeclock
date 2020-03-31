@@ -18,18 +18,14 @@ module.exports = {
 function addSegmentToDay(segment, dayId, weekId, userId) {
   return new Promise(
     (resolve, reject) => {
-      // get week by id
       console.log(weekId);
       console.log(dayId)
       WeekController.getById(weekId, userId)
-      // add missing props to seg
       .then(weekDoc => {
         console.log('@ @ &&&&&&\ni i i i i');
         console.log(weekDoc);
-        segmentsController.addMissingPropsToNewSegment(segment, weekDoc, dayId);
-      // add seg to day
-      console.log('// add seg to day')
-      return WeekController.addSegmentToDay(segment, dayId, weekId, userId);
+        console.log('// add seg to day')
+        return WeekController.addSegmentToDay(segment, dayId, weekId, userId);
       })
       .then(resolve)
       .catch(reject);
@@ -51,21 +47,17 @@ function addSegment(segment, jobId, userId) {
       .then(ids => {
         weekId = ids.weekId;
         dayId = ids.dayId;
-      // get week that matches week id
         return weeksController.findWeekWithId(weekId, job);
       })
-      // add missing props to seg
       .then(weekDoc => {
-        segmentsController.addMissingPropsToNewSegment(segment, weekDoc, dayId);
-      // add seg to day
-      return WeekController.addSegmentToDay(segment, dayId, weekId, userId);
+        return WeekController.addSegmentToDay(segment, dayId, weekId, userId);
       })
       .then(updatedWeekDoc => {
         const weeks = job.weeks;
         for (let i = 0; i < weeks.length; i++) {
-          let weekDoc = weeks[i].data;
-          if (updatedWeekDoc._id === weekDoc.document._id) {
-            weekDoc.document = updatedWeekDoc;
+          let week = weeks[i];
+          if (updatedWeekDoc._id === week.document._id) {
+            week.document = updatedWeekDoc;
             return resolve(job);
           }
         }
@@ -97,7 +89,9 @@ function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
   // return updated job
     .then(_job => {
       job = _job;
-      return weeksController.deleteSegmentsFromWeeksInDateRange(firstDateTime, lastDateTime, job, userId);
+      return weeksController.deleteSegmentsFromWeeksInDateRange(
+        firstDateTime, lastDateTime, job, userId
+      );
     })
     .then(resolve)
     .catch(reject);

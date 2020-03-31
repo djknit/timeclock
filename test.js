@@ -3,7 +3,7 @@ const ccData = require('currency-codes/data');
 
 const moment = require('moment-timezone');
 
-const zone = moment.tz.zone('America/Chicago');
+// const zone = moment.tz.zone('America/Chicago');
 
 // console.log(test)
 
@@ -13,7 +13,7 @@ const zone = moment.tz.zone('America/Chicago');
 
 // const summer = new Date(2020, 9, 31);
 
-const summer2 = new Date(2020, 10, 3);
+// const summer2 = new Date(2020, 10, 3);
 
 // const testholio1 = new Date(2020, 9, 1);
 // const testholio2 = new Date(2020, 9, 4);

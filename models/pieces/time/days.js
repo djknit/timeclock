@@ -25,21 +25,26 @@ const daysSubdocFactory = () => ({
     {
       validator(days) {
         for (let i = 0; i < days.length; i++) {
-          const { startCutoff, endCutoff, segments, timezone, date } = days[i];
+          const { startCutoff, endCutoff, date, timezone } = days[i];
           for (let j = 0; j < segments.length; j++) {
-            const segment = segments[j];
+            const { startTime, endTime } = segments[j];
+            const dayStartTime = getMoment(date, timezone).valueOf() + startCutoff;
+            const dayEndTime = getMoment(date, timezone).add(1, 'days').valueOf() + endCutoff;
             if (
-              segment.dayStartCutoff !== startCutoff ||
-              segment.dayEndCutoff !== endCutoff ||
-              segment.timezone !== timezone ||
-              !areDatesEquivalent(segment.date, date)
-            ) return false;
+              startTime < dayStartTime ||
+              startTime > dayEndTime ||
+              endTime < dayStartTime ||
+              endTime > dayEndTime
+            ) {
+              return false;
+            }
           }
         }
         return true;
       },
-      message: 'Segment data does not match day data for at least one segment on at least one day for this week.'
+      message: 'Invalid `startTime` or `endTime` for at least one segment. Value doesn\'t fall within the day specified.'
     }, {
+      // can't rely on for update
       validator(days) {
         let previousDateTime;
         for (let i = 0; i < days.length; i++) {

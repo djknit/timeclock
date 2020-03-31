@@ -15,18 +15,17 @@ module.exports = {
 
 function create(newWeek, jobId, userId) {
   return new Promise((resolve, reject) => {
-    const {
-      days, firstDate, lastDate, weekNumber, timezone, wage, dayCutoff
-    } = newWeek;
-    if (
-      !days || !firstDate || !lastDate || (!weekNumber && weekNumber !== 0) || !timezone || !wage || (!dayCutoff && dayCutoff !== 0)
-    ) {
+    const { days, firstDate, lastDate, weekNumber } = newWeek;
+    if (!days || !firstDate || !lastDate || (!weekNumber && weekNumber !== 0)) {
       const err = new Error('Missing required data properties.');
       reject(err);
       throw(err);
     }
     Week.create({
-      data: newWeek,
+      days,
+      firstDate,
+      lastDate,
+      weekNumber,
       job: jobId,
       user: userId
     })
@@ -48,16 +47,15 @@ function addSegmentToDay(segment, dayId, weekId, userId) {
     // make sure day belongs to week
     // * * * make sure segment falls within day and does not overlap with existing segments * * *
     // add segment to day and return: ? -> week
-    // all of the above should be handled by 1 `findOneAndUpdate` call; this is due partially to validation on model.
     Week.findOneAndUpdate(
       {
         _id: weekId,
         user: userId,
-        'data.days._id': dayId
+        'days._id': dayId
       },
       {
         $push: {
-          'data.days.$.segments': {
+          'days.$.segments': {
             $each: [segment],
             $sort: { startTime: 1 }
           }
@@ -76,11 +74,11 @@ function removeSegment(segmentId, dayId, weekId, userId) {
       {
         _id: weekId,
         user: userId,
-        'data.days._id': dayId
+        'days._id': dayId
       },
       {
         $pull: {
-          'data.days.$.segments': {
+          'days.$.segments': {
             _id: segmentId
           }
         }
@@ -117,13 +115,13 @@ function removeSegmentsFromDatesWithIds(dateIds, weekId, userId) {
       {
         _id: weekId,
         user: userId,
-        'data.days._id': {
+        'days._id': {
           $in: dateIds
         }
       },
       {
         $set: {
-          'data.days.$.segments': []
+          'days.$.segments': []
         }
       },
       { new: true }

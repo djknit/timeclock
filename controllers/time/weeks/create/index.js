@@ -32,21 +32,16 @@ function createWeekArrayEntryByDate(givenDate, job) {
         firstDate,
         lastDate,
         days: daysController.createDaysForDates(dates, job),
-        weekNumber: determineWeekNumber(firstDate, job.effectiveStartDate),
-        timezone: job.timezone,
-        wage: job.wage,
-        dayCutoff: job.dayCutoff
+        weekNumber: determineWeekNumber(firstDate, job.effectiveStartDate)
       };
       WeekController.create(newWeekData, job._id, job.user)
       .then(weekDoc => {
         console.log('#*#*#*#* - -')
         // console.log(weekDoc)
         return resolve({
-          data: {
-            document: weekDoc,
-            firstDateUtcTime: getUtcMoment(firstDate).valueOf(),
-            lastDateUtcTime: getUtcMoment(lastDate).valueOf()
-          }
+          document: weekDoc,
+          firstDateUtcTime: getUtcMoment(firstDate).valueOf(),
+          lastDateUtcTime: getUtcMoment(lastDate).valueOf()
         });
       })
       .catch(reject);

@@ -10,8 +10,7 @@ const {
 } = require('../../utilities');
 
 module.exports = {
-  getDayAndWeekIdsForNewSegment,
-  addMissingPropsToNewSegment
+  getDayAndWeekIdsForNewSegment
 };
 
 function getDayAndWeekIdsForNewSegment(segment, job) {
@@ -22,7 +21,7 @@ function getDayAndWeekIdsForNewSegment(segment, job) {
       JobController.getWeekWithDate(date, job)
       .then(weekDoc => {
         weekId = weekDoc._id;
-        return daysController.findDayForDate(date, weekDoc.data.days);
+        return daysController.findDayForDate(date, weekDoc.days);
       })
       .then(day => {
         return resolve({
@@ -41,16 +40,6 @@ function getDayAndWeekIdsForNewSegment(segment, job) {
       });
     }
   );
-}
-
-function addMissingPropsToNewSegment(segment, weekDoc, dayId) {
-  const day = daysController.findDayWithId(dayId, weekDoc.data.days);
-  const { startCutoff, endCutoff, timezone, date } = day;
-  segment.dayStartCutoff = startCutoff;
-  segment.dayEndCutoff = endCutoff;
-  segment.timezone = timezone;
-  segment.date = date;
-  return segment;
 }
 
 function getDateForNewSegment(segment, job) {
