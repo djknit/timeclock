@@ -37,6 +37,7 @@ const weeksSubdocFactory = () => ({
     }, {
       validator: weeks => new Promise(
         (resolve, reject) => {
+          console.log('weeks validator 2')
           let numCompleted = 0;
           for (let i = 0; i < weeks.length; i++) {
             const week = weeks[i];
@@ -75,6 +76,7 @@ const weeksSubdocFactory = () => ({
       }
     }, {
       validator(weeks) {
+          console.log('weeks validator 3')
         for (let i = 0; i < weeks.length; i++) {
           const week = weeks[i];
           if (week.firstDateUtcTime > week.lastDateUtcTime) {

@@ -27,32 +27,36 @@ function create(newJob, userId) {
         reject(error);
         throw(error);
       }
-      newJob.user = userId;
-      newJob.timezone = [{ value: timezone }];
-      newJob.dayCutoff = 
-        dayCutoff ?
-        [{ value: dayCutoff }] :
-        [{}];
-      newJob.weekBegins = 
-        weekBegins ?
-        [{ value: weekBegins }] :
-        [{}];
-      newJob.effectiveStartDate = getEffectiveStartDate(startDate, weekBegins || 0);
-      if (wage) {
-        newJob.wage = [{ value: wage }];
-      }
-      else newJob.wage = [{ value: null }];
       let jobId;
-      Job.create(newJob)
+      job = {
+        user: userId,
+        timezone: [{ value: timezone }],
+        dayCutoff: dayCutoff ?
+          [{ value: dayCutoff }] :
+          [{}],
+        weekBegins: weekBegins ?
+          [{ value: weekBegins }] :
+          [{}],
+        effectiveStartDate: getEffectiveStartDate(startDate, weekBegins || 0),
+        wage: [{ value: wage || null }],
+        weeks: []
+      };
+      console.log(job)
+      Job.create(job)
       .then(result => {
         console.log('new job -------------')
-        // console.log('new job created\n----------------------------------------')
+        console.log('new job created\n----------------------------------------')
         jobId = result._id;
         return weeksController.createWeekArrayEntryByDate(result.startDate, result);
       })
-      .then(firstWeek => addWeek(firstWeek, jobId))
-      .then(job => resolve(job))
-      .catch(err => reject(determineCreateJobError(err)));
+      .then(firstWeek => {
+        console.log('then 2')
+        return resolve(addWeek(firstWeek, jobId));
+      })
+      .catch(err => {
+        console.log('catch'); console.log(err);
+        reject(determineCreateJobError(err))
+      });
     }
   );
 }
