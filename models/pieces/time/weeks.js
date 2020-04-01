@@ -38,8 +38,10 @@ const weeksSubdocFactory = () => ({
       validator: weeks => new Promise(
         (resolve, reject) => {
           console.log('weeks validator 2')
+          const numWeeks = weeks.length;
+          if (numWeeks === 0) return resolve(true); 
           let numCompleted = 0;
-          for (let i = 0; i < weeks.length; i++) {
+          for (let i = 0; i < numWeeks; i++) {
             const week = weeks[i];
             Week.findById(week.document)
             .then(weekDoc => {
@@ -64,7 +66,7 @@ const weeksSubdocFactory = () => ({
                   return reject(new Error(errMsg2));
                 }
               }
-              if (++numCompleted === weeks.length) {
+              if (++numCompleted === numWeeks) {
                 return resolve(true);
               }
             });

@@ -24,9 +24,8 @@ const daysSubdocFactory = () => ({
   validate: [
     {
       validator(days) {
-          console.log('days validator 1')
-          for (let i = 0; i < days.length; i++) {
-          const { startCutoff, endCutoff, date, timezone } = days[i];
+        for (let i = 0; i < days.length; i++) {
+          const { startCutoff, endCutoff, date, timezone, segments } = days[i];
           for (let j = 0; j < segments.length; j++) {
             const { startTime, endTime } = segments[j];
             const dayStartTime = getMoment(date, timezone).valueOf() + startCutoff;
@@ -47,8 +46,7 @@ const daysSubdocFactory = () => ({
     }, {
       // can't rely on for update
       validator(days) {
-          console.log('days validator 2')
-          let previousDateTime;
+        let previousDateTime;
         for (let i = 0; i < days.length; i++) {
           const dateTime = getDateTime(days[i].date);
           if (i > 0 && dateTime <= previousDateTime) return false;

@@ -29,11 +29,13 @@ function create(newJob, userId) {
       }
       let jobId;
       job = {
+        name,
         user: userId,
         timezone: [{ value: timezone }],
         dayCutoff: dayCutoff ?
           [{ value: dayCutoff }] :
           [{}],
+        startDate,
         weekBegins: weekBegins ?
           [{ value: weekBegins }] :
           [{}],
