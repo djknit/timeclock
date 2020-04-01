@@ -26,10 +26,10 @@ const weeksSubdocFactory = () => ({
       validator(weeks) {
         let previousLastDateTime;
         for (let i = 0; i < weeks.length; i++) {
-          if (i > 0 && weeks[i].data.firstDateUtcTime <= previousLastDateTime) {
+          if (i > 0 && weeks[i].firstDateUtcTime <= previousLastDateTime) {
             return false;
           }
-          previousLastDateTime = weeks[i].data.lastDateUtcTime;
+          previousLastDateTime = weeks[i].lastDateUtcTime;
         }
         return true;
       },
@@ -37,7 +37,6 @@ const weeksSubdocFactory = () => ({
     }, {
       validator: weeks => new Promise(
         (resolve, reject) => {
-          console.log('weeks validator 2')
           const numWeeks = weeks.length;
           if (numWeeks === 0) return resolve(true); 
           let numCompleted = 0;
@@ -62,7 +61,7 @@ const weeksSubdocFactory = () => ({
               }
               for (let j = 0; j < days.length; j++) {
                 const dayUtcTime = getUtcMoment(days[j].date).valueOf();
-                if (dayUtcTime < firstDateTime || dayUtcTime > lastDateTime) {
+                if (dayUtcTime < firstDateUtcTime || dayUtcTime > lastDateUtcTime) {
                   return reject(new Error(errMsg2));
                 }
               }
@@ -78,7 +77,6 @@ const weeksSubdocFactory = () => ({
       }
     }, {
       validator(weeks) {
-          console.log('weeks validator 3')
         for (let i = 0; i < weeks.length; i++) {
           const week = weeks[i];
           if (week.firstDateUtcTime > week.lastDateUtcTime) {
