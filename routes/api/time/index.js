@@ -4,7 +4,9 @@ const WeekController = require('../../../controllers/Week');
 const JobController = require('../../../controllers/Job');
 const timeController = require('../../../controllers/time');
 
-const { routeErrorHandlerFactory, checkRequiredProps } = require('../utilities');
+const { routeErrorHandlerFactory, checkRequiredProps, resCleaners } = require('../utilities');
+
+const { cleanJob } = resCleaners;
 
 // router.use('/weeks', require('./weeks'));
 // router.use('/days', require('./days'));

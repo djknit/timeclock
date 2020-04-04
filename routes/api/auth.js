@@ -6,7 +6,9 @@ const UserController = require('../../controllers/User');
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
 
-const { routeErrorHandlerFactory } = require('./utilities');
+const { routeErrorHandlerFactory, resCleaners } = require('./utilities');
+
+const { cleanUser } = resCleaners;
 
 router.post(
   '/create-account',
@@ -206,16 +208,3 @@ router.post(
 );
 
 module.exports = router;
-
-function cleanUser(user) {
-  const { username, email, jobs } = user;
-  return {
-    username,
-    email,
-    jobs: jobs.map(job => ({
-      name: job.name,
-      _id: job._id,
-      startDate: job.startDate
-    }))
-  };
-}

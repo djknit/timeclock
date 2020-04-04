@@ -28,7 +28,7 @@ function create(newJob, userId) {
         throw(error);
       }
       let jobId;
-      job = {
+      const job = {
         name,
         user: userId,
         timezone: [{ value: timezone }],
@@ -43,29 +43,22 @@ function create(newJob, userId) {
         wage: [{ value: wage || null }],
         weeks: []
       };
-      console.log(job)
       Job.create(job)
       .then(result => {
-        console.log('new job -------------')
-        console.log('new job created\n----------------------------------------')
         jobId = result._id;
         return weeksController.createWeekArrayEntryByDate(result.startDate, result);
       })
       .then(firstWeek => {
-        console.log('then 2')
         return resolve(addWeek(firstWeek, jobId));
       })
-      .catch(err => {
-        console.log('catch'); console.log(err);
-        reject(determineCreateJobError(err))
-      });
+      .catch(err => reject(determineCreateJobError(err)));
     }
   );
 }
 
 function getJobById(jobId, userId) {
   return Job.findOne({ _id: jobId, user: userId })
-  .populate('weeks.data.document')
+  .populate('weeks.document')
   .then(jobNotFoundCheckerFactory(jobId));
 }
 
@@ -115,9 +108,9 @@ function addWeek(week, jobId) {
         },
         { new: true }
       )
-      .populate('weeks.data.document')
+      .populate('weeks.document')
       .then(jobNotFoundCheckerFactory(jobId))
-      .then(result => {console.log(result); resolve(result)})
+      .then(job => {console.log(job); resolve(job)})
       .catch(err => {
         // console.log(('=*'.repeat(30) + '\n').repeat(3));
         // console.error(err);

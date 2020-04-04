@@ -140,10 +140,7 @@ module.exports = {
         },
         { new: true }
       )
-      .populate({
-        path: 'jobs',
-        populate: 'weeks.data.document'
-      })
+      .populate('jobs')
       .then(resolve)
       .catch(reject);
     }
@@ -170,7 +167,7 @@ module.exports = {
       )
       .populate({
         path: 'jobs',
-        populate: 'weeks.data.document'
+        populate: 'weeks.document'
       })
       .then(resolve)
       .catch(reject);
