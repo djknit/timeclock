@@ -10,7 +10,8 @@ const {
 } = require('../../utilities');
 
 module.exports = {
-  getDayAndWeekIdsForNewSegment
+  getDayAndWeekIdsForNewSegment,
+  isSegmentValid
 };
 
 function getDayAndWeekIdsForNewSegment(segment, job) {
@@ -74,4 +75,9 @@ function getDateForTime(time, job, isStartTime) {
     }
   }
   throw new Error('Failed to get date for time.');
+}
+
+function isSegmentValid(segment) {
+  const { startTime, endTime } = segment;
+  return (startTime && endTime && startTime < endTime) || false;
 }

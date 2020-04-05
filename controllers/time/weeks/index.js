@@ -30,7 +30,7 @@ module.exports = {
     (resolve, reject) => {
       const { weeks } = job;
       for (let i = 0; i < weeks.length; i++) {
-        const { document } = weeks[i].data;
+        const { document } = weeks[i];
         if (document._id === weekId) {
           return resolve(document);
         }
@@ -65,7 +65,7 @@ function deleteSegmentsFromWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, j
   function _deleteSegsFromAffectedWeek(i) {
     const weekDoc = affectedWeeks[i].document;
     if (i === 0 || i === affectedWeeks.length - 1) {
-      const idsOfAffectedDays = daysController.getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, weekDoc.data.days);
+      const idsOfAffectedDays = daysController.getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, weekDoc.days);
       return WeekController.removeSegmentsFromDatesWithIds(idsOfAffectedDays, weekDoc._id, userId);
     }
     return WeekController.removeAllSegments(week._id, userId);

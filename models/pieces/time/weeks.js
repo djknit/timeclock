@@ -52,7 +52,7 @@ const weeksSubdocFactory = () => ({
                 docFirstDateUtcTime !== firstDateUtcTime ||
                 docLastDateUtcTime !== lastDateUtcTime
               ) {
-                return reject(new Error('Invalid week data. First date and/or last date in week document data doesn\'t match week array entry UTC date time.'));
+                return reject(new Error('Invalid week data. First date and/or last date in week document doesn\'t match week array entry UTC date time.'));
               }
               const errMsg2 = 'Invalid day(s). Week is missing day(s) and/or contains day(s) that do not fall within its time range.';
               const expectedNumberOfDays = getMoment(lastDate).diff(getMoment(firstDate), 'days') + 1;

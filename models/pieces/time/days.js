@@ -24,6 +24,7 @@ const daysSubdocFactory = () => ({
   validate: [
     {
       validator(days) {
+        console.log('DAYS VALIDATOR 1')
         for (let i = 0; i < days.length; i++) {
           const { startCutoff, endCutoff, date, timezone, segments } = days[i];
           for (let j = 0; j < segments.length; j++) {

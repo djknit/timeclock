@@ -24,7 +24,6 @@ router.post(
     timeController.addSegmentToDay(segment, dayId, weekId, req.user._id)
     .then(result => {
       res.json({
-        frick: 'yeah',
         week: result
       });
     })

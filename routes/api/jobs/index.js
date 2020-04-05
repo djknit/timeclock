@@ -16,7 +16,7 @@ router.post(
     const userId = req.user._id;
     checkRequiredProps(req.body, ['name', 'timezone', 'startDate'], res);
     let newJob;
-    UserController.checkForJobWithName(name, userId)
+    UserController.checkForJobWithName(req.body.name, userId)
     .then(() => JobController.create(req.body, userId))
     .then(job => {
       newJob = job;

@@ -43,10 +43,6 @@ function getById(weekId, userId) {
 
 function addSegmentToDay(segment, dayId, weekId, userId) {
   return new Promise((resolve, reject) => {
-    // make sure week belongs to user
-    // make sure day belongs to week
-    // * * * make sure segment falls within day and does not overlap with existing segments * * *
-    // add segment to day and return: ? -> week
     Week.findOneAndUpdate(
       {
         _id: weekId,
@@ -99,7 +95,7 @@ function removeAllSegments(weekId, userId) {
       },
       {
         $set: {
-          'data.days.segments': []
+          'days.segments': []
         }
       },
       { new: true }
