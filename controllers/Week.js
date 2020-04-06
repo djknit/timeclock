@@ -9,7 +9,7 @@ module.exports = {
   addSegmentToDay,
   removeSegment,
   removeAllSegments,
-  removeSegmentsFromDatesWithIds,
+  removeSegmentsFromDaysWithIds,
   deleteWeeks
 }
 
@@ -43,7 +43,6 @@ function getById(weekId, userId) {
 
 function addSegmentToDay(segment, dayId, weekId, userId) {
   return new Promise((resolve, reject) => {
-    console.log('addSegmentToDay <><><>')
     Week.findOneAndUpdate(
       {
         _id: weekId,
@@ -96,7 +95,7 @@ function removeAllSegments(weekId, userId) {
       },
       {
         $set: {
-          'days.segments': []
+          'days.$[].segments': []
         }
       },
       { new: true }
@@ -106,7 +105,7 @@ function removeAllSegments(weekId, userId) {
   });
 }
 
-function removeSegmentsFromDatesWithIds(dateIds, weekId, userId) {
+function removeSegmentsFromDaysWithIds(dateIds, weekId, userId) {
   return new Promise((resolve, reject) => {
     Week.findOneAndUpdate(
       {

@@ -47,7 +47,7 @@ router.post(
     checkRequiredProps(req.body, ['segmentId', 'weekId', 'dayId']);
     const { segmentId, weekId, dayId } = req.body;
     WeekController.removeSegment(segmentId, dayId, weekId, req.user._id)
-    .then(result => res.json(result))
+    .then(week => res.json({ week }))
     .catch(routeErrorHandlerFactory(res));
   }
 );

@@ -75,7 +75,7 @@ function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
     const lastDateTime = getUtcMoment(lastDate).valueOf();
     if (firstDateTime > lastDateTime) {
       let err = new Error('Invalid date range; `firstDate` is later than `lastDate`.');
-      err.status = 400;
+      err.status = 422;
       err.problems = {
         firstDate: true,
         lastDate: true
@@ -100,7 +100,19 @@ function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
 
 function deleteSegmentsForDates(dates, jobId, userId) {
   return new Promise((resolve, reject) => {
-    dates.forEach();
+    JobController.getJobById(jobId, userId)
+    .then(job => {
+      const { weeks } = job;
+      let affectedWeeks = [];
+      for (let i = 0; i < dates.length; i++) {
+        const date = dates[i];
+        const week = weeksController.findWeekWithDate(date, weeks);
+        if (week) {
+          
+        }
+      }
+    })
+    .catch(reject);
   });
 }
 

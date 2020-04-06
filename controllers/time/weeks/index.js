@@ -66,7 +66,7 @@ function deleteSegmentsFromWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, j
     const weekDoc = affectedWeeks[i].document;
     if (i === 0 || i === affectedWeeks.length - 1) {
       const idsOfAffectedDays = daysController.getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, weekDoc.days);
-      return WeekController.removeSegmentsFromDatesWithIds(idsOfAffectedDays, weekDoc._id, userId);
+      return WeekController.removeSegmentsFromDaysWithIds(idsOfAffectedDays, weekDoc._id, userId);
     }
     return WeekController.removeAllSegments(week._id, userId);
   }
@@ -77,16 +77,6 @@ function findWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, weeksArray) {
   .filter(arrayEntry => {
     const weekFirstDateTime = arrayEntry.firstDateUtcTime;
     const weekLastDateTime = arrayEntry.lastDateUtcTime;
-    // console.log('\nFINDING WEEKS IN DATE RANGE ---\nrange:')
-    // console.log(firstDateUtcTime)
-    // console.log(lastDateUtcTime)
-    // console.log('\nweek:')
-    // console.log(weekFirstDateTime)
-    // console.log(weekLastDateTime)
-    // console.log('\nconclusion:')
-    // console.log((firstDateUtcTime <= weekFirstDateTime && weekFirstDateTime <= lastDateUtcTime) ||
-    // (firstDateUtcTime <= weekLastDateTime && weekLastDateTime <= lastDateUtcTime) ||
-    // (weekFirstDateTime <= firstDateUtcTime && firstDateUtcTime <= weekLastDateTime))
     return (
       // is any part of the week within the date range provided?
         // if so then either the first or last days of week (or both) are within date range OR the entire date range is contained within week in which case both the first and last days of date range must fall in week
