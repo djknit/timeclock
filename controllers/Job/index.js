@@ -6,7 +6,6 @@ const WeekController = require('../Week');
 const UserController = require('../User');
 const weeksController = require('../time/weeks');
 
-const { convertMomentToMyDate, getFirstDayOfWeekForDate, getMoment } = require('../../utilities');
 const { jobNotFoundCheckerFactory } = require('./utilities');
 const { getJobById, getJobBasicsById } = require('./find');
 
@@ -21,8 +20,6 @@ module.exports = {
   deleteJob,
   updateWage
 };
-
-
 
 function getWeekWithDate(date, job) {
   return new Promise(

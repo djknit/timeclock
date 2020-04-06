@@ -22,11 +22,7 @@ router.post(
     checkRequiredProps(req.body, ['segment.startTime', 'segment.endTime'], res);
     const { segment, dayId, weekId } = req.body;
     timeController.addSegmentToDay(segment, dayId, weekId, req.user._id)
-    .then(result => {
-      res.json({
-        week: result
-      });
-    })
+    .then(result => res.json({ week: result }))
     .catch(routeErrorHandlerFactory(res));
   }
 );
@@ -39,9 +35,7 @@ router.post(
     checkRequiredProps(req.body, ['segment.startTime', 'segment.endTime'], res);
     const { segment, jobId } = req.body;
     timeController.addSegment(segment, jobId, req.user._id)
-    .then(result => {
-      res.json({ job: result })
-    })
+    .then(result => res.json({ job: result }))
     .catch(routeErrorHandlerFactory(res));
   }
 );
@@ -53,9 +47,7 @@ router.post(
     checkRequiredProps(req.body, ['segmentId', 'weekId', 'dayId']);
     const { segmentId, weekId, dayId } = req.body;
     WeekController.removeSegment(segmentId, dayId, weekId, req.user._id)
-    .then(result => {
-      return res.json(result);
-    })
+    .then(result => res.json(result))
     .catch(routeErrorHandlerFactory(res));
   }
 );

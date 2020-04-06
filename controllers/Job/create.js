@@ -4,7 +4,7 @@ const weeksController = require('../time/weeks');
 
 const { addWeek } = require('./addWeek');
 
-const { getMoment, convertMomentToMyDate } = require('../../utilities');
+const { getMoment, convertMomentToMyDate } = require('./utilities');
 
 module.exports = {
   create

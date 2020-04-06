@@ -20,7 +20,7 @@ module.exports = {
     const dateUtcTime = getUtcMoment(date).valueOf();
     for (let i = 0; i < weeksArray.length; i++) {
       const { firstDateUtcTime, lastDateUtcTime, document } = weeksArray[i];
-      if (dateUtcTime >= firstDateUtcTime && dateUtcTime <= lastDateUtcTime) {
+      if (firstDateUtcTime <= dateUtcTime && dateUtcTime <= lastDateUtcTime) {
         return document;
       }
     }

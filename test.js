@@ -23,6 +23,16 @@ const moment = require('moment-timezone');
 // console.log(testMoment.diff(moment(testholio2), 'days'));
 
 console.log('______________________\n----TEST--------------');
+// const dayDate = {
+//   date: 29,
+//   year: 2020,
+//   month: 2
+// };
+// const dayStartTime = moment.tz(dayDate, 'America/Chicago').valueOf();
+// const dayEndTime = moment.tz(dayDate, 'America/Chicago').add(1, 'days').valueOf();
+// console.log(dayStartTime);
+// console.log(dayEndTime);
+
 // let arr = ['test', {test: 'two'}, 4];
 // let obj = {
 //   testing: arr

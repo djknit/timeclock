@@ -14,6 +14,7 @@ const daySchema = new Schema({
   startCutoff: dayCutoffSubdocFactory(false),
   endCutoff: dayCutoffSubdocFactory(false),
   segments: segmentsSubdocFactory(),
+  startTimezone: timezoneSubdocFactory(),
   timezone: timezoneSubdocFactory(),
   wage: wageSubdocFactory(),
   date: dateSubdocFactory()
@@ -26,10 +27,10 @@ const daysSubdocFactory = () => ({
       validator(days) {
         console.log('DAYS VALIDATOR 1')
         for (let i = 0; i < days.length; i++) {
-          const { startCutoff, endCutoff, date, timezone, segments } = days[i];
+          const { startCutoff, endCutoff, date, startTimezone, timezone, segments } = days[i];
           for (let j = 0; j < segments.length; j++) {
             const { startTime, endTime } = segments[j];
-            const dayStartTime = getMoment(date, timezone).valueOf() + startCutoff;
+            const dayStartTime = getMoment(date, startTimezone).valueOf() + startCutoff;
             const dayEndTime = getMoment(date, timezone).add(1, 'days').valueOf() + endCutoff;
             if (
               startTime < dayStartTime ||

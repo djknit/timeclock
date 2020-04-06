@@ -43,6 +43,7 @@ function getById(weekId, userId) {
 
 function addSegmentToDay(segment, dayId, weekId, userId) {
   return new Promise((resolve, reject) => {
+    console.log('addSegmentToDay <><><>')
     Week.findOneAndUpdate(
       {
         _id: weekId,

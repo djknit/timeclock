@@ -11,7 +11,8 @@ const {
 
 module.exports = {
   getDayAndWeekIdsForNewSegment,
-  isSegmentValid
+  isSegmentValid,
+  doesNewSegOverlapExistingSegs
 };
 
 function getDayAndWeekIdsForNewSegment(segment, job) {
@@ -30,26 +31,24 @@ function getDayAndWeekIdsForNewSegment(segment, job) {
           dayId: day._id
         });
       })
-      .catch(err => {
-        err.problems = {
-          segment: {
-            startTime: true,
-            endTime: true
-          }
-        };
-        return reject(err);
-      });
+      .catch(reject);
     }
   );
 }
 
 function getDateForNewSegment(segment, job) {
   const { startTime, endTime } = segment;
-  const startTimeDate = getDateForTime(startTime, job);
+  const startTimeDate = getDateForTime(startTime, job, true);
   const endTimeDate = getDateForTime(endTime, job);
   if (!areDatesEquivalent(startTimeDate, endTimeDate)) {
     let err = new Error('Segment `startTime` and `endTime` do not fall on same date.');
-    err.status = 400;
+    err.problems = {
+      segment: {
+        startTime: true,
+        endTime: true
+      }
+    };
+    err.status = 422;
     throw err;
   }
   else return startTimeDate;
@@ -58,15 +57,17 @@ function getDateForNewSegment(segment, job) {
 function getDateForTime(time, job, isStartTime) {
   let guessMoment;
   let guessDate;
-  const guessDayOffsets = [0, 1, -1, 2, -2]
+  const guessDayOffsets = [0, 1, -1, 2, -2];
   for (let i = 0; i < guessDayOffsets.length; i++) {
     guessMoment = moment.utc(time).add(guessDayOffsets[i], 'days');
     guessDate = convertMomentToMyDate(guessMoment);
     const precedingDate = convertMomentToMyDate(getMoment(guessDate).subtract(1, 'days'));
     const dayStartCutoff = getMostRecentScheduleValueForDate(precedingDate, job.dayCutoff);
     const dayEndCutoff = getMostRecentScheduleValueForDate(guessDate, job.dayCutoff);
-    const guessDateStartTime = getMoment(date, job.timezone).valueOf() + dayStartCutoff;
-    const guessDateEndTime = getMoment(date, job.timezone).add(1, 'days').valueOf() + dayEndCutoff;
+    const dayStartTimezone = getMostRecentScheduleValueForDate(precedingDate, job.timezone);
+    const dayEndTimezone = getMostRecentScheduleValueForDate(guessDate, job.timezone);
+    const guessDateStartTime = getMoment(guessDate, dayStartTimezone).valueOf() + dayStartCutoff;
+    const guessDateEndTime = getMoment(guessDate, dayEndTimezone).add(1, 'days').valueOf() + dayEndCutoff;
     const isGuessCorrect = isStartTime ?
       (guessDateStartTime <= time && time < guessDateEndTime) :
       (guessDateStartTime < time && time <= guessDateEndTime);
@@ -80,4 +81,23 @@ function getDateForTime(time, job, isStartTime) {
 function isSegmentValid(segment) {
   const { startTime, endTime } = segment;
   return (startTime && endTime && startTime < endTime) || false;
+}
+
+function doesNewSegOverlapExistingSegs(segments, newSegment) {
+  const newSegStartTime = newSegment.startTime;
+  const newSegEndTime = newSegment.endTime;
+  for (let i = 0; i < segments.length; i++) {
+    const { startTime, endTime } = segments[i];
+    if (
+      (startTime <= newSegStartTime && newSegStartTime < endTime) ||
+      (startTime < newSegEndTime && newSegEndTime <= endTime) ||
+      (newSegStartTime <= startTime && startTime < newSegEndTime)
+    ) {
+      return {
+        startTime: true,
+        endTime: true
+      };
+    }
+  }
+  return false;
 }

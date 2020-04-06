@@ -1,5 +1,7 @@
 const Job = require('../../models/Job');
 
+const { jobNotFoundCheckerFactory } = require('./utilities');
+
 module.exports = {
   getJobById,
   getJobBasicsById
