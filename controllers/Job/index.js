@@ -10,31 +10,16 @@ const { jobNotFoundCheckerFactory } = require('./utilities');
 const { getJobById, getJobBasicsById } = require('./find');
 
 const { create } = require('./create');
-const { addWeek } = require('./addWeek');
+const { addWeek, createAndAddWeekWithDate } = require('./addWeek');
 
 module.exports = {
   create,
   addWeek,
   getJobById,
-  getWeekWithDate,
   deleteJob,
-  updateWage
+  updateWage,
+  createAndAddWeekWithDate
 };
-
-function getWeekWithDate(date, job) {
-  return new Promise(
-    (resolve, reject) => {
-      const weekDoc = weeksController.findWeekWithDate(date, job.weeks);
-      if (weekDoc) return resolve(weekDoc);
-      else {
-        weeksController.createWeekArrayEntryByDate(date, job)
-        .then(weekArrayEntry => addWeek(weekArrayEntry, job._id))
-        .then(result => resolve(weekArrayEntry.document))
-        .catch(reject);
-      }
-    }
-  );
-}
 
 function deleteJob(jobId, userId) {
   return new Promise(

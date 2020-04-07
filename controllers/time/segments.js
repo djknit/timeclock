@@ -4,37 +4,17 @@ const moment = require('moment-timezone');
 
 const JobController = require('../Job');
 const daysController = require('../time/days');
+const weeksController = require('../time/weeks');
 
 const {
   getMostRecentScheduleValueForDate, convertMomentToMyDate, getMoment, areDatesEquivalent
 } = require('../../utilities');
 
 module.exports = {
-  getDayAndWeekIdsForNewSegment,
   isSegmentValid,
-  doesNewSegOverlapExistingSegs
+  doesNewSegOverlapExistingSegs,
+  getDateForNewSegment
 };
-
-function getDayAndWeekIdsForNewSegment(segment, job) {
-  return new Promise(
-    (resolve, reject) => {
-      const date = getDateForNewSegment(segment, job);
-      let weekId;
-      JobController.getWeekWithDate(date, job)
-      .then(weekDoc => {
-        weekId = weekDoc._id;
-        return daysController.findDayForDate(date, weekDoc.days);
-      })
-      .then(day => {
-        return resolve({
-          weekId,
-          dayId: day._id
-        });
-      })
-      .catch(reject);
-    }
-  );
-}
 
 function getDateForNewSegment(segment, job) {
   const { startTime, endTime } = segment;

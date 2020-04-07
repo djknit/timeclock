@@ -19,14 +19,7 @@ module.exports = {
 function addSegmentToDay(segment, dayId, weekId, userId) {
   return new Promise(
     (resolve, reject) => {
-      const invalidSegMsg = 'Invalid segment. Segments must have both a `startTime` and `endTime`, and the `startTime` must be less than the `endTime`.';
-      const invalidSegProblemsObj = {
-        segment: {
-          startTime: true,
-          endTime: true
-        }
-      };
-      checkForFailure(!segmentsController.isSegmentValid(segment), invalidSegMsg, invalidSegProblemsObj, 422);
+      ensureSegmentIsValid(segment);
       WeekController.getById(weekId, userId)
       .then(weekDoc => ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc))
       .then(() => WeekController.addSegmentToDay(segment, dayId, weekId, userId))
@@ -39,20 +32,21 @@ function addSegmentToDay(segment, dayId, weekId, userId) {
 function addSegment(segment, jobId, userId) {
   return new Promise(
     (resolve, reject) => {
-      let weekId, dayId, job;
+      ensureSegmentIsValid(segment);
+      let date, weekDoc, job;
       JobController.getJobById(jobId, userId)
       .then(_job => {
+        date = segmentsController.getDateForNewSegment(segment, _job);
+        weekDoc = weeksController.findWeekWithDate(date, _job.weeks);
+        return weekDoc ? _job : JobController.createAndAddWeekWithDate(date, _job);
+      })
+      .then(_job => {
         job = _job;
-        return segmentsController.getDayAndWeekIdsForNewSegment(segment, job);
+        if (!weekDoc) weekDoc = weeksController.findWeekWithDate(date, job.weeks);
+        day = daysController.findDayForDate(date, weekDoc.days);
+        ensureNewSegDoesntOverlap(segment, day);
+        return WeekController.addSegmentToDay(segment, day._id, weekDoc._id, userId);
       })
-      .then(ids => {
-        weekId = ids.weekId;
-        dayId = ids.dayId;
-        return weeksController.findWeekWithId(weekId, job);
-      })
-      // next step is mostly redundant but isn't expensive so it might as well stay since it's not 100% redundant.
-      .then(weekDoc => ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc))
-      .then(() => WeekController.addSegmentToDay(segment, dayId, weekId, userId))
       .then(updatedWeekDoc => {
         const weeks = job.weeks;
         for (let i = 0; i < weeks.length; i++) {
@@ -116,12 +110,19 @@ function deleteSegmentsForDates(dates, jobId, userId) {
   });
 }
 
+function ensureSegmentIsValid(segment) {
+  const invalidSegMsg = 'Invalid segment. Segments must have both a `startTime` and `endTime`, and the `startTime` must be less than the `endTime`.';
+  const invalidSegProblemsObj = {
+    segment: {
+      startTime: true,
+      endTime: true
+    }
+  };
+  checkForFailure(!segmentsController.isSegmentValid(segment), invalidSegMsg, invalidSegProblemsObj, 422);
+}
+
 function ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc) {
   checkForFailure(!weekDoc, 'Week not found.', { weekId: true }, 422);
-  console.log('mmmmmmmmmmmmmmmmmmmm')
-  console.log(dayId);
-  console.log('mmmmmmmmmmmmmmmmmmmm')
-  console.log(weekDoc)
   const day = daysController.findDayWithId(dayId, weekDoc.days);
   checkForFailure(!day, 'Day not found in the week specified.', { dayId: true }, 422);
   const isSegmentInDay = daysController.isSegmentInDay(day, segment);
@@ -133,6 +134,10 @@ function ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc) {
     }
   };
   checkForFailure(!isSegmentInDay, segNotInDayMsg, segNotInDayProblemsObj, 422);
+  ensureNewSegDoesntOverlap(segment, day);
+}
+
+function ensureNewSegDoesntOverlap(segment, day) {
   const doesNewSegOverlapExistingSegs = segmentsController.doesNewSegOverlapExistingSegs(day.segments, segment);
   const segOverlapMsg = 'Segment could not be added because it overlaps with one or more existing segment(s).';
   const segOverlapProblemsObj = {
@@ -142,5 +147,4 @@ function ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc) {
     }
   };
   checkForFailure(doesNewSegOverlapExistingSegs, segOverlapMsg, segOverlapProblemsObj, 422);
-  return;
 }

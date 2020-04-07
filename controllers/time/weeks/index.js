@@ -1,5 +1,6 @@
 const moment = require('moment-timezone');
 
+const JobController = require('../../Job');
 const WeekController = require('../../Week');
 const daysController = require('../days');
 
@@ -16,32 +17,40 @@ const {
 module.exports = {
   createWeekArrayEntryByDate,
   createNextWeek,
-  findWeekWithDate(date, weeksArray) {
-    const dateUtcTime = getUtcMoment(date).valueOf();
-    for (let i = 0; i < weeksArray.length; i++) {
-      const { firstDateUtcTime, lastDateUtcTime, document } = weeksArray[i];
-      if (firstDateUtcTime <= dateUtcTime && dateUtcTime <= lastDateUtcTime) {
-        return document;
-      }
-    }
-    return null;
-  },
-  findWeekWithId: (weekId, job) => new Promise(
-    (resolve, reject) => {
-      const { weeks } = job;
-      for (let i = 0; i < weeks.length; i++) {
-        const { document } = weeks[i];
-        if (document._id === weekId) {
-          return resolve(document);
-        }
-      }
-      let err = new Error('No week found with `weekId`.');
-      reject(err);
-      throw err;
-    }
-  ),
+  findWeekWithDate,
+  findWeekWithId,
   findWeeksInDateRange,
   deleteSegmentsFromWeeksInDateRange
+}
+
+function findWeekWithDate(date, weeksArray) {
+  const dateUtcTime = getUtcMoment(date).valueOf();
+  for (let i = 0; i < weeksArray.length; i++) {
+    const { firstDateUtcTime, lastDateUtcTime, document } = weeksArray[i];
+    if (firstDateUtcTime <= dateUtcTime && dateUtcTime <= lastDateUtcTime) {
+      return document;
+    }
+  }
+  return null;
+}
+
+function findWeekWithId(weekId, job) {
+  return new Promise((resolve, reject) => {
+    const { weeks } = job;
+    for (let i = 0; i < weeks.length; i++) {
+      const { document } = weeks[i];
+      console.log('+- -'.repeat(20))
+      console.log(document._id.toString())
+      console.log(weekId.toString())
+      console.log('+- -'.repeat(20))
+      if (document._id.toString() === weekId.toString()) {
+        return resolve(document);
+      }
+    }
+    let err = new Error('No week found with `weekId`.');
+    reject(err);
+    throw err;
+  });
 }
 
 function deleteSegmentsFromWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, job, userId) {
