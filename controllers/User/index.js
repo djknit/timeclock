@@ -1,5 +1,3 @@
-const User = require('../../models/User');
-
 const { createAccount } = require('./create');
 const { findByUsernameOrEmail, findById } = require('./find');
 const { editAccountInfo } = require('./edit');

@@ -15,7 +15,7 @@ function checkRequiredProps(props, requiredPropNames, res) {
   });
   if (problemMessages.length > 0) {
     return res.status(400).json({
-      message: problemMessages.join(' '),
+      messages: problemMessages,
       problems
     });
   }

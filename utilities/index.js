@@ -26,20 +26,15 @@ function routeErrorHandlerFactory(responseObj) {
       console.log('No error object in routeErrorHandler. Unknown error.');
       err = { messages: ['Unknown error.'] };
     }
-    if (!err.status) err.status = 500;
-    if (!err.messages) {
-      err.messages = [err.message || 'An unknown error has occurred.'];
-    }
-    else if (err.message) err.messages.push(err.message);
+    let { status, messages, message, problems } = err;
+    if (!status) status = 500;
+    if (!messages) messages = [message || 'An unknown error has occurred.'];
     if (err.type === 'entity.parse.failed') {
-      err.messages.unshift('Improperly formatted request.');
+      messages.unshift('Improperly formatted request.');
     }
-    responseObj.status(err.status).json({
-      messages: err.messages,
-      problems: err.problems || (err.message ? {} : { unknown: true }),
-      err
-    });
-    if (err.status === 500) throw err;
+    if (!problems) problems = message ? {} : { unknown: true };
+    responseObj.status(status).json({ messages, problems, err });
+    if (status === 500) throw err;
   };
 }
 
