@@ -33,8 +33,6 @@ router.post(
     }
     UserController.createAccount(req.body)
     .then(result => {
-      console.log('RESULT')
-      console.log(result)
       req.login(
         result,
         err => {
@@ -67,7 +65,6 @@ router.post(
 );
 
 router.get('/fail', (req, res) => {
-  let response = {};
   const message = req.flash();
   let messages = [];
   let problems = {};
@@ -89,7 +86,7 @@ router.get('/fail', (req, res) => {
     messages.push('You are not authenticated.');
     problems.unknown = true
   }
-  res.status(401).json(response);
+  res.status(401).json({ messages, problems });
 });
 
 router.post(

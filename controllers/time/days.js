@@ -21,6 +21,17 @@ module.exports = {
 function createDaysForDates(dates, job) {
   return dates.map(date => {
     const precedingDate = convertMomentToMyDate(getMoment(date).subtract(1, 'days'));
+    console.log('*** * * * * * ============================= * * * *')
+    console.log({
+      date,
+      startCutoff: getMostRecentScheduleValueForDate(precedingDate, job.dayCutoff),
+      endCutoff: getMostRecentScheduleValueForDate(date, job.dayCutoff),
+      startTimezone: getMostRecentScheduleValueForDate(precedingDate, job.timezone),
+      timezone: getMostRecentScheduleValueForDate(date, job.timezone),
+      wage: getMostRecentScheduleValueForDate(date, job.wage),
+      // job: job._id
+    })
+    console.log('*** * * * * * ============================= * * * *')
     return {
       date,
       startCutoff: getMostRecentScheduleValueForDate(precedingDate, job.dayCutoff),
@@ -28,7 +39,7 @@ function createDaysForDates(dates, job) {
       startTimezone: getMostRecentScheduleValueForDate(precedingDate, job.timezone),
       timezone: getMostRecentScheduleValueForDate(date, job.timezone),
       wage: getMostRecentScheduleValueForDate(date, job.wage),
-      job: job._id
+      // job: job._id
     };
   });
 }

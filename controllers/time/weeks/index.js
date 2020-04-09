@@ -63,6 +63,7 @@ function deleteSegmentsFromWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, j
     for (let i = 0; i < affectedWeeks.length; i++) {
       _deleteSegsFromAffectedWeek(i)
       .then(updatedWeekDoc => {
+        console.log('\ncompleted _deleteSegsFromAffectedWeek\n')
         job.weeks[i].document = updatedWeekDoc;
         if (++numWeeksProcessed === affectedWeeks.length) {
           return resolve(job);
@@ -72,12 +73,13 @@ function deleteSegmentsFromWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, j
     }
   });
   function _deleteSegsFromAffectedWeek(i) {
+    console.log('_deleteSegsFromAffectedWeek')
     const weekDoc = affectedWeeks[i].document;
     if (i === 0 || i === affectedWeeks.length - 1) {
       const idsOfAffectedDays = daysController.getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, weekDoc.days);
       return WeekController.removeSegmentsFromDaysWithIds(idsOfAffectedDays, weekDoc._id, userId);
     }
-    return WeekController.removeAllSegments(week._id, userId);
+    return WeekController.removeAllSegments(weekDoc._id, userId);
   }
 }
 

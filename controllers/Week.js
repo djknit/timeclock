@@ -88,6 +88,7 @@ function removeSegment(segmentId, dayId, weekId, userId) {
 
 function removeAllSegments(weekId, userId) {
   return new Promise((resolve, reject) => {
+    console.log('remove all segments')
     Week.findOneAndUpdate(
       {
         _id: weekId,
@@ -95,7 +96,7 @@ function removeAllSegments(weekId, userId) {
       },
       {
         $set: {
-          'days.$[].segments': []
+          'days.$[]': { segments: [] }
         }
       },
       { new: true }
@@ -107,6 +108,13 @@ function removeAllSegments(weekId, userId) {
 
 function removeSegmentsFromDaysWithIds(dateIds, weekId, userId) {
   return new Promise((resolve, reject) => {
+    console.log('removeSegmentsFromDaysWithIds')
+    console.log('dateIds:')
+    console.log(dateIds)
+    console.log('weekId:')
+    console.log(weekId)
+    console.log('userId:')
+    console.log(userId)
     Week.findOneAndUpdate(
       {
         _id: weekId,

@@ -34,6 +34,8 @@ function createWeekArrayEntryByDate(givenDate, job) {
         days: daysController.createDaysForDates(dates, job),
         weekNumber: determineWeekNumber(firstDate, job.effectiveStartDate)
       };
+      console.log('+== ==== newWeekData')
+      console.log(newWeekData)
       WeekController.create(newWeekData, job._id, job.user)
       .then(weekDoc => {
         console.log('#*#*#*#* - -')

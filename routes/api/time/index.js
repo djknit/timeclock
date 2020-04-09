@@ -52,6 +52,9 @@ router.post(
   }
 );
 
+// needs bug fixes.
+  // not correctly identifying all weeks/days ?
+  // not removing segments from days by id
 router.post(
   '/delete-segments-for-date-range',
   verifyLogin,
