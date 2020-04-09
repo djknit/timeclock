@@ -96,7 +96,7 @@ function removeAllSegments(weekId, userId) {
       },
       {
         $set: {
-          'days.$[]': { segments: [] }
+          'days.$[].segments': []
         }
       },
       { new: true }
@@ -125,7 +125,7 @@ function removeSegmentsFromDaysWithIds(dateIds, weekId, userId) {
       },
       {
         $set: {
-          'days.$.segments': []
+          'days.$[].segments': []
         }
       },
       { new: true }
