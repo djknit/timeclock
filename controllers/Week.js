@@ -118,17 +118,19 @@ function removeSegmentsFromDaysWithIds(dateIds, weekId, userId) {
     Week.findOneAndUpdate(
       {
         _id: weekId,
-        user: userId,
-        'days._id': {
-          $in: dateIds
-        }
+        user: userId
       },
       {
         $set: {
-          'days.$[].segments': []
+          'days.$[i].segments': []
         }
       },
-      { new: true }
+      {
+        arrayFilters: [{
+          $or: dateIds.map(id => ({ 'i._id': id }))
+        }],
+        new: true
+      }
     )
     .then(resolve)
     .catch(reject);
