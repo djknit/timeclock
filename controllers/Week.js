@@ -102,7 +102,7 @@ function removeAllSegments(weekId, userId) {
       { new: true }
     )
     .then(resolve)
-    .catch(err => reject);
+    .catch(reject);
   });
 }
 
@@ -115,6 +115,7 @@ function removeSegmentsFromDaysWithIds(dateIds, weekId, userId) {
     console.log(weekId)
     console.log('userId:')
     console.log(userId)
+    // source: https://jira.mongodb.org/browse/SERVER-1243
     Week.findOneAndUpdate(
       {
         _id: weekId,

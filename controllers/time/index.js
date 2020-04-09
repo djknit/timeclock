@@ -86,9 +86,6 @@ function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
     }
     let job;
     JobController.getJobById(jobId, userId)
-    // find weeks affected
-    // update each week
-    // return updated job
     .then(_job => {
       job = _job;
       return weeksController.deleteSegmentsFromWeeksInDateRange(
@@ -104,14 +101,24 @@ function deleteSegmentsForDates(dates, jobId, userId) {
   return new Promise((resolve, reject) => {
     JobController.getJobById(jobId, userId)
     .then(job => {
+      if (!job) throw {
+        message: 'Job not found.',
+        problems: { jobId: true },
+        code: 422
+      };
       const { weeks } = job;
-      let affectedWeeks = [];
-      for (let i = 0; i < dates.length; i++) {
-        const date = dates[i];
-        const week = weeksController.findWeekWithDate(date, weeks);
-        if (week) {
-          
-        }
+      let weekAndDayIds = weeksController.getWeekAndDayIdsForDates(dates, job.weeks);
+      const numWeeksCompleted = 0;
+      for (let i = 0; i < weekAndDayIds.length; i++) {
+        const { weekId, dayIds } = weekAndDayIds[i];
+        WeekController.removeSegmentsFromDaysWithIds(dayIds, weekId, userId)
+        .then(updatedWeekDoc => {
+          jobWeeksArrIndex = weeks.map(week => week.document._id.toString()).indexOf(weekId);
+          job.weeks[jobWeeksArrIndex].document = updatedWeekDoc;
+          if (++numWeeksCompleted === weekAndDayIds.length) {
+            return resolve(job);
+          }
+        });
       }
     })
     .catch(reject);

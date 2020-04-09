@@ -15,7 +15,8 @@ module.exports = {
   getIdsOfDaysInRange,
   isSegmentInDay,
   getDayStartTime,
-  getDayEndTime
+  getDayEndTime,
+  getIdsOfDaysWithDates
 };
 
 function createDaysForDates(dates, job) {
@@ -73,6 +74,13 @@ function getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, days) {
     console.log(firstDateUtcTime <= dayUtcDateTime && dayUtcDateTime <= lastDateUtcTime)
     return firstDateUtcTime <= dayUtcDateTime && dayUtcDateTime <= lastDateUtcTime;
   })
+  .map(day => day._id);
+}
+
+function getIdsOfDaysWithDates(dates, days) {
+  return dates
+  .map(date => findDayForDate(date, days))
+  .filter(day => day !== null)
   .map(day => day._id);
 }
 

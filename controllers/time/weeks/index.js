@@ -20,7 +20,8 @@ module.exports = {
   findWeekWithDate,
   findWeekWithId,
   findWeeksInDateRange,
-  deleteSegmentsFromWeeksInDateRange
+  deleteSegmentsFromWeeksInDateRange,
+  getWeekAndDayIdsForDates
 }
 
 function findWeekWithDate(date, weeksArray) {
@@ -98,11 +99,48 @@ function findWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, weeksArray) {
   });
 }
 
-// function _deleteSegsFromAffectedWeekInDateRange(firstDateUtcTime, lastDateUtcTime, affectedWeeks, i, userId) {
-//   const weekDoc = affectedWeeks[i].data.document;
-//   if (i === 0 || i === affectedWeeks.length - 1) {
-//     const daysAffectedIds = daysController.getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, weekDoc.data.days);
-//     return WeekController.removeSegmentsFromDatesWithIds(daysAffectedIds, week._id, userId);
-//   }
-//   return WeekController.removeAllSegments(week._id, userId);
+// function deleteSegmentsForDates(dates, job) {
+//   return new Promise((resolve, reject) => {
+//     const { weeks } = job;
+//     let affectedWeeks = [];
+//     for (let i = 0; i < dates.length; i++) {
+//       const date = dates[i];
+//       const week = weeksController.findWeekWithDate(date, weeks);
+//       const weekId = week._id;
+//       if (week && week) {
+        
+//       }
+//     }
+//   });
 // }
+
+function getWeekAndDayIdsForDates(dates, weeks) {
+  let affectedWeeks = [];
+  for (let i = 0; i < dates.length; i++) {
+    const date = dates[i];
+    const week = findWeekWithDate(date, weeks);
+    _addIdsForDate(date, week);
+  }
+  return affectedWeeks.map(el => {
+    return {
+      weekId: el.week._id.toString(),
+      dayIds: el.dayIds
+    };
+  });
+  function _addIdsForDate(date, week) {
+    if (!week) return;
+    const affectedWeeksIndex = affectedWeeks
+    .map(el => el.week._id.toString())
+    .indexOf(week._id.toString());
+    const dayId = daysController.findDayForDate(date, week.days)._id.toString();
+    if (affectedWeeksIndex < 0) {
+      affectedWeeks.push({
+        week: week,
+        daysIds: [dayId]
+      });
+    }
+    else {
+      affectedWeeks[affectedWeeksIndex].daysIds.push(dayId);
+    }
+  }
+}

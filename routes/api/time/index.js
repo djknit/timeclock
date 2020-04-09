@@ -52,9 +52,6 @@ router.post(
   }
 );
 
-// needs bug fixes.
-  // not correctly identifying all weeks/days ?
-  // not removing segments from days by id
 router.post(
   '/delete-segments-for-date-range',
   verifyLogin,
@@ -62,7 +59,7 @@ router.post(
     checkRequiredProps(req.body, ['firstDate', 'lastDate', 'jobId']);
     const { firstDate, lastDate, jobId } = req.body;
     timeController.deleteSegmentsInDateRange(firstDate, lastDate, jobId, req.user._id)
-    .then(result => res.json(result))
+    .then(job => res.json({ job }))
     .catch(routeErrorHandlerFactory(res));
   }
 );
@@ -74,7 +71,8 @@ router.post(
     checkRequiredProps(req.body, ['dates', 'jobId']);
     const { dates, jobId } = req.body;
     timeController.deleteSegmentsForDates(dates, jobId, req.user._id)
-
+    .then(job => res.json({ job }))
+    .catch(routeErrorHandlerFactory(res));
   }
 );
 
