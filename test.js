@@ -7,12 +7,12 @@ const moment = require('moment-timezone');
 
 console.log('_'.repeat(33) + '\n- - TEST' + ' -'.repeat(12) + '\n');
 
-let date = { date: 10, month: 3, year: 2020 };
-let dayMoment = moment.tz(date, 'America/Chicago');
-console.log('day begins:')
-console.log(dayMoment.valueOf())
-console.log('ends:')
-console.log(dayMoment.add(1, 'days').valueOf())
+// let date = { date: 10, month: 3, year: 2020 };
+// let dayMoment = moment.tz(date, 'America/Chicago');
+// console.log('day begins:')
+// console.log(dayMoment.valueOf())
+// console.log('ends:')
+// console.log(dayMoment.add(1, 'days').valueOf())
 
 console.log('* * *');
 

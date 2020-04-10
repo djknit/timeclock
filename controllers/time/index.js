@@ -108,7 +108,10 @@ function deleteSegmentsForDates(dates, jobId, userId) {
       };
       const { weeks } = job;
       let weekAndDayIds = weeksController.getWeekAndDayIdsForDates(dates, job.weeks);
-      const numWeeksCompleted = 0;
+      console.log('========================')
+      console.log(weekAndDayIds)
+      console.log('========================')
+      let numWeeksCompleted = 0;
       for (let i = 0; i < weekAndDayIds.length; i++) {
         const { weekId, dayIds } = weekAndDayIds[i];
         WeekController.removeSegmentsFromDaysWithIds(dayIds, weekId, userId)

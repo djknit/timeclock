@@ -76,4 +76,16 @@ router.post(
   }
 );
 
+router.post(
+  '/delete-segments-for-day-ids',
+  verifyLogin,
+  (req, res) => {
+    checkRequiredProps(req.body, ['dayIds', 'jobId']);
+    const { dayIds, jobId } = req.body;
+    timeController.deleteSegmentsForDates(dayIds, jobId, req.user._id)
+    .then(job => res.json({ job }))
+    .catch(routeErrorHandlerFactory(res));
+  }
+);
+
 module.exports = router;

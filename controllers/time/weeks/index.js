@@ -40,10 +40,6 @@ function findWeekWithId(weekId, job) {
     const { weeks } = job;
     for (let i = 0; i < weeks.length; i++) {
       const { document } = weeks[i];
-      console.log('+- -'.repeat(20))
-      console.log(document._id.toString())
-      console.log(weekId.toString())
-      console.log('+- -'.repeat(20))
       if (document._id.toString() === weekId.toString()) {
         return resolve(document);
       }
@@ -56,15 +52,12 @@ function findWeekWithId(weekId, job) {
 
 function deleteSegmentsFromWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, job, userId) {
   const affectedWeeks = findWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, job.weeks);
-  console.log('\n*_ *_ *___*');
-  console.log(affectedWeeks);
   return new Promise((resolve, reject) => {
     if (affectedWeeks.length === 0) return resolve(job);
     let numWeeksProcessed = 0;
     for (let i = 0; i < affectedWeeks.length; i++) {
       _deleteSegsFromAffectedWeek(i)
       .then(updatedWeekDoc => {
-        console.log('\ncompleted _deleteSegsFromAffectedWeek\n')
         job.weeks[i].document = updatedWeekDoc;
         if (++numWeeksProcessed === affectedWeeks.length) {
           return resolve(job);
@@ -74,7 +67,6 @@ function deleteSegmentsFromWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, j
     }
   });
   function _deleteSegsFromAffectedWeek(i) {
-    console.log('_deleteSegsFromAffectedWeek')
     const weekDoc = affectedWeeks[i].document;
     if (i === 0 || i === affectedWeeks.length - 1) {
       const idsOfAffectedDays = daysController.getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, weekDoc.days);
@@ -132,15 +124,15 @@ function getWeekAndDayIdsForDates(dates, weeks) {
     const affectedWeeksIndex = affectedWeeks
     .map(el => el.week._id.toString())
     .indexOf(week._id.toString());
-    const dayId = daysController.findDayForDate(date, week.days)._id.toString();
+    const dayId = daysController.findDayForDate(date, week.days)._id;
     if (affectedWeeksIndex < 0) {
       affectedWeeks.push({
         week: week,
-        daysIds: [dayId]
+        dayIds: [dayId]
       });
     }
     else {
-      affectedWeeks[affectedWeeksIndex].daysIds.push(dayId);
+      affectedWeeks[affectedWeeksIndex].dayIds.push(dayId);
     }
   }
 }

@@ -46,7 +46,11 @@ const JobSchema = new Schema(
     ),
     weeks: weeksSubdocFactory(),
     startDate: dateSubdocFactory(),
-    effectiveStartDate: dateSubdocFactory()
+    effectiveStartDate: dateSubdocFactory(),
+    punchClock: {
+      timeIn: intSubdocFactory(),
+      timeOut: intSubdocFactory()
+    }
   }
 );
 
