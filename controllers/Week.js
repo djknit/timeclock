@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const Week = require('../models/Week');
 const Job = require('../models/Job');
 
@@ -107,6 +109,11 @@ function removeAllSegments(weekId, userId) {
 
 function removeSegmentsFromDaysWithIds(dateIds, weekId, userId) {
   return new Promise((resolve, reject) => {
+    dateIds.forEach((id, index) => {
+      if (typeof(id) === 'string') {
+        dateIds[index] = mongoose.Types.ObjectId(id);
+      }
+    });
     // source: https://jira.mongodb.org/browse/SERVER-1243
     Week.findOneAndUpdate(
       {
