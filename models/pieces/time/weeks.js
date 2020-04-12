@@ -1,54 +1,93 @@
 const { Schema } = require('mongoose');
 
-const dateSubdocFactory = require('../date');
-const intSubdocFactory = require('../integer');
-const daysSubdocFactory = require('./days');
+const Week = require('../../Week');
 
-const { getDateTime, getMoment } = require('../../../utilities');
+const intSubdocFactory = require('../integer');
+
+const { getDateTime, getMoment, getUtcMoment } = require('../../../utilities');
 
 const weekSchema = new Schema({
-  days: daysSubdocFactory(),
-  firstDate: dateSubdocFactory(),
-  lastDate: dateSubdocFactory(),
-  weekNumber: intSubdocFactory()
+  document: {
+    type: Schema.Types.ObjectId,
+    ref: 'Week',
+    required: true
+  },
+  firstDateUtcTime: intSubdocFactory({ required: true }),
+  lastDateUtcTime: intSubdocFactory({ required: true })
+}, {
+  _id: false
 });
 
-const weeksSubdocFactory = () => ([{
-  type: weekSchema,
+const weeksSubdocFactory = () => ({
+  type: [weekSchema],
   validate: [
     {
-      validator(val) {
-        const { days, firstDate, lastDate } = val;
-        return days.length - 1 === getMoment(lastDate).diff(getMoment(firstDate), 'days');
-      },
-      message: 'Invalid days. This week is missing days.'
-    }, {
-      validator(val) {
-        const { days, firstDate, lastDate } = val;
-        const firstDateTime = getDateTime(firstDate);
-        const lastDateTime = getDateTime(lastDate);
-        for (let i = 0; i < days.length; i++) {
-          const dateTime = getDateTime(days[i].date);
-          if (dateTime < firstDateTime || dateTime > lastDateTime) return false;
+      // Doesn't run on update; need additional check somewhere else.
+      validator(weeks) {
+        let previousLastDateTime;
+        for (let i = 0; i < weeks.length; i++) {
+          if (i > 0 && weeks[i].firstDateUtcTime <= previousLastDateTime) {
+            return false;
+          }
+          previousLastDateTime = weeks[i].lastDateUtcTime;
         }
         return true;
       },
-      message: 'Invalid days. This week contains days that do not fall within its timespan.'
+      message: 'Invalid weeks: overlapping or incorrectly ordered weeks. Weeks must be in chronological order and cannot overlap.'
     }, {
-      validator(val) {
-        const { days } = val;
-        let previousDateTime;
-        for (let i = 0; i < days.length; i++) {
-          const { day, month, year } = days[i].date;
-          const dateTime = new Date(year, month, day).getTime();
-          if (i > 0 && dateTime <= previousDateTime) return false;
-          previousDateTime = dateTime;
+      validator: weeks => new Promise(
+        (resolve, reject) => {
+          const numWeeks = weeks.length;
+          if (numWeeks === 0) return resolve(true); 
+          let numCompleted = 0;
+          for (let i = 0; i < numWeeks; i++) {
+            const week = weeks[i];
+            Week.findById(week.document)
+            .then(weekDoc => {
+              const { firstDateUtcTime, lastDateUtcTime } = week;
+              const { firstDate, lastDate, days } = weekDoc;
+              const docFirstDateUtcTime = getUtcMoment(firstDate).valueOf();
+              const docLastDateUtcTime = getUtcMoment(lastDate).valueOf();
+              if (
+                docFirstDateUtcTime !== firstDateUtcTime ||
+                docLastDateUtcTime !== lastDateUtcTime
+              ) {
+                return reject(new Error('Invalid week data. First date and/or last date in week document doesn\'t match week array entry UTC date time.'));
+              }
+              const errMsg2 = 'Invalid day(s). Week is missing day(s) and/or contains day(s) that do not fall within its time range.';
+              const expectedNumberOfDays = getMoment(lastDate).diff(getMoment(firstDate), 'days') + 1;
+              if (days.length !== expectedNumberOfDays) {
+                return reject(new Error(errMsg2));
+              }
+              for (let j = 0; j < days.length; j++) {
+                const dayUtcTime = getUtcMoment(days[j].date).valueOf();
+                if (dayUtcTime < firstDateUtcTime || dayUtcTime > lastDateUtcTime) {
+                  return reject(new Error(errMsg2));
+                }
+              }
+              if (++numCompleted === numWeeks) {
+                return resolve(true);
+              }
+            });
+          }
+        }
+      ),
+      message: function(props) {
+        return props.reason.message;
+      }
+    }, {
+      validator(weeks) {
+        for (let i = 0; i < weeks.length; i++) {
+          const week = weeks[i];
+          if (week.firstDateUtcTime > week.lastDateUtcTime) {
+            return false;
+          }
         }
         return true;
       },
-      message: 'Invalid days array. Days must be in chronological order and cannot be duplicated.'
+      message: 'Invalid `firstDate`/`lastDate` combination for week. First date must not come after last date.'
     }
   ]
-}]);
+});
 
-module.exports =  weeksSubdocFactory
+module.exports =  weeksSubdocFactory;

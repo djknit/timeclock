@@ -8,11 +8,13 @@ module.exports = {
   getMoment,
   convertDateToMyDate,
   convertMomentToMyDate,
+  getUtcMoment,
   getMostRecentScheduleIndexForDate,
   getMostRecentScheduleValueForDate,
   areDatesEquivalent,
   getFirstDayOfWeekForDate,
-  findWeekBeginsSchedIndexForDate
+  findWeekBeginsSchedIndexForDate,
+  areWagesEquivalent
 }
 
 
@@ -24,20 +26,15 @@ function routeErrorHandlerFactory(responseObj) {
       console.log('No error object in routeErrorHandler. Unknown error.');
       err = { messages: ['Unknown error.'] };
     }
-    if (!err.status) err.status = 500;
-    if (!err.messages) {
-      err.messages = [err.message || 'An unknown error has occurred.'];
-    }
-    else if (err.message) err.messages.push(err.message);
+    let { status, messages, message, problems } = err;
+    if (!status) status = 500;
+    if (!messages) messages = [message || 'An unknown error has occurred.'];
     if (err.type === 'entity.parse.failed') {
-      err.messages.unshift('Improperly formatted request.');
+      messages.unshift('Improperly formatted request.');
     }
-    responseObj.status(err.status).json({
-      messages: err.messages,
-      problems: err.problems || (err.message ? {} : { unknown: true }),
-      err
-    });
-    if (err.status === 500) throw err;
+    if (!problems) problems = message ? {} : { unknown: true };
+    responseObj.status(status).json({ messages, problems, err });
+    if (status === 500) throw err;
   };
 }
 
@@ -47,7 +44,7 @@ function errorHandlerMiddleware(err, req, res, next) {
 
   if (err) {
     errorHandler(err);
-    console.error(err);
+    // console.error(err);
     return;
   }
 
@@ -67,12 +64,23 @@ function getDate(myDate) {
   return (new Date(year, month, day));
 }
 
-function getMoment(myDate) {
-  return moment({
+function getMoment(myDate, timezone) {
+  const momentFriendlyDate = getMomentFriendlyDate(myDate);
+  return timezone ?
+    moment.tz(momentFriendlyDate, timezone) :
+    moment(momentFriendlyDate);
+}
+
+function getMomentFriendlyDate(myDate) {
+  return {
     date: myDate.day,
     year: myDate.year,
     month: myDate.month
-  });
+  };
+}
+
+function getUtcMoment(myDate) {
+  return moment.utc(getMomentFriendlyDate(myDate));
 }
 
 function convertMomentToMyDate(moment_) {
@@ -98,20 +106,33 @@ function areDatesEquivalent(date1, date2) {
   return (
     date1.day === date2.day &&
     date1.month === date2.month &&
-    date1.year !== date2.year
+    date1.year === date2.year
   );
 }
 
 
 // JOB DATA -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-<><><>
 
+function areWagesEquivalent(wage1, wage2) {
+  if (!wage1 && !wage2) return true;
+  if (!wage1 || !wage2) return false;
+  return (
+    wage1.rate === wage2.rate &&
+    wage1.currency === wage2.currency &&
+    wage1.overtime.rate === wage2.overtime.rate &&
+    wage1.overtime.rateMultiplier === wage2.overtime.rateMultiplier &&
+    wage1.overtime.useMultiplier === wage2.overtime.useMultiplier &&
+    wage1.overtime.cutoff === wage2.overtime.cutoff
+  );
+}
+
 function getMostRecentScheduleIndexForDate(date, valueSchedule) {
   if (valueSchedule.length === 0) return;
   if (valueSchedule.length === 1) return 0;
-  const dateTime = moment(date).valueOf();
+  const dateTime = getDateTime(date);
   let selectedIndex = 0;
   for (let i = 1; i < valueSchedule.length; i++) {
-    if (moment(valueSchedule[i].startDate).valueOf() > dateTime) {
+    if (getDateTime(valueSchedule[i].startDate) > dateTime) {
       return selectedIndex;
     }
     selectedIndex = i;
@@ -132,7 +153,9 @@ function getFirstDayOfWeekForDate(date, weekBeginsValueSchedule, weekBeginsSched
     weekBeginsScheduleIndex = findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule);
   }
   let firstDate = getMoment(date).day(weekBeginsValueSchedule[weekBeginsScheduleIndex].value);
-  if (firstDate.valueOf() > getMoment(date).valueOf()) firstDate.subtract(1, 'weeks');
+  if (firstDate.valueOf() > getMoment(date).valueOf()) {
+    firstDate.subtract(1, 'weeks');
+  }
   return convertMomentToMyDate(firstDate);
 }
 
@@ -146,25 +169,22 @@ function findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule) {
   return 0;
 }
 
-// only checks if value goes in to effect by date. doesn't verify it is the most recent value.
+// only checks if value goes in to effect by date; doesn't verify that it is the most recent value; also doesn't work if value startDate is less than 1 week before given date.
 function isWeekBeginsValueActualFirstDayOfWeek(date, scheduleEntry) {
-  const weekBeginsStartDateMoment = moment(scheduleEntry.startDate);
-  if (moment(date).subtract(weekBeginsStartDateMoment, 'days') > 6) {
+  const weekBeginsStartDateMoment = getMoment(scheduleEntry.startDate);
+  if (getMoment(date).diff(weekBeginsStartDateMoment, 'days') > 6) {
     return true;
   }
   const dayIndexes = {
-    date: moment(date).day(),
+    date: getMoment(date).day(),
     weekBeginsValue: scheduleEntry.value,
     weekBeginsStartDate: weekBeginsStartDateMoment.day()
-  }
+  };
   const normalize = dayIndex => (dayIndex - dayIndexes.weekBeginsStartDate + 6) % 6;
   const normalizedDayIndexes = {
     date: normalize(dayIndexes.date),
     weekBeginsValue: normalize(dayIndexes.weekBeginsValue),
     weekBeginsStartDate: 0
   };
-  return (
-    normalizedDayIndexes.weekBeginsStartDate <= normalizedDayIndexes.weekBeginsValue &&
-    normalizedDayIndexes.weekBeginsValue <= normalizedDayIndexes.date
-  );
+  return normalizedDayIndexes.weekBeginsValue <= normalizedDayIndexes.date;
 }

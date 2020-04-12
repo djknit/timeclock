@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../../models/User');
 
 module.exports = {
   createAccount: newUser => new Promise(
@@ -102,7 +102,7 @@ module.exports = {
           return reject(determineUserInfoError(err));
         }
         else if (user) {
-          console.log(user)
+          // console.log(user)
           return resolve(cleanUser(user));
         }
         const unexpectedErr = new Error('Unexpected outcome. Reason unknown.');
@@ -141,6 +141,34 @@ module.exports = {
         { new: true }
       )
       .populate('jobs')
+      .then(resolve)
+      .catch(reject);
+    }
+  ),
+  getWithJobBasics: (userId) => new Promise(
+    (resolve, reject) => {
+      User.findById(userId)
+      .populate('jobs')
+      .then(user => {
+        return resolve(user);
+      });
+    }
+  ),
+  removeJob: (jobId, userId) => new Promise(
+    (resolve, reject) => {
+      User.findByIdAndUpdate(
+        userId,
+        {
+          $pull: {
+            jobs: jobId
+          }
+        },
+        { new: true }
+      )
+      .populate({
+        path: 'jobs',
+        populate: 'weeks.document'
+      })
       .then(resolve)
       .catch(reject);
     }

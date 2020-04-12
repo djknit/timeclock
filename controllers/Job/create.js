@@ -1,95 +1,66 @@
-const Job = require('../models/Job');
+const Job = require('../../models/Job');
 
-const moment = require('moment-timezone');
+const weeksController = require('../time/weeks');
 
-const weeksController = require('./time/weeks');
+const { addWeek } = require('./addWeek');
 
-const { convertMomentToMyDate, getFirstDayOfWeekForDate, getMoment } = require('../utilities');
+const { getMoment, convertMomentToMyDate } = require('./utilities');
 
 module.exports = {
-  create: (newJob, userId) => new Promise(
+  create
+};
+
+function create(newJob, userId) {
+  return new Promise(
     (resolve, reject) => {
       const { name, timezone, wage, startDate, dayCutoff, weekBegins } = newJob;
-      console.log(wage)
-      // newJob.user = userId;
+      console.log('- - - CREATE JOB - - -')
       if (!name || !timezone || !startDate) {
         const error = new Error('Missing required data properties.');
         reject(error);
         throw(error);
       }
-      newJob.user = userId;
-      newJob.timezone = [{ value: timezone }];
-      newJob.dayCutoff = 
-        dayCutoff ?
-        [{ value: dayCutoff }] :
-        [{}];
-      newJob.weekBegins = 
-        weekBegins ?
-        [{ value: weekBegins }] :
-        [{}];
-      newJob.effectiveStartDate = getEffectiveStartDate(startDate, weekBegins || 0);
-      if (wage) {
-        newJob.wage = [{ value: wage }];
-      }
-      else newJob.wage = [{ value: null }];
       let jobId;
-      Job.create(newJob)
+      const job = {
+        name,
+        user: userId,
+        timezone: [{ value: timezone }],
+        dayCutoff: dayCutoff ?
+          [{ value: dayCutoff }] :
+          [{}],
+        startDate,
+        weekBegins: weekBegins ?
+          [{ value: weekBegins }] :
+          [{}],
+        effectiveStartDate: getEffectiveStartDate(startDate, weekBegins || 0),
+        wage: [{ value: wage || null }],
+        weeks: []
+      };
+      Job.create(job)
       .then(result => {
-        console.log('new job created\n----------------------------------------')
         jobId = result._id;
-        return weeksController.createWeekByDate(result.startDate, result);
+        return weeksController.createWeekArrayEntryByDate(result.startDate, result);
       })
       .then(firstWeek => {
-        return addWeek(firstWeek, jobId);
+        return resolve(addWeek(firstWeek, jobId));
       })
-      .then(job =>resolve(job))
       .catch(err => reject(determineCreateJobError(err)));
     }
-  ),
-  addWeek
-};
+  );
+}
 
 function getEffectiveStartDate(startDate, weekBegins) {
-  let firstDateOfFirstWeekEstimate = moment(startDate).day(weekBegins);
-  if (firstDateOfFirstWeekEstimate.valueOf() > moment(startDate).valueOf()) {
+  let firstDateOfFirstWeekEstimate = getMoment(startDate).day(weekBegins);
+  if (firstDateOfFirstWeekEstimate.valueOf() > getMoment(startDate).valueOf()) {
     firstDateOfFirstWeekEstimate.subtract(1, 'weeks');
   }
   let resultEstimate = firstDateOfFirstWeekEstimate;
-  if (resultEstimate.diff(getMoment(startDate), 'days') > 3) {
+  if (Math.abs(resultEstimate.diff(getMoment(startDate), 'days')) > 3) {
     resultEstimate.add(1, 'weeks');
   }
   return convertMomentToMyDate(resultEstimate);
 }
 
-function addWeek(week, jobId) {
-  return new Promise(
-    (resolve, reject) => {
-      // Job.findById(jobId).then(result=>console.log(result))
-      console.log('adding week...')
-      // console.log(week);
-      // console.log(jobId)
-      Job.findByIdAndUpdate(
-        jobId,
-        {
-          $push: {
-            weeks: week
-          }
-        },
-        { new: true }
-      )
-      .then(resolve)
-      .catch(err => {
-        console.log('ADD WEEK ERROR');
-        console.error(err);
-        console.log('ADD WEEK ERROR');
-        console.log(('=*'.repeat(30) + '\n').repeat(3));
-        const reason = err && err.reason && err.reason.reason && err.reason.reason;
-        console.log(reason);
-        reject(err)
-      });
-    }
-  );
-}
 
 function determineCreateJobError(err) {
   if (!err) err = {};

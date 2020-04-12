@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 
+const { getDateTime } = require('../../utilities');
+
 const dateSubdocFactory = require('./date');
 
-module.exports = (valueOutline, options) => {
+module.exports = valueOutline => {
 
   const valDatePairSchema = new mongoose.Schema(
     {
@@ -16,20 +18,10 @@ module.exports = (valueOutline, options) => {
     type: [valDatePairSchema],
     validate: [
       {
-        validator: vals => {
-          const isRequired = options && options.required;
-          if (!isRequired) return true;
-          if (vals.length === 0) return false;
-          return true;
-        },
+        validator: vals => vals.length > 0,
         message: 'Missing initial value. You must have at least one value.'
       }, {
-        validator: vals => {
-          const firstVal = vals[0];
-          if (!firstVal) return true;
-          if (firstVal.startDate) return false;
-          return true;
-        },
+        validator: vals => !vals[0].startDate,
         message: 'Invalid initial value. The first value must not have a start date.'
       }, {
         validator: vals => {
@@ -38,16 +30,13 @@ module.exports = (valueOutline, options) => {
           }
           return true;
         },
-        message: 'Missing date. All values in schedule except for the first must have a date.'
+        message: 'Missing date. All values in schedule except for the first must have a start date.'
       }, {
         validator: vals => {
           if (vals.length < 3) return true;
           let previousDateTime;
           for (let i = 1; i < vals.length; i++) {
-            const { startDate } = vals[i];
-            if (!startDate) return false;
-            const { year, month, day } = startDate;
-            const valDateTime = new Date(year, month, day).getTime();
+            const valDateTime = getDateTime(vals[i].startDate);
             if (i > 1 && valDateTime <= previousDateTime) return false;
             previousDateTime = valDateTime;
           }

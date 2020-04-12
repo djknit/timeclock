@@ -6,7 +6,9 @@ const UserController = require('../../controllers/User');
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
 
-const { routeErrorHandlerFactory } = require('./utilities');
+const { routeErrorHandlerFactory, resCleaners } = require('./utilities');
+
+const { cleanUser } = resCleaners;
 
 router.post(
   '/create-account',
@@ -25,15 +27,17 @@ router.post(
     };
     if (problemMessages.length > 0) {
       return res.status(400).json({
-        message: problemMessages.join(' '),
+        messages: problemMessages,
         problems
       });
     }
     UserController.createAccount(req.body)
     .then(result => {
       req.login(
-        { password, ...result },
+        result,
         err => {
+          console.log(req.user)
+          console.log(err)
           if (err) return res.status(500).json(err);
           res.json({
             user: cleanUser(req.user),
@@ -61,33 +65,28 @@ router.post(
 );
 
 router.get('/fail', (req, res) => {
-  let response = {};
   const message = req.flash();
+  let messages = [];
+  let problems = {};
   if (message.error && message.error[0] === 'Missing credentials') {
     return res.status(400).json({
-      message: 'Missing or improperly formatted credentials.',
+      messages: ['Missing or improperly formatted credentials.'],
       problems: { unknown: true }
     });
   }
   if (message.error && message.error[0] === 'user') {
-    response = {
-      message: 'Username or email address not found.',
-      problems: { usernameOrEmail: true }
-    }
+    messages.push('Username or email address not found.');
+    problems.usernameOrEmail = true;
   }
   else if (message.error && message.error[0] === 'password') {
-    response = {
-      message: 'Incorrect password.',
-      problems: { password: true }
-    }
+    messages.push('Incorrect password.');
+    problems.password= true;
   }
   else {
-    response = {
-      message: 'You are not authenticated.',
-      problems: { unknown: true }
-    }
+    messages.push('You are not authenticated.');
+    problems.unknown = true
   }
-  res.status(401).json(response);
+  res.status(401).json({ messages, problems });
 });
 
 router.post(
@@ -113,7 +112,7 @@ router.get(
       });
     }
     else {
-      res.status(401).json({ message: 'User not found.'});
+      res.status(401).json({ messages: ['User not found.'] });
     }
   }
 );
@@ -124,7 +123,7 @@ router.post(
   (req, res) => {
     const { password } = req.body;
     if (typeof(password) !== 'string') res.status(400).json({
-      message: 'You must enter your password.',
+      messages: ['You must enter your password.'],
       problems: {
         password: true
       }
@@ -180,7 +179,7 @@ router.post(
     }
     if (problemMessages.length > 0) {
       return res.status(400).json({
-        message: problemMessages.join(' '),
+        messages: problemMessages,
         problems
       });
     }
@@ -206,8 +205,3 @@ router.post(
 );
 
 module.exports = router;
-
-function cleanUser(user) {
-  const { username, email } = user;
-  return { username, email };
-}

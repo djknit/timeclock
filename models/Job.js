@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 // const moment = require('moment-timezone');
 
-const { getMoment } = require('../utilities');
+// const { getMoment } = require('../utilities');
 
 const valueScheduleSubdocFactory = require('./pieces/valueSchedule');
 const intSubdocFactory = require('./pieces/integer');
@@ -46,39 +46,14 @@ const JobSchema = new Schema(
     ),
     weeks: weeksSubdocFactory(),
     startDate: dateSubdocFactory(),
-    effectiveStartDate: dateSubdocFactory()
-  }
-);
-
-// source: http://jasonjl.me/blog/2014/10/23/adding-validation-for-embedded-objects-in-mongoose/
-JobSchema.path('timezone').validate(
-  arr => arr.length > 0,
-  'You must have at least one timezone value.'
-);
-JobSchema.path('dayCutoff').validate(
-  arr => arr.length > 0,
-  'You must have at least one `dayCutoff` value.'
-);
-JobSchema.path('weekBegins').validate(
-  arr => arr.length > 0,
-  'You must have at least one `weekBegins` value.'
-);
-JobSchema.path('weeks').validate(
-  weeksArr => {
-    let previousEndTime = 0;
-    for (let i = 0; i < segments.length; i++) {
-      const { firstDate, lastDate } = weeksArr[i];
-      const startTime = getMoment(firstDate);
-      const endTime = getMoment(lastDate);
-      if (i > 0 && startTime < previousEndTime) return false;
-      previousEndTime = endTime;
+    effectiveStartDate: dateSubdocFactory(),
+    punchClock: {
+      timeIn: intSubdocFactory(),
+      timeOut: intSubdocFactory()
     }
-    return true;
-  },
-  'Invalid weeks: overlapping or incorrectly ordered weeks. Weeks must be in chronological order and cannot overlap.'
+  }
 );
 
 const Job = mongoose.model('Job', JobSchema);
 
 module.exports = Job;
-

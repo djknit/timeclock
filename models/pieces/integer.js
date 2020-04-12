@@ -8,12 +8,10 @@ module.exports = function intTypeFactory(options) {
 
   const otherValidate = options && options.validate;
 
-  const defaultVal = options && options.default
-
   return {
     type: Number,
     validate: otherValidate ? [intValidate, otherValidate] : intValidate,
-    default: defaultVal,
+    default: options && options.default,
     required: options && options.required
   };
 }

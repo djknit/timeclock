@@ -1,157 +1,138 @@
 const moment = require('moment-timezone');
 
-const { createWeekByDate, createNextWeek } = require('./create');
+const JobController = require('../../Job');
+const WeekController = require('../../Week');
+const daysController = require('../days');
+
+const { createWeekArrayEntryByDate, createNextWeek } = require('./create');
 
 const {
   getMostRecentScheduleIndexForDate,
   areDatesEquivalent,
   convertMomentToMyDate,
+  getUtcMoment,
   getMostRecentScheduleValueForDate
 } = require('../../../utilities');
 
 module.exports = {
-  createWeekByDate,
-  createNextWeek
+  createWeekArrayEntryByDate,
+  createNextWeek,
+  findWeekWithDate,
+  findWeekWithId,
+  findWeeksInDateRange,
+  deleteSegmentsFromWeeksInDateRange,
+  getWeekAndDayIdsForDates
 }
 
+function findWeekWithDate(date, weeksArray) {
+  const dateUtcTime = getUtcMoment(date).valueOf();
+  for (let i = 0; i < weeksArray.length; i++) {
+    const { firstDateUtcTime, lastDateUtcTime, document } = weeksArray[i];
+    if (firstDateUtcTime <= dateUtcTime && dateUtcTime <= lastDateUtcTime) {
+      return document;
+    }
+  }
+  return null;
+}
 
-// function addWeek({ weekNumber, date }, job) {
-//   return new Promise(
-//     (resolve, reject) => {
-//       // `weekBegins` is index of weekday 0 - 6, not the actual date. `startDate` is job start date, not week start date.
-//       const { startDate, weeks, weekBegins } = job;
-//       const startDateMoment = getMoment(startDate);
-//       const weekBeginsDateMoment = startDateMoment.day(weekBegins);
-//       if (weekBeginsDateMoment.valueOf() < startDateMoment.valueOf()) {
-//         weekBeginsDateMoment = weekBeginsDateMoment.subtract(1, 'weeks');
+function findWeekWithId(weekId, job) {
+  return new Promise((resolve, reject) => {
+    const { weeks } = job;
+    for (let i = 0; i < weeks.length; i++) {
+      const { document } = weeks[i];
+      if (document._id.toString() === weekId.toString()) {
+        return resolve(document);
+      }
+    }
+    let err = new Error('No week found with `weekId`.');
+    reject(err);
+    throw err;
+  });
+}
+
+function deleteSegmentsFromWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, job, userId) {
+  const affectedWeeks = findWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, job.weeks);
+  return new Promise((resolve, reject) => {
+    if (affectedWeeks.length === 0) return resolve(job);
+    let numWeeksProcessed = 0;
+    for (let i = 0; i < affectedWeeks.length; i++) {
+      _deleteSegsFromAffectedWeek(i)
+      .then(updatedWeekDoc => {
+        job.weeks[i].document = updatedWeekDoc;
+        if (++numWeeksProcessed === affectedWeeks.length) {
+          return resolve(job);
+        }
+      })
+      .catch(reject);
+    }
+  });
+  function _deleteSegsFromAffectedWeek(i) {
+    const weekDoc = affectedWeeks[i].document;
+    if (i === 0 || i === affectedWeeks.length - 1) {
+      const idsOfAffectedDays = daysController.getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, weekDoc.days);
+      return WeekController.removeSegmentsFromDaysWithIds(idsOfAffectedDays, weekDoc._id, userId);
+    }
+    return WeekController.removeAllSegments(weekDoc._id, userId);
+  }
+}
+
+function findWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, weeksArray) {
+  return weeksArray
+  .filter(arrayEntry => {
+    const weekFirstDateTime = arrayEntry.firstDateUtcTime;
+    const weekLastDateTime = arrayEntry.lastDateUtcTime;
+    return (
+      // is any part of the week within the date range provided?
+        // if so then either the first or last days of week (or both) are within date range OR the entire date range is contained within week in which case both the first and last days of date range must fall in week
+      (firstDateUtcTime <= weekFirstDateTime && weekFirstDateTime <= lastDateUtcTime) ||
+      (firstDateUtcTime <= weekLastDateTime && weekLastDateTime <= lastDateUtcTime) ||
+      (weekFirstDateTime <= firstDateUtcTime && firstDateUtcTime <= weekLastDateTime)
+    );
+  });
+}
+
+// function deleteSegmentsForDates(dates, job) {
+//   return new Promise((resolve, reject) => {
+//     const { weeks } = job;
+//     let affectedWeeks = [];
+//     for (let i = 0; i < dates.length; i++) {
+//       const date = dates[i];
+//       const week = weeksController.findWeekWithDate(date, weeks);
+//       const weekId = week._id;
+//       if (week && week) {
+        
 //       }
-      
 //     }
-//   );
-// }
-
-// function createFirstWeek(job) {
-//   const weekDates = getDatesInWeekWithDate(job.startDate, job.weekBegins);
-//   const weekStartDate = weekDates[0];
-//   if ()
-// }
-
-// function createWeekWithDate(givenDate, job) {
-//   const dates = getDatesInWeekWithDate(givenDate, job.weekBegins);
-//   const firstDate = dates[0];
-//   const lastDate = dates[dates.length - 1];
-//   let days = [];
-//   dates.forEach(date => {
-//     const dayBeforeDate = convertMomentToMyDate(moment(date).subtract(1, 'days'));
-//     days.push({
-//       date,
-//       startCutoff: getMostRecentScheduleValueForDate(dayBeforeDate, job.dayCutoff),
-//       endCutoff: getMostRecentScheduleValueForDate(date, job.dayCutoff),
-//       timezone: getMostRecentScheduleValueForDate(date, job.timezone),
-//       wage: getMostRecentScheduleValueForDate(date, job.wage)
-//     });
 //   });
-//   const referenceDate = areDatesEquivalent(job.startDate, givenDate) ?
-//     job.startDate :
-//     job.effectiveStartDate;
-//   const weekNumber = determineWeekNumber(firstDateOfWeek, referenceDate);
 // }
 
-// function getDatesInWeekWithDate(date, weekBeginsValueSchedule) {
-//   const weekBeginsScheduleIndexForDate = findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule);
-//   const firstDate = getFirstDayOfWeekForDate(
-//     date, weekBeginsValueSchedule, weekBeginsScheduleIndexForDate
-//   );
-//   const dates = getRemainingDatesOfWeekFromFirstDate(
-//     firstDate, weekBeginsValueSchedule, firstDateWeekBeginsScheduleIndex
-//   );
-// }
-
-// // Determine actual first day of the week that includes the given date. This may be different than the `weekBegins` value given by the value schedule if the value changed less than a week before the date and the corresponding day of the week does not fall between the value `startDate` and the given `date`.
-// function getFirstDayOfWeekForDate(date, weekBeginsValueSchedule, weekBeginsScheduleIndex) {
-//   date = moment(date);
-//   let firstDate = date.day(weekBeginsValueSchedule[weekBeginsScheduleIndex].value);
-//   if (firstDate.valueOf() > date.valueOf()) firstDate.subtract(1, 'weeks');
-//   return convertMomentToMyDate(firstDate);
-// }
-
-// function findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule) {
-//   const mostRecentSheduleIndex = getMostRecentScheduleIndexForDate(date, weekBeginsValueSchedule);
-//   for (let i = mostRecentSheduleIndex; i > 0; i--) {
-//     if (isWeekBeginsValueActualFirstDayOfWeek(date, weekBeginsValueSchedule[i])) {
-//       return i;
-//     }
-//   }
-//   return 0;
-// }
-
-// // only checks if value goes in to effect by date. doesn't verify it is the most recent value.
-// function isWeekBeginsValueActualFirstDayOfWeek(date, scheduleEntry) {
-//   const dateMoment = moment(date);
-//   const weekBeginsStartDateMoment = moment(scheduleEntry.startDate);
-//   if (dateMoment.subtract(weekBeginsStartDateMoment, 'days') > 6) return true;
-//   const dayIndexes = {
-//     date: dateMoment.day(),
-//     weekBeginsValue: scheduleEntry.value,
-//     weekBeginsStartDate: weekBeginsStartDateMoment.day()
-//   }
-//   const normalize = dayIndex => (dayIndex - dayIndexes.weekBeginsStartDate + 6) % 6;
-//   const normalizedDayIndexes = {
-//     date: normalize(dayIndexes.date),
-//     weekBeginsValue: normalize(dayIndexes.weekBeginsValue),
-//     weekBeginsStartDate: 0
-//   };
-//   return (
-//     normalizedDayIndexes.weekBeginsStartDate <= normalizedDayIndexes.weekBeginsValue &&
-//     normalizedDayIndexes.weekBeginsValue <= normalizedDayIndexes.date
-//   );
-// }
-
-// function getRemainingDatesOfWeekFromFirstDate(
-//   firstDate, weekBeginsValueSchedule, firstDateWeekBeginsScheduleIndex
-// ) {
-//   if (weekBeginsValueSchedule.length === 1) {
-//     return getWeekDatesForStaticWeekBegins(firstDate);
-//   }
-//   const firstDateMoment = moment(firstDate);
-//   const weekBeginsValueChangeMoment = moment(
-//     weekBeginsValueSchedule[firstDateWeekBeginsScheduleIndex + 1].startDate
-//   );
-//   if (firstDateMoment.add(1, 'weeks').valueOf() <= weekBeginsValueChangeMoment.valueOf()) {
-//     return getWeekDatesForStaticWeekBegins(firstDate);
-//   }
-//   return getWeekDatesForChangingWeekBegins(firstDate, weekBeginsValueSchedule);
-// }
-
-// function getWeekDatesForStaticWeekBegins(firstDate) {
-//   let dates = [];
-//   for (let i = 0; i < 7; i++) {
-//     const dateMoment = moment(firstDate).add(i, 'days');
-//     dates.push(convertMomentToMyDate(dateMoment));
-//   }
-//   return dates;
-// }
-
-// function getWeekDatesForChangingWeekBegins(firstDate, weekBeginsValueSchedule) {
-//   let dates = [firstDate];
-//   for (let i = 1; i < 7; i++) {
-//     const dateMoment = moment(firstDate).add(i, 'days');
-//     const date = convertMomentToMyDate(dateMoment);
-//     const firstDateOfWeekWithDate = getFirstDayOfWeekForDate(date, weekBeginsValueSchedule);
-//     if (!areDatesEquivalent(firstDate, firstDateOfWeekWithDate)) {
-//       return dates;
-//     }
-//     dates.push(date);
-//   }
-//   return dates;
-// }
-
-// function determineWeekNumber(weekStartDate, referenceDate) {
-//   const estimate = moment(weekStartDate).diff(moment(referenceDate), 'weeks') + 1;
-//   for (let i = estimate - 1; i < estimate + 2; i++) {
-//     const idealFirstDateOfWeek = moment(referenceDate).add(i - 1, 'weeks');
-//     const weekFirstDateDiffFromIdeal = idealFirstDateOfWeek.diff(moment(weekStartDate), 'days');
-//     if (-4 < weekFirstDateDiffFromIdeal && weekFirstDateDiffFromIdeal < 4) return i;
-//   }
-//   throw new Error('Failed to determine week number.');
-// }
+function getWeekAndDayIdsForDates(dates, weeks) {
+  let affectedWeeks = [];
+  for (let i = 0; i < dates.length; i++) {
+    const date = dates[i];
+    const week = findWeekWithDate(date, weeks);
+    _addIdsForDate(date, week);
+  }
+  return affectedWeeks.map(el => {
+    return {
+      weekId: el.week._id.toString(),
+      dayIds: el.dayIds
+    };
+  });
+  function _addIdsForDate(date, week) {
+    if (!week) return;
+    const affectedWeeksIndex = affectedWeeks
+    .map(el => el.week._id.toString())
+    .indexOf(week._id.toString());
+    const dayId = daysController.findDayForDate(date, week.days)._id;
+    if (affectedWeeksIndex < 0) {
+      affectedWeeks.push({
+        week: week,
+        dayIds: [dayId]
+      });
+    }
+    else {
+      affectedWeeks[affectedWeeksIndex].dayIds.push(dayId);
+    }
+  }
+}

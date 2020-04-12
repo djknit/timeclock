@@ -19,7 +19,7 @@ router.all(
   '*',
   (req, res) => {
     res.status(404).json({
-      message: 'This API route either does not exist or does not allow the HTTP method that you are attempting to use.'
+      messages: ['This API route either does not exist or does not allow the HTTP method that you are attempting to use.']
     });
   }
 );

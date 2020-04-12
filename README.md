@@ -56,8 +56,8 @@ This plan is not complete. Future steps will be expanded on in the plan before t
   * [ ] Develop code necessary for time management
     * [x] Create job
     * [ ] Edit job information
-    * [ ] Add weeks and days
-    * [ ] Add time segments
+    * [x] Add weeks and days
+    * [x] Add time segments
 * [ ] Develop front-end to complete MVP
 * [ ] Review code for bugs and code organization/readability
 * [ ] Work on additional features

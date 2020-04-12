@@ -17,10 +17,13 @@ passport.use(new LocalStrategy(
     })
     .then(result => {
       if (result && result.isMatch) {
-        const { _id, username, email } = result.user;
-        return done(null, { _id, username, email });
+        return UserController.getWithJobBasics(result.user._id);
       }
       else throw new Error('password');
+    })
+    .then(user => {
+      const { _id, username, email, jobs } = user;
+      return done(null, { _id, username, email, jobs });
     })
     .catch(err => done(null, false, { message: err && err.message || 'unknown' }));
   }
