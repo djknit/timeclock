@@ -44,7 +44,7 @@ router.post(
   '/delete-segment',
   verifyLogin,
   (req, res) => {
-    checkRequiredProps(req.body, ['segmentId', 'weekId', 'dayId']);
+    checkRequiredProps(req.body, ['segmentId', 'weekId', 'dayId'], res);
     const { segmentId, weekId, dayId } = req.body;
     WeekController.removeSegment(segmentId, dayId, weekId, req.user._id)
     .then(week => res.json({ week }))
@@ -56,7 +56,7 @@ router.post(
   '/delete-segments-for-date-range',
   verifyLogin,
   (req, res) => {
-    checkRequiredProps(req.body, ['firstDate', 'lastDate', 'jobId']);
+    checkRequiredProps(req.body, ['firstDate', 'lastDate', 'jobId'], res);
     const { firstDate, lastDate, jobId } = req.body;
     timeController.deleteSegmentsInDateRange(firstDate, lastDate, jobId, req.user._id)
     .then(job => res.json({ job }))
@@ -68,7 +68,7 @@ router.post(
   '/delete-segments-for-dates',
   verifyLogin,
   (req, res) => {
-    checkRequiredProps(req.body, ['dates', 'jobId']);
+    checkRequiredProps(req.body, ['dates', 'jobId'], res);
     const { dates, jobId } = req.body;
     timeController.deleteSegmentsForDates(dates, jobId, req.user._id)
     .then(job => res.json({ job }))
@@ -80,9 +80,10 @@ router.post(
   '/delete-segments-for-day-ids',
   verifyLogin,
   (req, res) => {
-    checkRequiredProps(req.body, ['dayIds', 'jobId']);
-    const { dayIds, jobId } = req.body;
-    timeController.deleteSegmentsForDates(dayIds, jobId, req.user._id)
+    checkRequiredProps(req.body, ['ids', 'jobId'], res);
+    // expects `ids` to have the format [{ weekId: '', dayIds: ['', '', ...] }, ...]
+    const { ids, jobId } = req.body;
+    timeController.deleteSegmentsForDayIds(ids, jobId, req.user._id)
     .then(job => res.json({ job }))
     .catch(routeErrorHandlerFactory(res));
   }

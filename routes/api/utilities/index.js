@@ -14,10 +14,11 @@ function checkRequiredProps(props, requiredPropNames, res) {
     checkRequiredProp(props, name, problems, problemMessages, name);
   });
   if (problemMessages.length > 0) {
-    return res.status(400).json({
+    res.status(400).json({
       messages: problemMessages,
       problems
     });
+    throw new Error('Missing required input for route.');
   }
 }
 
