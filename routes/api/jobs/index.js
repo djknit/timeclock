@@ -37,9 +37,7 @@ router.post(
   verifyLogin,
   (req, res) => {
     JobController.deleteJob(req.params._id, req.user._id)
-    .then(result => {
-      return res.json({ result });
-    })
+    .then(result => res.json({ result }))
     .catch(routeErrorHandlerFactory(res));
   }
 );

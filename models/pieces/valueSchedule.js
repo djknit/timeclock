@@ -10,8 +10,7 @@ module.exports = valueOutline => {
     {
       value: valueOutline,
       startDate: dateSubdocFactory()
-    },
-    { _id: false }
+    }
   );
 
   return {

@@ -1,9 +1,14 @@
-const { getMoment, convertMomentToMyDate } = require('../../../utilities');
+const {
+  checkForFailure, getMoment, convertMomentToMyDate, isDateValid, wageValidation
+} = require('../../utilities');
 
 module.exports = {
   getMoment,
   convertMomentToMyDate,
-  jobNotFoundCheckerFactory
+  jobNotFoundCheckerFactory,
+  checkForFailure,
+  isDateValid,
+  wageValidation
 };
 
 function jobNotFoundCheckerFactory(jobId) {
