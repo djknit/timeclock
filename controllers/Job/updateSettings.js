@@ -11,14 +11,12 @@ module.exports = {
 // *** Probably need to update individual schedule entries to make it easier to know what has changed when determining weeks affected
 function updateWage(updates, jobId, userId) {
   return new Promise((resolve, reject) => {
-    const { add, changeDate, remove, edit } = updates;
     // check input
     // validate values for add and edit operations
     let job;
     getJobById(jobId, userId)
     .then(_job => {
       job = _job;
-
       // if dates moved, determine if date moved passed another schedule entry
         // if so, add entries passed to delete list
       // do all removes, then change date, then add; edit can be anytime
@@ -28,23 +26,23 @@ function updateWage(updates, jobId, userId) {
       // run updates to value schedule
       // update weeks and days
     })
-    .populate('weeks.document')
     .then(jobNotFoundCheckerFactory(jobId))
+    .then(() => validateWageUpdates(updates, job.wage))
     .then(job => updateWagesOfWeeksAndDays())
     .then(resolve)
     .catch(reject);
   });
 }
 
-function validateWageUpdatesInput(updates) {
+function validateWageUpdates(updates, wageSchedule) {
   return new Promise((resolve, reject) => {
     validateUpdatesParentObj(updates);
     const { add, changeDate, remove, edit } = updates;
     validateAddMethod(add)
-    .then(() => {
-      
-    });
-
+    .then(() => validateChangeDateMethod(changeDate, wageSchedule))
+    .then(() => validateRemoveMethod(remove, wageSchedule))
+    .then(() => validateEditMethod(edit, wageSchedule))
+    .catch(reject);
   });
 }
 
@@ -85,11 +83,8 @@ function validateAddMethod(additionUpdates) {
     const problemsObj = {
       updates: { add: true }
     };
-    const failStatus = 422;
     for (let i = 0; i < additionUpdates.length; i++) {
-      let newScheduleEntry = additionUpdates[i];
-      const { startDate, value } = newScheduleEntry;
-      validateStartDate(startDate, 'add', problemsObj);
+      validateStartDate(additionUpdates[i].startDate, 'add', problemsObj);
     }
     wageValidation.validateWages(additionUpdates.map(newSchedEntry => newSchedEntry.value))
     .then(resolve)
@@ -97,17 +92,49 @@ function validateAddMethod(additionUpdates) {
   });
 }
 
-function validateStartDate(startDate, methodName, problemsObj) {
-  checkForFailure(
-    !startDate || !isDateValid(startDate),
-    'Missing or invalid `startDate` in `' + methodName + '` method.',
-    problemsObj,
-    failStatus
-  );
+function validateChangeDateMethod(dateChangeUpdates, wageSchedule) {
+  const problemsObj = {
+    updates: { changeDate: true }
+  };
+  for (let i = 0; i < dateChangeUpdates.length; i++) {
+    const { startDate, id } = dateChangeUpdates[i];
+    validateScheduleEntryId(id, wageSchedule, 'changeDate', problemsObj);
+    validateStartDate(startDate, 'changeDate', problemsObj);
+  }
 }
 
-function validateWage(wage, methodName, problemsObj) {
-  const wageDoc = Wage.create(wage).validate(err => {
-    
-  })
+function validateRemoveMethod(removalUpdates, wageSchedule) {
+  const problemsObj = {
+    updates: { remove: true }
+  };
+  for (let i = 0; i < removalUpdates.length; i++) {
+    validateScheduleEntryId(removalUpdates[i].id, wageSchedule, 'remove', problemsObj);
+  }
+}
+
+function validateEditMethod(editingUpdates, wageSchedule) {
+  return new Promise((resolve, reject) => {
+    const problemsObj = {
+      updates: { edit: true }
+    };
+    for (let i = 0; i < editingUpdates.length; i++) {
+      validateScheduleEntryId(editingUpdates[i].id, wageSchedule, 'edit', problemsObj);
+    }
+    wageValidation.validateWages(editingUpdates.map(updatedSchedEntry => updatedSchedEntry.value))
+    .then(resolve)
+    .catch(err => checkForFailure(true, 'Invalid value in `edit` update method.', problemsObj, 422));
+  });
+}
+
+function validateStartDate(startDate, methodName, problemsObj) {
+  const failMsg = 'Missing or invalid `startDate` in `' + methodName + '` method.';
+  checkForFailure(!startDate || !isDateValid(startDate), failMsg, problemsObj, 422);
+}
+
+function validateScheduleEntryId(id, schedule, methodName, problemsObj) {
+  for (let i = 0; i < schedule.length; i++) {
+    if (schedule[i]._id.toString() === id) return;
+  }
+  const failMsg = 'Missing or invalid `id` in `' + methodName + '` method.';
+  checkForFailure(true, failMsg, problemsObj, 422);
 }
