@@ -21,5 +21,9 @@ const testWage = {
 
 console.log('* * *');
 
+let str = 'my string';
+console.log(str);
+console.log(str.toString())
+
 
 console.log('_'.repeat(33) + '\n');

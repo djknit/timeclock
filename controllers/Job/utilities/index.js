@@ -1,5 +1,5 @@
 const {
-  checkForFailure, getMoment, convertMomentToMyDate, isDateValid, wageValidation
+  checkForFailure, getMoment, convertMomentToMyDate, isDateValid, wageValidation, getUtcMoment
 } = require('../../utilities');
 
 module.exports = {
@@ -8,7 +8,8 @@ module.exports = {
   jobNotFoundCheckerFactory,
   checkForFailure,
   isDateValid,
-  wageValidation
+  wageValidation,
+  getUtcMoment
 };
 
 function jobNotFoundCheckerFactory(jobId) {
