@@ -47,8 +47,8 @@ router.post(
   verifyLogin,
   (req, res) => {
     checkRequiredProps(req.body, ['jobId', 'wage'], res);
-    const { jobId, wage } = req.body;
-    JobController.updateWage(jobId, wage, req.user._id)
+    const { jobId, updates } = req.body;
+    JobController.updateWage(updates, jobId, req.user._id)
     .then(job => res.json(cleanJob(job)))
     .catch(routeErrorHandlerFactory(res));
   }
