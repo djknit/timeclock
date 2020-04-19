@@ -1,5 +1,7 @@
 const moment = require('moment-timezone');
 
+const wageValidation = require('./wageValidation');
+
 module.exports = {
   routeErrorHandlerFactory,
   errorHandlerMiddleware,
@@ -14,7 +16,9 @@ module.exports = {
   areDatesEquivalent,
   getFirstDayOfWeekForDate,
   findWeekBeginsSchedIndexForDate,
-  areWagesEquivalent
+  areWagesEquivalent,
+  isDateValid,
+  wageValidation
 }
 
 
@@ -108,6 +112,15 @@ function areDatesEquivalent(date1, date2) {
     date1.month === date2.month &&
     date1.year === date2.year
   );
+}
+
+function isDateValid(val) {
+  const { day, month, year } = val;
+  const date = new Date(year, month, day);
+  if (date.getDate() !== day) return false;
+  if (date.getMonth() !== month) return false;
+  if (date.getFullYear() !== year) return false;
+  return true;
 }
 
 

@@ -1,7 +1,4 @@
-const mongoose = require('mongoose');
-
 const intSubdocFactory = require('./integer');
-const valueScheduleSubdocFactory = require('./valueSchedule');
 
 module.exports = (useDefault) => {
   const options = useDefault !== false ? { default: 0 } : { required: true };

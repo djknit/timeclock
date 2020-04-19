@@ -1,17 +1,18 @@
 const mongoose = require('mongoose');
 
-const { getDateTime } = require('../../utilities');
+const { getDateTime, getUtcMoment } = require('../../utilities');
 
 const dateSubdocFactory = require('./date');
+const intSubdocFactory = require('./integer');
 
 module.exports = valueOutline => {
 
   const valDatePairSchema = new mongoose.Schema(
     {
       value: valueOutline,
-      startDate: dateSubdocFactory()
-    },
-    { _id: false }
+      startDate: dateSubdocFactory(),
+      startDateUtcTime: intSubdocFactory()
+    }
   );
 
   return {
@@ -43,6 +44,17 @@ module.exports = valueOutline => {
           return true;
         },
         message: 'Schedule must be in chronological order.'
+      }, {
+        validator: vals => {
+          for (let i = 0; i < vals.length; i++) {
+            const { startDate, startDateUtcTime } = vals[i];
+            if (!startDateUtcTime || getUtcMoment(startDate).valueOf() !== startDateUtcTime) {
+              return false;
+            }
+          }
+          return true;
+        },
+        message: 'A schedule entry is missing `startDateUtcTime` or has a `startDateUtcTime` that does not match its `startDate`.'
       }
     ]
   };

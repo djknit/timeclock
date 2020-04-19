@@ -41,10 +41,10 @@ This plan is not complete. Future steps will be expanded on in the plan before t
   * [x] Add configuration for Mongoose (MongoDB ODM)
   * [x] Add Bash scripts (to package.json) needed for Heroku to install + build
   * [x] Set up automatic deployment to Heroku from github repo.
-    * [x] Create 2 Heroku projects. Deploy `dev` branch to 1 project and `master` branch to another.
+    * [x] Create 2 Heroku projects. Deploy ~~`dev`~~ `beta` branch to 1 project and `master` branch to another.
     * [x] Provision database for both project.
 * [ ] _Develop back-end for all MVP features_
-  * [x] _Develop code necessary for user authentication._
+  * [x] Develop code necessary for user authentication.
     * [x] Create User database model
     * [x] Configure passport. Create controller functions needed to create account and login.
     * [x] Create api routes and remaining controller functions needed for authentication.
@@ -52,12 +52,17 @@ This plan is not complete. Future steps will be expanded on in the plan before t
       * [x] Test login
       * [x] Login and logout
       * [x] Delete account
-      * [x] _Edit account information_
-  * [ ] Develop code necessary for time management
+      * [x] Edit account information
+  * [ ] _Develop code necessary for time management_
     * [x] Create job
-    * [ ] Edit job information
+    * [x] Get jobs for user (basic info only)
+    * [x] Get individual job data (w/ all values populated)
+    * [ ] _Edit job information (`wage`, `dayCutoff`, `timezone`, and `weekBegins`)_
+    * [ ] Change job name
     * [x] Add weeks and days
     * [x] Add time segments
+    * [x] Delete time segments (individually by id and in bulk by date)
+    * [ ] Delete job (code is written, but still needs reviewed and tested)
 * [ ] Develop front-end to complete MVP
 * [ ] Review code for bugs and code organization/readability
 * [ ] Work on additional features
@@ -75,15 +80,14 @@ This plan is not complete. Future steps will be expanded on in the plan before t
 * create-react-app package
 
 #### Back End
-* Passport (Passport Local Strategy)
+* Passport and passport-local
 * Express
 * Node
 * MongoDB
 * Mongoose
 * Bcrypt
-
-#### Public APIs
-* Google Books API
+* Moment and moment-timezone
+* Currency-codes
 
 ## Instructions for Use
 (Coming soon...)

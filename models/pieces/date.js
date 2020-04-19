@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const intTypeFactory = require('./integer');
 
+const { isDateValid } = require('../../utilities');
+
 const dateSchema = new mongoose.Schema({
   year: intTypeFactory(),
   month: intTypeFactory(),
@@ -16,14 +18,7 @@ module.exports = options => {
   return {
     type: dateSchema,
     validate: {
-      validator: val => {
-        const { day, month, year } = val;
-        const date = new Date(year, month, day);
-        if (date.getDate() !== day) return false;
-        if (date.getMonth() !== month) return false;
-        if (date.getFullYear() !== year) return false;
-        return true;
-      },
+      validator: isDateValid,
       message: 'Invalid date'
     },
     required

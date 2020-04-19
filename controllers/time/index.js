@@ -44,11 +44,6 @@ function addSegment(segment, jobId, userId) {
       .then(_job => {
         job = _job;
         if (!weekDoc) weekDoc = weeksController.findWeekWithDate(date, job.weeks);
-        console.log('\n& & & -- _ -');
-        console.log(weekDoc)
-        console.log(' -  -  -');
-        console.log(date);
-        console.log(' -  -  -');
         day = daysController.findDayForDate(date, weekDoc.days);
         ensureNewSegDoesntOverlap(segment, day);
         return WeekController.addSegmentToDay(segment, day._id, weekDoc._id, userId);
@@ -71,11 +66,8 @@ function addSegment(segment, jobId, userId) {
 
 function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
   return new Promise((resolve, reject) => {
-    console.log('\n\nDELETE SEGS IN RANGE\n')
     const firstDateTime = getUtcMoment(firstDate).valueOf();
-    console.log(firstDateTime)
     const lastDateTime = getUtcMoment(lastDate).valueOf();
-    console.log(lastDateTime)
     if (firstDateTime > lastDateTime) {
       let err = new Error('Invalid date range; `firstDate` is later than `lastDate`.');
       err.status = 422;
@@ -98,6 +90,7 @@ function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
   });
 }
 
+//* * maybe move to segments
 function ensureSegmentIsValid(segment) {
   const invalidSegMsg = 'Invalid segment. Segments must have both a `startTime` and `endTime`, and the `startTime` must be less than the `endTime`.';
   const invalidSegProblemsObj = {
@@ -125,7 +118,7 @@ function ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc) {
   ensureNewSegDoesntOverlap(segment, day);
 }
 
-function ensureNewSegDoesntOverlap(segment, day) {
+function ensureNewSegDoesntOverlap(segment, day) {2
   const doesNewSegOverlapExistingSegs = segmentsController.doesNewSegOverlapExistingSegs(day.segments, segment);
   const segOverlapMsg = 'Segment could not be added because it overlaps with one or more existing segment(s).';
   const segOverlapProblemsObj = {
