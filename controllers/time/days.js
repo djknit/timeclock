@@ -22,25 +22,13 @@ module.exports = {
 function createDaysForDates(dates, job) {
   return dates.map(date => {
     const precedingDate = convertMomentToMyDate(getMoment(date).subtract(1, 'days'));
-    console.log('*** * * * * * ============================= * * * *')
-    console.log({
-      date,
-      startCutoff: getMostRecentScheduleValueForDate(precedingDate, job.dayCutoff),
-      endCutoff: getMostRecentScheduleValueForDate(date, job.dayCutoff),
-      startTimezone: getMostRecentScheduleValueForDate(precedingDate, job.timezone),
-      timezone: getMostRecentScheduleValueForDate(date, job.timezone),
-      wage: getMostRecentScheduleValueForDate(date, job.wage),
-      // job: job._id
-    })
-    console.log('*** * * * * * ============================= * * * *')
     return {
       date,
       startCutoff: getMostRecentScheduleValueForDate(precedingDate, job.dayCutoff),
       endCutoff: getMostRecentScheduleValueForDate(date, job.dayCutoff),
       startTimezone: getMostRecentScheduleValueForDate(precedingDate, job.timezone),
       timezone: getMostRecentScheduleValueForDate(date, job.timezone),
-      wage: getMostRecentScheduleValueForDate(date, job.wage),
-      // job: job._id
+      wage: getMostRecentScheduleValueForDate(date, job.wage)
     };
   });
 }
@@ -59,7 +47,6 @@ function findDayWithId(dayId, days) {
   for (let i = 0; i < days.length; i++) {
     const day = days[i];
     if (day._id.toString() === dayId.toString()) {
-      // console.log('HIT HIT HIT  eowpf afp')
       return day;
     }
   }
@@ -70,8 +57,6 @@ function getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, days) {
   return days
   .filter(day => {
     const dayUtcDateTime = getUtcMoment(day.date).valueOf();
-    console.log(dayUtcDateTime)
-    console.log(firstDateUtcTime <= dayUtcDateTime && dayUtcDateTime <= lastDateUtcTime)
     return firstDateUtcTime <= dayUtcDateTime && dayUtcDateTime <= lastDateUtcTime;
   })
   .map(day => day._id);
