@@ -10,51 +10,56 @@ module.exports = {
   updateWage
 };
 
-// *** Probably need to update individual schedule entries to make it easier to know what has changed when determining weeks affected
 function updateWage(updates, jobId, userId) {
   return new Promise((resolve, reject) => {
-    // check input
-    // validate values for add and edit operations
     let job;
     let affectedTimespans = {};
     getJobById(jobId, userId)
     .then(_job => {
       job = _job;
-      // if dates moved, determine if date moved passed another schedule entry
-        // if so, add entries passed to delete list
-      // get affected date ranges
-      // do all removes, then change date, then add; edit can be anytime
-      // for remove, change date, and edit: make sure id exists.
-      // run updates to value schedule
-      // update weeks and days
     })
     .then(jobNotFoundCheckerFactory(jobId))
-    .then(() => validateWageUpdates(updates, job.wage))
+    .then(() => validateWageUpdates_part1of2(updates, job.wage))
     .then(() => {
       affectedTimespans = getTimespansAffectedByUpdate(updates, job.wage);
-    })
-    .then(() => {
+      // for each `changeDate` update, remove all entries with dates between old and new dates
+        // note: for this and the next 2 actions, schedule entries that are named in `changeDate` updates are exempt
       markEntriesWithinTimespansForRemoval(affectedTimespans.changeDate, job.wage, updates);
+      // for each new entry (`add` method), remove any existing entry w/ the same date
       markEntriesWithStartDatesForRemoval(updates.add.map(update => update.startDate), job.wage, updates);
+      // for each `changeDate` update, remove any existing entry w/ the same date as new date
+      markEntriesWithStartDatesForRemoval(updates.changeDate.map(update => update.startDate), job.wage, updates);
       removeDuplicatesFromRemoveUpdates(updates);
+      validateWageUpdates_part2of2(updates);
+      return updateValueSchedule(updates, job);
     })
-    .then(() => updateValueSchedule(updates, job))
     .then(job => updateWagesOfWeeksAndDays())
     .then(resolve)
     .catch(reject);
   });
 }
 
-function validateWageUpdates(updates, wageSchedule) {
-  return new Promise((resolve, reject) => {
+function validateWageUpdates_part1of2(updates, wageSchedule) {
+  // return new Promise((resolve, reject) => {
     validateUpdatesParentObj(updates);
-    validateAddMethod(updates.add)
+    return validateAddMethod(updates.add)
     .then(() => validateChangeDateMethod(updates.changeDate, wageSchedule))
     .then(() => validateRemoveMethod(updates.remove, wageSchedule))
     .then(() => validateEditMethod(updates.edit, wageSchedule))
-    .catch(reject);
-  });
+    .then(validateDateChangeDatesAgainstAdditionDates(updates, wageSchedule));
+  // });
 } 
+
+function validateWageUpdates_part2of2(updates) {
+  const problemsObj = {
+    updates: { edit: true }
+  };
+  const removalUpdateIds = updates.remove.map(({ id }) => id);
+  for (let i = 0; i < updates.edit; i++) {
+    const failMsg = 'Cannot complete `edit` update because the entry with specified `id` is marked for removal.';
+    checkForFailure(removalUpdateIds.indexOf(updates.edit[i].id) !== -1, failMsg, problemsObj, 422);
+  }
+}
 
 function getTimespansAffectedByUpdate(updates, valueSchedule) {
   let result = {};
@@ -118,19 +123,23 @@ function getNextDateInScheduleUtcTime(schedule, referenceDateUtcTime) {
 }
 
 function markEntriesWithinTimespansForRemoval(timespans, schedule, updates) {
+  const dateChangeUpdateIds = getDateChangeUpdateIds(updates);
   for (let i = 0; i < schedule.length; i++) {
-    if (isDateInTimespans(timespans, schedule[i].startDate)) {
+    const { _id, startDate } = schedule[i];
+    if (isDateInTimespans(timespans, startDate && dateChangeUpdateIds.indexOf(_id) === -1)) {
       updates.remove.push({ id: schedule[i]._id });
     }
   }
 }
 
 function markEntriesWithStartDatesForRemoval(startDates, schedule, updates) {
+  const dateChangeUpdateIds = getDateChangeUpdateIds(updates);
   const startDateTimes = startDates.map(date => getUtcMoment(date).valueOf());
   for (let i = 0; i < schedule.length; i++) {
-    const entryDateTime = getUtcMoment(schedule[i].startDate).valueOf();
-    if (startDateTimes.indexOf(entryDateTime) !== -1) {
-      updates.remove.push({ id: schedule[i]._id });
+    const { _id, startDate } = schedule[i];
+    const entryDateTime = getUtcMoment(startDate).valueOf();
+    if (startDateTimes.indexOf(entryDateTime) !== -1 && dateChangeUpdateIds.indexOf(_id) === -1) {
+      updates.remove.push({ id: _id });
     }
   }
 }
@@ -140,11 +149,15 @@ function isDateInTimespans(timespans, date) {
   for (let i = 0; i < timespans.length; i++) {
     const { firstDateUtcTime, lastDateUtcTime } = timespans[i];
     if (
-      (!firstDateUtcTime || firstDateUtcTime <= dateTime) &&
-      (!lastDateUtcTime || dateTime <= lastDateUtcTime)
+      (!firstDateUtcTime || firstDateUtcTime < dateTime) &&
+      (!lastDateUtcTime || dateTime < lastDateUtcTime)
     ) return true;
   }
   return false;
+}
+
+function getDateChangeUpdateIds(updates) {
+  return updates.changeDate.map(({ id }) => id);
 }
 
 function removeDuplicatesFromRemoveUpdates(updates) {
@@ -159,46 +172,130 @@ function removeDuplicatesFromRemoveUpdates(updates) {
   }
 }
 
-function updateValueSchedule(updates, jobId) {
-  executeRemoveUpdates(updates.remove, jobId)
+function updateValueSchedule(updates, job) {
+  // need to return job w/ updated value schedule
+  const jobId = job._id;
+  return executeRemoveUpdates(updates.remove, jobId)
   .then(() => executeChangeDateUpdates(updates.changeDate, jobId))
   .then(() => executeEditUpdates(updates.edit, jobId))
-  .then(() => executeAddUpdates(updates.add, jobId));
-  
+  .then(() => executeAddUpdates(updates.add, jobId))
+  .then(() => job);
 }
 
-function executeRemoveUpdates(removalUpdates, jobId) {
-  if (removalUpdates.length === 0) return;
-  Job.findByIdAndUpdate(
-    jobId,
-    {
-      $pull: {
-        wage: {
-          _id: {
-            $in: removalUpdates.map(update => update.id)
+function executeRemoveUpdates(removalUpdates, job, propName) {
+  return new Promise((resolve, reject) => {
+    if (removalUpdates.length === 0) return resolve();
+    Job.findByIdAndUpdate(
+      job._id,
+      {
+        $pull: {
+          [propName]: {
+            _id: {
+              $in: removalUpdates.map(update => update.id)
+            }
           }
         }
-      }
-    },
-    { new: true }
-  )
+      },
+      { new: true }
+    )
+    .then(_job => {
+      job[propName] = _job[propName];
+      resolve();
+    });
+  });
 }
 
-function executeChangeDateUpdates() {
-
+function executeChangeDateUpdates(dateChangeUpdates, job, propName) {
+  return new Promise((resolve, reject) => {
+    if (dateChangeUpdates.length === 0) return resolve();
+    const idPropName = propName + '._id';
+    const dateFieldName = propName + '.$.startDate';
+    const dateTimeFieldName = propName + '.$.startDateUtcTime';
+    let numCompleted = 0;
+    for (let i = 0; i < dateChangeUpdates.length; i++) {
+      const { id, startDate } = dateChangeUpdates[i];
+      const startDateUtcTime = getUtcMoment(startDate).valueOf();
+      Job.findOneAndUpdate(
+        {
+          _id: job._id,
+          [idPropName]: id
+        },
+        {
+          $set: {
+            [dateFieldName]: startDate,
+            [dateTimeFieldName]: startDateUtcTime
+          }
+        },
+        { new: true }
+      )
+      .then(_job => {
+        if (++numCompleted === dateChangeUpdates.length) {
+          job[propName] = _job[propName];
+          resolve();
+        }
+      });
+    }
+    
+  });
 }
 
-function executeEditUpdates() {
-
+function executeEditUpdates(editingUpdates, job, propName) {
+  return new Promise((resolve, reject) => {
+    if (editingUpdates.length === 0) return resolve();
+    const idPropName = propName + '._id';
+    const fieldName = propName + '.$.value';
+    let numCompleted = 0;
+    for (let i = 0; i < editingUpdates.length; i++) {
+      const { id, value } = editingUpdates[i];
+      Job.findOneAndUpdate(
+        {
+          _id: job._id,
+          [idPropName]: id
+        },
+        {
+          $set: {
+            [fieldName]: value
+          }
+        },
+        { new: true }
+      )
+      .then(_job => {
+        if (++numCompleted === editingUpdates.length) {
+          job[propName] = _job[propName];
+          resolve();
+        }
+      });
+    }
+  });
 }
 
-function executeAddUpdates() {
-
+function executeAddUpdates(additionUpdates, job, propName) {
+  return new Promise((resolve, reject) => {
+    if (additionUpdates.length === 0) return resolve();
+    Job.findByIdAndUpdate(
+      job._id,
+      {
+        $push: {
+          [propName]: {
+            _id: {
+              $in: removalUpdates.map(update => update.id)
+            }
+          }
+        }
+      },
+      { new: true }
+    )
+    .then(_job => {
+      job[propName] = _job[propName];
+      resolve();
+    });
+  });
 }
 
 function updateWagesOfWeeksAndDays(updatedWageSched, job) {
   const oldWageSched = job.wage;
   return new Promise((resolve, reject) => {
+    if (dateChangeUpdates.length === 0) return resolve();
 
   });
 }
@@ -221,7 +318,7 @@ function validateUpdatesParentObj(updates) {
   checkForFailure(!hasValidUpdate, 'No valid updates provided.', { updates: true }, 422);
 }
 
-function validateAddMethod(additionUpdates, wageSchedule) {
+function validateAddMethod(additionUpdates) {
   return new Promise((resolve, reject) => {
     const problemsObj = {
       updates: { add: true }
@@ -230,9 +327,8 @@ function validateAddMethod(additionUpdates, wageSchedule) {
     for (let i = 0; i < additionUpdates.length; i++) {
       validateStartDate(additionUpdates[i].startDate, 'add', problemsObj);
       const startDateTime = getUtcMoment(additionUpdates[i].startDate).valueOf();
-      if (dateTimes.indexOf(startDateTime) !== -1) {
-        checkForFailure(true, 'Duplicate `startDate`s are not allowed.', problemsObj, 422);
-      }
+      const failMsg = 'Duplicate `startDate`s are not allowed.';
+      checkForFailure(dateTimes.indexOf(startDateTime) !== -1, failMsg, problemsObj, 422);
       dateTimes.push(startDateTime);
     }
     wageValidation.validateWages(additionUpdates.map(newSchedEntry => newSchedEntry.value))
@@ -245,10 +341,15 @@ function validateChangeDateMethod(dateChangeUpdates, wageSchedule) {
   const problemsObj = {
     updates: { changeDate: true }
   };
+  let dateTimes = [];
   for (let i = 0; i < dateChangeUpdates.length; i++) {
     const { startDate, id } = dateChangeUpdates[i];
-    validateScheduleEntryId(id, wageSchedule, 'changeDate', problemsObj);
     validateStartDate(startDate, 'changeDate', problemsObj);
+    const startDateTime = getUtcMoment(startDate).valueOf();
+    const failMsg = 'Duplicate `startDate`s are not allowed.';
+    checkForFailure(dateTimes.indexOf(startDateTime) !== -1, failMsg, problemsObj, 422);
+    dateTimes.push(startDateTime);
+    validateScheduleEntryId(id, wageSchedule, 'changeDate', problemsObj);
   }
 }
 
@@ -273,6 +374,21 @@ function validateEditMethod(editingUpdates, wageSchedule) {
     .then(resolve)
     .catch(err => checkForFailure(true, 'Invalid value in `edit` update method.', problemsObj, 422));
   });
+}
+
+function validateDateChangeDatesAgainstAdditionDates(updates) {
+  const problemsObj = {
+    updates: {
+      changeDate: true,
+      add: true
+    }
+  };
+  const additionDateTimes = updates.add.map(({ startDate }) => getUtcMoment(startDate).valueOf());
+  for (let i = 0; i < updates.changeDate; i++) {
+    const dateTime = getUtcMoment(updates.changeDate[i].startDate).valueOf();
+    const failMsg = 'Duplicate `startDates`s are not allowed; `add` and `changeDate` updates must all have unique dates.';
+    checkForFailure(additionDateTimes.indexOf(dateTime) !== -1, failMsg, problemsObj, 422);
+  }
 }
 
 function validateStartDate(startDate, methodName, problemsObj) {
