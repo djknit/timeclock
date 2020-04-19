@@ -272,14 +272,20 @@ function executeEditUpdates(editingUpdates, job, propName) {
 function executeAddUpdates(additionUpdates, job, propName) {
   return new Promise((resolve, reject) => {
     if (additionUpdates.length === 0) return resolve();
+    additionUpdates = additionUpdates.map(
+      ({ startDate, value }) => ({
+        startDate,
+        value,
+        startDateUtcTime: getUtcMoment(startDate).valueOf()
+      })
+    );
     Job.findByIdAndUpdate(
       job._id,
       {
         $push: {
-          [propName]: {
-            _id: {
-              $in: removalUpdates.map(update => update.id)
-            }
+          [propName] : {
+            $each: additionUpdates,
+            $sort: { startDateUtcTime: 1 }
           }
         }
       },
