@@ -11,8 +11,6 @@ function processUpdates(updates, job, propName, affectedTimespans) {
   // for each `changeDate` update, remove any existing entry w/ the same date as new date
   markEntriesWithStartDatesForRemoval(updates.changeDate.map(update => update.startDate), job[propName], updates);
   removeDuplicatesFromRemoveUpdates(updates);
-  validateUpdates_part2of2(updates);
-  return updateValueSchedule(updates, job);
 }
 
 function markEntriesWithinTimespansForRemoval(timespans, schedule, updates) {

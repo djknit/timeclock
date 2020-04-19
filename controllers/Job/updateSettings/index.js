@@ -15,10 +15,10 @@ function updateWage(updates, jobId, userId) {
   return new Promise((resolve, reject) => {
     let job, affectedTimespans;
     getJobById(jobId, userId)
+    .then(jobNotFoundCheckerFactory(jobId))
     .then(_job => {
       job = _job;
     })
-    .then(jobNotFoundCheckerFactory(jobId))
     .then(() => validateUpdates_part1of2(updates, job.wage))
     .then(() => {
       affectedTimespans = getTimespansAffectedByUpdate(updates, job.wage);

@@ -13,13 +13,13 @@ module.exports = {
 };
 
 function jobNotFoundCheckerFactory(jobId) {
-  return function(job) {
+  return function jobNotFoundChecker(job) {
     if (!job) {
       let err = new Error(`No job found for job id "${jobId}".`);
       err.status = 422;
       err.problems = { jobId: true };
       throw err;
     }
-    else return job;
+    return job;
   }
 }
