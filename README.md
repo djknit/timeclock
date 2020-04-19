@@ -80,15 +80,14 @@ This plan is not complete. Future steps will be expanded on in the plan before t
 * create-react-app package
 
 #### Back End
-* Passport (Passport Local Strategy)
+* Passport and passport-local
 * Express
 * Node
 * MongoDB
 * Mongoose
 * Bcrypt
-
-#### Public APIs
-* Google Books API
+* Moment and moment-timezone
+* Currency-codes
 
 ## Instructions for Use
 (Coming soon...)
