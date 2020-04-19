@@ -1,8 +1,10 @@
 const { checkForFailure, isDateValid, wageValidation, getUtcMoment } = require('../../utilities');
 
+const validateUpdateValues = require('./validateUpdateValues');
+
 module.exports = validateUpdates_part1of2;
 
-function validateUpdates_part1of2(updates, valueSchedule) {
+function validateUpdates_part1of2(updates, valueSchedule, propName) {
   // return new Promise((resolve, reject) => {
   validateUpdatesParentObj(updates);
   return validateAddMethod(updates.add)
@@ -31,7 +33,7 @@ function validateUpdatesParentObj(updates) {
   checkForFailure(!hasValidUpdate, 'No valid updates provided.', { updates: true }, 422);
 }
 
-function validateAddMethod(additionUpdates) {
+function validateAddMethod(additionUpdates, propName) {
   return new Promise((resolve, reject) => {
     const problemsObj = {
       updates: { add: true }
@@ -44,13 +46,13 @@ function validateAddMethod(additionUpdates) {
       checkForFailure(dateTimes.indexOf(startDateTime) !== -1, failMsg, problemsObj, 422);
       dateTimes.push(startDateTime);
     }
-    wageValidation.validateWages(additionUpdates.map(newSchedEntry => newSchedEntry.value))
+    validateUpdateValues(additionUpdates, propName)
     .then(resolve)
     .catch(err => checkForFailure(true, 'Invalid value in `add` update method.', problemsObj, 422));
   });
 }
 
-function validateChangeDateMethod(dateChangeUpdates, wageSchedule) {
+function validateChangeDateMethod(dateChangeUpdates, schedule) {
   const problemsObj = {
     updates: { changeDate: true }
   };
@@ -62,28 +64,28 @@ function validateChangeDateMethod(dateChangeUpdates, wageSchedule) {
     const failMsg = 'Duplicate `startDate`s are not allowed.';
     checkForFailure(dateTimes.indexOf(startDateTime) !== -1, failMsg, problemsObj, 422);
     dateTimes.push(startDateTime);
-    validateScheduleEntryId(id, wageSchedule, 'changeDate', problemsObj);
+    validateScheduleEntryId(id, schedule, 'changeDate', problemsObj);
   }
 }
 
-function validateRemoveMethod(removalUpdates, wageSchedule) {
+function validateRemoveMethod(removalUpdates, schedule) {
   const problemsObj = {
     updates: { remove: true }
   };
   for (let i = 0; i < removalUpdates.length; i++) {
-    validateScheduleEntryId(removalUpdates[i].id, wageSchedule, 'remove', problemsObj);
+    validateScheduleEntryId(removalUpdates[i].id, schedule, 'remove', problemsObj);
   }
 }
 
-function validateEditMethod(editingUpdates, wageSchedule) {
+function validateEditMethod(editingUpdates, schedule, propName) {
   return new Promise((resolve, reject) => {
     const problemsObj = {
       updates: { edit: true }
     };
     for (let i = 0; i < editingUpdates.length; i++) {
-      validateScheduleEntryId(editingUpdates[i].id, wageSchedule, 'edit', problemsObj);
+      validateScheduleEntryId(editingUpdates[i].id, schedule, 'edit', problemsObj);
     }
-    wageValidation.validateWages(editingUpdates.map(updatedSchedEntry => updatedSchedEntry.value))
+    validateUpdateValues(editingUpdates, propName)
     .then(resolve)
     .catch(err => checkForFailure(true, 'Invalid value in `edit` update method.', problemsObj, 422));
   });

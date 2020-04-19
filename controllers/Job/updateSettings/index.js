@@ -6,6 +6,7 @@ const { validateUpdates_part1of2, validateUpdates_part2of2 } = require('./valida
 const processUpdates = require('./processUpdates');
 const updateValueSchedule = require('./updateValueSchedule');
 const getTimespansAffectedByUpdate = require('./getTimespansAffectedByUpdate');
+const updateWeeksAndDays = require('./updateWeeksAndDays');
 
 module.exports = {
   updateWage
@@ -29,14 +30,6 @@ function updateWage(updates, jobId, userId) {
     .then(job => updateWagesOfWeeksAndDays())
     .then(resolve)
     .catch(reject);
-  });
-}
-
-function updateWagesOfWeeksAndDays(updatedWageSched, job) {
-  const oldWageSched = job.wage;
-  return new Promise((resolve, reject) => {
-    if (dateChangeUpdates.length === 0) return resolve();
-
   });
 }
 

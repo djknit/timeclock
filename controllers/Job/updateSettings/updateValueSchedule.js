@@ -4,13 +4,13 @@ const { getUtcMoment } = require('../utilities');
 
 module.exports = updateValueSchedule;
 
-function updateValueSchedule(updates, job) {
+function updateValueSchedule(updates, job, propName) {
   // need to return job w/ updated value schedule
   const jobId = job._id;
-  return executeRemoveUpdates(updates.remove, jobId)
-  .then(() => executeChangeDateUpdates(updates.changeDate, jobId))
-  .then(() => executeEditUpdates(updates.edit, jobId))
-  .then(() => executeAddUpdates(updates.add, jobId))
+  return executeRemoveUpdates(updates.remove, jobId, propName)
+  .then(() => executeChangeDateUpdates(updates.changeDate, jobId, propName))
+  .then(() => executeEditUpdates(updates.edit, jobId, propName))
+  .then(() => executeAddUpdates(updates.add, jobId, propName))
   .then(() => job);
 }
 
@@ -38,6 +38,7 @@ function executeRemoveUpdates(removalUpdates, job, propName) {
 }
 
 function executeChangeDateUpdates(dateChangeUpdates, job, propName) {
+  // still need to ensure updated schedule is in chronological order. If 2 or more date changes result in dates being crossed, schedule must be rearranged.
   return new Promise((resolve, reject) => {
     if (dateChangeUpdates.length === 0) return resolve();
     const idPropName = propName + '._id';
@@ -60,14 +61,27 @@ function executeChangeDateUpdates(dateChangeUpdates, job, propName) {
         },
         { new: true }
       )
-      .then(_job => {
+      .then(() => {
         if (++numCompleted === dateChangeUpdates.length) {
-          job[propName] = _job[propName];
-          resolve();
+          Job.findOneAndUpdate(
+            { _id: job._id },
+            {
+              $push: {
+                [propName]: {
+                  $each: [],
+                  $sort: { startDateUtcTime: 1 }
+                }
+              }
+            },
+            { new: true }
+          )
+          .then(_job => {
+            job[propName] = _job[propName];
+            resolve();
+          });
         }
       });
     }
-    
   });
 }
 
