@@ -18,7 +18,8 @@ module.exports = {
   findWeekBeginsSchedIndexForDate,
   areWagesEquivalent,
   isDateValid,
-  wageValidation
+  wageValidation,
+  getPrecedingDate
 }
 
 
@@ -66,6 +67,10 @@ function getDateTime(myDate) {
 function getDate(myDate) {
   const { day, month, year } = myDate;
   return (new Date(year, month, day));
+}
+
+function getPrecedingDate(myDate) {
+  return convertMomentToMyDate(getMoment(myDate).subtract(1, 'days'));
 }
 
 function getMoment(myDate, timezone) {

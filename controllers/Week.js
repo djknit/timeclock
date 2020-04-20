@@ -12,7 +12,8 @@ module.exports = {
   removeSegment,
   removeAllSegments,
   removeSegmentsFromDaysWithIds,
-  deleteWeeks
+  deleteWeeks,
+  updateJobSettingsForDays
 }
 
 function create(newWeek, jobId, userId) {
@@ -134,6 +135,29 @@ function removeSegmentsFromDaysWithIds(dateIds, weekId, userId) {
     )
     .then(resolve)
     .catch(reject);
+  });
+}
+
+function updateJobSettingsForDays(dayIdsAndUpdatedProps, weekId) {
+  return new Promise((resolve, reject) => {
+    let numCompleted = 0;
+    for (let i = 0; i < dayIdsAndUpdatedProps.length; i++) {
+      const { id, updates } = dayIdsAndUpdates[i];
+      Week.findOneAndUpdate(
+        {
+          _id: weekId,
+          'days.id': id
+        },
+        { $set: updates },
+        { new: true }
+      )
+      .then(weekDoc => {
+        if (!weekDoc) throw new Error('Failed to find and update weekId="' + weekId + '" dayId="' + id + '".');
+        if (++numCompleted === dayIdsAndUpdatedProps.length) {
+          return resolve(weekDoc);
+        }
+      });
+    }
   });
 }
 
