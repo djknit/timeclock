@@ -3,12 +3,12 @@ const { getUtcMoment } = require('../utilities');
 module.exports = processUpdates;
 
 function processUpdates(updates, job, propName, affectedTimespans) {
-  // for each `changeDate` update, remove all entries with dates between old and new dates
-    // note: for this and the next 2 actions, schedule entries that are named in `changeDate` updates are exempt
+  // note: for the next 3 actions, schedule entries that are named in `changeDate` updates are exempt from being removed
+  // 1.) for each `changeDate` update, remove all entries with dates between old and new dates
   markEntriesWithinTimespansForRemoval(affectedTimespans.changeDate, job[propName], updates);
-  // for each new entry (`add` method), remove any existing entry w/ the same date
+  // 2.) for each new entry (`add` method), remove any existing entry w/ the same date
   markEntriesWithStartDatesForRemoval(updates.add.map(update => update.startDate), job[propName], updates);
-  // for each `changeDate` update, remove any existing entry w/ the same date as new date
+  // 3.) for each `changeDate` update, remove any existing entry w/ the same date as new date
   markEntriesWithStartDatesForRemoval(updates.changeDate.map(update => update.startDate), job[propName], updates);
   removeDuplicatesFromRemoveUpdates(updates);
 }

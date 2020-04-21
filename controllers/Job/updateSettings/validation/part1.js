@@ -7,10 +7,10 @@ module.exports = validateUpdates_part1of2;
 function validateUpdates_part1of2(updates, valueSchedule, propName) {
   // return new Promise((resolve, reject) => {
   validateUpdatesParentObj(updates);
-  return validateAddMethod(updates.add)
+  return validateAddMethod(updates.add, propName)
   .then(() => validateChangeDateMethod(updates.changeDate, valueSchedule))
   .then(() => validateRemoveMethod(updates.remove, valueSchedule))
-  .then(() => validateEditMethod(updates.edit, valueSchedule))
+  .then(() => validateEditMethod(updates.edit, valueSchedule, propName))
   .then(validateDateChangeDatesAgainstAdditionDates(updates, valueSchedule));
   // });
 }

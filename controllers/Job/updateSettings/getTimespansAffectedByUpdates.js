@@ -1,8 +1,8 @@
 const { getUtcMoment } = require('../utilities');
 
-module.exports = getTimespansAffectedByUpdate;
+module.exports = getTimespansAffectedByUpdates;
 
-function getTimespansAffectedByUpdate(updates, valueSchedule) {
+function getTimespansAffectedByUpdates(updates, valueSchedule) {
   let result = {};
   const methods = ['add', 'changeDate', 'remove', 'edit'];
   methods.forEach(method => {
