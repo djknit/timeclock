@@ -2,7 +2,7 @@ const { getJobById, getJobBasicsById } = require('./find');
 const { create } = require('./create');
 const { addWeek, createAndAddWeekWithDate } = require('./addWeek');
 const { deleteJob } = require('./delete');
-const { updateWage } = require('./updateSettings');
+const { updateWage, updatePropWithName } = require('./updateSettings');
 
 module.exports = {
   create,
@@ -10,5 +10,6 @@ module.exports = {
   getJobById,
   deleteJob,
   updateWage,
-  createAndAddWeekWithDate
+  createAndAddWeekWithDate,
+  updatePropWithName
 };

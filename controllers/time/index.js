@@ -4,7 +4,7 @@ const segmentsController = require('./segments');
 const daysController = require('./days');
 const weeksController = require('./weeks');
 
-const { getUtcMoment, checkForFailure } = require('../utilities');
+const { getUtcDateTime, checkForFailure } = require('../utilities');
 
 module.exports = {
   days: daysController,
@@ -66,8 +66,8 @@ function addSegment(segment, jobId, userId) {
 
 function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
   return new Promise((resolve, reject) => {
-    const firstDateTime = getUtcMoment(firstDate).valueOf();
-    const lastDateTime = getUtcMoment(lastDate).valueOf();
+    const firstDateTime = getUtcDateTime(firstDate);
+    const lastDateTime = getUtcDateTime(lastDate);
     if (firstDateTime > lastDateTime) {
       let err = new Error('Invalid date range; `firstDate` is later than `lastDate`.');
       err.status = 422;

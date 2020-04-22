@@ -9,7 +9,7 @@ const { getDatesInWeekWithDate } = require('./getDates');
 const {
   convertMomentToMyDate,
   getMoment,
-  getUtcMoment
+  getUtcDateTime
 } = require('../../../../utilities/index');
 
 module.exports = {
@@ -42,8 +42,8 @@ function createWeekArrayEntryByDate(givenDate, job) {
         // console.log(weekDoc)
         return resolve({
           document: weekDoc,
-          firstDateUtcTime: getUtcMoment(firstDate).valueOf(),
-          lastDateUtcTime: getUtcMoment(lastDate).valueOf()
+          firstDateUtcTime: getUtcDateTime(firstDate),
+          lastDateUtcTime: getUtcDateTime(lastDate)
         });
       })
       .catch(reject);

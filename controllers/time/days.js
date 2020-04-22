@@ -1,6 +1,6 @@
 const moment = require('moment-timezone');
 
-const { areDatesEquivalent, getUtcMoment } = require('../../utilities');
+const { areDatesEquivalent, getUtcDateTime } = require('../../utilities');
 
 const {
   getMostRecentScheduleValueForDate,
@@ -12,6 +12,7 @@ module.exports = {
   createDaysForDates,
   findDayForDate,
   findDayWithId,
+  getDaysInDateRanges,
   getIdsOfDaysInRange,
   isSegmentInDay,
   getDayStartTime,
@@ -53,13 +54,29 @@ function findDayWithId(dayId, days) {
   return null;
 }
 
-function getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, days) {
+function getDaysInDateRanges(dateRanges, days) {
   return days
   .filter(day => {
-    const dayUtcDateTime = getUtcMoment(day.date).valueOf();
-    return firstDateUtcTime <= dayUtcDateTime && dayUtcDateTime <= lastDateUtcTime;
-  })
+    for (let i = 0; i < dateRanges.length; i++) {
+      const { firstDateUtcTime, lastDateUtcTime } = dateRanges[i];
+      if (isDayInDateRange(firstDateUtcTime, lastDateUtcTime, day)) return true;
+    }
+    return false;
+  });
+}
+
+function getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, days) {
+  return days
+  .filter(day => isDayInDateRange(firstDateUtcTime, lastDateUtcTime, day))
   .map(day => day._id);
+}
+
+function isDayInDateRange(firstDateUtcTime, lastDateUtcTime, day) {
+  const dateTime = getUtcDateTime(day.date);
+  return (
+    (!firstDateUtcTime || firstDateUtcTime <= dateTime) &&
+    (!lastDateUtcTime || dateTime <= lastDateUtcTime)
+  );
 }
 
 function getIdsOfDaysWithDates(dates, days) {

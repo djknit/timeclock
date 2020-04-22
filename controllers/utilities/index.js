@@ -1,12 +1,24 @@
-const { getUtcMoment, getMoment, convertMomentToMyDate, isDateValid, wageValidation } = require('../../utilities');
+const {
+  getUtcMoment,
+  getUtcDateTime,
+  getMoment,
+  convertMomentToMyDate,
+  isDateValid,
+  wageValidation,
+  getMostRecentScheduleValueForDate,
+  getPrecedingDate
+} = require('../../utilities');
 
 module.exports = {
   getUtcMoment,
+  getUtcDateTime,
   getMoment,
   checkForFailure,
   convertMomentToMyDate,
   isDateValid,
-  wageValidation
+  wageValidation,
+  getMostRecentScheduleValueForDate,
+  getPrecedingDate
 };
 
 function checkForFailure(failCondition, failMsg, problemsObj, statusCode) {
