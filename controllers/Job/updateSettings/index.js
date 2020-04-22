@@ -14,22 +14,33 @@ module.exports = {
 };
 
 function updatePropWithName(propName, updates, jobId, userId) {
+  console.log('\n@-@-@ UPDATE PROP WITH NAME ~_~^~_~^~_~')
   return new Promise((resolve, reject) => {
     validatePropName(propName);
+    console.log('## Passed `propName` validation')
     let job, affectedTimespans;
     getJobById(jobId, userId)
     .then(jobNotFoundCheckerFactory(jobId))
     .then(_job => {
+      console.log('$ Job found. $$$')
+      console.log(_job)
       job = _job;
     })
     .then(() => validateUpdates_part1of2(updates, job[propName], propName))
     .then(() => {
+      console.log('## passed `updates` validation part 1')
       affectedTimespans = getTimespansAffectedByUpdates(updates, job[propName]);
+      console.log('$ Affected Timespans $$$')
+      console.log(affectedTimespans)
       processUpdates(updates, job, propName, affectedTimespans);
+      console.log('## processed updates.')
+      console.log('$ updates $$$')
+      console.log(updates);
       validateUpdates_part2of2(updates);
-      return updateValueSchedule(updates, job);
+      console.log('## passed `updates` validation part 1')
+      return updateValueSchedule(updates, job, propName);
     })
-    .then(job => updateWagesOfWeeksAndDays())
+    .then(job => updateWeeksAndDays(job, affectedTimespans, propName))
     .then(resolve)
     .catch(reject);
   });

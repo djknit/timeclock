@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Week = require('../models/Week');
 const Job = require('../models/Job');
 
-const { getUtcMoment } = require('../utilities');
+const { getUtcDateTime } = require('../utilities');
 
 module.exports = {
   create,
@@ -140,18 +140,26 @@ function removeSegmentsFromDaysWithIds(dateIds, weekId, userId) {
 
 function updateJobSettingsForDays(dayIdsAndUpdatedProps, weekId) {
   return new Promise((resolve, reject) => {
+    console.log('\n', dayIdsAndUpdatedProps, '\n')
+    console.log('WEEK ID')
+    console.log(weekId)
+    console.log('WEEK ID')
     let numCompleted = 0;
     for (let i = 0; i < dayIdsAndUpdatedProps.length; i++) {
-      const { id, updates } = dayIdsAndUpdates[i];
+      const { id, updates } = dayIdsAndUpdatedProps[i];
+      console.log('\n -+-+-+-+-+ + _ _ _  _ _  _')
+      console.log(updates)
+      console.log(id)
       Week.findOneAndUpdate(
         {
           _id: weekId,
-          'days.id': id
+          'days._id': id
         },
         { $set: updates },
         { new: true }
       )
       .then(weekDoc => {
+        console.log(weekDoc)
         if (!weekDoc) throw new Error('Failed to find and update weekId="' + weekId + '" dayId="' + id + '".');
         if (++numCompleted === dayIdsAndUpdatedProps.length) {
           return resolve(weekDoc);

@@ -9,6 +9,7 @@ const { getMostRecentScheduleValueForDate, getPrecedingDate } = require('../util
 module.exports = updateWeeksAndDays;
 
 function updateWeeksAndDays(job, affectedTimespans, propName) {
+  console.log('\n@-@-@ UPDATE WEEKS AND DAYS ~_~^~_~^~_~')
   if (propName === 'dayCutoff' || propName === 'timezone') {
     adjustAffectedTimespansForPropsAffectingDayStartTime(affectedTimespans);
   }
@@ -27,25 +28,33 @@ function updateWeeksAndDays(job, affectedTimespans, propName) {
 
 function updateWeekBeginsForWeeksAndDays(job, allAffectedTimespans) {
   // update weeks array entry and Week doc
+    // (firstDateUtcTime & lastDateUtcTime in array entry; firstDate, lastDate, & weekNumber in weekDoc)
+    // * get affected weeks
+    // * calculate firstDate, lastDate, & weekNumber for each day in week.
+      // * if any of the values don't match, update week values and move days as needed to restore consistency
   // move days between weeks to force compliance w/ new week start and end date times.
     // not sure if previous steps can be conducted in that order; need to experiment
 }
 
 function updateOtherPropForWeeksAndDays(job, allAffectedTimespans, propName) {
+  console.log('\n@-@-@ UPDATE OTHER PROP FOR WEEKS AND DAYS ~_~^~_~^~_~')
   // either update all days in affected weeks or update affected days.
     // when updating, check to see if segments are bumped off the edge of day.
   return new Promise((resolve, reject) => {
     if (propName !== 'wage') { // (propName === 'dayCutoff' || propName === 'timezone')
       allAffectedTimespans.forEach(adjustTimespanToIncludePrecedingDate);
     }
-    const weekAndDayIdsAndUpdatedProps = getAffectedWeekAndDayIdsWithUpdatedProps(allAffectedTimespans, job, propName);
+    const weekAndDayIdsWithUpdatedProps = getAffectedWeekAndDayIdsWithUpdatedProps(
+      allAffectedTimespans, job, propName
+    );
+    if (weekAndDayIdsWithUpdatedProps.length === 0) return resolve(job);
     let numCompleted = 0;
-    for (let i = 0; i < weekAndDayIdsAndUpdatedProps.length; i++) {
-      const { weekId, days } = weekAndDayIdsAndUpdatedProps[i];
+    for (let i = 0; i < weekAndDayIdsWithUpdatedProps.length; i++) {
+      const { weekId, days } = weekAndDayIdsWithUpdatedProps[i];
       WeekController.updateJobSettingsForDays(days, weekId)
       .then(updatedWeekDoc => {
         placeUpdatedWeekDocInWeeksArray(updatedWeekDoc, job.weeks);
-        if (++numCompleted === weekAndDayIdsAndUpdatedProps.length) {
+        if (++numCompleted === weekAndDayIdsWithUpdatedProps.length) {
           return resolve(job);
         }
       });
@@ -59,6 +68,7 @@ function adjustTimespanToIncludePrecedingDate(timespan) {
 }
 
 function getAffectedWeekAndDayIdsWithUpdatedProps(timespans, job, propName) {
+  console.log('\n@-@-@ getAffectedWeekAndDayIdsWithUpdatedProps ~_~^~_~^~_~')
   return getWeekDocIdsAndDaysInTimespans(timespans, job.weeks)
   .map(({ weekId, days }) => ({
     weekId,
@@ -76,6 +86,8 @@ function getWeekDocIdsAndDaysInTimespans(timespans, weeksArray) {
 }
 
 function turnDaysIntoDayIdsWithUpdatedProps(days, propName, propValueSchedule) {
+  console.log('\n@-@-@ turnDaysIntoDayIdsWithUpdatedProps ~_~^~_~^~_~')
+  console.log(days)
   return days.map(
     ({ _id, date }) => ({
       id: _id,
@@ -85,6 +97,7 @@ function turnDaysIntoDayIdsWithUpdatedProps(days, propName, propValueSchedule) {
 }
 
 function getUpdatedPropsForDayWithDate(date, propName, propValueSchedule) {
+  console.log('\n@-@-@ getUpdatedPropsForDayWithDate ~_~^~_~^~_~')
   let fieldName_1 = fieldName_2 = 'days.$.';
   if (propName === 'dayCutoff') {
     fieldName_1 += 'endCutoff';
@@ -105,6 +118,6 @@ function getUpdatedPropsForDayWithDate(date, propName, propValueSchedule) {
 }
 
 function placeUpdatedWeekDocInWeeksArray(updatedWeekDoc, weeksArray) {
-  const index = job.weeks.map(({ document }) => document._id.toString()).indexOf(updatedWeekDoc._id.toString());
+  const index = weeksArray.map(({ document }) => document._id.toString()).indexOf(updatedWeekDoc._id.toString());
   weeksArray[index].document = updatedWeekDoc;
 }

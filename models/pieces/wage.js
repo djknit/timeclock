@@ -47,6 +47,7 @@ const wageSchema = new Schema(
       type: overtimeSchema,
       validate: {
         validator(value) {
+          if (!value) return true;
           return value.useMultiplier === true || !!value.rate;
         },
         message: 'You must specify the overtime rate or rate multiplier.'

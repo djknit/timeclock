@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const { getDateTime, getUtcMoment } = require('../../utilities');
+const { getDateTime, getUtcDateTime } = require('../../utilities');
 
 const dateSubdocFactory = require('./date');
 const intSubdocFactory = require('./integer');
@@ -22,10 +22,16 @@ module.exports = valueOutline => {
         validator: vals => vals.length > 0,
         message: 'Missing initial value. You must have at least one value.'
       }, {
-        validator: vals => !vals[0].startDate,
+        validator: vals => {
+          if (!this) return true;
+          return !vals[0].startDate;
+        },
         message: 'Invalid initial value. The first value must not have a start date.'
       }, {
         validator: vals => {
+          console.log('\n``````````````````````````````')
+          console.log(vals)
+          console.log(',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, \n')
           for (let i = 1; i < vals.length; i++) {
             if (!vals[i].startDate) return false;
           }
@@ -48,7 +54,9 @@ module.exports = valueOutline => {
         validator: vals => {
           for (let i = 0; i < vals.length; i++) {
             const { startDate, startDateUtcTime } = vals[i];
-            if (!startDateUtcTime || getUtcMoment(startDate).valueOf() !== startDateUtcTime) {
+            console.log(getUtcDateTime(startDate))
+            console.log(startDateUtcTime)
+            if (startDate && (!startDateUtcTime || getUtcDateTime(startDate) !== startDateUtcTime)) {
               return false;
             }
           }

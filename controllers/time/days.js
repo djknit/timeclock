@@ -1,6 +1,6 @@
 const moment = require('moment-timezone');
 
-const { areDatesEquivalent, getUtcMoment } = require('../../utilities');
+const { areDatesEquivalent, getUtcDateTime } = require('../../utilities');
 
 const {
   getMostRecentScheduleValueForDate,
@@ -62,8 +62,7 @@ function getDaysInDateRanges(dateRanges, days) {
       if (isDayInDateRange(firstDateUtcTime, lastDateUtcTime, day)) return true;
     }
     return false;
-  })
-  .map(day => day._id);
+  });
 }
 
 function getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, days) {
@@ -73,7 +72,7 @@ function getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, days) {
 }
 
 function isDayInDateRange(firstDateUtcTime, lastDateUtcTime, day) {
-  const dateTime = getUtcMoment(day.date).valueOf();
+  const dateTime = getUtcDateTime(day.date);
   return (
     (!firstDateUtcTime || firstDateUtcTime <= dateTime) &&
     (!lastDateUtcTime || dateTime <= lastDateUtcTime)

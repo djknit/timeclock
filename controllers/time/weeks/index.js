@@ -10,7 +10,7 @@ const {
   getMostRecentScheduleIndexForDate,
   areDatesEquivalent,
   convertMomentToMyDate,
-  getUtcMoment,
+  getUtcDateTime,
   getMostRecentScheduleValueForDate
 } = require('../../../utilities');
 
@@ -26,7 +26,7 @@ module.exports = {
 }
 
 function findWeekWithDate(date, weeksArray) {
-  const dateUtcTime = getUtcMoment(date).valueOf();
+  const dateUtcTime = getUtcDateTime(date);
   for (let i = 0; i < weeksArray.length; i++) {
     const { firstDateUtcTime, lastDateUtcTime, document } = weeksArray[i];
     if (firstDateUtcTime <= dateUtcTime && dateUtcTime <= lastDateUtcTime) {

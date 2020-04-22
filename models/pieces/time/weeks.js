@@ -4,7 +4,7 @@ const Week = require('../../Week');
 
 const intSubdocFactory = require('../integer');
 
-const { getDateTime, getMoment, getUtcMoment } = require('../../../utilities');
+const { getDateTime, getMoment, getUtcDateTime } = require('../../../utilities');
 
 const weekSchema = new Schema({
   document: {
@@ -46,8 +46,8 @@ const weeksSubdocFactory = () => ({
             .then(weekDoc => {
               const { firstDateUtcTime, lastDateUtcTime } = week;
               const { firstDate, lastDate, days } = weekDoc;
-              const docFirstDateUtcTime = getUtcMoment(firstDate).valueOf();
-              const docLastDateUtcTime = getUtcMoment(lastDate).valueOf();
+              const docFirstDateUtcTime = getUtcDateTime(firstDate);
+              const docLastDateUtcTime = getUtcDateTime(lastDate);
               if (
                 docFirstDateUtcTime !== firstDateUtcTime ||
                 docLastDateUtcTime !== lastDateUtcTime
@@ -60,7 +60,7 @@ const weeksSubdocFactory = () => ({
                 return reject(new Error(errMsg2));
               }
               for (let j = 0; j < days.length; j++) {
-                const dayUtcTime = getUtcMoment(days[j].date).valueOf();
+                const dayUtcTime = getUtcDateTime(days[j].date);
                 if (dayUtcTime < firstDateUtcTime || dayUtcTime > lastDateUtcTime) {
                   return reject(new Error(errMsg2));
                 }

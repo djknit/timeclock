@@ -5,6 +5,7 @@ const {
   isDateValid,
   wageValidation,
   getUtcMoment,
+  getUtcDateTime,
   getMostRecentScheduleValueForDate,
   getPrecedingDate
 } = require('../../utilities');
@@ -17,6 +18,7 @@ module.exports = {
   isDateValid,
   wageValidation,
   getUtcMoment,
+  getUtcDateTime,
   getMostRecentScheduleValueForDate,
   getPrecedingDate
 };

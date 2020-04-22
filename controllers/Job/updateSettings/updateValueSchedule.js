@@ -1,16 +1,16 @@
 const { Job, } = require('../../../models');
 
-const { getUtcMoment } = require('../utilities');
+const { getUtcDateTime } = require('../utilities');
 
 module.exports = updateValueSchedule;
 
 function updateValueSchedule(updates, job, propName) {
+  console.log('\n@-@-@ UPDATE VALUE SCHEDULE ~_~^~_~^~_~')
   // need to return job w/ updated value schedule
-  const jobId = job._id;
-  return executeRemoveUpdates(updates.remove, jobId, propName)
-  .then(() => executeChangeDateUpdates(updates.changeDate, jobId, propName))
-  .then(() => executeEditUpdates(updates.edit, jobId, propName))
-  .then(() => executeAddUpdates(updates.add, jobId, propName))
+  return executeRemoveUpdates(updates.remove, job, propName)
+  .then(() => executeChangeDateUpdates(updates.changeDate, job, propName))
+  .then(() => executeEditUpdates(updates.edit, job, propName))
+  .then(() => executeAddUpdates(updates.add, job, propName))
   .then(() => job);
 }
 
@@ -33,7 +33,8 @@ function executeRemoveUpdates(removalUpdates, job, propName) {
     .then(_job => {
       job[propName] = _job[propName];
       resolve();
-    });
+    })
+    .catch(reject);
   });
 }
 
@@ -47,7 +48,7 @@ function executeChangeDateUpdates(dateChangeUpdates, job, propName) {
     let numCompleted = 0;
     for (let i = 0; i < dateChangeUpdates.length; i++) {
       const { id, startDate } = dateChangeUpdates[i];
-      const startDateUtcTime = getUtcMoment(startDate).valueOf();
+      const startDateUtcTime = getUtcDateTime(startDate);
       Job.findOneAndUpdate(
         {
           _id: job._id,
@@ -78,9 +79,11 @@ function executeChangeDateUpdates(dateChangeUpdates, job, propName) {
           .then(_job => {
             job[propName] = _job[propName];
             resolve();
-          });
+          })
+          .catch(reject);
         }
-      });
+      })
+      .catch(reject);
     }
   });
 }
@@ -110,7 +113,8 @@ function executeEditUpdates(editingUpdates, job, propName) {
           job[propName] = _job[propName];
           resolve();
         }
-      });
+      })
+      .catch(reject);
     }
   });
 }
@@ -122,24 +126,42 @@ function executeAddUpdates(additionUpdates, job, propName) {
       ({ startDate, value }) => ({
         startDate,
         value,  
-        startDateUtcTime: getUtcMoment(startDate).valueOf()
+        startDateUtcTime: getUtcDateTime(startDate)
       })
     );
-    Job.findByIdAndUpdate(
-      job._id,
-      {
-        $push: {
-          [propName] : {
-            $each: additionUpdates,
-            $sort: { startDateUtcTime: 1 }
-          }
-        }
-      },
-      { new: true }
-    )
+    console.log('==================================')
+    console.log(job)
+    console.log('\n' + propName)
+    additionUpdates.forEach(el => {
+      job[propName].push(el);
+    });
+    // job[propName].push({ $each: additionUpdates });
+    job[propName].sort(
+      (el_1, el_2) => {
+        const dateTime_1 = el_1.startDateUtcTime;
+        const dateTime_2 = el_2.startDateUtcTime;
+        if (!dateTime_1) return -1;
+        if (!dateTime_2) return 1;
+        return dateTime_1 - dateTime_2;
+      }
+    );
+    job.save()
+    // Job.findByIdAndUpdate(
+    //   job._id,
+    //   {
+    //     $push: {
+    //       [propName] : {
+    //         $each: additionUpdates,
+    //         $sort: { startDateUtcTime: 1 }
+    //       }
+    //     }
+    //   },
+    //   { new: true }
+    // )
     .then(_job => {
       job[propName] = _job[propName];
       resolve();
-    });
+    })
+    .catch(reject);
   });
 }

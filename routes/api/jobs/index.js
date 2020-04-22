@@ -42,11 +42,11 @@ router.post(
   }
 );
 
+// This route is for updating value schedules for `wage`, `timezone`, `dayCutoff`, or `weekBegins`
 router.post(
   '/update-setting/:propName',
   verifyLogin,
   (req, res) => {
-    // This route is for updating value schedules for `wage`, `timezone`, `dayCutoff`, or `weekBegins`
     checkRequiredProps(req.body, ['jobId', 'updates'], res);
     const { jobId, updates } = req.body;
     JobController.updatePropWithName(req.params.propName, updates, jobId, req.user._id)

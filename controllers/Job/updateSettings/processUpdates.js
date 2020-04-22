@@ -1,14 +1,11 @@
-const { getUtcMoment } = require('../utilities');
+const { getUtcDateTime, getUtcMoment } = require('../utilities');
 
 module.exports = processUpdates;
 
 function processUpdates(updates, job, propName, affectedTimespans) {
   // note: for the next 3 actions, schedule entries that are named in `changeDate` updates are exempt from being removed
-  // 1.) for each `changeDate` update, remove all entries with dates between old and new dates
   markEntriesWithinTimespansForRemoval(affectedTimespans.changeDate, job[propName], updates);
-  // 2.) for each new entry (`add` method), remove any existing entry w/ the same date
   markEntriesWithStartDatesForRemoval(updates.add.map(update => update.startDate), job[propName], updates);
-  // 3.) for each `changeDate` update, remove any existing entry w/ the same date as new date
   markEntriesWithStartDatesForRemoval(updates.changeDate.map(update => update.startDate), job[propName], updates);
   removeDuplicatesFromRemoveUpdates(updates);
 }
@@ -17,7 +14,7 @@ function markEntriesWithinTimespansForRemoval(timespans, schedule, updates) {
   const dateChangeUpdateIds = getDateChangeUpdateIds(updates);
   for (let i = 0; i < schedule.length; i++) {
     const { _id, startDate } = schedule[i];
-    if (isDateInTimespans(timespans, startDate && dateChangeUpdateIds.indexOf(_id) === -1)) {
+    if (isDateInTimespans(timespans, startDate) && dateChangeUpdateIds.indexOf(_id) === -1) {
       updates.remove.push({ id: schedule[i]._id });
     }
   }
@@ -25,10 +22,10 @@ function markEntriesWithinTimespansForRemoval(timespans, schedule, updates) {
 
 function markEntriesWithStartDatesForRemoval(startDates, schedule, updates) {
   const dateChangeUpdateIds = getDateChangeUpdateIds(updates);
-  const startDateTimes = startDates.map(date => getUtcMoment(date).valueOf());
+  const startDateTimes = startDates.map(date => getUtcDateTime(date));
   for (let i = 0; i < schedule.length; i++) {
     const { _id, startDate } = schedule[i];
-    const entryDateTime = getUtcMoment(startDate).valueOf();
+    const entryDateTime = getUtcDateTime(startDate);
     if (startDateTimes.indexOf(entryDateTime) !== -1 && dateChangeUpdateIds.indexOf(_id) === -1) {
       updates.remove.push({ id: _id });
     }
@@ -36,7 +33,7 @@ function markEntriesWithStartDatesForRemoval(startDates, schedule, updates) {
 }
 
 function isDateInTimespans(timespans, date) {
-  const dateTime = getUtcMoment(date).valueOf();
+  const dateTime = getUtcDateTime(date);
   for (let i = 0; i < timespans.length; i++) {
     const { firstDateUtcTime, lastDateUtcTime } = timespans[i];
     if (

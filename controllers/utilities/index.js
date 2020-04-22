@@ -1,5 +1,6 @@
 const {
   getUtcMoment,
+  getUtcDateTime,
   getMoment,
   convertMomentToMyDate,
   isDateValid,
@@ -10,6 +11,7 @@ const {
 
 module.exports = {
   getUtcMoment,
+  getUtcDateTime,
   getMoment,
   checkForFailure,
   convertMomentToMyDate,

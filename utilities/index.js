@@ -11,6 +11,7 @@ module.exports = {
   convertDateToMyDate,
   convertMomentToMyDate,
   getUtcMoment,
+  getUtcDateTime,
   getMostRecentScheduleIndexForDate,
   getMostRecentScheduleValueForDate,
   areDatesEquivalent,
@@ -92,6 +93,10 @@ function getUtcMoment(myDate) {
   return moment.utc(getMomentFriendlyDate(myDate));
 }
 
+function getUtcDateTime(myDate) {
+  return myDate ? moment.utc(getMomentFriendlyDate(myDate)).valueOf() : null;
+}
+
 function convertMomentToMyDate(moment_) {
   return {
     day: moment_.date(),
@@ -145,6 +150,7 @@ function areWagesEquivalent(wage1, wage2) {
 }
 
 function getMostRecentScheduleIndexForDate(date, valueSchedule) {
+  console.log('\n@-@-@ getMostRecentScheduleIndexForDate ~_~^~_~^~_~')
   if (valueSchedule.length === 0) return;
   if (valueSchedule.length === 1) return 0;
   const dateTime = getDateTime(date);
@@ -159,6 +165,8 @@ function getMostRecentScheduleIndexForDate(date, valueSchedule) {
 }
 
 function getMostRecentScheduleValueForDate(date, valueSchedule) {
+  console.log('\n@-@-@ getMostRecentScheduleValueForDate ~_~^~_~^~_~')
+  console.log(date);
   const index = getMostRecentScheduleIndexForDate(date, valueSchedule);
   if (!index && index !== 0) return null;
   return valueSchedule[index].value;
@@ -187,7 +195,7 @@ function findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule) {
   return 0;
 }
 
-// only checks if value goes in to effect by date; doesn't verify that it is the most recent value; also doesn't work if value startDate is less than 1 week before given date.
+// only checks if value goes in to effect by date; doesn't verify that it is the most recent value; also doesn't work if value startDate is "x~~less~than~~x" -> "earlier than" 1 week before given date.
 function isWeekBeginsValueActualFirstDayOfWeek(date, scheduleEntry) {
   const weekBeginsStartDateMoment = getMoment(scheduleEntry.startDate);
   if (getMoment(date).diff(weekBeginsStartDateMoment, 'days') > 6) {
