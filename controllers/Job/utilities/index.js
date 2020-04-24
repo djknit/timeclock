@@ -20,7 +20,9 @@ module.exports = {
   getUtcMoment,
   getUtcDateTime,
   getMostRecentScheduleValueForDate,
-  getPrecedingDate
+  getPrecedingDate,
+  getDayStartTimeForDate,
+  getDayEndTimeForDate
 };
 
 function jobNotFoundCheckerFactory(jobId) {
@@ -33,4 +35,17 @@ function jobNotFoundCheckerFactory(jobId) {
     }
     return job;
   }
+}
+
+function getDayStartTimeForDate(date, job) {
+  const precedingDate = getPrecedingDate(date);
+  const startCutoff = getMostRecentScheduleValueForDate(precedingDate, job.dayCutoff);
+  const startTimezone = getMostRecentScheduleValueForDate(precedingDate, job.timezone);
+  return getMoment(date, startTimezone).valueOf() + startCutoff;
+}
+
+function getDayEndTimeForDate(date, job) {
+  const endCutoff = getMostRecentScheduleValueForDate(date, job.dayCutoff);
+  const timezone = getMostRecentScheduleValueForDate(date, job.timezone);
+  return getMoment(date, timezone).add(1, 'days').valueOf() + endCutoff;
 }

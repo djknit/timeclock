@@ -21,6 +21,10 @@ const testWage = {
 
 console.log('* * *');
 
+// const allZones = moment.tz.names();
 
+// let offsets = allZones.map(zone => moment.tz.zone(zone).utcOffset(moment(new Date())));
+// console.log(offsets)
+// console.log(offsets.sort((a, b) => a - b))
 
 console.log('_'.repeat(33) + '\n');
