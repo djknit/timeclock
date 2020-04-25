@@ -23,7 +23,8 @@ module.exports = {
   getPrecedingDate,
   getDayStartTimeForDate,
   getDayEndTimeForDate,
-  findScheduleEntryById
+  findScheduleEntryById,
+  findScheduleIndexByEntryId
 };
 
 function jobNotFoundCheckerFactory(jobId) {
@@ -51,8 +52,13 @@ function getDayEndTimeForDate(date, job) {
   return getMoment(date, timezone).add(1, 'days').valueOf() + endCutoff;
 }
 
-function findScheduleEntryById(id, schedule, excludeFirstEntry) {
+function findScheduleEntryById(id, schedule, excludeFirstEntry, requireSuccess) {
+  return schedule[findScheduleIndexByEntryId(id, schedule, excludeFirstEntry, requireSuccess)];
+}
+
+function findScheduleIndexByEntryId(id, schedule, excludeFirstEntry, requireSuccess) {
   for (let i = (excludeFirstEntry ? 1 : 0); i < schedule.length; i++) {
-    if (schedule[i]._id.toString() === id.toString()) return schedule[i];
+    if (schedule[i]._id.toString() === id.toString()) return i;
   }
+  if (requireSuccess) throw new Error('Failed to find schedule index by entry id');
 }
