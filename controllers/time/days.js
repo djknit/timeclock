@@ -67,6 +67,16 @@ function getIdsOfDaysInRange(firstDateUtcTime, lastDateUtcTime, days) {
 
 function isDayInDateRange(firstDateUtcTime, lastDateUtcTime, day) {
   const dateTime = getUtcDateTime(day.date);
+  if (day.date.day == 22) {
+    console.log('=========================================\n')
+    console.log('really')
+    console.log(firstDateUtcTime)
+    console.log(dateTime)
+    console.log(lastDateUtcTime)
+    console.log((firstDateUtcTime - dateTime) / 1000)
+    console.log(!firstDateUtcTime || firstDateUtcTime <= dateTime)
+    console.log(!lastDateUtcTime || dateTime <= lastDateUtcTime)
+  }
   return (
     (!firstDateUtcTime || firstDateUtcTime <= dateTime) &&
     (!lastDateUtcTime || dateTime <= lastDateUtcTime)

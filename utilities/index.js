@@ -150,7 +150,7 @@ function areWagesEquivalent(wage1, wage2) {
 }
 
 function getMostRecentScheduleIndexForDate(date, valueSchedule) {
-  console.log('\n@-@-@ getMostRecentScheduleIndexForDate ~_~^~_~^~_~')
+  // console.log('\n@-@-@ getMostRecentScheduleIndexForDate ~_~^~_~^~_~')
   if (valueSchedule.length === 0) return;
   if (valueSchedule.length === 1) return 0;
   const dateTime = getDateTime(date);
@@ -165,7 +165,7 @@ function getMostRecentScheduleIndexForDate(date, valueSchedule) {
 }
 
 function getMostRecentScheduleValueForDate(date, valueSchedule) {
-  console.log('\n@-@-@ getMostRecentScheduleValueForDate ~_~^~_~^~_~')
+  // console.log('\n@-@-@ getMostRecentScheduleValueForDate ~_~^~_~^~_~')
   console.log(date);
   const index = getMostRecentScheduleIndexForDate(date, valueSchedule);
   if (!index && index !== 0) return null;

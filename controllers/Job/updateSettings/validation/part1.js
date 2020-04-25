@@ -1,4 +1,6 @@
-const { checkForFailure, isDateValid, wageValidation, getUtcDateTime } = require('../../utilities');
+const {
+  checkForFailure, isDateValid, wageValidation, getUtcDateTime, findScheduleEntryById
+} = require('../../utilities');
 
 const validateUpdateValues = require('./validateUpdateValues');
 
@@ -123,14 +125,8 @@ function validateStartDate(startDate, methodName, problemsObj) {
 }
 
 function validateScheduleEntryId(id, schedule, methodName, problemsObj) {
-  findScheduleEntryById(id, schedule);
+  const excludeFirstEntry = methodName !== 'edit';
+  const missingSchedEntry = !findScheduleEntryById(id, schedule, excludeFirstEntry);
   const failMsg = 'Missing or invalid `id` in `' + methodName + '` method.';
-  checkForFailure(true, failMsg, problemsObj, 422);
-}
-
-function findScheduleEntryById(id, schedule) {
-  for (let i = 0; i < schedule.length; i++) {
-    if (schedule[i]._id.toString() === id.toString()) return schedule[i];
-  }
-  throw new Error('No schedule entry found for id.');
+  checkForFailure(missingSchedEntry, failMsg, problemsObj, 422);
 }

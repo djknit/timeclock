@@ -22,7 +22,8 @@ module.exports = {
   getMostRecentScheduleValueForDate,
   getPrecedingDate,
   getDayStartTimeForDate,
-  getDayEndTimeForDate
+  getDayEndTimeForDate,
+  findScheduleEntryById
 };
 
 function jobNotFoundCheckerFactory(jobId) {
@@ -48,4 +49,10 @@ function getDayEndTimeForDate(date, job) {
   const endCutoff = getMostRecentScheduleValueForDate(date, job.dayCutoff);
   const timezone = getMostRecentScheduleValueForDate(date, job.timezone);
   return getMoment(date, timezone).add(1, 'days').valueOf() + endCutoff;
+}
+
+function findScheduleEntryById(id, schedule, excludeFirstEntry) {
+  for (let i = (excludeFirstEntry ? 1 : 0); i < schedule.length; i++) {
+    if (schedule[i]._id.toString() === id.toString()) return schedule[i];
+  }
 }

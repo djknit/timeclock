@@ -14,6 +14,7 @@ module.exports = updateWeeksAndDays;
 
 function updateWeeksAndDays(job, affectedTimespans, propName) {
   console.log('\n@-@-@ UPDATE WEEKS AND DAYS ~_~^~_~^~_~')
+  console.log(affectedTimespans)
   const allAffectedTimespans = [
     ...affectedTimespans.add,
     ...affectedTimespans.changeDate,
@@ -61,6 +62,7 @@ function updateWageForWeeksAndDays(job, allAffectedTimespans) {
 }
 
 function updateDayCutoffOrTimezoneForWeeksAndDays(job, allAffectedTimespans, propName) {
+  console.log('\n@-@-@ UPDATE DAY-CUTOFF OR TIMEZONE ~_~^~_~^~_~')
   return new Promise((resolve, reject) => {
     allAffectedTimespans.forEach(adjustTimespanToIncludeSucceedingDate);
     let modifiedWeekDocIds = [];
@@ -70,9 +72,10 @@ function updateDayCutoffOrTimezoneForWeeksAndDays(job, allAffectedTimespans, pro
       modifiedWeekDocIds.push(week.document._id.toString());
       updateDayCutoffOrTimezoneForDaysInWeek(week.document, job, allAffectedTimespans, propName, orphanedSegments);
     });
+    // console.log(job.weeks);
     placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWeekDocIds)
     .then(() => saveModifiedWeeks(job.weeks, modifiedWeekDocIds))
-    .then(() => resolve())
+    .then(() => resolve(job))
     .catch(reject);
   });
 }
@@ -117,7 +120,13 @@ function updateDayCutoffOrTimezoneForDaysInWeek(weekDoc, job, allAffectedTimespa
     }
   );
   weekDoc.days.forEach(day => {
+    console.log('\n************************', day.date);
     if (!daysController.isDayInDateRanges(allAffectedTimespans, day)) return;
+    console.log('pass')
+    // console.log(day.date)
+    // console.log(getPrecedingDate(day.date))
+    // console.log(getMostRecentScheduleValueForDate(day.date, job[propName]))
+    // console.log(getMostRecentScheduleValueForDate(getPrecedingDate(day.date), job[propName]));
     day[fieldNames.main] = getMostRecentScheduleValueForDate(day.date, job[propName]);
     day[fieldNames.start] = getMostRecentScheduleValueForDate(getPrecedingDate(day.date), job[propName]);
     orphanedSegments.push(...getOrphanedSegments(day));
@@ -126,6 +135,7 @@ function updateDayCutoffOrTimezoneForDaysInWeek(weekDoc, job, allAffectedTimespa
 
 function placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWeekDocIds) {
   return new Promise((resolve, reject) => {
+    if (orphanedSegments.length === 0) return resolve();
     ensureSegmentsSpanOnlyOneDayEach(orphanedSegments, job);
     let numCompleted = 0;
     orphanedSegments.forEach(segment => {
@@ -223,7 +233,7 @@ function getOrphanedSegments(day) {
 }
 
 function adjustTimespanToIncludeSucceedingDate(timespan) {
-  timespan.firstDateUtcTime = moment.utc(timespan.firstDateUtcTime).add(1, 'days').valueOf();
+  timespan.lastDateUtcTime = moment.utc(timespan.lastDateUtcTime).add(1, 'days').valueOf();
   return timespan;
 }
 
