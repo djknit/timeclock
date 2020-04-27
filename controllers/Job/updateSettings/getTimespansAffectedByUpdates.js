@@ -1,11 +1,10 @@
-const { getUtcDateTime, findScheduleEntryById } = require('../utilities');
+const { getUtcDateTime, findScheduleEntryById, methodNames } = require('./utilities');
 
 module.exports = getTimespansAffectedByUpdates;
 
 function getTimespansAffectedByUpdates(updates, valueSchedule) {
   let result = {};
-  const methods = ['add', 'changeDate', 'remove', 'edit'];
-  methods.forEach(method => {
+  methodNames.forEach(method => {
     result[method] = getAffectedTimespansForMethod(method, updates, valueSchedule);
   });
   return result;
@@ -49,10 +48,6 @@ function getAffectedTimespanForOtherUpdate(update, method, schedule) {
   );
   const schedEntryDateTime = getUtcDateTime(schedEntryStartDate);
   const nextDateTime = getNextDateInScheduleUtcTime(schedule, schedEntryDateTime);
-  console.log({
-    firstDateUtcTime: schedEntryDateTime,
-    lastDateUtcTime: nextDateTime
-  })
   return {
     firstDateUtcTime: schedEntryDateTime,
     lastDateUtcTime: nextDateTime

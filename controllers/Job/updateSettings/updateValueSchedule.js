@@ -1,11 +1,10 @@
 const { Job, } = require('../../../models');
 
-const { getUtcDateTime, findScheduleIndexByEntryId } = require('../utilities');
+const { getUtcDateTime, findScheduleIndexByEntryId } = require('./utilities');
 
 module.exports = updateValueSchedule;
 
 function updateValueSchedule(updates, job, propName) {
-  console.log('\n@-@-@ UPDATE VALUE SCHEDULE ~_~^~_~^~_~')
   return new Promise((resolve, reject) => {
     const schedule = job[propName];
     performRemoveUpdates(updates.remove, schedule);
@@ -16,7 +15,7 @@ function updateValueSchedule(updates, job, propName) {
     job.save()
     .then(_job => {
       job[propName] = _job[propName];
-      resolve();
+      resolve(_job);
     })
     .catch(reject);
   });
@@ -24,13 +23,15 @@ function updateValueSchedule(updates, job, propName) {
 
 function performRemoveUpdates(removalUpdates, schedule) {
   removalUpdates.forEach(update => {
-    const entryIndex = findScheduleIndexByEntryId(id, schedule, true, true);
+    const entryIndex = findScheduleIndexByEntryId(update.id, schedule, true, true);
     schedule.splice(entryIndex, 1);
   });
 }
 
 function performChangeDateUpdates(dateChangeUpdates, schedule) {
   dateChangeUpdates.forEach(update => {
+    console.log(schedule)
+    console.log(update.id)
     const entryIndex = findScheduleIndexByEntryId(update.id, schedule, true, true);
     schedule[entryIndex].startDate = update.startDate;
     schedule[entryIndex].startDateUtcTime = getUtcDateTime(update.startDate);

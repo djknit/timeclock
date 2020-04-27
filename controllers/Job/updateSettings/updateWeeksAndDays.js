@@ -7,20 +7,16 @@ const segmentsController = require('../../time/segments');
 const JobController = require('../index');
 
 const {
-  getMostRecentScheduleValueForDate, getPrecedingDate, getDayStartTimeForDate, getDayEndTimeForDate
-} = require('../utilities');
+  getMostRecentScheduleValueForDate, getPrecedingDate, getDayEndTimeForDate, methodNames
+} = require('./utilities');
 
 module.exports = updateWeeksAndDays;
 
 function updateWeeksAndDays(job, affectedTimespans, propName) {
-  console.log('\n@-@-@ UPDATE WEEKS AND DAYS ~_~^~_~^~_~')
-  console.log(affectedTimespans)
-  const allAffectedTimespans = [
-    ...affectedTimespans.add,
-    ...affectedTimespans.changeDate,
-    ...affectedTimespans.remove,
-    ...affectedTimespans.edit
-  ];
+  let allAffectedTimespans = [];
+  methodNames.forEach(method => {
+    allAffectedTimespans.push(...affectedTimespans[method])
+  });
   return (
     (propName === 'wage' && updateWageForWeeksAndDays(job, allAffectedTimespans)) ||
     (propName === 'weekBegins' && updateWeekBeginsForWeeksAndDays(job, allAffectedTimespans)) ||
@@ -39,9 +35,6 @@ function updateWeekBeginsForWeeksAndDays(job, allAffectedTimespans) {
 }
 
 function updateWageForWeeksAndDays(job, allAffectedTimespans) {
-  console.log('\n@-@-@ UPDATE OTHER PROP FOR WEEKS AND DAYS ~_~^~_~^~_~')
-  // either update all days in affected weeks or update affected days.
-    // when updating, check to see if segments are bumped off the edge of day.
   return new Promise((resolve, reject) => {
     const weekAndDayIdsWithUpdatedProps = getAffectedWeekAndDayIdsWithUpdatedProps(
       allAffectedTimespans, job, 'wage'
@@ -62,17 +55,18 @@ function updateWageForWeeksAndDays(job, allAffectedTimespans) {
 }
 
 function updateDayCutoffOrTimezoneForWeeksAndDays(job, allAffectedTimespans, propName) {
-  console.log('\n@-@-@ UPDATE DAY-CUTOFF OR TIMEZONE ~_~^~_~^~_~')
   return new Promise((resolve, reject) => {
     allAffectedTimespans.forEach(adjustTimespanToIncludeSucceedingDate);
     let modifiedWeekDocIds = [];
     let orphanedSegments = [];
     job.weeks.forEach(week => {
+      console.log(week)
+      console.log(allAffectedTimespans)
       if (!weeksController.isWeekInDateRanges(allAffectedTimespans, week)) return;
       modifiedWeekDocIds.push(week.document._id.toString());
+      console.log("week in range")
       updateDayCutoffOrTimezoneForDaysInWeek(week.document, job, allAffectedTimespans, propName, orphanedSegments);
     });
-    // console.log(job.weeks);
     placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWeekDocIds)
     .then(() => saveModifiedWeeks(job.weeks, modifiedWeekDocIds))
     .then(() => resolve(job))
@@ -98,15 +92,6 @@ function saveModifiedWeeks(weeksArray, modifiedWeekDocIds) {
   });
 }
 
-// function updateDayCutoffOrTimezoneForAllDays(job, allAffectedTimespans, propName) {
-//   for (let i = 0; i < job.weeks.length; i++) {
-//     const week = job.weeks[i];
-//     if (weeksController.isWeekInDateRanges(allAffectedTimespans, week)) {
-//       updateDayCutoffOrTimezoneForDaysInWeek(week.document, job, allAffectedTimespans, propName);
-//     }
-//   }
-// }
-
 function updateDayCutoffOrTimezoneForDaysInWeek(weekDoc, job, allAffectedTimespans, propName, orphanedSegments) {
   const fieldNames = (
     propName === 'timezone' ?
@@ -120,13 +105,7 @@ function updateDayCutoffOrTimezoneForDaysInWeek(weekDoc, job, allAffectedTimespa
     }
   );
   weekDoc.days.forEach(day => {
-    console.log('\n************************', day.date);
     if (!daysController.isDayInDateRanges(allAffectedTimespans, day)) return;
-    console.log('pass')
-    // console.log(day.date)
-    // console.log(getPrecedingDate(day.date))
-    // console.log(getMostRecentScheduleValueForDate(day.date, job[propName]))
-    // console.log(getMostRecentScheduleValueForDate(getPrecedingDate(day.date), job[propName]));
     day[fieldNames.main] = getMostRecentScheduleValueForDate(day.date, job[propName]);
     day[fieldNames.start] = getMostRecentScheduleValueForDate(getPrecedingDate(day.date), job[propName]);
     orphanedSegments.push(...getOrphanedSegments(day));

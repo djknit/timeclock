@@ -1,15 +1,12 @@
 const moment = require('moment-timezone');
 
-const { wageValidation } = require('../../utilities');
-
-const { validateWages } = wageValidation;
+const { wageValidation } = require('./utilities');
 
 module.exports = validateUpdateValues;
 
 function validateUpdateValues(updates, propName) {
-  console.log('\n@-@-@ VALIDATE UPDATE VALUES ~_~^~_~^~_~')
   const values = updates.map(({ value }) => value);
-  if (propName === 'wage') return validateWages(values);
+  if (propName === 'wage') return wageValidation.validateWages(values);
   else return new Promise((resolve, reject) => {
     for (let i = 0; i < values.length; i++) {
       const value = values[i];
