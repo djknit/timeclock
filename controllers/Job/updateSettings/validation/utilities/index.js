@@ -1,5 +1,5 @@
 const {
-  checkForFailure, isDateValid, getUtcDateTime, findScheduleEntryById, wageValidation, methodNamesFactory
+  checkForFailure, isDateValid, getUtcDateTime, findScheduleEntryById, wageValidation, methodNames
 } = require('../../utilities');
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
   wageValidation,
   validateThatEntryIdsForMethodAreNotOnRemoveList,
   updatesProblemsObjFactory,
-  methodNamesFactory
+  methodNames
 };
 
 function validateThatEntryIdsForMethodAreNotOnRemoveList(methodName, updates) {

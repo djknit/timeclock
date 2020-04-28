@@ -50,5 +50,5 @@ function getDateChangeUpdateIds(updates) {
 
 function removeDuplicatesFromRemoveUpdates(updates) {
   const ids = updates.remove.map(update => update.id.toString());
-  return updates.remove.filter((el, index) => ids.indexOf(ids[index]) === index);
+  updates.remove = updates.remove.filter((el, index) => ids.indexOf(ids[index]) === index);
 }

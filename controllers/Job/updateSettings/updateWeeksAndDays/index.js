@@ -51,7 +51,7 @@ function updateDaysInWeek(weekDoc, job, allAffectedTimespans, propName, orphaned
   }
   weekDoc.days.forEach(day => {
     if (!daysController.isDayInDateRanges(allAffectedTimespans, day)) return;
-    day[mainFieldName] = getMostRecentScheduleValueForDate(day.date, job[propName]);
+    day[fieldNames.main] = getMostRecentScheduleValueForDate(day.date, job[propName]);
     if (isDayBoundaryAffected) {
       day[fieldNames.start] = getMostRecentScheduleValueForDate(getPrecedingDate(day.date), job[propName]);
       orphanedSegments.push(...getOrphanedSegments(day));

@@ -22,6 +22,10 @@ function updateValueSchedule(updates, job, propName) {
 }
 
 function performRemoveUpdates(removalUpdates, schedule) {
+  console.log(removalUpdates)
+  console.log(' ^ REMOVAL UPDATES ^ ^ ^')
+  console.log(schedule)
+  console.log(' ^ SCHEDULE ^ ^ ^')
   removalUpdates.forEach(update => {
     const entryIndex = findScheduleIndexByEntryId(update.id, schedule, true, true);
     schedule.splice(entryIndex, 1);

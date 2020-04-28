@@ -51,8 +51,7 @@ function validateUpdatesParentObj(updates) {
 function validateAddMethod(additionUpdates, propName) {
   return new Promise((resolve, reject) => {
     const problemsObj = updatesProblemsObjFactory('add');
-    const startDates = additionUpdates.map(update => update.startDate);
-    validateStartDates(startDates, 'add', problemsObj);
+    validateStartDates(additionUpdates, 'add', problemsObj);
     validateUpdateValues(additionUpdates, propName)
     .then(resolve)
     .catch(err => checkForFailure(true, 'Invalid value in `add` update method.', problemsObj, 422));
@@ -95,8 +94,11 @@ function validateDateChangeDatesAgainstAdditionDates(updates) {
 
 function validateStartDates(updates, methodName, problemsObj) {
   const failMsg = 'Missing or invalid `startDate` in `' + methodName + '` method.';
+  console.log('VALIDATE START DATE');
+  console.log(updates)
   for (let i = 0; i < updates.length; i++) {
     const date = updates[i].startDate;
+    console.log(date)
     checkForFailure(!date || !isDateValid(date), failMsg, problemsObj, 422);
   }
   validateThatStartDatesAreNotDuplicated(updates, problemsObj);
@@ -105,7 +107,7 @@ function validateStartDates(updates, methodName, problemsObj) {
 function validateScheduleEntryIds(updates, schedule, methodName, problemsObj) {
   const excludeFirstEntry = methodName !== 'edit';
   const failMsg = 'Missing or invalid `id` in `' + methodName + '` method.';
-  for (let i = 0; i < ids.length; i++) {
+  for (let i = 0; i < updates.length; i++) {
     const isMissingSchedEntry = !findScheduleEntryById(updates[i].id, schedule, excludeFirstEntry);
     checkForFailure(isMissingSchedEntry, failMsg, problemsObj, 422);
   }
