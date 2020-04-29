@@ -94,8 +94,6 @@ function validateDateChangeDatesAgainstAdditionDates(updates) {
 
 function validateStartDates(updates, methodName, problemsObj) {
   const failMsg = 'Missing or invalid `startDate` in `' + methodName + '` method.';
-  console.log('VALIDATE START DATE');
-  console.log(updates)
   for (let i = 0; i < updates.length; i++) {
     const date = updates[i].startDate;
     console.log(date)

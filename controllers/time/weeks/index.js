@@ -115,21 +115,6 @@ function isWeekInDateRanges(dateRanges, weeksArrayEntry) {
   return false;
 }
 
-// function deleteSegmentsForDates(dates, job) {
-//   return new Promise((resolve, reject) => {
-//     const { weeks } = job;
-//     let affectedWeeks = [];
-//     for (let i = 0; i < dates.length; i++) {
-//       const date = dates[i];
-//       const week = weeksController.findWeekWithDate(date, weeks);
-//       const weekId = week._id;
-//       if (week && week) {
-        
-//       }
-//     }
-//   });
-// }
-
 function getWeekAndDayIdsForDates(dates, weeks) {
   let affectedWeeks = [];
   for (let i = 0; i < dates.length; i++) {

@@ -10,7 +10,7 @@ const {
   convertMomentToMyDate,
   getMoment,
   getUtcDateTime
-} = require('../../../../utilities/index');
+} = require('../../../utilities');
 
 module.exports = {
   createWeekArrayEntryByDate,
@@ -18,11 +18,6 @@ module.exports = {
 };
 
 function createWeekArrayEntryByDate(givenDate, job) {
-  console.log('- - - CREATE WEEK BY DATE - - -')
-  console.log(givenDate);
-  console.log('_givenDate__^_^_^_^__')
-  console.log(job)
-  console.log('_job__^_^_^_^__')
   return new Promise(
     (resolve, reject) => {
       const dates = getDatesInWeekWithDate(givenDate, job.weekBegins);
@@ -34,12 +29,8 @@ function createWeekArrayEntryByDate(givenDate, job) {
         days: daysController.createDaysForDates(dates, job),
         weekNumber: determineWeekNumber(firstDate, job.effectiveStartDate)
       };
-      console.log('+== ==== newWeekData')
-      console.log(newWeekData)
       WeekController.create(newWeekData, job._id, job.user)
       .then(weekDoc => {
-        console.log('#*#*#*#* - -')
-        // console.log(weekDoc)
         return resolve({
           document: weekDoc,
           firstDateUtcTime: getUtcDateTime(firstDate),
@@ -49,14 +40,6 @@ function createWeekArrayEntryByDate(givenDate, job) {
       .catch(reject);
     }
   );
-}
-
-function checkForWeekWithDate() {
-
-}
-
-function createWeekByDate() {
-  
 }
 
 function createNextWeek(currentWeek, job) {
