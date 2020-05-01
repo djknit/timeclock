@@ -10,6 +10,8 @@ const {
   areDatesEquivalent
 } = require('../../utilities');
 
+const { getDatesInWeekWithDate } = require('./getDates');
+
 module.exports = {
   getUtcMoment,
   getUtcDateTime,
@@ -22,7 +24,8 @@ module.exports = {
   getPrecedingDate,
   getFirstDayOfWeekForDate,
   areDatesEquivalent,
-  findWeekBeginsSchedIndexForDate
+  findWeekBeginsSchedIndexForDate,
+  getDatesInWeekWithDate
 };
 
 function checkForFailure(failCondition, failMsg, problemsObj, statusCode) {

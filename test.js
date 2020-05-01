@@ -49,14 +49,13 @@ let x;
 function doStuff(index, length) {
   return new Promise((resolve, reject) => {
     if (index === length) return resolve();
-    // if (index % 3 === 0) console.log(index);
     console.log(x)
     x = index;
     resolve(doStuff(++index, length));
   })
 }
 
-doStuff(0, 10);
+// doStuff(0, 10);
 
 // const allZones = moment.tz.names();
 

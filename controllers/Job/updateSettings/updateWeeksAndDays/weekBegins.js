@@ -1,43 +1,94 @@
 const weeksController = require('../../../time/weeks');
+const daysController = require('../../../time/days');
+const WeekController = require('../../../Week');
 
-const { getFirstDayOfWeekForDate, getUtcDateTime, areDatesEquivalent } = require('../utilities');
+const {
+  getFirstDayOfWeekForDate, getUtcDateTime, areDatesEquivalent, getDatesInWeekWithDate, saveModifiedWeeks
+} = require('../utilities');
 
 module.exports = {
   updateWeekBeginsForWeeks
 };
 
 function updateWeekBeginsForWeeks(job, allAffectedTimespans) {
-  const weekBeginsSchedule = job.weekBegins;
-  let modifiedWeekDocIds = [];
-  let orphanedDays = [];
-  job.weeks.forEach(week => {
-    if (weeksController.isWeekInDateRanges(allAffectedTimespans, week)) {
-      modifiedWeekDocIds.push(week.document._id.toString());
-      removeAnyExtraDaysFromWeekDoc(week.document, weekBeginsSchedule, orphanedDays);
+  return new Promise((resolve, reject) => {
+    const weekBeginsSchedule = job.weekBegins;
+    let modifiedWeekDocIds = [];
+    let orphanedDays = [];
+    job.weeks.forEach(week => {
+      if (weeksController.isWeekInDateRanges(allAffectedTimespans, week)) {
+        modifiedWeekDocIds.push(week.document._id.toString());
+        removeAnyExtraDaysFromWeekDoc(week.document, weekBeginsSchedule, orphanedDays);
+      }
+    });
+    // place orphaned days w/ weeks
+      // for each orphaned day:
+        // get 1st day of week for day
+        // search weeks array for week whose first day matches day from previous step
+          // (should be done by getting first day of week for one of the days, not by checking the first day.)
+        // if not found, create weeks array entry for day date
+        // add day to week. (check for day w/ date and replace when the week is newly created)
+        // sort days array for adoptive week
+    // check if any weeks are missing days and add new days if they are
+    // set firstDateUtcTime and lastDateUtcTime in array entry
+    // save modified weeks
+    // ???
+    // profit
+    const orphanedDaysGroupedByWeek = groupDaysByWeek(orphanedDays, weekBeginsSchedule);
+    let stillOrphanedDayGroups = [];
+    placeDaysWithExistingWeeks(orphanedDaysGroupedByWeek, job, stillOrphanedDayGroups, modifiedWeekDocIds);
+    ensureUpdatedWeeksAreComplete(job, modifiedWeekDocIds)
+    .then(() => placeRemainingDaysWithNewWeeks(stillOrphanedDayGroups, job))
+    .then(newWeeks => {
+      modifiedWeekDocIds.push(...newWeeks.map(({ document }) => document._id.toString()));
+      job.weeks.push(newWeeks);
+      job.weeks.sort((wk_1, wk_2) => wk_1.firstDateUtcTime - wk_2.firstDateUtcTime);
+    })
+    .then(() => saveModifiedWeeks(job.weeks, modifiedWeekDocIds))
+    .then(() => resolve(job))
+    .catch(reject);
+  });
+}
+
+function ensureUpdatedWeeksAreComplete(job, modifiedWeekDocIds) {
+  return new Promise((resolve, reject) => {
+    let deadWeekIndexes = [];
+    job.weeks.forEach((week, index) => {
+      if (modifiedWeekDocIds.indexOf(week.document._id.toString()) === -1) return;
+      const { days } = week.document;
+      if (days.length === 0) {
+        deadWeekIndexes.push(index);
+        return;
+      }
+      checkWeekDaysForMissingDays(days, job);
+      week.firstDateUtcTime = getUtcDateTime(days[0].date);
+      week.lastDateUtcTime = getUtcDateTime(days[days.length - 1].date);
+    });
+    removeDeadWeeks(job, deadWeekIndexes)
+    .then(() => resolve())
+    .catch(reject);
+  });
+}
+
+function removeDeadWeeks(job, deadWeekIndexes) {
+  const idsOfWeekDocsToKill = deadWeekIndexes.map(
+    index => job.weeks[index].document._id
+  );
+  job.weeks = job.weeks.filter((wk, index) => deadWeekIndexes.indexOf(index) === -1);
+  return WeekController.deleteWeeks(idsOfWeekDocsToKill, job.user);
+}
+
+function checkWeekDaysForMissingDays(days, job) {
+  const datesMissingDays = [];
+  const daysDateTimes = days.map(day => getUtcDateTime(day.date));
+  const datesInWeek = getDatesInWeekWithDate(days[0].date, job.weekBegins);
+  datesInWeek.forEach(date => {
+    if (daysDateTimes.indexOf(getUtcDateTime(date)) === -1) {
+      missingDates.push(date);
     }
   });
-  // place orphaned days w/ weeks
-    // for each orphaned day:
-      // get 1st day of week for day
-      // search weeks array for week whose first day matches day from previous step
-        // (needs to be done by getting first day of week for one of the days, not by checking the first day.)
-      // if not found, create weeks array entry for day date
-      // add day to week. (check for day w/ date and replace when the week is newly created)
-      // sort days array for adoptive week
-  const orphanedDaysGroupedByWeek = groupDaysByWeek(orphanedDays, weekBeginsSchedule);
-  let stillOrphanedDayGroups = [];
-  placeDaysWithExistingWeeks(orphanedDaysGroupedByWeek, job, stillOrphanedDayGroups, modifiedWeekDocIds);
-  let newWeeks;
-  placeRemainingDaysWithNewWeeks(stillOrphanedDayGroups, job)
-  .then(() => {
-
-  })
-  .catch(reject);
-  // check if any weeks are missing days and add new days if they are
-  // set firstDateUtcTime and lastDateUtcTime in array entry
-  // save modified weeks
-  // ???
-  // profit
+  days.push(...daysController.createDaysForDates(datesMissingDays, job));
+  days.sort(day_1, day_2 => getUtcDateTime(day_1.date) - getUtcDateTime(day_2.date));
 }
 
 function placeRemainingDaysWithNewWeeks(daysGroupedByWeek, job) {
@@ -45,17 +96,22 @@ function placeRemainingDaysWithNewWeeks(daysGroupedByWeek, job) {
     let newWeeks = [];
     let numCompleted = 0;
     daysGroupedByWeek.forEach(group => {
-      const groupDayDateTimes = group.days.map(_day => getUtcDateTime(_day.date));
-      weeksController.createWeekArrayEntryByDate(group.weekFirstDayDate)
+      const groupDaysDateTimes = group.days.map(_day => getUtcDateTime(_day.date));
+      weeksController.createWeekArrayEntryByDate(group.weekFirstDayDate, job)
       .then(week => {
         const weekDoc = week.document;
         weekDoc.days = weekDoc.days.filter(
-          day => groupDayDateTimes.indexOf(getUtcDateTime(day.date)) === -1
+          day => groupDaysDateTimes.indexOf(getUtcDateTime(day.date)) === -1
         );
         weekDoc.days.push(...group.days);
         weekDoc.days.sort(day_1, day_2 => getUtcDateTime(day_1.date) - getUtcDateTime(day_2.date));
+        newWeeks.push(week);
+        if (++numCompleted === daysGroupedByWeek.length) {
+          return resolve(newWeeks);
+        }
       });
-    });
+    })
+    .catch(reject);
   });
 }
 

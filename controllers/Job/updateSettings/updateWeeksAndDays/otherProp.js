@@ -3,7 +3,7 @@ const daysController = require('../../../time/days');
 
 const { getOrphanedSegments, placeOrphanedSegmentsWithAdoptiveDays } = require('./orphanedSegments');
 
-const { getMostRecentScheduleValueForDate, getPrecedingDate, methodNames } = require('../utilities');
+const { getMostRecentScheduleValueForDate, getPrecedingDate, saveModifiedWeeks } = require('../utilities');
 
 module.exports = {
   updateOtherPropForWeeksAndDays
@@ -40,24 +40,6 @@ function updateDaysInWeek(weekDoc, job, allAffectedTimespans, propName, orphaned
     if (isDayBoundaryAffected) {
       day[fieldNames.start] = getMostRecentScheduleValueForDate(getPrecedingDate(day.date), job[propName]);
       orphanedSegments.push(...getOrphanedSegments(day));
-    }
-  });
-}
-
-function saveModifiedWeeks(weeksArray, modifiedWeekDocIds) {
-  return new Promise((resolve, reject) => {
-    let numCompleted = 0;
-    for (let i = 0; i < weeksArray.length; i++) {
-      const weekDoc = weeksArray[i].document;
-      if (modifiedWeekDocIds.indexOf(weekDoc._id.toString()) !== -1) {
-        weekDoc.save()
-        .then(_weekDoc => {
-          weeksArray[i].document = weekDoc;
-          if (++numCompleted === weeksArray.length) resolve();
-        })
-        .catch(reject);
-      }
-      else if (++numCompleted === weeksArray.length) resolve();
     }
   });
 }

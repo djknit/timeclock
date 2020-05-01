@@ -4,7 +4,7 @@ const WeekController = require('../../../Week');
 
 const daysController = require('../../days');
 
-const { getDatesInWeekWithDate } = require('./getDates');
+const { getDatesInWeekWithDate } = require('../../../utilities');
 
 const {
   convertMomentToMyDate,

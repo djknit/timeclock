@@ -1,6 +1,6 @@
 const {
   getFirstDayOfWeekForDate, findWeekBeginsSchedIndexForDate, convertMomentToMyDate, areDatesEquivalent, getMoment
-} = require('../../../utilities');
+} = require('.');
 
 module.exports = {
   getDatesInWeekWithDate

@@ -5,7 +5,7 @@ const {
   getUtcDateTime,
   getMostRecentScheduleValueForDate,
   convertMomentToMyDate,
-  getMoment,
+  getMoment
 } = require('../../utilities');
 
 module.exports = {

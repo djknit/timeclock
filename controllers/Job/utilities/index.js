@@ -9,7 +9,8 @@ const {
   getMostRecentScheduleValueForDate,
   getPrecedingDate,
   getFirstDayOfWeekForDate,
-  areDatesEquivalent
+  areDatesEquivalent,
+  getDatesInWeekWithDate
 } = require('../../utilities');
 
 module.exports = {
@@ -28,7 +29,8 @@ module.exports = {
   findScheduleEntryById,
   findScheduleIndexByEntryId,
   getFirstDayOfWeekForDate,
-  areDatesEquivalent
+  areDatesEquivalent,
+  getDatesInWeekWithDate
 };
 
 function jobNotFoundCheckerFactory(jobId) {

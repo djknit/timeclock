@@ -25,7 +25,7 @@ function getAllAffectedTimespans(affectedTimespans, propName) {
     allAffectedTimespans.forEach(adjustTimespanToIncludeSucceedingDate);
   }
   else if (propName === 'weekBegins') {
-    allAffectedTimespans.forEach(expandTimespanByOneWeekOnBothEnds);
+    allAffectedTimespans.forEach(expandTimespanOnBothEnds);
   }
   return allAffectedTimespans;
 }
@@ -35,11 +35,12 @@ function adjustTimespanToIncludeSucceedingDate(timespan) {
   timespan.lastDateUtcTime = moment.utc(timespan.lastDateUtcTime).add(1, 'days').valueOf();
 }
 
-function expandTimespanByOneWeekOnBothEnds(timespan) {
+function expandTimespanOnBothEnds(timespan) {
+  // For `weekBegins`. Not sure exactly which days can be affected, so 2 weeks expansion on either side just to be safe.
   if (timespan.firstDateUtcTime) {
-    timespan.firstDateUtcTime = moment.utc(timespan.firstDateUtcTime).subtract(1, 'weeks').valueOf();
+    timespan.firstDateUtcTime = moment.utc(timespan.firstDateUtcTime).subtract(2, 'weeks').valueOf();
   }
   if (timespan.lastDateUtcTime) {
-    timespan.lastDateUtcTime = moment.utc(timespan.lastDateUtcTime).add(1, 'weeks').valueOf();
+    timespan.lastDateUtcTime = moment.utc(timespan.lastDateUtcTime).add(2, 'weeks').valueOf();
   }
 }
