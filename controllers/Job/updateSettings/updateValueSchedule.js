@@ -30,8 +30,6 @@ function performRemoveUpdates(removalUpdates, schedule) {
 
 function performChangeDateUpdates(dateChangeUpdates, schedule) {
   dateChangeUpdates.forEach(update => {
-    console.log(schedule)
-    console.log(update.id)
     const entryIndex = findScheduleIndexByEntryId(update.id, schedule, true, true);
     schedule[entryIndex].startDate = update.startDate;
     schedule[entryIndex].startDateUtcTime = getUtcDateTime(update.startDate);

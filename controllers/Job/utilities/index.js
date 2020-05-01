@@ -7,7 +7,9 @@ const {
   getUtcMoment,
   getUtcDateTime,
   getMostRecentScheduleValueForDate,
-  getPrecedingDate
+  getPrecedingDate,
+  getFirstDayOfWeekForDate,
+  areDatesEquivalent
 } = require('../../utilities');
 
 module.exports = {
@@ -24,7 +26,9 @@ module.exports = {
   getDayStartTimeForDate,
   getDayEndTimeForDate,
   findScheduleEntryById,
-  findScheduleIndexByEntryId
+  findScheduleIndexByEntryId,
+  getFirstDayOfWeekForDate,
+  areDatesEquivalent
 };
 
 function jobNotFoundCheckerFactory(jobId) {

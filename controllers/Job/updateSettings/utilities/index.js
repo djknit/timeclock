@@ -8,7 +8,9 @@ const {
   findScheduleIndexByEntryId,
   getMostRecentScheduleValueForDate,
   getPrecedingDate,
-  getDayEndTimeForDate
+  getDayEndTimeForDate,
+  getFirstDayOfWeekForDate,
+  areDatesEquivalent
 } = require('../../utilities');
 
 module.exports = {
@@ -24,5 +26,7 @@ module.exports = {
   findScheduleIndexByEntryId,
   getMostRecentScheduleValueForDate,
   getPrecedingDate,
-  getDayEndTimeForDate
+  getDayEndTimeForDate,
+  getFirstDayOfWeekForDate,
+  areDatesEquivalent
 };
