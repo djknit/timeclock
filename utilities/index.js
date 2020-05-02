@@ -17,7 +17,7 @@ module.exports = {
   areDatesEquivalent,
   areWagesEquivalent,
   isDateValid,
-  wageValidation,
+  ...wageValidation,
   getPrecedingDate
 };
 

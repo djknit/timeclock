@@ -5,9 +5,7 @@ const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fa
 const JobController = require('../../../controllers/Job');
 const UserController = require('../../../controllers/User');
 
-const { routeErrorHandlerFactory, checkRequiredProps, resCleaners } = require('../utilities');
-
-const { cleanJob, cleanJobsExtra } = resCleaners;
+const { routeErrorHandlerFactory, checkRequiredProps, cleanJob, cleanJobsExtra } = require('../utilities');
 
 router.post(
   '/create',

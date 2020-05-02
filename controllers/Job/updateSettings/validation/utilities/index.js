@@ -1,16 +1,7 @@
-const {
-  checkForFailure, isDateValid, getUtcDateTime, findScheduleEntryById, wageValidation, methodNames
-} = require('../../utilities');
-
 module.exports = {
-  checkForFailure,
-  isDateValid,
-  getUtcDateTime,
-  findScheduleEntryById,
-  wageValidation,
+  ...require('../../utilities'),
   validateThatEntryIdsForMethodAreNotOnRemoveList,
-  updatesProblemsObjFactory,
-  methodNames
+  updatesProblemsObjFactory
 };
 
 function validateThatEntryIdsForMethodAreNotOnRemoveList(methodName, updates) {

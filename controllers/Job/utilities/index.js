@@ -1,36 +1,10 @@
-const {
-  checkForFailure,
-  getMoment,
-  convertMomentToMyDate,
-  isDateValid,
-  wageValidation,
-  getUtcMoment,
-  getUtcDateTime,
-  getMostRecentScheduleValueForDate,
-  getPrecedingDate,
-  getFirstDayOfWeekForDate,
-  areDatesEquivalent,
-  getDatesInWeekWithDate
-} = require('../../utilities');
-
 module.exports = {
-  getMoment,
-  convertMomentToMyDate,
+  ...require('../../utilities'),
   jobNotFoundCheckerFactory,
-  checkForFailure,
-  isDateValid,
-  wageValidation,
-  getUtcMoment,
-  getUtcDateTime,
-  getMostRecentScheduleValueForDate,
-  getPrecedingDate,
   getDayStartTimeForDate,
   getDayEndTimeForDate,
   findScheduleEntryById,
-  findScheduleIndexByEntryId,
-  getFirstDayOfWeekForDate,
-  areDatesEquivalent,
-  getDatesInWeekWithDate
+  findScheduleIndexByEntryId
 };
 
 function jobNotFoundCheckerFactory(jobId) {

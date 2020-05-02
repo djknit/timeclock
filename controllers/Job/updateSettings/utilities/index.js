@@ -1,36 +1,8 @@
-const {
-  checkForFailure,
-  isDateValid,
-  getUtcDateTime,
-  findScheduleEntryById,
-  wageValidation,
-  jobNotFoundCheckerFactory,
-  findScheduleIndexByEntryId,
-  getMostRecentScheduleValueForDate,
-  getPrecedingDate,
-  getDayEndTimeForDate,
-  getFirstDayOfWeekForDate,
-  areDatesEquivalent,
-  getDatesInWeekWithDate
-} = require('../../utilities');
-
 module.exports = {
-  checkForFailure,
-  isDateValid,
-  getUtcDateTime,
-  findScheduleEntryById,
-  wageValidation,
+  ...require('../../utilities'),
   get methodNames() {
     return ['add', 'changeDate', 'remove', 'edit'];
   },
-  jobNotFoundCheckerFactory,
-  findScheduleIndexByEntryId,
-  getMostRecentScheduleValueForDate,
-  getPrecedingDate,
-  getDayEndTimeForDate,
-  getFirstDayOfWeekForDate,
-  areDatesEquivalent,
-  getDatesInWeekWithDate,
   saveModifiedWeeks
 };
 

@@ -1,31 +1,9 @@
-const {
-  getUtcMoment,
-  getUtcDateTime,
-  getMoment,
-  convertMomentToMyDate,
-  isDateValid,
-  wageValidation,
-  getMostRecentScheduleValueForDate,
-  getPrecedingDate,
-  areDatesEquivalent
-} = require('../../utilities');
-
-const { getDatesInWeekWithDate } = require('./getDates');
-
 module.exports = {
-  getUtcMoment,
-  getUtcDateTime,
-  getMoment,
+  ...require('./getDates'),
+  ...require('../../utilities'),
   checkForFailure,
-  convertMomentToMyDate,
-  isDateValid,
-  wageValidation,
-  getMostRecentScheduleValueForDate,
-  getPrecedingDate,
   getFirstDayOfWeekForDate,
-  areDatesEquivalent,
-  findWeekBeginsSchedIndexForDate,
-  getDatesInWeekWithDate
+  findWeekBeginsSchedIndexForDate
 };
 
 function checkForFailure(failCondition, failMsg, problemsObj, statusCode) {

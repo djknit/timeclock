@@ -6,9 +6,7 @@ const UserController = require('../../controllers/User');
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
 
-const { routeErrorHandlerFactory, resCleaners } = require('./utilities');
-
-const { cleanUser } = resCleaners;
+const { routeErrorHandlerFactory, cleanUser } = require('./utilities');
 
 router.post(
   '/create-account',
