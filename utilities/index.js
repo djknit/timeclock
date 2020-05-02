@@ -1,8 +1,11 @@
 const moment = require('moment-timezone');
 
+const constants = require('./constants');
 const wageValidation = require('./wageValidation');
 
 module.exports = {
+  constants,
+  ...wageValidation,
   routeErrorHandlerFactory,
   errorHandlerMiddleware,
   getDateTime,
@@ -17,7 +20,6 @@ module.exports = {
   areDatesEquivalent,
   areWagesEquivalent,
   isDateValid,
-  ...wageValidation,
   getPrecedingDate
 };
 

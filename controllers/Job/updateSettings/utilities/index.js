@@ -1,5 +1,7 @@
+const utilities = require('../../utilities');
+
 module.exports = {
-  ...require('../../utilities'),
+  ...utilities,
   get methodNames() {
     return ['add', 'changeDate', 'remove', 'edit'];
   },

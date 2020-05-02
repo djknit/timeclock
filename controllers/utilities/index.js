@@ -1,6 +1,13 @@
+const utilities = require('../../utilities');
+const getDates = require('./getDates');
+
+const {
+  convertMomentToMyDate, getMostRecentScheduleIndexForDate, getMoment
+} = utilities;
+
 module.exports = {
-  ...require('./getDates'),
-  ...require('../../utilities'),
+  ...utilities,
+  ...getDates,
   checkForFailure,
   getFirstDayOfWeekForDate,
   findWeekBeginsSchedIndexForDate

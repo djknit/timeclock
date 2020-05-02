@@ -1,5 +1,9 @@
+const utilities = require('../../utilities');
+
+const { checkForFailure } = utilities
+
 module.exports = {
-  ...require('../../utilities'),
+  ...utilities,
   validateThatEntryIdsForMethodAreNotOnRemoveList,
   updatesProblemsObjFactory
 };

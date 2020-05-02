@@ -1,4 +1,6 @@
-const { getUtcDateTime } = require('./utilities');
+const { getUtcDateTime } = require('../utilities');
+
+const applyDefaultValuesToUpdates = require('./applyDefaultValues');
 
 module.exports = processUpdates;
 
@@ -8,6 +10,7 @@ function processUpdates(updates, job, propName, affectedTimespans) {
   markEntriesWithStartDatesForRemoval(updates.add.map(update => update.startDate), job[propName], updates);
   markEntriesWithStartDatesForRemoval(updates.changeDate.map(update => update.startDate), job[propName], updates);
   removeDuplicatesFromRemoveUpdates(updates);
+  applyDefaultValuesToUpdates(updates, propName);
 }
 
 function markEntriesWithinTimespansForRemoval(timespans, schedule, updates) {

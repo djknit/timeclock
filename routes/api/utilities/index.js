@@ -1,6 +1,9 @@
+const utilities = require('../../../utilities');
+const resCleaners = require('./resCleaners');
+
 module.exports = {
-  ...require('../../../utilities'),
-  ...require('./resCleaners'),
+  ...utilities,
+  ...resCleaners,
   checkRequiredProps
 };
 

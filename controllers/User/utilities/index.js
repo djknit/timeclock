@@ -1,7 +1,9 @@
 const models = require('../../../models');
 
+const utilities = require('../../utilities');
+
 module.exports = {
-  ...require('../../utilities'),
+  ...utilities,
   models,
   determineUserInfoError
 };

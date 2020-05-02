@@ -1,5 +1,11 @@
+const utilities = require('../../utilities');
+
+const {
+  getPrecedingDate, getMostRecentScheduleValueForDate, getMoment
+} = utilities;
+
 module.exports = {
-  ...require('../../utilities'),
+  ...utilities,
   jobNotFoundCheckerFactory,
   getDayStartTimeForDate,
   getDayEndTimeForDate,

@@ -75,7 +75,8 @@ function validateEditMethod(editingUpdates, schedule, propName) {
     validateScheduleEntryIds(editingUpdates, schedule, 'edit', problemsObj);
     validateUpdateValues(editingUpdates, propName)
     .then(resolve)
-    .catch(err => checkForFailure(true, 'Invalid value in `edit` update method.', problemsObj, 422));
+    .catch(err => checkForFailure(true, 'Invalid value in `edit` update method.', problemsObj, 422))
+    .catch(reject);
   });
 }
 
