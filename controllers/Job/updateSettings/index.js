@@ -27,9 +27,13 @@ function updatePropWithName(propName, updates, jobId, userId) {
       affectedTimespans = getTimespansAffectedByUpdates(updates, job[propName]);
       processUpdates(updates, job, propName, affectedTimespans);
       validateUpdates_part2of2(updates);
-      return updateValueSchedule(updates, job, propName);
+      updateValueSchedule(updates, job, propName);
+      return updateWeeksAndDays(job, affectedTimespans, propName);
     })
-    .then(_job => updateWeeksAndDays(_job, affectedTimespans, propName))
+    .then(_job => {
+      job.weeks = _job.weeks;
+      return job.save();
+    })
     .then(resolve)
     .catch(reject);
   });

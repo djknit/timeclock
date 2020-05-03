@@ -4,7 +4,7 @@ const WeekController = require('../../../Week');
 
 const daysController = require('../../days');
 
-const { getDatesInWeekWithDate } = require('../../../utilities');
+const { getDatesInWeekWithDate, determineWeekNumber } = require('../../../utilities');
 
 const {
   convertMomentToMyDate,
@@ -45,14 +45,4 @@ function createWeekArrayEntryByDate(givenDate, job) {
 function createNextWeek(currentWeek, job) {
   const nextWeekFirstDateMoment = getMoment(currentWeek.lastDate).add(1, 'days');
   return createWeekByDate(convertMomentToMyDate(nextWeekFirstDateMoment), job);
-}
-
-function determineWeekNumber(weekStartDate, referenceDate) {
-  const estimate = getMoment(weekStartDate).diff(getMoment(referenceDate), 'weeks') + 1;
-  for (let i = estimate - 1; i < estimate + 2; i++) {
-    const idealFirstDateOfWeek = getMoment(referenceDate).add(i - 1, 'weeks');
-    const weekFirstDateDiffFromIdeal = idealFirstDateOfWeek.diff(getMoment(weekStartDate), 'days');
-    if (-4 < weekFirstDateDiffFromIdeal && weekFirstDateDiffFromIdeal < 4) return i;
-  }
-  throw new Error('Failed to determine week number.');
 }

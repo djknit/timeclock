@@ -6,7 +6,7 @@ module.exports = {
 };
 
 function createAccount(newUser) {
-  console.log('CREATE ACCOUNT')
+  // console.log('CREATE ACCOUNT')
   return new Promise((resolve, reject) => {
     const { email, username, password } = newUser;
     if ((!username && !email) || !password) {

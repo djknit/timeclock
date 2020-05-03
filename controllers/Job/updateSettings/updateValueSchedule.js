@@ -5,20 +5,20 @@ const { getUtcDateTime, findScheduleIndexByEntryId } = require('./utilities');
 module.exports = updateValueSchedule;
 
 function updateValueSchedule(updates, job, propName) {
-  return new Promise((resolve, reject) => {
+  // return new Promise((resolve, reject) => {
     const schedule = job[propName];
     performRemoveUpdates(updates.remove, schedule);
     performChangeDateUpdates(updates.changeDate, schedule);
     performEditUpdates(updates.edit, schedule);
     performAddUpdates(updates.add, schedule);
     sortScheduleChronologically(schedule);
-    job.save()
-    .then(_job => {
-      job[propName] = _job[propName];
-      resolve(_job);
-    })
-    .catch(reject);
-  });
+    // job.save()
+    // .then(_job => {
+    //   job[propName] = _job[propName];
+    //   resolve(_job);
+    // })
+    // .catch(reject);
+  // });
 }
 
 function performRemoveUpdates(removalUpdates, schedule) {
