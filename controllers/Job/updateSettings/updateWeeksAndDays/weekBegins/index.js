@@ -35,7 +35,6 @@ function updateWeekBeginsForWeeks(job, allAffectedTimespans) {
       modifiedWeekDocIds.push(...newWeeks.map(({ document }) => document._id.toString()));
       job.weeks.push(...newWeeks);
       job.weeks.sort((wk_1, wk_2) => wk_1.firstDateUtcTime - wk_2.firstDateUtcTime);
-      console.log(job.weeks)
     })
     .then(() => saveModifiedWeeks(job.weeks, modifiedWeekDocIds))
     .then(() => resolve(job))
@@ -45,8 +44,6 @@ function updateWeekBeginsForWeeks(job, allAffectedTimespans) {
 
 function removeAnyExtraDaysFromWeekDoc(weekDoc, weekBeginsSchedule, orphanedDays) {
   const { days } = weekDoc;
-  console.log('removeAnyExtraDaysFromWeekDoc')
-  console.log(weekBeginsSchedule)
   if (doFirstAndLastDaysGoTogether(days, weekBeginsSchedule)) {
     return;
   }
@@ -55,29 +52,21 @@ function removeAnyExtraDaysFromWeekDoc(weekDoc, weekBeginsSchedule, orphanedDays
     // 2.) then keep all days for which the first day of week matches first day of week discovered in step #1.
     // 3.) remove all days that do not meet condition from step #2.
   let firstDayOfWeek;
-  console.log('do do do do do do')
   weekDoc.days = days.filter(day => {
-    console.log(day)
     const firstDayOfWeekWithDay = getFirstDayOfWeekForDate(day.date, weekBeginsSchedule);
     if (!firstDayOfWeek && areDatesEquivalent(day.date, firstDayOfWeekWithDay)) {
       firstDayOfWeek = firstDayOfWeekWithDay;
-      console.log('true 1st day')
       return true;
     }
     if (!firstDayOfWeek || !areDatesEquivalent(firstDayOfWeekWithDay, firstDayOfWeek)) {
       orphanedDays.push(day);
-      console.log('bad day')
       return false;
     }
     return true;
-    console.log('___________________8')
   });
-  console.log(weekDoc.days)
 }
 
 function groupDaysByWeek(days, weekBeginsSchedule) {
-  console.log('groupDaysByWeekl')
-  console.log(days)
   let daysGroupedByWeek = [];
   days.forEach(day => {
     const firstDayOfWeekWithDayDate = getFirstDayOfWeekForDate(day.date, weekBeginsSchedule);
@@ -104,15 +93,10 @@ function groupDaysByWeek(days, weekBeginsSchedule) {
 }
 
 function placeDaysWithExistingWeeks(daysGroupedByWeek, job, unplacedGroups, modifiedWeekDocIds) {
-  console.log('placeDaysWithExistingWeeks');
-  console.log(daysGroupedByWeek)
   daysGroupedByWeek.forEach(group => {
-    console.log(group)
-    console.log('group^')
     const { weekFirstDayDate, days } = group;
     const weekDoc = findWeekDocWithFirstDayDate(weekFirstDayDate, job.weeks, job.weekBegins);
     if (weekDoc) {
-      console.log(weekDoc)
       weekDoc.days.push(...days);
       weekDoc.days.sort((day_1, day_2) => getUtcDateTime(day_1.date) - getUtcDateTime(day_2.date));
       modifiedWeekDocIds.push(weekDoc._id.toString());
@@ -125,7 +109,6 @@ function placeDaysWithExistingWeeks(daysGroupedByWeek, job, unplacedGroups, modi
 
 function finishUpdatingUpdatedWeeks(job, modifiedWeekDocIds) {
   return new Promise((resolve, reject) => {
-    console.log('finishUpdatingUpdatedWeeks')
     let deadWeekIndexes = [];
     job.weeks.forEach((week, index) => {
       if (modifiedWeekDocIds.indexOf(week.document._id.toString()) === -1) return;
@@ -149,30 +132,21 @@ function finishUpdatingUpdatedWeeks(job, modifiedWeekDocIds) {
 
 function placeRemainingDaysWithNewWeeks(daysGroupedByWeek, job) {
   return new Promise((resolve, reject) => {
-    console.log('placeRemainingDaysWithNewWeeks')
     if (daysGroupedByWeek.length === 0) return resolve([]);
-    console.log('pass')
     let newWeeks = [];
     let numCompleted = 0;
     daysGroupedByWeek.forEach(group => {
       const groupDaysDateTimes = group.days.map(_day => getUtcDateTime(_day.date));
       weeksController.createWeekArrayEntryByDate(group.weekFirstDayDate, job)
       .then(week => {
-        console.log('WEEK CREATED')
-        console.log(week)
         const weekDoc = week.document;
         weekDoc.days = weekDoc.days.filter(
           day => groupDaysDateTimes.indexOf(getUtcDateTime(day.date)) === -1
         );
-        console.log('% % %%\n', weekDoc)
         weekDoc.days.push(...group.days);
         weekDoc.days.sort((day_1, day_2) => getUtcDateTime(day_1.date) - getUtcDateTime(day_2.date));
-        console.log('% % - -_\n', weekDoc)
-        console.log('- -_\n', week)
         newWeeks.push(week);
-        console.log('% @@@_@@ \n ', newWeeks)
         if (++numCompleted === daysGroupedByWeek.length) {
-          console.log('NEW WEEKS\n', newWeeks)
           return resolve(newWeeks);
         }
       });
@@ -181,32 +155,26 @@ function placeRemainingDaysWithNewWeeks(daysGroupedByWeek, job) {
 }
 
 function doFirstAndLastDaysGoTogether(days, weekBeginsSchedule) {
-  console.log('doFirstAndLastDaysGoTogether')
   const firstDayDate = days[0].date;
-  console.log(firstDayDate)
   const lastDayDate = days[days.length - 1].date;
-  console.log(lastDayDate)
   const firstDayOfWeekWithLastDayDate = getFirstDayOfWeekForDate(lastDayDate, weekBeginsSchedule)
-  console.log(firstDayOfWeekWithLastDayDate)
   return areDatesEquivalent(firstDayDate, firstDayOfWeekWithLastDayDate);
 }
 
 function findWeekDocWithFirstDayDate(date, weeks, weekBeginsSchedule) {
-  console.log('findWeekDocWithFirstDayDate')
   for (let i = 0; i < weeks.length; i++) {
-    const firstDayOfWeekDate = getFirstDayOfWeekForDate(weeks[i].document.days[0], weekBeginsSchedule);
+    const firstDayOfWeekDate = getFirstDayOfWeekForDate(weeks[i].document.days[0].date, weekBeginsSchedule);
     if (areDatesEquivalent(date, firstDayOfWeekDate)) return weeks[i].document;
   }
 }
 
 function checkWeekDaysForMissingDays(days, job) {
-  console.log('checkWeekDaysForMissingDays')
   const datesMissingDays = [];
   const daysDateTimes = days.map(day => getUtcDateTime(day.date));
   const datesInWeek = getDatesInWeekWithDate(days[0].date, job.weekBegins);
   datesInWeek.forEach(date => {
     if (daysDateTimes.indexOf(getUtcDateTime(date)) === -1) {
-      missingDates.push(date);
+      datesMissingDays.push(date);
     }
   });
   days.push(...daysController.createDaysForDates(datesMissingDays, job));
@@ -214,7 +182,6 @@ function checkWeekDaysForMissingDays(days, job) {
 }
 
 function removeDeadWeeks(job, deadWeekIndexes) {
-  console.log('removeDeadWeeks\n', deadWeekIndexes);
   const idsOfWeekDocsToKill = deadWeekIndexes.map(
     index => job.weeks[index].document._id
   );

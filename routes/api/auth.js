@@ -34,8 +34,6 @@ router.post(
       req.login(
         result,
         err => {
-          // console.log(req.user)
-          // console.log(err)
           if (err) return res.status(500).json(err);
           res.json({
             user: cleanUser(req.user),

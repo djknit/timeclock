@@ -55,19 +55,13 @@ const weeksSubdocFactory = () => ({
                 return reject(new Error('Invalid week data. First date and/or last date in week document doesn\'t match week array entry UTC date time.'));
               }
               const errMsg2 = 'Invalid day(s). Week is missing day(s) and/or contains day(s) that do not fall within its time range.';
-              console.log('__ + _____________ + __________');
               const expectedNumberOfDays = getMoment(lastDate).diff(getMoment(firstDate), 'days') + 1;
-              console.log(expectedNumberOfDays);
-              console.log(days);
               if (days.length !== expectedNumberOfDays) {
                 return reject(new Error(errMsg2));
               }
               for (let j = 0; j < days.length; j++) {
-                console.log('passed length check')
                 const dayUtcTime = getUtcDateTime(days[j].date);
-                console.log(dayUtcTime)
                 if (dayUtcTime < firstDateUtcTime || dayUtcTime > lastDateUtcTime) {
-                  console.log('rejecting')
                   return reject(new Error(errMsg2));
                 }
               }

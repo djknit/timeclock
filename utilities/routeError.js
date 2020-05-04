@@ -27,7 +27,6 @@ function errorHandlerMiddleware(err, req, res, next) {
 
   if (err) {
     errorHandler(err);
-    // console.error(err);
     return;
   }
 

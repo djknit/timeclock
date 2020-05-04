@@ -97,7 +97,6 @@ function validateStartDates(updates, methodName, problemsObj) {
   const failMsg = 'Missing or invalid `startDate` in `' + methodName + '` method.';
   for (let i = 0; i < updates.length; i++) {
     const date = updates[i].startDate;
-    // console.log(date)
     checkForFailure(!date || !isDateValid(date), failMsg, problemsObj, 422);
   }
   validateThatStartDatesAreNotDuplicated(updates, problemsObj);

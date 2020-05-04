@@ -102,7 +102,6 @@ module.exports = {
           return reject(determineUserInfoError(err));
         }
         else if (user) {
-          // console.log(user)
           return resolve(cleanUser(user));
         }
         const unexpectedErr = new Error('Unexpected outcome. Reason unknown.');

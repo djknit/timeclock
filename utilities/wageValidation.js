@@ -24,11 +24,9 @@ function validateWage(value) {
 }
 
 function validateWages(values) {
-  // console.log('\n@-@-@ VALIDATE WAGES ~_~^~_~^~_~')
   return new Promise((resolve, reject) => {
     if (values.length === 0) return resolve();
     let numCompleted = 0;
-    // console.log(values.length)
     for (let i = 0; i < values.length; i++) {
       validateWage(values[i])
       .then(result => {

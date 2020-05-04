@@ -8,7 +8,6 @@ const { methodNames } = require('../utilities');
 module.exports = updateWeeksAndDays;
 
 function updateWeeksAndDays(job, affectedTimespans, propName) {
-  console.log('updateWeeksAndDays')
   const allAffectedTimespans = getAllAffectedTimespans(affectedTimespans, propName);
   return (
     propName === 'weekBegins' ?
@@ -18,7 +17,6 @@ function updateWeeksAndDays(job, affectedTimespans, propName) {
 }
 
 function getAllAffectedTimespans(affectedTimespans, propName) {
-  console.log('getAllAffectedTimespans')
   let allAffectedTimespans = [];
   methodNames.forEach(method => {
     allAffectedTimespans.push(...affectedTimespans[method])
@@ -33,13 +31,11 @@ function getAllAffectedTimespans(affectedTimespans, propName) {
 }
 
 function adjustTimespanToIncludeSucceedingDate(timespan) {
-  console.log('adjustTimespanToIncludeSucceedingDate')
   if (!timespan.lastDateUtcTime) return;
   timespan.lastDateUtcTime = moment.utc(timespan.lastDateUtcTime).add(1, 'days').valueOf();
 }
 
 function expandTimespanOnBothEnds(timespan) {
-  console.log('expandTimespanOnBothEnds')
   // For `weekBegins`. Not sure exactly which days can be affected, so 2 weeks expansion on either side just to be safe.
   if (timespan.firstDateUtcTime) {
     timespan.firstDateUtcTime = moment.utc(timespan.firstDateUtcTime).subtract(2, 'weeks').valueOf();
