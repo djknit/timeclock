@@ -25,6 +25,7 @@ function validateWage(value) {
 
 function validateWages(values) {
   return new Promise((resolve, reject) => {
+    if (values.length === 0) return resolve();
     let numCompleted = 0;
     for (let i = 0; i < values.length; i++) {
       validateWage(values[i])

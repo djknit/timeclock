@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Week = require('../models/Week');
 const Job = require('../models/Job');
 
-const { getUtcMoment } = require('../utilities');
+// const { getUtcDateTime } = require('../utilities');
 
 module.exports = {
   create,

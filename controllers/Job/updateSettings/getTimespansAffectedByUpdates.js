@@ -1,11 +1,10 @@
-const { getUtcMoment } = require('../utilities');
+const { getUtcDateTime, findScheduleEntryById, methodNames } = require('./utilities');
 
-module.exports = getTimespansAffectedByUpdate;
+module.exports = getTimespansAffectedByUpdates;
 
-function getTimespansAffectedByUpdate(updates, valueSchedule) {
+function getTimespansAffectedByUpdates(updates, valueSchedule) {
   let result = {};
-  const methods = ['add', 'changeDate', 'remove', 'edit'];
-  methods.forEach(method => {
+  methodNames.forEach(method => {
     result[method] = getAffectedTimespansForMethod(method, updates, valueSchedule);
   });
   return result;
@@ -26,8 +25,8 @@ function getAffectedTimespansForMethod(method, updates, schedule) {
 
 function getAffectedTimespanForChangeDateUpdate(update, schedule) {
   const oldDate = findScheduleEntryById(update.id, schedule).startDate;
-  const oldDateTime = getUtcMoment(oldDate).valueOf();
-  const newDateTime = getUtcMoment(update.startDate).valueOf();
+  const oldDateTime = getUtcDateTime(oldDate);
+  const newDateTime = getUtcDateTime(update.startDate);
   return (
     oldDateTime < newDateTime ?
     {
@@ -47,7 +46,7 @@ function getAffectedTimespanForOtherUpdate(update, method, schedule) {
     update.startDate :
     findScheduleEntryById(update.id, schedule).startDate
   );
-  const schedEntryDateTime = getUtcMoment(schedEntryStartDate).valueOf();
+  const schedEntryDateTime = getUtcDateTime(schedEntryStartDate);
   const nextDateTime = getNextDateInScheduleUtcTime(schedule, schedEntryDateTime);
   return {
     firstDateUtcTime: schedEntryDateTime,
@@ -57,7 +56,7 @@ function getAffectedTimespanForOtherUpdate(update, method, schedule) {
 
 function getNextDateInScheduleUtcTime(schedule, referenceDateUtcTime) {
   for (let i = 0; i < schedule.length; i++) {
-    const entryStartDateTime = getUtcMoment(schedule[i].startDate).valueOf();
+    const entryStartDateTime = getUtcDateTime(schedule[i].startDate);
     if (entryStartDateTime > referenceDateUtcTime) return entryStartDateTime;
   }
   return null;

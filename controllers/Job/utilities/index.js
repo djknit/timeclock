@@ -1,15 +1,16 @@
+const utilities = require('../../utilities');
+
 const {
-  checkForFailure, getMoment, convertMomentToMyDate, isDateValid, wageValidation, getUtcMoment
-} = require('../../utilities');
+  getPrecedingDate, getMostRecentScheduleValueForDate, getMoment
+} = utilities;
 
 module.exports = {
-  getMoment,
-  convertMomentToMyDate,
+  ...utilities,
   jobNotFoundCheckerFactory,
-  checkForFailure,
-  isDateValid,
-  wageValidation,
-  getUtcMoment
+  getDayStartTimeForDate,
+  getDayEndTimeForDate,
+  findScheduleEntryById,
+  findScheduleIndexByEntryId
 };
 
 function jobNotFoundCheckerFactory(jobId) {
@@ -22,4 +23,28 @@ function jobNotFoundCheckerFactory(jobId) {
     }
     return job;
   }
+}
+
+function getDayStartTimeForDate(date, job) {
+  const precedingDate = getPrecedingDate(date);
+  const startCutoff = getMostRecentScheduleValueForDate(precedingDate, job.dayCutoff);
+  const startTimezone = getMostRecentScheduleValueForDate(precedingDate, job.timezone);
+  return getMoment(date, startTimezone).valueOf() + startCutoff;
+}
+
+function getDayEndTimeForDate(date, job) {
+  const endCutoff = getMostRecentScheduleValueForDate(date, job.dayCutoff);
+  const timezone = getMostRecentScheduleValueForDate(date, job.timezone);
+  return getMoment(date, timezone).add(1, 'days').valueOf() + endCutoff;
+}
+
+function findScheduleEntryById(id, schedule, excludeFirstEntry, requireSuccess) {
+  return schedule[findScheduleIndexByEntryId(id, schedule, excludeFirstEntry, requireSuccess)];
+}
+
+function findScheduleIndexByEntryId(id, schedule, excludeFirstEntry, requireSuccess) {
+  for (let i = (excludeFirstEntry ? 1 : 0); i < schedule.length; i++) {
+    if (schedule[i]._id.toString() === id.toString()) return i;
+  }
+  if (requireSuccess) throw new Error('Failed to find schedule index by entry id');
 }

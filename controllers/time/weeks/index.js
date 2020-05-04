@@ -10,7 +10,7 @@ const {
   getMostRecentScheduleIndexForDate,
   areDatesEquivalent,
   convertMomentToMyDate,
-  getUtcMoment,
+  getUtcDateTime,
   getMostRecentScheduleValueForDate
 } = require('../../../utilities');
 
@@ -21,11 +21,13 @@ module.exports = {
   findWeekWithId,
   findWeeksInDateRange,
   deleteSegmentsFromWeeksInDateRange,
-  getWeekAndDayIdsForDates
+  getWeekAndDayIdsForDates,
+  findWeeksInDateRanges,
+  isWeekInDateRanges
 }
 
 function findWeekWithDate(date, weeksArray) {
-  const dateUtcTime = getUtcMoment(date).valueOf();
+  const dateUtcTime = getUtcDateTime(date);
   for (let i = 0; i < weeksArray.length; i++) {
     const { firstDateUtcTime, lastDateUtcTime, document } = weeksArray[i];
     if (firstDateUtcTime <= dateUtcTime && dateUtcTime <= lastDateUtcTime) {
@@ -77,34 +79,41 @@ function deleteSegmentsFromWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, j
 }
 
 function findWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, weeksArray) {
-  return weeksArray
-  .filter(arrayEntry => {
-    const weekFirstDateTime = arrayEntry.firstDateUtcTime;
-    const weekLastDateTime = arrayEntry.lastDateUtcTime;
-    return (
-      // is any part of the week within the date range provided?
-        // if so then either the first or last days of week (or both) are within date range OR the entire date range is contained within week in which case both the first and last days of date range must fall in week
-      (firstDateUtcTime <= weekFirstDateTime && weekFirstDateTime <= lastDateUtcTime) ||
-      (firstDateUtcTime <= weekLastDateTime && weekLastDateTime <= lastDateUtcTime) ||
-      (weekFirstDateTime <= firstDateUtcTime && firstDateUtcTime <= weekLastDateTime)
-    );
-  });
+  // return all weeks that have one or more days falling within date range
+  return weeksArray.filter(arrayEntry => isWeekInDateRange(firstDateUtcTime, lastDateUtcTime, arrayEntry));
 }
 
-// function deleteSegmentsForDates(dates, job) {
-//   return new Promise((resolve, reject) => {
-//     const { weeks } = job;
-//     let affectedWeeks = [];
-//     for (let i = 0; i < dates.length; i++) {
-//       const date = dates[i];
-//       const week = weeksController.findWeekWithDate(date, weeks);
-//       const weekId = week._id;
-//       if (week && week) {
-        
-//       }
-//     }
-//   });
-// }
+function findWeeksInDateRanges(dateRanges, weeksArray) {
+  return weeksArray.filter(arrayEntry => isWeekInDateRanges(dateRanges, arrayEntry));
+}
+
+function isWeekInDateRange(firstDateUtcTime, lastDateUtcTime, weeksArrayEntry) {
+  const weekFirstDateTime = weeksArrayEntry.firstDateUtcTime;
+  const weekLastDateTime = weeksArrayEntry.lastDateUtcTime;
+  return (
+    // is any part of the week within the date range provided?
+      // if so then either the first or last days of week (or both) are within date range OR the entire date range is contained within week in which case both the first and last days of date range must fall in week
+    (
+      (!firstDateUtcTime || firstDateUtcTime <= weekFirstDateTime) &&
+      (!lastDateUtcTime || weekFirstDateTime <= lastDateUtcTime)
+    ) ||
+    (
+      (!firstDateUtcTime || firstDateUtcTime <= weekLastDateTime) &&
+      (!lastDateUtcTime || weekLastDateTime <= lastDateUtcTime)
+    ) ||
+    (weekFirstDateTime <= firstDateUtcTime && firstDateUtcTime <= weekLastDateTime)
+  );
+}
+
+function isWeekInDateRanges(dateRanges, weeksArrayEntry) {
+  for (let i = 0; i < dateRanges.length; i++) {
+    const { firstDateUtcTime, lastDateUtcTime } = dateRanges[i];
+    if (isWeekInDateRange(firstDateUtcTime, lastDateUtcTime, weeksArrayEntry)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 function getWeekAndDayIdsForDates(dates, weeks) {
   let affectedWeeks = [];

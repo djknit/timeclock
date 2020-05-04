@@ -1,10 +1,10 @@
-const { routeErrorHandlerFactory } = require('../../../utilities');
+const utilities = require('../../../utilities');
 const resCleaners = require('./resCleaners');
 
 module.exports = {
-  routeErrorHandlerFactory,
-  checkRequiredProps,
-  resCleaners
+  ...utilities,
+  ...resCleaners,
+  checkRequiredProps
 };
 
 function checkRequiredProps(props, requiredPropNames, res) {

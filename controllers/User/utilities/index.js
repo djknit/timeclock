@@ -1,9 +1,10 @@
 const models = require('../../../models');
-const { checkForFailure } = require('../../utilities');
+
+const utilities = require('../../utilities');
 
 module.exports = {
+  ...utilities,
   models,
-  checkForFailure,
   determineUserInfoError
 };
 

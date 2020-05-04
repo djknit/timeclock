@@ -1,8 +1,6 @@
 const moment = require('moment-timezone');
 
-const { wageValidation } = require('../../utilities');
-
-const { validateWages } = wageValidation;
+const { validateWages } = require('./utilities');
 
 module.exports = validateUpdateValues;
 

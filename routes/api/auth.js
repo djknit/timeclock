@@ -6,9 +6,7 @@ const UserController = require('../../controllers/User');
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
 
-const { routeErrorHandlerFactory, resCleaners } = require('./utilities');
-
-const { cleanUser } = resCleaners;
+const { routeErrorHandlerFactory, cleanUser } = require('./utilities');
 
 router.post(
   '/create-account',
@@ -36,8 +34,6 @@ router.post(
       req.login(
         result,
         err => {
-          console.log(req.user)
-          console.log(err)
           if (err) return res.status(500).json(err);
           res.json({
             user: cleanUser(req.user),

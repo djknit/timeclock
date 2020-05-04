@@ -1,22 +1,28 @@
 const cc = require('currency-codes');
 const { Schema } = require('mongoose');
 
+// cannot require '../../utilities/index.js' b/c exports appear empty. I'm guessing this is due to circular requires b/c this file is required by a file which is required by '../../utilities/index.js', so this file would be requiring a file which requires this file indirectly.
+const { wageDefaultValues } = require('../../utilities/constants');
+
 const intSubdocFactory = require('./integer');
 
 const overtimeSchema = new Schema(
   {
-    rate: Number,
+    rate: {
+      type: Number,
+      min: 0
+    },
     rateMultiplier: {
       type: Number,
-      default: 1.5,
+      default: wageDefaultValues.overtime.rateMultiplier,
       min: 0
     },
     useMultiplier: {
       type: Boolean,
-      default: true
+      default: wageDefaultValues.overtime.useMultiplier
     },
     cutoff: intSubdocFactory({
-      default: 144000000,
+      default: wageDefaultValues.overtime.cutoff,
       validate: {
         validator(value) {
           return (value <= 604800000) && (value >= 0);
@@ -41,12 +47,13 @@ const wageSchema = new Schema(
         validator: validateCurrencyCode,
         message: 'Invalid currency code.'
       },
-      default: 'USD'
+      default: wageDefaultValues.currency
     },
     overtime: {
       type: overtimeSchema,
       validate: {
         validator(value) {
+          if (!value) return true;
           return value.useMultiplier === true || !!value.rate;
         },
         message: 'You must specify the overtime rate or rate multiplier.'

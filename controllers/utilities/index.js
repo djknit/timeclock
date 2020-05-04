@@ -1,12 +1,10 @@
-const { getUtcMoment, getMoment, convertMomentToMyDate, isDateValid, wageValidation } = require('../../utilities');
+const utilities = require('../../utilities');
+const dates = require('./dates');
 
 module.exports = {
-  getUtcMoment,
-  getMoment,
-  checkForFailure,
-  convertMomentToMyDate,
-  isDateValid,
-  wageValidation
+  ...utilities,
+  ...dates,
+  checkForFailure
 };
 
 function checkForFailure(failCondition, failMsg, problemsObj, statusCode) {

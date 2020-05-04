@@ -1,23 +1,23 @@
-const { getUtcMoment } = require('../utilities');
+const { getUtcDateTime } = require('../utilities');
+
+const applyDefaultValuesToUpdates = require('./applyDefaultValues');
 
 module.exports = processUpdates;
 
 function processUpdates(updates, job, propName, affectedTimespans) {
-  // for each `changeDate` update, remove all entries with dates between old and new dates
-    // note: for this and the next 2 actions, schedule entries that are named in `changeDate` updates are exempt
+  // note: for the next 3 actions, schedule entries that are named in `changeDate` updates are exempt from being removed
   markEntriesWithinTimespansForRemoval(affectedTimespans.changeDate, job[propName], updates);
-  // for each new entry (`add` method), remove any existing entry w/ the same date
   markEntriesWithStartDatesForRemoval(updates.add.map(update => update.startDate), job[propName], updates);
-  // for each `changeDate` update, remove any existing entry w/ the same date as new date
   markEntriesWithStartDatesForRemoval(updates.changeDate.map(update => update.startDate), job[propName], updates);
   removeDuplicatesFromRemoveUpdates(updates);
+  applyDefaultValuesToUpdates(updates, propName);
 }
 
 function markEntriesWithinTimespansForRemoval(timespans, schedule, updates) {
   const dateChangeUpdateIds = getDateChangeUpdateIds(updates);
   for (let i = 0; i < schedule.length; i++) {
     const { _id, startDate } = schedule[i];
-    if (isDateInTimespans(timespans, startDate && dateChangeUpdateIds.indexOf(_id) === -1)) {
+    if (isDateInTimespans(timespans, startDate) && dateChangeUpdateIds.indexOf(_id.toString()) === -1) {
       updates.remove.push({ id: schedule[i]._id });
     }
   }
@@ -25,18 +25,18 @@ function markEntriesWithinTimespansForRemoval(timespans, schedule, updates) {
 
 function markEntriesWithStartDatesForRemoval(startDates, schedule, updates) {
   const dateChangeUpdateIds = getDateChangeUpdateIds(updates);
-  const startDateTimes = startDates.map(date => getUtcMoment(date).valueOf());
+  const startDateTimes = startDates.map(date => getUtcDateTime(date));
   for (let i = 0; i < schedule.length; i++) {
     const { _id, startDate } = schedule[i];
-    const entryDateTime = getUtcMoment(startDate).valueOf();
-    if (startDateTimes.indexOf(entryDateTime) !== -1 && dateChangeUpdateIds.indexOf(_id) === -1) {
+    const entryDateTime = getUtcDateTime(startDate);
+    if (startDateTimes.indexOf(entryDateTime) !== -1 && dateChangeUpdateIds.indexOf(_id.toString()) === -1) {
       updates.remove.push({ id: _id });
     }
   }
 }
 
 function isDateInTimespans(timespans, date) {
-  const dateTime = getUtcMoment(date).valueOf();
+  const dateTime = getUtcDateTime(date);
   for (let i = 0; i < timespans.length; i++) {
     const { firstDateUtcTime, lastDateUtcTime } = timespans[i];
     if (
@@ -48,17 +48,10 @@ function isDateInTimespans(timespans, date) {
 }
 
 function getDateChangeUpdateIds(updates) {
-  return updates.changeDate.map(({ id }) => id);
+  return updates.changeDate.map(({ id }) => id.toString());
 }
 
 function removeDuplicatesFromRemoveUpdates(updates) {
-  let ids = [];
-  let indexesToRemove = [];
-  updates.remove.forEach((update, index) => {
-    if (ids.indexOf(update.id) !== -1) indexesToRemove.push(index);
-    else ids.push(update.id);
-  });
-  if (indexesToRemove.length > 0) {
-    updates.remove = updates.remove.filter((el, index) => indexesToRemove.indexOf(index) === -1);
-  }
+  const ids = updates.remove.map(update => update.id.toString());
+  updates.remove = updates.remove.filter((el, index) => ids.indexOf(ids[index]) === index);
 }
