@@ -1,7 +1,7 @@
 const { Schema } = require('mongoose');
 
 const {
-  areDatesEquivalent, getDateTime
+  getDateTime, getMoment
 } = require('../../../utilities');
 
 const dayCutoffSubdocFactory = require('../dayCutoff');
@@ -25,7 +25,6 @@ const daysSubdocFactory = () => ({
   validate: [
     {
       validator(days) {
-        console.log('DAYS VALIDATOR 1')
         for (let i = 0; i < days.length; i++) {
           const { startCutoff, endCutoff, date, startTimezone, timezone, segments } = days[i];
           for (let j = 0; j < segments.length; j++) {

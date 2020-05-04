@@ -5,9 +5,7 @@ const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fa
 const JobController = require('../../../controllers/Job');
 const UserController = require('../../../controllers/User');
 
-const { routeErrorHandlerFactory, checkRequiredProps, resCleaners } = require('../utilities');
-
-const { cleanJob, cleanJobsExtra } = resCleaners;
+const { routeErrorHandlerFactory, checkRequiredProps, cleanJob, cleanJobsExtra } = require('../utilities');
 
 router.post(
   '/create',
@@ -37,7 +35,7 @@ router.post(
   verifyLogin,
   (req, res) => {
     JobController.deleteJob(req.params._id, req.user._id)
-    .then(result => res.json({ result }))
+    .then(user => res.json({ jobs: cleanJobsExtra(user.jobs) }))
     .catch(routeErrorHandlerFactory(res));
   }
 );

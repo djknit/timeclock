@@ -32,11 +32,15 @@ function addWeek(week, jobId) {
   );
 }
 
-function createAndAddWeekWithDate(date, job) {
+function createAndAddWeekWithDate(date, job, returnWeekArrayEntry) {
   return new Promise((resolve, reject) => {
+    let weekArrayEntry;
     weeksController.createWeekArrayEntryByDate(date, job)
-    .then(weekArrayEntry => addWeek(weekArrayEntry, job._id))
-    .then(resolve)
+    .then(_weekArrayEntry => {
+      weekArrayEntry = _weekArrayEntry;
+      return addWeek(weekArrayEntry, job._id);
+    })
+    .then(_job => resolve(returnWeekArrayEntry ? arrayEntry : _job))
     .catch(reject);
   });
 }

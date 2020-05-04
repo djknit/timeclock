@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-// const moment = require('moment-timezone');
-
-// const { getMoment } = require('../utilities');
 
 const valueScheduleSubdocFactory = require('./pieces/valueSchedule');
 const intSubdocFactory = require('./pieces/integer');

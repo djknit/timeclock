@@ -1,13 +1,15 @@
 const {
-  getFirstDayOfWeekForDate, findWeekBeginsSchedIndexForDate, convertMomentToMyDate, areDatesEquivalent, getMoment
-} = require('../../../../utilities');
+  convertMomentToMyDate, areDatesEquivalent, getMoment
+} = require('../../../utilities');
 
-module.exports = {
-  getDatesInWeekWithDate
-};
+const {
+  getFirstDayOfWeekForDate, findWeekBeginsSchedIndexForDate
+} = require('./other');
+
+module.exports = { getDatesInWeekWithDate };
 
 function getDatesInWeekWithDate(date, weekBeginsValueSchedule) {
-  const weekBeginsScheduleIndexForDate = findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule)
+  const weekBeginsScheduleIndexForDate = findWeekBeginsSchedIndexForDate(date, weekBeginsValueSchedule);
   const firstDate = getFirstDayOfWeekForDate(
     date, weekBeginsValueSchedule, weekBeginsScheduleIndexForDate
   );
@@ -19,7 +21,7 @@ function getDatesInWeekWithDate(date, weekBeginsValueSchedule) {
 function getRemainingDatesOfWeekFromFirstDate(
   firstDate, weekBeginsValueSchedule, firstDateWeekBeginsScheduleIndex
 ) {
-  if (weekBeginsValueSchedule.length === 1) {
+  if (firstDateWeekBeginsScheduleIndex === weekBeginsValueSchedule.length - 1) {
     return getWeekDatesForStaticWeekBegins(firstDate);
   }
   const firstDateMoment = getMoment(firstDate);

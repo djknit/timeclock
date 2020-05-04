@@ -22,7 +22,8 @@ module.exports = {
   findWeeksInDateRange,
   deleteSegmentsFromWeeksInDateRange,
   getWeekAndDayIdsForDates,
-  findWeeksInDateRanges
+  findWeeksInDateRanges,
+  isWeekInDateRanges
 }
 
 function findWeekWithDate(date, weeksArray) {
@@ -83,16 +84,7 @@ function findWeeksInDateRange(firstDateUtcTime, lastDateUtcTime, weeksArray) {
 }
 
 function findWeeksInDateRanges(dateRanges, weeksArray) {
-  return weeksArray
-  .filter(arrayEntry => {
-    for (let i = 0; i < dateRanges.length; i++) {
-      const { firstDateUtcTime, lastDateUtcTime } = dateRanges[i];
-      if (isWeekInDateRange(firstDateUtcTime, lastDateUtcTime, arrayEntry)) {
-        return true;
-      }
-    }
-    return false;
-  })
+  return weeksArray.filter(arrayEntry => isWeekInDateRanges(dateRanges, arrayEntry));
 }
 
 function isWeekInDateRange(firstDateUtcTime, lastDateUtcTime, weeksArrayEntry) {
@@ -113,20 +105,15 @@ function isWeekInDateRange(firstDateUtcTime, lastDateUtcTime, weeksArrayEntry) {
   );
 }
 
-// function deleteSegmentsForDates(dates, job) {
-//   return new Promise((resolve, reject) => {
-//     const { weeks } = job;
-//     let affectedWeeks = [];
-//     for (let i = 0; i < dates.length; i++) {
-//       const date = dates[i];
-//       const week = weeksController.findWeekWithDate(date, weeks);
-//       const weekId = week._id;
-//       if (week && week) {
-        
-//       }
-//     }
-//   });
-// }
+function isWeekInDateRanges(dateRanges, weeksArrayEntry) {
+  for (let i = 0; i < dateRanges.length; i++) {
+    const { firstDateUtcTime, lastDateUtcTime } = dateRanges[i];
+    if (isWeekInDateRange(firstDateUtcTime, lastDateUtcTime, weeksArrayEntry)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 function getWeekAndDayIdsForDates(dates, weeks) {
   let affectedWeeks = [];

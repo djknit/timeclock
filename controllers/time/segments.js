@@ -13,7 +13,8 @@ const {
 module.exports = {
   isSegmentValid,
   doesNewSegOverlapExistingSegs,
-  getDateForNewSegment
+  getDateForNewSegment,
+  getDateForTime
 };
 
 function getDateForNewSegment(segment, job) {

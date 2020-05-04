@@ -4,13 +4,7 @@ const WeekController = require('../../../controllers/Week');
 const JobController = require('../../../controllers/Job');
 const timeController = require('../../../controllers/time');
 
-const { routeErrorHandlerFactory, checkRequiredProps, resCleaners } = require('../utilities');
-
-const { cleanJob } = resCleaners;
-
-// router.use('/weeks', require('./weeks'));
-// router.use('/days', require('./days'));
-// router.use('/segments', require('./segments'));
+const { routeErrorHandlerFactory, checkRequiredProps, cleanJob } = require('../utilities');
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
 

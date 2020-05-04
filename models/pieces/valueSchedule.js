@@ -29,9 +29,6 @@ module.exports = valueOutline => {
         message: 'Invalid initial value. The first value must not have a start date.'
       }, {
         validator: vals => {
-          console.log('\n``````````````````````````````')
-          console.log(vals)
-          console.log(',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, \n')
           for (let i = 1; i < vals.length; i++) {
             if (!vals[i].startDate) return false;
           }
@@ -54,8 +51,6 @@ module.exports = valueOutline => {
         validator: vals => {
           for (let i = 0; i < vals.length; i++) {
             const { startDate, startDateUtcTime } = vals[i];
-            console.log(getUtcDateTime(startDate))
-            console.log(startDateUtcTime)
             if (startDate && (!startDateUtcTime || getUtcDateTime(startDate) !== startDateUtcTime)) {
               return false;
             }

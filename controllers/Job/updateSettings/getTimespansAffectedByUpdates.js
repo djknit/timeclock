@@ -1,11 +1,10 @@
-const { getUtcDateTime } = require('../utilities');
+const { getUtcDateTime, findScheduleEntryById, methodNames } = require('./utilities');
 
 module.exports = getTimespansAffectedByUpdates;
 
 function getTimespansAffectedByUpdates(updates, valueSchedule) {
   let result = {};
-  const methods = ['add', 'changeDate', 'remove', 'edit'];
-  methods.forEach(method => {
+  methodNames.forEach(method => {
     result[method] = getAffectedTimespansForMethod(method, updates, valueSchedule);
   });
   return result;

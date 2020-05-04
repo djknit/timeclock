@@ -37,7 +37,6 @@ function editAccountInfo(user, updatedProps) {
         return reject(determineUserInfoError(err));
       }
       else if (user) {
-        // console.log(user)
         return resolve(user);
       }
       const unexpectedErr = new Error('Unexpected outcome. Reason unknown.');
