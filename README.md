@@ -64,6 +64,12 @@ This plan is not complete. Future steps will be expanded on in the plan before t
     * [x] Delete time segments (individually by id and in bulk by date)
     * [x] Delete job
 * [ ] _Develop front-end to complete MVP_
+  * [ ] _Landing page_
+  * [ ] _Account creation & login_
+  * [ ] 404 page
+  * [ ] Dashboard
+  * [ ] Job creation
+  * [ ] Job page: Display & controls (edit time, edit settings)
 * [ ] Review code for bugs and code organization/readability
 * [ ] Work on additional features
 
