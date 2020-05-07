@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import 'bulma/css/bulma.css';
+import '@fortawesome/fontawesome-free/css/all.css';
 import './App.css';
-import getStyle from './style';
+import getStyle from './AppStyle';
+import { windowWidthService } from './data';
 import LandingPage from './components/LandingPage';
 import MainApp from './components/MainApp';
 import NotFound from './components/NotFound';
-import { windowWidthService } from './data';
+import Footer from './components/Footer';
 
 class App extends Component {
   constructor() {
@@ -29,27 +31,29 @@ class App extends Component {
     return (
       <Router>
         <div style={style.wholeApp}>
-          <Switch>
-            <Route
-              path="/app"
-              render={
-                props => <MainApp
-                  {...props}
-                />
-              }
-            />
-            <Route
-              exact
-              path="/"
-              render={
-                props => <LandingPage
-                  {...props}
-                />
-              }
-            />
-            <Route component={NotFound} />
-          </Switch>
-          <footer></footer>
+          <div style={style.allExceptFooter}>
+            <Switch>
+              <Route
+                path="/app"
+                render={
+                  props => <MainApp
+                    {...props}
+                  />
+                }
+              />
+              <Route
+                exact
+                path="/"
+                render={
+                  props => <LandingPage
+                    {...props}
+                  />
+                }
+              />
+              <Route component={NotFound} />
+            </Switch>
+          </div>
+          <Footer></Footer>
         </div>
       </Router>
     );

@@ -8,6 +8,9 @@ export default function getStyle() {
       backgroundColor: mainBackgroundColor,
       minHeight: '100vh',
       textAlign: 'center'
+    },
+    allExceptFooter: {
+      minHeight: `calc(100vh - ${footerHeight}px)`
     }
   };
 };

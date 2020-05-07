@@ -1,6 +1,8 @@
-import { headingFontFam } from '../../style';
+import { headingFontFam } from '../../AppStyle';
 
-export default function getStyle() {
+export default function getStyle(windowWidth) {
+  const buttonsAreaXPadding = windowWidth > 700 ? '25%' : '10%';
+
   return {
     container: {
       paddingTop: 20
@@ -16,7 +18,10 @@ export default function getStyle() {
       maxHeight: 350
     },
     buttonsArea: {
-      padding: '20px 15% 0'
+      padding: `20px ${buttonsAreaXPadding} 0`
+    },
+    leftButton: {
+      marginRight: 'calc(24% - 40px)'
     }
   };
 };

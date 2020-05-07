@@ -1,19 +1,42 @@
-import React from 'react';
+import React, { Component } from 'react';
+import getStyle from './style';
+import {footerHeight} from './style'
 
-function Button({
-  children,
-  size,
-  color
-}) {
+class Button extends Component {
+  constructor(props) {
+    super(props);
+    this.setFocus = this.setFocus.bind(this);
+    this.state = {
+      isFocused: false
+    };
+  };
 
-  const sizeClass = size ? `is-${size}` : 'is-medium';
-  const colorClass = color ? `is-color` : 'is-light'
+  setFocus(newValue) {
+    this.setState({ isFocused: newValue });
+  };
 
-  return (
-    <button className={`button ${sizeClass} ${colorClass}`}>
-      {children}
-    </button>
-  );
+  render() {
+
+    const { props, state, setFocus } = this;
+    const { children, size, color, style, onClick } = props;
+    
+    const completeStyle = getStyle(style, state.isFocused);
+
+    const sizeClass = size ? `is-${size}` : 'is-medium';
+    const colorClass = color ? `is-color` : 'is-light'
+
+    return (
+      <button
+        className={`button ${sizeClass} ${colorClass}`}
+        style={completeStyle.button}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
+        onClick={onClick}
+      >
+        {children}
+      </button>
+    );
+  };
 }
 
 export default Button;
