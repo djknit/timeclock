@@ -1,21 +1,70 @@
 import React, { Component } from 'react';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import Form from '../../Form';
+import TextInput from '../../formFields/TextInput';
+
+const fieldsInfo = [
+  {
+    name: 'username',
+    label: 'Create a username...',
+    type: 'text',
+    placeholder: 'Your username...',
+    iconClass: 'fas fa-user-tag',
+    helpText: '4 characters minimum. Case-sensitive.'
+  },
+  {
+    name: 'email',
+    label: 'And/or enter your email',
+    type: 'email',
+    placeholder: 'example@email.com',
+    iconClass: 'fas fa-envelope',
+    helpText: 'Not case-sensitive.'
+  },
+  {
+    name: 'password',
+    label: 'Create a password',
+    type: 'password',
+    placeholder: 'Your password...',
+    iconClass: 'fas fa-lock',
+    helpText: '7 characters minimum.'
+  },
+  {
+    name: 'verifyPassword',
+    label: 'Confirm your password',
+    type: 'newPassword',
+    placeholder: 'Retype password...',
+    iconClass: 'fas fa-unlock',
+    helpText: ''
+  },
+];
+
+const formId = '';
 
 class NewUserModal extends Component {
   constructor(props) {
     super(props);
+    this.handleChange = this.handleChange.bind(this);
     this.state = {
       username: '',
+      email: '',
       password: '',
-      verifyPassword: ''
+      verifyPassword: '',
+      problems: {},
+      hasSuccess: false,
+      isLoading: false,
+      hasProblem: false,
+      showInstructions: true
     };
+  };
+
+  handleChange(event) {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
   };
 
   render() {
     const { isActive, closeModal } = this.props;
-    const { hasSuccess, isLoading, hasProblem, verifyPassword, problems } = this.state;
+    const { hasSuccess, isLoading, hasProblem, problems, showInstructions, problemMessage } = this.state;
 
     return (
       <ModalSkeleton
@@ -28,7 +77,7 @@ class NewUserModal extends Component {
           </>
         }
       >
-        {/* <form>
+        <form>
           {showInstructions &&
             <p className="help">
               You must create a username OR provide an e-mail address. You may also choose to do both. If you enter a username and an email address, you can use
@@ -41,92 +90,24 @@ class NewUserModal extends Component {
               <br />You are now signed in.
             </div>
           }
-          {hasProblems &&
+          {hasProblem &&
             <div className="notification is-danger has-shadow">
               {problemMessage}
             </div>
           }
-          <div className="field">
-            <label className="label" htmlFor="username-input">Create a username</label>
-            <div className="control has-icons-left">
-              <input
-                id="username-input"
-                name="username"
-                value={username}
-                placeholder="Your username..."
-                onChange={handleChange}
-                disabled={hasSuccess || isLoading}
-                className={hasUsernameProblem && !hasSuccess ? 'input is-danger' : 'input'}
-                tabIndex={isActive ? 1 : -1}
+          {fieldsInfo.map(
+            (field, index) => (
+              <TextInput
+                {...field}
+                value={this.state[field.name]}
+                handleChange={this.handleChange}
+                isActive={isActive && !isLoading && !hasSuccess}
+                index={index}
+                hasProblem={problems[this.state[field.name]]}
               />
-              <span className="icon is-small is-left">
-                <i className="fas fa-user-tag"></i>
-              </span>
-              <p className="help">4 characters minimum. Case-sensitive.</p>
-            </div>
-          </div>
-          <div className="field">
-            <label className="label" htmlFor="email-input">And/or enter your email</label>
-            <div className="control has-icons-left">
-              <input id="email-input"
-                name="email"
-                value={email}
-                type="email"
-                placeholder="Your email address..."
-                onChange={handleChange}
-                disabled={hasSuccess || isLoading}
-                className={hasEmailProblem && !hasSuccess ? 'input is-danger' : 'input'}
-                tabIndex={isActive ? 2 : -1}
-              />
-              <span className="icon is-small is-left">
-                <i className="fas fa-envelope"></i>
-              </span>
-              <p className="help">Not case-sensitive.</p>
-            </div>
-          </div>
-          <div className="field">
-            <label className="label" htmlFor="password-input">Create a password</label>
-            <div className="control has-icons-left">
-              <input
-                id="password-input"
-                name="password"
-                value={password}
-                type="password"
-                placeholder="Your password..."
-                onChange={handleChange}
-                disabled={hasSuccess || isLoading}
-                className={hasPasswordProblem && !hasSuccess ? 'input is-danger' : 'input'}
-                tabIndex={isActive ? 3 : -1}
-              />
-              <span className="icon is-small is-left">
-                <i className="fas fa-lock"></i>
-              </span>
-              <p className="help">7 characters minimum.</p>
-            </div>
-          </div>
-          <div className="field">
-            <label className="label" htmlFor="verify-password-input">Verify your password</label>
-            <div className="control has-icons-left">
-              <input
-                id="verify-password-input"
-                name="verifyPassword"
-                value={verifyPassword}
-                type="password"
-                placeholder="Retype your password..."
-                onChange={handleChange}
-                disabled={hasSuccess || isLoading}
-                className={hasVerifyPasswordProblem && !hasSuccess ? 'input is-danger' : 'input'}
-                tabIndex={isActive ? 4 : -1}
-              />
-              <span className="icon is-small is-left">
-                <i className="fas fa-unlock"></i>
-              </span>
-            </div>
-          </div>
-          <div className="content">
-            <p>I will never share or sell your information.</p>
-          </div>
-        </form> */}
+            )
+          )}
+        </form>
       </ModalSkeleton>
     );
   };
