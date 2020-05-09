@@ -27,8 +27,6 @@ class LandingPage extends Component {
   };
 
   toggleLoginModal(isActiveAfterToggle) {
-    console.log('toggle')
-    console.log(isActiveAfterToggle)
     this.setState({ isLoginModalActive: isActiveAfterToggle });
   }
 

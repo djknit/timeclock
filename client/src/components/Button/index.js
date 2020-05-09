@@ -18,7 +18,7 @@ class Button extends Component {
   render() {
 
     const { props, state, setFocus } = this;
-    const { children, size, color, style, onClick } = props;
+    const { children, size, color, style, onClick, disabled } = props;
     
     const completeStyle = getStyle(style, state.isFocused);
 
@@ -32,6 +32,7 @@ class Button extends Component {
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         onClick={onClick}
+        disabled={disabled}
       >
         {children}
       </button>

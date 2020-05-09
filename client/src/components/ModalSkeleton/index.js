@@ -8,8 +8,6 @@ function ModalSkeleton({
   footerContent
 }) {
 
-  console.log(isActive)
-
   const modalContainerClass = `modal${isActive ? ' is-active' : ''}`;
 
   return (
