@@ -1,4 +1,5 @@
 import React from 'react';
+import getStyle from './style';
 
 function TextInput({
   name,
@@ -24,9 +25,13 @@ function TextInput({
   }
   else typeAttrVal = type;
 
+  const style = getStyle();
+
   return (
     <div className="field">
-      <label className="label" htmlFor={inputId}>{label}</label>
+      <label className="label" htmlFor={inputId}>
+        {label}
+      </label>
       <div className={`control${iconClass ? ' has-icons-left' : ''}`}>
         <input
           id={inputId}

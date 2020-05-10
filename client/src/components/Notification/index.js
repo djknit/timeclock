@@ -20,7 +20,7 @@ function Notification({
   return (
     <div className={className} style={style.notification}>
       {close && (
-        <button className="delete" onClick={_close}></button>
+        <button className="delete" onClick={_close} type="button"></button>
       )}
       {children}
     </div>

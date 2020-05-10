@@ -4,7 +4,8 @@ export default function getStyle(additionalStyle, isFocused) {
   return {
     button: Object.assign(
       {
-        boxShadow: `0 0 ${shadowBlur} #202020`
+        boxShadow: `0 0 ${shadowBlur} #202020`,
+        display: 'inline-block'
       },
       additionalStyle
     )

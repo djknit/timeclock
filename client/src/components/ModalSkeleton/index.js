@@ -1,4 +1,5 @@
 import React from 'react';
+import getStyle from './style';
 
 function ModalSkeleton({
   title,
@@ -7,6 +8,8 @@ function ModalSkeleton({
   children,
   footerContent
 }) {
+
+  const style = getStyle();
 
   const modalContainerClass = `modal${isActive ? ' is-active' : ''}`;
 
@@ -21,7 +24,7 @@ function ModalSkeleton({
         <section className="modal-card-body">
           {children}
         </section>
-        <footer className="modal-card-foot">
+        <footer className="modal-card-foot" style={style.footer}>
           {footerContent}
         </footer>
       </div>

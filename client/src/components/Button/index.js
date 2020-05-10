@@ -18,12 +18,21 @@ class Button extends Component {
   render() {
 
     const { props, state, setFocus } = this;
-    const { children, size, color, style, onClick, disabled } = props;
+    const { children, size, color, style, onClick, disabled, formId, isSubmit } = props;
+
+    let formRelatedAttributes = (
+      isSubmit ?
+      {
+        form: formId,
+        type: 'submit'
+      } :
+      { type: 'button' }
+    );
     
     const completeStyle = getStyle(style, state.isFocused);
 
     const sizeClass = size ? `is-${size}` : 'is-medium';
-    const colorClass = color ? `is-color` : 'is-light'
+    const colorClass = color ? `is-${color}` : 'is-light'
 
     return (
       <button
@@ -33,6 +42,7 @@ class Button extends Component {
         onBlur={() => setFocus(false)}
         onClick={onClick}
         disabled={disabled}
+        {...formRelatedAttributes}
       >
         {children}
       </button>
