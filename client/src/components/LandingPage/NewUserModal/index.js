@@ -4,6 +4,7 @@ import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import TextInput from '../../formFields/TextInput';
 import Notification, { NotificationText } from '../../Notification';
+import api from '../../../utilities/api';
 
 const fieldsInfo = [
   {
@@ -50,18 +51,27 @@ const startingState = {
   isLoading: false,
   hasProblem: false,
   problemMessages: [],
-  showMessage: true
+  showMessage: true,
+  hasBeenSubmitted: false,
+  unavailableUsernames: [],
+  unavailableEmails: []
 };
+function getTakenUsernameDisplayMessage(username) {
+  return `The username "${username}" is not available.`;
+}
+function getTakenEmailDisplayMessage(email) {
+  return `There is already an account for the email address "${email}".`;
+}
 
 
 class NewUserModal extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    this.setShowMessage = this.setShowMessage.bind(this);
-    this.validateInputs = this.validateInputs.bind(this);
+    this.getInputProblems = this.getInputProblems.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
+    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
     this.state = {
       ...startingState
     };
@@ -69,16 +79,22 @@ class NewUserModal extends Component {
 
   handleChange(event) {
     const { name, value } = event.target;
-    this.setState({ [name]: value });
+    this.setState(
+      { [name]: value },
+      () => {
+        if (this.state.hasBeenSubmitted) {
+          this.setState(this.getInputProblems());
+        }
+      }
+    );
   };
 
-  setShowMessage(newValue) {
-    this.setState({ showMessage: newValue });
-  };
-
-  validateInputs() {
+  getInputProblems() {
     console.log('validate inputs')
-    const { username, email, password, verifyPassword } = this.state;
+    const {
+      username, email, password, verifyPassword, unavailableEmails, unavailableUsernames
+    } = this.state;
+    console.log(unavailableUsernames)
     let problems = {};
     let problemMessages = [];
     const emailRegEx = /.+@.+\..+/;
@@ -108,34 +124,106 @@ class NewUserModal extends Component {
       problems.verifyPassword = true;
       problemMessages.push('The passwords you entered don\'t match.');
     }
-    console.log('a-')
-    this.setState({ problems, problemMessages });
-    console.log('a')
-    return problemMessages.length === 0;
+    if (username && unavailableUsernames.indexOf(username) !== -1) {
+      problems.username = true;
+      problemMessages.push(getTakenUsernameDisplayMessage(username));
+    }
+    if (email && unavailableEmails.indexOf(email.toLowerCase()) !== -1) {
+      problems.username = true;
+      problemMessages.push(getTakenEmailDisplayMessage(email));
+    }
+    return { problems, problemMessages };
+    // this.setState({ problems, problemMessages });
+    // return problemMessages.length === 0;
   };
+
+  setSubmissionProcessingState() {
+    return new Promise(resolve => {
+      this.setState(
+        {
+          hasBeenSubmitted: true,
+          isLoading: true,
+          hasProblem: false,
+          showMessage: false,
+          problems: {},
+          problemMessages: []
+        },
+        resolve
+      );
+    });
+  }
 
   submit(event) {
     console.log('submit')
     event.preventDefault();
-    this.setState({
-      isLoading: true,
-      hasProblem: false,
-      showMessage: false,
-      problems: {},
-      problemMessages: []
+    // this.setState({
+    //   hasBeenSubmitted: true,
+    //   isLoading: true,
+    //   hasProblem: false,
+    //   showMessage: false,
+    //   problems: {},
+    //   problemMessages: []
+    // });
+    const { username, email, password } = this.state;
+    let { unavailableEmails, unavailableUsernames } = this.state;
+    this.setSubmissionProcessingState()
+    .then(() => {
+      const { problems, problemMessages } = this.getInputProblems();
+      if (problemMessages.length > 0) {
+        throw {
+          problems,
+          messages: problemMessages
+        };
+      }
+      return api.auth.createAccount({ username, email, password });
     })
-    const areInputsValid = this.validateInputs();
-    console.log('b')
-    console.log(areInputsValid)
-    if (!areInputsValid) {
+    .then(res => {
       this.setState({
+        hasSuccess: true,
         isLoading: false,
+        hasProblem: false,
+        showMessage: true,
+        problems: {},
+        problemMessages: []
+      });
+    })
+    .catch(err => {
+      console.log(err)
+      console.log('awefjio')
+      console.log(err.response)
+      const errorData = err.response && err.response.data || err;
+      const { problems, messages } = errorData;
+      const takenUsernameMessage = 'That username is taken.';
+      const takenEmailMessage = 'There is already an account for that email address.';
+      if (messages.indexOf(takenUsernameMessage) !== -1) {
+        unavailableUsernames = [...unavailableUsernames];
+        unavailableUsernames.push(username);
+      }
+      if (messages.indexOf(takenEmailMessage) !== -1) {
+        unavailableEmails = [...unavailableEmails];
+        unavailableEmails.push(email);
+      }
+      const problemMessages = messages.map(
+        message => {
+          if (message === takenUsernameMessage) {
+            return getTakenUsernameDisplayMessage(username);
+          }
+          if (message === takenEmailMessage) {
+            return getTakenEmailDisplayMessage(email);
+          }
+          return message;
+        }
+      );
+      this.setState({
+        unavailableEmails,
+        unavailableUsernames,
+        problems,
+        problemMessages,
         hasProblem: true,
+        isLoading: false,
         showMessage: true
       });
-      return;
-    }
-
+    });
   };
 
   reset() {
@@ -171,29 +259,28 @@ class NewUserModal extends Component {
         }
       >
         <form id={formId}>
-          {showMessage && (
-            hasProblem ? (
-              <Notification theme="danger" close={() => this.setState({ showMessage: false })}>
-                {problemMessages.map(
-                  message => (
-                    <NotificationText>
-                      {message}
-                    </NotificationText>
-                  )
-                )}
-              </Notification>
-            ) : (
-              <Notification theme="info" close={() => this.setState({ showMessage: false })}>
-                <NotificationText>
-                  You must create a username <strong>and/or</strong> provide an e-mail address.
-                </NotificationText>
-                <NotificationText isLast={true}>
-                  If you provide an email, you will be able to use it to recover your account if you forget your password.
-                </NotificationText>
-              </Notification>
-            )
+          {showMessage && !hasProblem && !hasSuccess && (
+            <Notification theme="info" close={() => this.setState({ showMessage: false })}>
+              <NotificationText>
+                You must create a username <strong>and/or</strong> provide an e-mail address.
+              </NotificationText>
+              <NotificationText isLast={true}>
+                If you provide an email, you will be able to use it to recover your account if you forget your password.
+              </NotificationText>
+            </Notification>
           )}
-          {showMessage && hasSuccess &&
+          {showMessage && problemMessages.length > 0 && (
+            <Notification theme="danger" close={() => this.setState({ showMessage: false })}>
+              {problemMessages.map(
+                message => (
+                  <NotificationText>
+                    {message}
+                  </NotificationText>
+                )
+              )}
+            </Notification>
+          )}
+          {showMessage && hasSuccess && (
             <Notification theme="success">
               <NotificationText>
                 <strong>Success!</strong> Your account was created.
@@ -202,7 +289,7 @@ class NewUserModal extends Component {
                 You are now signed in.
               </NotificationText>
             </Notification>
-          }
+          )}
           {fieldsInfo.map(
             (field, index) => (
               <TextInput

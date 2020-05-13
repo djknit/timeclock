@@ -1,4 +1,4 @@
-const axios = 'axios';
+import axios from 'axios';
 
 function createAxiosInstance(path) {
   return axios.create({
