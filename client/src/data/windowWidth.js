@@ -8,8 +8,7 @@ const service = dataServiceFactory({
     reportChange(newWidth) {
       windowWidth = newWidth;
     }
-  },
-  isAsync: false
+  }
 });
 
 export default service;

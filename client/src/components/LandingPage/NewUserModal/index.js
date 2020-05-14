@@ -227,7 +227,7 @@ class NewUserModal extends Component {
   };
 
   reset() {
-
+    this.setState(startingState);
   };
 
   render() {
@@ -273,7 +273,7 @@ class NewUserModal extends Component {
             <Notification theme="danger" close={() => this.setState({ showMessage: false })}>
               {problemMessages.map(
                 message => (
-                  <NotificationText>
+                  <NotificationText key={message}>
                     {message}
                   </NotificationText>
                 )
