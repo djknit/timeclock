@@ -21,7 +21,7 @@ function ModalSkeleton({
           <p className="modal-card-title">{title}</p>
           <button className="delete" aria-label="close" onClick={closeModal}></button>
         </header>
-        <section className="modal-card-body">
+        <section className="modal-card-body" style={style.body}>
           {children}
         </section>
         <footer className="modal-card-foot" style={style.footer}>

@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import TextInput from '../../formFields/TextInput';
+import { TextInput } from '../../formFields';
 import Notification, { NotificationText } from '../../Notification';
-import api from '../../../utilities/api';
+import { api } from '../../../utilities';
 import { userService } from '../../../data';
 
 const fieldsInfo = [
@@ -74,9 +74,7 @@ class NewUserModal extends Component {
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
-    this.state = {
-      ...startingState
-    };
+    this.state = { ...startingState };
   };
 
   handleChange(event) {
@@ -255,7 +253,7 @@ class NewUserModal extends Component {
             <Button
               color="primary"
               onClick={this.submit}
-              disabled={(!username && !email) || !password || !verifyPassword}
+              disabled={isLoading || hasSuccess || (!username && !email) || !password || !verifyPassword}
               formId={formId}
               isSubmit={true}
             >

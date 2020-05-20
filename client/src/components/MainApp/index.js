@@ -26,7 +26,9 @@ class MainApp extends Component {
     const { props, state } = this;
 
     return (
-      <h1>Welcome, {state.user.username || state.user.email}</h1>
+      state.user ?
+      <h1>Welcome, {state.user.username || state.user.email}</h1> :
+      <h1>Oops, no user found.</h1>
     );
   };
 }
