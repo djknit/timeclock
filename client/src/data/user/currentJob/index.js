@@ -4,7 +4,7 @@ import timeService from './time';
 let weeks = timeService.getValue();
 timeService.subscribe(() => weeks = timeService.getValue());
 
-let name, timezone, wage, dayCutoff, weekBegins, id;
+let id, name, timezone, wage, dayCutoff, weekBegins;
 
 const service = dataServiceFactory({
   readFunction: () => (
@@ -13,7 +13,17 @@ const service = dataServiceFactory({
     null
   ),
   methods: {
-
+    setCurrentJob(currentJob) {
+      id = currentJob.id;
+      name = currentJob.name;
+      timezone = currentJob.timezone;
+      wage = currentJob.wage;
+      dayCutoff = currentJob.dayCutoff;
+      weekBegins = currentJob.weekBegins;
+    },
+    clearCurrentJob() {
+      id = name = timezone = wage = dayCutoff = weekBegins = undefined;
+    }
   }
 });
 

@@ -36,7 +36,7 @@ class LandingPage extends Component {
 
   render() {
 
-    const { state, toggleLoginModal, toggleNewUserModal } = this;
+    const { state, props, toggleLoginModal, toggleNewUserModal } = this;
     const { windowWidth, isNewUserModalActive, isLoginModalActive } = state;
 
     const style = getStyle(windowWidth);
@@ -58,10 +58,12 @@ class LandingPage extends Component {
           </Button>
         </div>
         <NewUserModal
+          history={props.history}
           isActive={isNewUserModalActive}
           closeModal={() => toggleNewUserModal(false)}
         />
         <LoginModal
+          history={props.history}
           isActive={isLoginModalActive}
           closeModal={() => toggleLoginModal(false)}
         />

@@ -5,6 +5,7 @@ import Button from '../../Button';
 import TextInput from '../../formFields/TextInput';
 import Notification, { NotificationText } from '../../Notification';
 import api from '../../../utilities/api';
+import { userService } from '../../../data';
 
 const fieldsInfo = [
   {
@@ -54,7 +55,8 @@ const startingState = {
   showMessage: true,
   hasBeenSubmitted: false,
   unavailableUsernames: [],
-  unavailableEmails: []
+  unavailableEmails: [],
+  secondsUntilRedirect: undefined
 };
 function getTakenUsernameDisplayMessage(username) {
   return `The username "${username}" is not available.`;
@@ -156,14 +158,6 @@ class NewUserModal extends Component {
   submit(event) {
     console.log('submit')
     event.preventDefault();
-    // this.setState({
-    //   hasBeenSubmitted: true,
-    //   isLoading: true,
-    //   hasProblem: false,
-    //   showMessage: false,
-    //   problems: {},
-    //   problemMessages: []
-    // });
     const { username, email, password } = this.state;
     let { unavailableEmails, unavailableUsernames } = this.state;
     this.setSubmissionProcessingState()
@@ -178,14 +172,26 @@ class NewUserModal extends Component {
       return api.auth.createAccount({ username, email, password });
     })
     .then(res => {
+      let secondsUntilRedirect = 6;
       this.setState({
         hasSuccess: true,
         isLoading: false,
         hasProblem: false,
         showMessage: true,
         problems: {},
-        problemMessages: []
+        problemMessages: [],
+        secondsUntilRedirect
       });
+      userService.setUser(res.data.user);
+      const intervalId = setInterval(() => {
+        secondsUntilRedirect--;
+        this.setState({ secondsUntilRedirect });
+        if (secondsUntilRedirect === 0) {
+          clearInterval(intervalId);
+          this.setState(startingState);
+          this.props.history.push('/app');
+        }
+      }, 1000);
     })
     .catch(err => {
       console.log(err)
@@ -233,7 +239,7 @@ class NewUserModal extends Component {
   render() {
     const { isActive, closeModal } = this.props;
     const {
-      hasSuccess, isLoading, hasProblem, problems, showMessage, problemMessages, username, email, password, verifyPassword
+      hasSuccess, isLoading, hasProblem, problems, showMessage, problemMessages, username, email, password, verifyPassword, secondsUntilRedirect
     } = this.state;
 
     // const style = getStyle();
@@ -285,8 +291,11 @@ class NewUserModal extends Component {
               <NotificationText>
                 <strong>Success!</strong> Your account was created.
               </NotificationText>
-              <NotificationText isLast={true}>
+              <NotificationText>
                 You are now signed in.
+              </NotificationText>
+              <NotificationText isLast={true}>
+                You will be redirected in {secondsUntilRedirect} seconds...
               </NotificationText>
             </Notification>
           )}
