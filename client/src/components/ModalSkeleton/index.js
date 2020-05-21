@@ -6,7 +6,8 @@ function ModalSkeleton({
   isActive,
   closeModal,
   children,
-  footerContent
+  footerContent,
+  isCloseButtonDisabled
 }) {
 
   const style = getStyle();
@@ -19,7 +20,12 @@ function ModalSkeleton({
       <div className="modal-card">
         <header className="modal-card-head">
           <p className="modal-card-title">{title}</p>
-          <button className="delete" aria-label="close" onClick={closeModal}></button>
+          <button
+            className="delete"
+            aria-label="close"
+            onClick={closeModal}
+            disabled={isCloseButtonDisabled}
+          ></button>
         </header>
         <section className="modal-card-body" style={style.body}>
           {children}

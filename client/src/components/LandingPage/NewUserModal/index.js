@@ -4,14 +4,14 @@ import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import { TextInput } from '../../formFields';
 import Notification, { NotificationText } from '../../Notification';
-import { api } from '../../../utilities';
+import { api, constants } from '../utilities';
 import { userService } from '../../../data';
 
 const fieldsInfo = [
   {
     name: 'username',
     label: 'Create a Username...',
-    type: 'text',
+    type: 'username',
     placeholder: 'Your username...',
     iconClass: 'fas fa-user-tag',
     helpText: '4 characters minimum. Case-sensitive.'
@@ -64,7 +64,7 @@ function getTakenUsernameDisplayMessage(username) {
 function getTakenEmailDisplayMessage(email) {
   return `There is already an account for the email address "${email}".`;
 }
-
+const { secondsToDelayRedirect } = constants;
 
 class NewUserModal extends Component {
   constructor(props) {
@@ -90,11 +90,9 @@ class NewUserModal extends Component {
   };
 
   getInputProblems() {
-    console.log('validate inputs')
     const {
       username, email, password, verifyPassword, unavailableEmails, unavailableUsernames
     } = this.state;
-    console.log(unavailableUsernames)
     let problems = {};
     let problemMessages = [];
     const emailRegEx = /.+@.+\..+/;
@@ -133,8 +131,6 @@ class NewUserModal extends Component {
       problemMessages.push(getTakenEmailDisplayMessage(email));
     }
     return { problems, problemMessages };
-    // this.setState({ problems, problemMessages });
-    // return problemMessages.length === 0;
   };
 
   setSubmissionProcessingState() {
@@ -154,7 +150,6 @@ class NewUserModal extends Component {
   }
 
   submit(event) {
-    console.log('submit')
     event.preventDefault();
     const { username, email, password } = this.state;
     let { unavailableEmails, unavailableUsernames } = this.state;
@@ -170,7 +165,7 @@ class NewUserModal extends Component {
       return api.auth.createAccount({ username, email, password });
     })
     .then(res => {
-      let secondsUntilRedirect = 6;
+      let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
         isLoading: false,
@@ -192,11 +187,10 @@ class NewUserModal extends Component {
       }, 1000);
     })
     .catch(err => {
-      console.log(err)
-      console.log('awefjio')
-      console.log(err.response)
-      const errorData = err.response && err.response.data || err;
-      const { problems, messages } = errorData;
+      const errorData = (err && err.response && err.response.data) || {};
+      let { problems, messages } = errorData;
+      if (!problems) problems = { unknown: true };
+      if (!messages) messages = ['An unknown problem has occurred.'];
       const takenUsernameMessage = 'That username is taken.';
       const takenEmailMessage = 'There is already an account for that email address.';
       if (messages.indexOf(takenUsernameMessage) !== -1) {
@@ -235,19 +229,19 @@ class NewUserModal extends Component {
   };
 
   render() {
-    const { isActive, closeModal } = this.props;
+    const { isActive, closeModal, inputRef } = this.props;
     const {
       hasSuccess, isLoading, hasProblem, problems, showMessage, problemMessages, username, email, password, verifyPassword, secondsUntilRedirect
     } = this.state;
 
-    // const style = getStyle();
-    console.log(this.state)
+    const style = getStyle();
 
     return (
       <ModalSkeleton
         title="New User Sign Up"
         isActive={isActive}
         closeModal={closeModal}
+        isCloseButtonDisabled={hasSuccess}
         footerContent={
           <>
             <Button
@@ -292,21 +286,28 @@ class NewUserModal extends Component {
               <NotificationText>
                 You are now signed in.
               </NotificationText>
-              <NotificationText isLast={true}>
+              <NotificationText>
                 You will be redirected in {secondsUntilRedirect} seconds...
               </NotificationText>
+              <progress
+                className="progress is-success"
+                style={style.progressBar}
+                value={secondsToDelayRedirect - secondsUntilRedirect}
+                max={secondsToDelayRedirect}
+              ></progress>
             </Notification>
           )}
           {fieldsInfo.map(
             (field, index) => (
               <TextInput
                 {...field}
+                formId={formId}
                 value={this.state[field.name]}
                 handleChange={this.handleChange}
                 isActive={isActive && !isLoading && !hasSuccess}
-                index={index}
                 hasProblem={problems[field.name]}
                 key={index}
+                inputRef={index === 0 ? inputRef : undefined}
               />
             )
           )}

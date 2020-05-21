@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import {footerHeight} from './style'
 
 class Button extends Component {
   constructor(props) {
@@ -18,7 +17,9 @@ class Button extends Component {
   render() {
 
     const { props, state, setFocus } = this;
-    const { children, size, color, style, onClick, disabled, formId, isSubmit } = props;
+    const {
+      children, size, color, style, onClick, disabled, formId, isSubmit, allowTabFocus, isLoading
+    } = props;
 
     let formRelatedAttributes = (
       isSubmit ?
@@ -32,17 +33,19 @@ class Button extends Component {
     const completeStyle = getStyle(style, state.isFocused);
 
     const sizeClass = size ? `is-${size}` : 'is-medium';
-    const colorClass = color ? `is-${color}` : 'is-light'
+    const colorClass = color ? `is-${color}` : 'is-light';
+    const loadingClass = isLoading ? 'is-loading' : '';
 
     return (
       <button
-        className={`button ${sizeClass} ${colorClass}`}
+        className={`button ${sizeClass} ${colorClass} ${loadingClass}`}
         style={completeStyle.button}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         onClick={onClick}
         disabled={disabled}
         {...formRelatedAttributes}
+        tabIndex={allowTabFocus !== false ? 0 : -1}
       >
         {children}
       </button>
@@ -50,4 +53,4 @@ class Button extends Component {
   };
 }
 
-export default Button;
+export default Button;      

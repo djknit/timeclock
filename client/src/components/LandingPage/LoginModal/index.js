@@ -1,27 +1,32 @@
 import React, { Component } from 'react';
+import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import { TextInput } from '../../formFields';
 import Notification, { NotificationText } from '../../Notification';
-import { api } from '../../../utilities';
+import { api, constants } from '../utilities';
 import { userService } from '../../../data';
 
 const fieldsInfo = [
   {
     name: 'usernameOrEmail',
     label: 'Enter Your Username or Email',
-    type: 'text',
-    placeholder: 'Your username or email...',
-    iconClass: 'fas fa-user-tag'
+    type: 'username',
+    placeholder: 'Your username or email...'
   },
   {
     name: 'password',
     label: 'Enter Your Password',
     type: 'password',
-    placeholder: 'Your password...',
-    iconClass: 'fas fa-lock'
+    placeholder: 'Your password...'
   }
 ];
+function getIconClass(fieldName, hasSuccess) {
+  if (fieldName === 'usernameOrEmail') {
+    return hasSuccess ? 'fas fa-user-tag' : 'fas fa-user';
+  }
+  return hasSuccess ? 'fas fa-unlock' : 'fas fa-lock';
+}
 const formId = 'login-form';
 const startingState = {
   usernameOrEmail: '',
@@ -35,6 +40,7 @@ const startingState = {
   hasBeenSubmitted: false,
   secondsUntilRedirect: undefined
 };
+const { secondsToDelayRedirect } = constants;
 
 class LoginModal extends Component {
   constructor(props) {
@@ -52,31 +58,35 @@ class LoginModal extends Component {
     this.setState(
       { [name]: value },
       () => {
-        if (this.state.hasBeenSubmitted) {
-          this.setState(this.getInputProblems());
+        const { problems, hasBeenSubmitted, problemMessages } = this.state;
+        if (!hasBeenSubmitted) return;
+        let problemsToKeep, problemMessagesToKeep;
+        if (name === 'password' && problems.usernameOrEmail) {
+          problemsToKeep = { usernameOrEmail: true };
+          problemMessagesToKeep = problemMessages.filter(
+            message => message.toLowerCase().indexOf('password') === -1
+          );
         }
+        this.setState(this.getInputProblems(problemsToKeep, problemMessagesToKeep));
       }
     );
   };
 
-  getInputProblems() {
-    console.log('validate inputs')
+  getInputProblems(problemsToKeep, problemMessagesToKeep) {
     const {
       usernameOrEmail, password
     } = this.state;
-    let problems = {};
-    let problemMessages = [];
-    if (!usernameOrEmail) {
+    let problems = problemsToKeep || {};
+    let problemMessages = problemMessagesToKeep || [];
+    if (!usernameOrEmail && !problems.usernameOrEmail) {
       problems.usernameOrEmail = true;
       problemMessages.push('You must enter your username or email address.');
     }
-    if (password.length < 7) {
+    if (!password && !problems.password) {
       problems.password = true;
-      problemMessages.push('Invalid password: must be at least 7 characters long.')
+      problemMessages.push('You must enter a password.');
     }
     return { problems, problemMessages };
-    // this.setState({ problems, problemMessages });
-    // return problemMessages.length === 0;
   };
 
   setSubmissionProcessingState() {
@@ -96,9 +106,8 @@ class LoginModal extends Component {
   }
 
   submit(event) {
-    console.log('submit')
     event.preventDefault();
-    const { username, email, password } = this.state;
+    const { usernameOrEmail, password } = this.state;
     let { unavailableEmails, unavailableUsernames } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
@@ -109,10 +118,10 @@ class LoginModal extends Component {
           messages: problemMessages
         };
       }
-      return api.auth.createAccount({ username, email, password });
+      return api.auth.login({ usernameOrEmail, password });
     })
     .then(res => {
-      let secondsUntilRedirect = 6;
+      let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
         isLoading: false,
@@ -134,27 +143,13 @@ class LoginModal extends Component {
       }, 1000);
     })
     .catch(err => {
-      console.log(err)
-      console.log('awefjio')
-      console.log(err.response)
-      const errorData = err.response && err.response.data || err;
+      const errorData = (err && err.response && err.response.data) || {};
       const { problems, messages } = errorData;
-      const takenUsernameMessage = 'That username is taken.';
-      const takenEmailMessage = 'There is already an account for that email address.';
-      if (messages.indexOf(takenUsernameMessage) !== -1) {
-        unavailableUsernames = [...unavailableUsernames];
-        unavailableUsernames.push(username);
-      }
-      if (messages.indexOf(takenEmailMessage) !== -1) {
-        unavailableEmails = [...unavailableEmails];
-        unavailableEmails.push(email);
-      }
-      const problemMessages = messages;
       this.setState({
         unavailableEmails,
         unavailableUsernames,
-        problems,
-        problemMessages,
+        problems: problems || { unknown: true },
+        problemMessages: messages || ['An unknown problem has occured.'],
         hasProblem: true,
         isLoading: false,
         showMessage: true
@@ -167,24 +162,28 @@ class LoginModal extends Component {
   };
 
   render() {
-    const { isActive, closeModal } = this.props;
+    const { isActive, closeModal, inputRef } = this.props;
     const {
-      hasSuccess, isLoading, hasProblem, problems, showMessage, problemMessages, usernameOrEmail, password, secondsUntilRedirect
+      hasSuccess, isLoading, problems, showMessage, problemMessages, usernameOrEmail, password, secondsUntilRedirect
     } = this.state;
+    
+    const style = getStyle();
 
     return (
       <ModalSkeleton
         title="Sign In"
         isActive={isActive}
         closeModal={closeModal}
+        isCloseButtonDisabled={hasSuccess}
         footerContent={
           <>
             <Button
-              color="primary"
+              color={hasSuccess ? 'success' : 'primary'}
               onClick={this.submit}
               disabled={isLoading || hasSuccess || !usernameOrEmail || !password}
               formId={formId}
               isSubmit={true}
+              isLoading={isLoading}
             >
               Submit
             </Button>
@@ -206,26 +205,31 @@ class LoginModal extends Component {
           {showMessage && hasSuccess && (
             <Notification theme="success">
               <NotificationText>
-                <strong>Success!</strong> Your account was created.
+                <strong>Success!</strong> You are signed in.
               </NotificationText>
               <NotificationText>
-                You are now signed in.
-              </NotificationText>
-              <NotificationText isLast={true}>
                 You will be redirected in {secondsUntilRedirect} seconds...
               </NotificationText>
+              <progress
+                className="progress is-success"
+                style={style.progressBar}
+                value={secondsToDelayRedirect - secondsUntilRedirect}
+                max={secondsToDelayRedirect}
+              ></progress>
             </Notification>
           )}
           {fieldsInfo.map(
             (field, index) => (
               <TextInput
                 {...field}
+                formId={formId}
                 value={this.state[field.name]}
                 handleChange={this.handleChange}
                 isActive={isActive && !isLoading && !hasSuccess}
-                index={index}
                 hasProblem={problems[field.name]}
                 key={index}
+                inputRef={index === 0 ? inputRef : undefined}
+                iconClass={getIconClass(field.name, hasSuccess)}
               />
             )
           )}

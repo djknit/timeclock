@@ -11,9 +11,9 @@ function TextInput({
   helpText,
   handleChange,
   isActive,
-  index,
   formId,
-  type
+  type,
+  inputRef
 }) {
 
   const inputId = `${name}-input-${formId}`;
@@ -23,7 +23,14 @@ function TextInput({
     typeAttrVal = 'password';
     autocompleteAttrVal = type === 'password' ? 'current-password' : 'new-password';
   }
-  else typeAttrVal = type;
+  else if (type === 'username') {
+    typeAttrVal = 'text';
+    autocompleteAttrVal = 'username';
+  }
+  else {
+    typeAttrVal = type;
+    autocompleteAttrVal = type === 'email' ? 'email' : 'off';
+  }
 
   const style = getStyle();
 
@@ -41,9 +48,9 @@ function TextInput({
           onChange={handleChange}
           disabled={!isActive}
           className={hasProblem ? 'input is-danger' : 'input'}
-          tabIndex={isActive ? (index + 1) : -1}
           type={typeAttrVal}
           autoComplete={autocompleteAttrVal}
+          ref={inputRef}
         />
         {iconClass &&
           <span className="icon is-small is-left">

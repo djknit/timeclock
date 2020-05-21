@@ -11,6 +11,10 @@ class LandingPage extends Component {
     super(props);
     this.toggleLoginModal = this.toggleLoginModal.bind(this);
     this.toggleNewUserModal = this.toggleNewUserModal.bind(this);
+    this.focusLoginModal = this.focusLoginModal.bind(this);
+    this.focusNewUserModal = this.focusNewUserModal.bind(this);
+    this.newUserInputRef = React.createRef();
+    this.loginInputRef = React.createRef();
     this.state = {
       windowWidth: windowWidthService.getValue(),
       isLoginModalActive: false,
@@ -28,16 +32,37 @@ class LandingPage extends Component {
 
   toggleLoginModal(isActiveAfterToggle) {
     this.setState({ isLoginModalActive: isActiveAfterToggle });
-  }
+    if (isActiveAfterToggle) {
+      setTimeout(
+        () => this.focusLoginModal(),
+        250
+      );
+    }
+  };
 
   toggleNewUserModal(isActiveAfterToggle) {
     this.setState({ isNewUserModalActive: isActiveAfterToggle });
-  }
+    if (isActiveAfterToggle) {
+      setTimeout(
+        () => this.focusNewUserModal(),
+        250
+      );
+    }
+  };
+
+  focusLoginModal() {
+    this.loginInputRef.current.focus();
+  };
+
+  focusNewUserModal() {
+    this.newUserInputRef.current.focus();
+  };
 
   render() {
 
-    const { state, props, toggleLoginModal, toggleNewUserModal } = this;
+    const { state, props, toggleLoginModal, toggleNewUserModal, loginInputRef, newUserInputRef } = this;
     const { windowWidth, isNewUserModalActive, isLoginModalActive } = state;
+    const isAnyModalActive = isLoginModalActive || isNewUserModalActive;
 
     const style = getStyle(windowWidth);
 
@@ -50,10 +75,15 @@ class LandingPage extends Component {
             size="large"
             style={style.leftButton}
             onClick={() => toggleNewUserModal(true)}
+            allowTabFocus={!isAnyModalActive}
           >
             Sign Up
           </Button>
-          <Button size="large" onClick={() => toggleLoginModal(true)}>
+          <Button
+            size="large"
+            onClick={() => toggleLoginModal(true)}
+            allowTabFocus={!isAnyModalActive}
+          >
             Log In
           </Button>
         </div>
@@ -61,11 +91,13 @@ class LandingPage extends Component {
           history={props.history}
           isActive={isNewUserModalActive}
           closeModal={() => toggleNewUserModal(false)}
+          inputRef={newUserInputRef}
         />
         <LoginModal
           history={props.history}
           isActive={isLoginModalActive}
           closeModal={() => toggleLoginModal(false)}
+          inputRef={loginInputRef}
         />
       </div>
     );
