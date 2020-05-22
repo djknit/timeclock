@@ -7,10 +7,11 @@ class _MainApp_needsData extends Component {
 
   render() {
     const { props } = this;
+    console.log(props.history)
 
     return (
       <>
-        <Navbar />
+        <Navbar history={props.history} />
         <div className="content" style={{paddingTop: 20}}><h1>
           Welcome!&nbsp;
           {(props && props.user && (props.user.username || props.user.email)) || 'No user found.'}

@@ -1,3 +1,3 @@
-import { headingFontFam } from '../../AppStyle';
+import { headingFontFam, shadow, mainBackgroundColor, secondaryBackgroundColor } from '../../AppStyle';
 
-export { headingFontFam };
+export { headingFontFam, shadow, mainBackgroundColor, secondaryBackgroundColor };

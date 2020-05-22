@@ -32,7 +32,11 @@ class Button extends Component {
     
     const completeStyle = getStyle(style, state.isFocused);
 
-    const sizeClass = size ? `is-${size}` : 'is-medium';
+    const sizeClass = (
+      size === 'none' ?
+      '' :
+      (size ? `is-${size}` : 'is-medium')
+    );
     const colorClass = color ? `is-${color}` : 'is-light';
     const loadingClass = isLoading ? 'is-loading' : '';
 

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import logo from './logo192.png';
-import { isLoggedInService, profileService } from '../../../data';
+import { isLoggedInService, profileService, userService } from '../../../data';
+import { api } from '../../../utilities';
 import getStyle from './style';
+import Button from '../../Button';
 import { addData } from '../../higherOrder';
 
 class _Navbar_needsData extends Component {
@@ -9,11 +11,37 @@ class _Navbar_needsData extends Component {
     super(props);
     this.brandText = React.createRef();
     this.brandItem = React.createRef();
+    this.setStatePromise = this.setStatePromise.bind(this);
+    this.submitLogout = this.submitLogout.bind(this);
     this.state = {
       brandItemInnerHeight: undefined,
-      totalHeight: undefined
+      totalHeight: undefined,
+      isLoading: false,
+      hasProblem: false
     };
+  };
+
+  setStatePromise(updates) {
+    return new Promise(resolve => {
+      this.setState(updates, resolve)
+    });
   }
+
+  submitLogout() {
+    this.setStatePromise({ isLoading: true, hasProblem: false })
+    .then(api.auth.logout)
+    .then(res => this.setStatePromise({ isLoading: false, hasProblem: false }))
+    .then(() => {
+      userService.clearUser();
+      this.props.history.push('/');
+    })
+    .catch(err => {
+      this.setState({
+        isLoading: false,
+        hasProblem: true
+      });
+    });
+  };
 
   componentDidMount() {
     this.setState({
@@ -23,10 +51,13 @@ class _Navbar_needsData extends Component {
   };
 
   render() {
-    const style = getStyle(this.state.brandItemInnerHeight, this.state.totalHeight);
+    const { isLoggedIn, profileData } = this.props;
+    const { brandItemInnerHeight, totalHeight, isLoading, hasProblem } = this.state;
+
+    const style = getStyle(brandItemInnerHeight, totalHeight);
 
     return (
-      <nav className="navbar" role="navigation" ariaLabel="main navigation" style={style.nav}>
+      <nav className="navbar" role="navigation" aria-label="main navigation" style={style.nav}>
         <div className="navbar-brand" style={style.brand}>
           <div className="navbar-item" style={style.brandImgItem}>
             <img src={logo} style={style.brandImg} />
@@ -40,19 +71,19 @@ class _Navbar_needsData extends Component {
           <a
             role="button"
             className="navbar-burger burger"
-            ariaLabel="menu"
-            ariaExpanded="false"
-            dataTarget="navbarBasicExample"
+            aria-label="menu"
+            aria-expanded="false"
+            data-target="navbarBasicExample"
           >
-            <span ariaHidden="true"></span>
-            <span ariaHidden="true"></span>
-            <span ariaHidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
           </a>
         </div>
   
         <div id="navbarBasicExample" className="navbar-menu">
           <div className="navbar-start">
-            <a className="navbar-item">
+            {/* <a className="navbar-item">
               Home
             </a>
   
@@ -80,19 +111,25 @@ class _Navbar_needsData extends Component {
                   Report an issue
                 </a>
               </div>
-            </div>
+            </div> */}
           </div>
-  
+
           <div className="navbar-end">
             <div className="navbar-item">
-              <div className="buttons">
-                <a className="button is-primary">
-                  <strong>Sign up</strong>
-                </a>
-                <a className="button is-light">
-                  Log in
-                </a>
-              </div>
+              <span style={style.welcomeText}>
+                {profileData && isLoggedIn ?
+                  <>Hi, <strong style={style.welcomeText}>{profileData.username || profileData.email}</strong>!</> :
+                  <>No user found.</>
+                }
+                {hasProblem &&
+                  <>Unexpected outcome.</>
+                }
+              </span>
+              {isLoggedIn &&
+                <Button size="none" color="white" onClick={this.submitLogout} isLoading={isLoading} style={style.logoutButton}>
+                  Sign Out
+                </Button>
+              }
             </div>
           </div>
         </div>

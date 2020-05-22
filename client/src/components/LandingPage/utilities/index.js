@@ -1,7 +1,7 @@
 import { api } from '../../../utilities';
 
 const constants = {
-  secondsToDelayRedirect: 4
+  secondsToDelayRedirect: 3
 };
 
 export {

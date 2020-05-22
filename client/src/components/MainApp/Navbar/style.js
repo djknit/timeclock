@@ -1,9 +1,12 @@
-import { headingFontFam } from '../style';
+import { headingFontFam, shadow, secondaryBackgroundColor, mainBackgroundColor } from '../style';
+
+const textColor = '#ffffff';
 
 export default function getStyle(brandItemInnerHeight, totalHeight) {
   return {
     nav: {
-      backgroundColor: '#f4f4f4'
+      backgroundColor: '#6141D1',
+      ...shadow(7, {})
     },
     brandTextItem: {
       paddingLeft: 2
@@ -14,7 +17,8 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       fontFamily: headingFontFam,
       fontSize: brandItemInnerHeight && (brandItemInnerHeight / 2)  ,
       lineHeight: 1,
-      textAlign: 'left'
+      textAlign: 'left',
+      color: textColor
     },
     brandImgItem: {
       paddingTop: 0,
@@ -25,6 +29,12 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       height: totalHeight,
       maxHeight: totalHeight,
       width: totalHeight
+    },
+    welcomeText: {
+      color: textColor
+    },
+    logoutButton: {
+      marginLeft: 10
     }
   };
 };
