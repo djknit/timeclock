@@ -53,6 +53,17 @@ router.post(
   }
 );
 
+router.post(
+  '/rename/:_id',
+  verifyLogin,
+  (req, res) => {
+    checkRequiredProps(req.body, ['name'], res);
+    JobController.changeName(req.params._id, req.user._id, req.body.name)
+    .then(job => res.json(cleanJob(job)))
+    .catch(routeErrorHandlerFactory(res));
+  }
+);
+
 router.get(
   '/:_id',
   verifyLogin,

@@ -43,7 +43,7 @@ This plan is not complete. Future steps will be expanded on in the plan before t
   * [x] Set up automatic deployment to Heroku from github repo.
     * [x] Create 2 Heroku projects. Deploy ~~`dev`~~ `beta` branch to 1 project and `master` branch to another.
     * [x] Provision database for both project.
-* [ ] _Develop back-end for all MVP features_
+* [x] Develop back-end for all MVP features
   * [x] Develop code necessary for user authentication.
     * [x] Create User database model
     * [x] Configure passport. Create controller functions needed to create account and login.
@@ -53,17 +53,23 @@ This plan is not complete. Future steps will be expanded on in the plan before t
       * [x] Login and logout
       * [x] Delete account
       * [x] Edit account information
-  * [ ] _Develop code necessary for time management_
+  * [x] Develop code necessary for time management
     * [x] Create job
     * [x] Get jobs for user (basic info only)
     * [x] Get individual job data (w/ all values populated)
-    * [ ] _Edit job information (`wage`, `dayCutoff`, `timezone`, and `weekBegins`)_
-    * [ ] Change job name
+    * [x] Edit job information (`wage`, `dayCutoff`, `timezone`, and `weekBegins`)
+    * [x] Change job name
     * [x] Add weeks and days
     * [x] Add time segments
     * [x] Delete time segments (individually by id and in bulk by date)
-    * [ ] Delete job (code is written, but still needs reviewed and tested)
-* [ ] Develop front-end to complete MVP
+    * [x] Delete job
+* [ ] _Develop front-end to complete MVP_
+  * [ ] _Landing page_
+  * [ ] _Account creation & login_
+  * [ ] 404 page
+  * [ ] Dashboard
+  * [ ] Job creation
+  * [ ] Job page: Display & controls (edit time, edit settings)
 * [ ] Review code for bugs and code organization/readability
 * [ ] Work on additional features
 
