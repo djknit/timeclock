@@ -39,6 +39,9 @@ arr.forEach((e, i, a) => {
   }
 });
 
+let a, b;
+
+
 // console.log('arr\n', arr)
 // console.log('removed\n', removedEls)
 
