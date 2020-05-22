@@ -5,8 +5,9 @@ import getStyle from './style';
 import Button from '../Button';
 import NewUserModal from './NewUserModal';
 import LoginModal from './LoginModal';
+import { addData } from '../higherOrder';
 
-class LandingPage extends Component {
+class _LandingPage_needsData extends Component {
   constructor(props) {
     super(props);
     this.toggleLoginModal = this.toggleLoginModal.bind(this);
@@ -16,18 +17,9 @@ class LandingPage extends Component {
     this.newUserInputRef = React.createRef();
     this.loginInputRef = React.createRef();
     this.state = {
-      windowWidth: windowWidthService.getValue(),
       isLoginModalActive: false,
       isNewUserModalActive: false
     };
-  };
-
-  componentDidMount() {
-    windowWidthService.subscribe(
-      () => this.setState({
-        windowWidth: windowWidthService.getValue()
-      })
-    );
   };
 
   toggleLoginModal(isActiveAfterToggle) {
@@ -61,7 +53,8 @@ class LandingPage extends Component {
   render() {
 
     const { state, props, toggleLoginModal, toggleNewUserModal, loginInputRef, newUserInputRef } = this;
-    const { windowWidth, isNewUserModalActive, isLoginModalActive } = state;
+    const { isNewUserModalActive, isLoginModalActive } = state;
+    const { windowWidth } = props;
     const isAnyModalActive = isLoginModalActive || isNewUserModalActive;
 
     const style = getStyle(windowWidth);
@@ -103,5 +96,7 @@ class LandingPage extends Component {
     );
   };
 }
+
+const LandingPage = addData(_LandingPage_needsData, 'windowWidth', windowWidthService);
 
 export default LandingPage;

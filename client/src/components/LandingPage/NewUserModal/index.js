@@ -245,11 +245,22 @@ class NewUserModal extends Component {
         footerContent={
           <>
             <Button
-              color="primary"
+              color="light"
+              onClick={() => {
+                this.reset();
+                closeModal();
+              }}
+              disabled={isLoading || hasSuccess}
+            >
+              Cancel
+            </Button>
+            <Button
+              color={hasSuccess ? 'success' : 'primary'}
               onClick={this.submit}
               disabled={isLoading || hasSuccess || (!username && !email) || !password || !verifyPassword}
               formId={formId}
               isSubmit={true}
+              isLoading={isLoading}
             >
               Submit
             </Button>

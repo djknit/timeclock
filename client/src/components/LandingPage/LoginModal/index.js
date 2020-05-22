@@ -166,7 +166,7 @@ class LoginModal extends Component {
     const {
       hasSuccess, isLoading, problems, showMessage, problemMessages, usernameOrEmail, password, secondsUntilRedirect
     } = this.state;
-    
+
     const style = getStyle();
 
     return (
@@ -177,6 +177,16 @@ class LoginModal extends Component {
         isCloseButtonDisabled={hasSuccess}
         footerContent={
           <>
+            <Button
+              color="light"
+              onClick={() => {
+                this.reset();
+                closeModal();
+              }}
+              disabled={isLoading || hasSuccess}
+            >
+              Cancel
+            </Button>
             <Button
               color={hasSuccess ? 'success' : 'primary'}
               onClick={this.submit}

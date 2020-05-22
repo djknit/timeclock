@@ -1,40 +1,25 @@
 import React, { Component } from 'react';
 import { userService } from '../../data';
+import Navbar from './Navbar';
+import { addData } from '../higherOrder';
 
-class MainApp extends Component {
-  constructor(props) {
-    super(props);
-    this.setUser = this.setUser.bind(this);
-    this.state = {
-      user: userService.getValue()
-    };
-  };
-
-  setUser() {
-    this.setState({ user: userService.getValue() });
-  };
-
-  componentDidMount() {
-    userService.subscribe(this.setUser);
-  };
-
-  componentWillUnmount() {
-    userService.unsub(this.setUser);
-  }
+class _MainApp_needsData extends Component {
 
   render() {
-    const { props, state } = this;
+    const { props } = this;
 
     return (
-      <div className="content">
-        {
-          state.user ?
-          <h1>Welcome, {state.user.username || state.user.email}</h1> :
-          <h1>Oops, no user found.</h1>
-        }
-      </div>
+      <>
+        <Navbar />
+        <div className="content" style={{paddingTop: 20}}><h1>
+          Welcome!&nbsp;
+          {(props && props.user && (props.user.username || props.user.email)) || 'No user found.'}
+        </h1></div>
+      </>
     );
   };
 }
+
+const MainApp = addData(_MainApp_needsData, 'user', userService);
 
 export default MainApp;
