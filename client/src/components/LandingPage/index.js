@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import logo from '../../logo_wide.png'
-import { windowWidthService } from '../../data';
+import { windowWidthService, userService } from '../../data';
 import getStyle from './style';
+import { api } from './utilities';
 import Button from '../Button';
 import NewUserModal from './NewUserModal';
 import LoginModal from './LoginModal';
@@ -48,6 +49,16 @@ class _LandingPage_needsData extends Component {
 
   focusNewUserModal() {
     this.newUserInputRef.current.focus();
+  };
+
+  componentDidMount() {
+    api.auth.test()
+    .then(res => {
+      if (!res.data.user) return console.error('Missing user.');
+      userService.setUser(res.data.user);
+      this.props.history.push('/app');
+    })
+    .catch(err => {});
   };
 
   render() {

@@ -36,11 +36,11 @@ export default function dataServiceFactory({
       if (isAsync) {
         return new Promise((resolve, reject) => {
           methods[methodKey](...args)
-            .then(result => {
-              emitter.emit('change');
-              resolve(result);
-            })
-            .catch(reject);
+          .then(result => {
+            emitter.emit('change');
+            resolve(result);
+          })
+          .catch(reject);
         });
       }
       else {
