@@ -9,7 +9,9 @@ export default function getStyle(navHeight) {
     jobsArea: {
       height: '100%',
       width: '100%',
-      backgroundColor: '#f1f1f1'
+      backgroundColor: '#f1f1f1',
+      ...shadow(8),
+      borderRadius: '.4%'
     }
   };
 };

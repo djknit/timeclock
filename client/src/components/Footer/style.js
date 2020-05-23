@@ -49,7 +49,7 @@ export default function getStyle() {
         textDecoration: 'none'
       },
       active: {
-        color: '#efefef'
+        color: '#b0b0b0'
       },
       hover: {
         color: '#000000'

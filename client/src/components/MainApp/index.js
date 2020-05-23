@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
+import { Switch, Route } from 'react-router-dom';
 import { userService } from '../../data';
 import { api } from './utilities';
 import getStyle from './style';
 import Navbar from './Navbar';
+import Dashboard from './Dashboard';
+import JobPage from './JobPage';
+import NotFoundPage from '../NotFound';
 import { addData } from '../higherOrder';
+
+const dashboardPathName = 'dashboard';
 
 class _MainApp_needsData extends Component {
   constructor(props) {
@@ -21,8 +27,12 @@ class _MainApp_needsData extends Component {
   componentDidMount() {
     api.auth.test()
     .then(res => {
-      if (!this.props.user && res.data.user) {
+      const { user, match, history } = this.props
+      if (!user && res.data.user) {
         userService.setUser(res.data.user);
+      }
+      if (match.isExact) {
+        history.push(`${match.path}/${dashboardPathName}`)
       }
     })
     .catch(() => {
@@ -32,10 +42,12 @@ class _MainApp_needsData extends Component {
   }
 
   render() {
-    const { history, user } = this.props;
+    const { history, user, match } = this.props;
     const { navHeight } = this.state;
 
     const style = getStyle(navHeight);
+
+    const buildPath = subpath => `${match.path}/${subpath}`;
 
     return (
       <>
@@ -44,11 +56,24 @@ class _MainApp_needsData extends Component {
           totalHeight={navHeight}
           reportHeight={this.setNavHeight}
         />
-        <div className="content" style={style.mainContentArea}>
-          {/* <h1>
-            Welcome!&nbsp;
-            {(user && (user.username || user.email)) || 'No user found.'}
-          </h1> */}
+        <div style={style.mainContentArea}>
+          <Switch>
+            <Route
+              path={buildPath(dashboardPathName)}
+              render={props => <Dashboard {...props} />}
+            />
+            {/* '/app' is redirected to '/app/dashboard' in componentDidMount. Next route prevents glitchy looking effect of rendering the 404 page momentarily before redirecting to '/app/dashboard'. */}
+            <Route
+              exact
+              path={buildPath('')}
+              render={props => <Dashboard {...props} />}
+            />
+            <Route
+              path={buildPath('job/:jobName')}
+              render={props => <JobPage {...props} />}
+            />
+            <Route component={NotFoundPage} />
+          </Switch>
           <div style={style.jobsArea}></div>
         </div>
       </>

@@ -139,7 +139,7 @@ class LoginModal extends Component {
           if (secondsUntilRedirect <= 0) {
             clearInterval(intervalId);
             this.setState(startingState);
-            this.props.history.push('/app');
+            this.props.history.push('/app/dashboard');
           }
         },
         1000 * stepSizeOfRedirectDelay
