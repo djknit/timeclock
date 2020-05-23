@@ -1,10 +1,23 @@
 import React, { Component } from 'react';
 import { userService } from '../../data';
-import { api } from '../../utilities';
+import { api } from './utilities';
+import getStyle from './style';
 import Navbar from './Navbar';
 import { addData } from '../higherOrder';
 
 class _MainApp_needsData extends Component {
+  constructor(props) {
+    super(props);
+    this.setNavHeight = this.setNavHeight.bind(this);
+    this.state = {
+      navHeight: undefined
+    };
+  };
+
+  setNavHeight(navHeight) {
+    this.setState({ navHeight });
+  };
+
   componentDidMount() {
     api.auth.test()
     .then(res => {
@@ -19,15 +32,25 @@ class _MainApp_needsData extends Component {
   }
 
   render() {
-    const { props } = this;
+    const { history, user } = this.props;
+    const { navHeight } = this.state;
+
+    const style = getStyle(navHeight);
 
     return (
       <>
-        <Navbar history={props.history} />
-        <div className="content" style={{paddingTop: 20}}><h1>
-          Welcome!&nbsp;
-          {(props && props.user && (props.user.username || props.user.email)) || 'No user found.'}
-        </h1></div>
+        <Navbar
+          history={history}
+          totalHeight={navHeight}
+          reportHeight={this.setNavHeight}
+        />
+        <div className="content" style={style.mainContentArea}>
+          {/* <h1>
+            Welcome!&nbsp;
+            {(user && (user.username || user.email)) || 'No user found.'}
+          </h1> */}
+          <div style={style.jobsArea}></div>
+        </div>
       </>
     );
   };

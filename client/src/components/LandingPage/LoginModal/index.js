@@ -40,7 +40,7 @@ const startingState = {
   hasBeenSubmitted: false,
   secondsUntilRedirect: undefined
 };
-const { secondsToDelayRedirect } = constants;
+const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 class LoginModal extends Component {
   constructor(props) {
@@ -132,15 +132,18 @@ class LoginModal extends Component {
         secondsUntilRedirect
       });
       userService.setUser(res.data.user);
-      const intervalId = setInterval(() => {
-        secondsUntilRedirect = secondsUntilRedirect - .1;
-        this.setState({ secondsUntilRedirect });
-        if (secondsUntilRedirect <= 0) {
-          clearInterval(intervalId);
-          this.setState(startingState);
-          this.props.history.push('/app');
-        }
-      }, 100);
+      const intervalId = setInterval(
+        () => {
+          secondsUntilRedirect -= stepSizeOfRedirectDelay;
+          this.setState({ secondsUntilRedirect });
+          if (secondsUntilRedirect <= 0) {
+            clearInterval(intervalId);
+            this.setState(startingState);
+            this.props.history.push('/app');
+          }
+        },
+        1000 * stepSizeOfRedirectDelay
+      );
     })
     .catch(err => {
       const errorData = (err && err.response && err.response.data) || {};
