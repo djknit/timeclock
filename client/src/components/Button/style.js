@@ -5,7 +5,7 @@ export default function getStyle(additionalStyle, isFocused) {
 
   return {
     button: {
-      ...shadow(shadowBlur),
+      ...shadow(shadowBlur, undefined, '#000000'),
       display: 'inline-block',
       ...additionalStyle
     }

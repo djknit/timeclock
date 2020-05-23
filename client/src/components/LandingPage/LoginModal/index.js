@@ -133,14 +133,14 @@ class LoginModal extends Component {
       });
       userService.setUser(res.data.user);
       const intervalId = setInterval(() => {
-        secondsUntilRedirect--;
+        secondsUntilRedirect = secondsUntilRedirect - .1;
         this.setState({ secondsUntilRedirect });
-        if (secondsUntilRedirect === 0) {
+        if (secondsUntilRedirect <= 0) {
           clearInterval(intervalId);
           this.setState(startingState);
           this.props.history.push('/app');
         }
-      }, 1000);
+      }, 100);
     })
     .catch(err => {
       const errorData = (err && err.response && err.response.data) || {};
@@ -218,7 +218,7 @@ class LoginModal extends Component {
                 <strong>Success!</strong> You are signed in.
               </NotificationText>
               <NotificationText>
-                You will be redirected in {secondsUntilRedirect} seconds...
+                You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
               </NotificationText>
               <progress
                 className="progress is-success"

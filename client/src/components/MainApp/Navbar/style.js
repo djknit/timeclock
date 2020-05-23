@@ -15,7 +15,7 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       display: 'inline-block',
       height: '100%',
       fontFamily: headingFontFam,
-      fontSize: brandItemInnerHeight && (brandItemInnerHeight / 2)  ,
+      fontSize: brandItemInnerHeight && (brandItemInnerHeight / 2),
       lineHeight: 1,
       textAlign: 'left',
       color: textColor
