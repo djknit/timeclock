@@ -1,3 +1,5 @@
+const utilities = require('./utilities');
+
 module.exports = {
-  testValue: 'gobbledeegook'
+  utilities
 };

@@ -4,9 +4,6 @@ require('./config/database');
 
 require('./models');
 
-require('./config/server').start();
+const server = require('./config/server');
 
-const shared = require('../shared');
-console.log(shared.testValue);
-
-module.exports = {};
+module.exports = server;
