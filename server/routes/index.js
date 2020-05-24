@@ -1,13 +1,13 @@
-const path = require('path');
-
 const router = require('express').Router();
+
+const htmlDocPath = require('../../htmlDocPath');
 
 router.use('/api', require('./api'));
 
 router.get(
   '*',
   (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+    res.sendFile(htmlDocPath);
   }
 );
 

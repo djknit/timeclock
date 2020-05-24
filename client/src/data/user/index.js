@@ -12,8 +12,7 @@ let currentJob = currentJobService.getValue();
 const userService = dataServiceFactory({
   readFunction: () => {
     if (!isLoggedIn) return undefined;
-    const { username, email } = profileInfo;
-    return { username, email, jobs, currentJob };
+    return { ...profileInfo, jobs, currentJob };
   },
   methods: {
     setUser(user) {

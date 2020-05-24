@@ -1,3 +1,16 @@
-import { headingFontFam, shadow, mainBackgroundColor, secondaryBackgroundColor } from '../../AppStyle';
+import {
+  headingFontFam, sectionHeadingFontFam, shadow, mainBackgroundColor, secondaryBackgroundColor, footerHeight
+} from '../../AppStyle';
 
-export { headingFontFam, shadow, mainBackgroundColor, secondaryBackgroundColor };
+const mainAreaPadding = 20;
+
+export default function getStyle(navHeight) {
+  return {
+    mainContentArea: {
+      minHeight: `calc(100vh - ${footerHeight + (navHeight || 0)}px)`,
+      padding: mainAreaPadding
+    }
+  };
+};
+
+export { headingFontFam, sectionHeadingFontFam, shadow, mainBackgroundColor, secondaryBackgroundColor, mainAreaPadding };

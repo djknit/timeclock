@@ -1,9 +1,11 @@
-require('dotenv').config();
+// require('dotenv').config();
 
-require('./config/database');
+// require('./config/database');
 
-require('./models');
+// require('./models');
 
-require('./config/server').start();
+// require('./config/server').start();
 
 require('./test');
+
+require('./server');

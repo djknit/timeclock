@@ -3,6 +3,7 @@ const secondaryBackgroundColor = '#A749D1';
 const tertiaryColor = '#6141D1';
 const quaternaryColor = '#B2D158';
 const headingFontFam = 'Averia Serif Libre, Alice, IM Fell English, Overlock, serif, Times';
+const sectionHeadingFontFam = 'Averia Serif Libre, IM Fell English, serif';
 const footerHeight = 50;
 
 function shadow(blur, offsetDirection, color) {
@@ -36,6 +37,7 @@ export {
   mainBackgroundColor,
   secondaryBackgroundColor,
   headingFontFam,
+  sectionHeadingFontFam,
   footerHeight,
   shadow
 };
