@@ -103,7 +103,7 @@ class LoginModal extends Component {
         resolve
       );
     });
-  }
+  };
 
   submit(event) {
     event.preventDefault();

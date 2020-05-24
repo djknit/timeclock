@@ -10,7 +10,7 @@
     "heroku-postbuild": "npm run link-shared && npm run build",
     "install": "cd client && npm install",
     "dev": "cd client && npm start",
-    "serve": "cd client && npm run build && cd .. && nodemon app.js",
+    "easy-serve": "npm install && npm run link-shared && cd client && npm run build && cd .. && node app.js",
     "api": "nodemon app.js",
     "link-shared": "cd shared && npm link && cd ../client && npm link timeclock-shared-resources"
   },
