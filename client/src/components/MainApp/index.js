@@ -7,11 +7,11 @@ import Navbar from './Navbar';
 import Dashboard from './Dashboard';
 import JobPage from './JobPage';
 import NotFoundPage from '../NotFound';
-import { addData } from '../higherOrder';
+// import { addData } from '../higherOrder';
 
 const dashboardPathName = 'dashboard';
 
-class _MainApp_needsData extends Component {
+class MainApp extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
@@ -27,8 +27,8 @@ class _MainApp_needsData extends Component {
   componentDidMount() {
     api.auth.test()
     .then(res => {
-      const { user, match, history } = this.props
-      if (!user && res.data.user) {
+      const { match, history } = this.props
+      if (!userService.getValue() && res.data.user) {
         userService.setUser(res.data.user);
       }
       if (match.isExact) {
@@ -42,7 +42,7 @@ class _MainApp_needsData extends Component {
   }
 
   render() {
-    const { history, user, match } = this.props;
+    const { history, match } = this.props;
     const { navHeight } = this.state;
 
     const style = getStyle(navHeight);
@@ -74,13 +74,10 @@ class _MainApp_needsData extends Component {
             />
             <Route component={NotFoundPage} />
           </Switch>
-          <div style={style.jobsArea}></div>
         </div>
       </>
     );
   };
 }
-
-const MainApp = addData(_MainApp_needsData, 'user', userService);
 
 export default MainApp;

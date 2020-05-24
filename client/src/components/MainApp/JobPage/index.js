@@ -10,7 +10,7 @@ class JobPage extends Component {
     const style = getStyle();
 
     return (
-      <></>
+      <div style={style.jobsArea}></div>
     );
   };
 }
