@@ -27,9 +27,9 @@ class _Jobs_needsData extends Component {
           <tbody>
             {jobs && jobs.map(
               job => (
-                <tr>
+                <tr key={job._id}>
                   <td>{job.name}</td>
-                  <td>{moment({date:8, month:4, year:2020}).format()}</td>
+                  <td>{moment(job.startDate).format('MMM D, YYYY')}</td>
                 </tr>
               )
             )}

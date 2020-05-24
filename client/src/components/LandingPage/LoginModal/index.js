@@ -146,7 +146,7 @@ class LoginModal extends Component {
       );
     })
     .catch(err => {
-      const errorData = (err && err.response && err.response.data) || {};
+      const errorData = (err && err.response && err.response.data) || err || {};
       const { problems, messages } = errorData;
       this.setState({
         unavailableEmails,

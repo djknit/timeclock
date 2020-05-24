@@ -190,7 +190,7 @@ class NewUserModal extends Component {
       );
     })
     .catch(err => {
-      const errorData = (err && err.response && err.response.data) || {};
+      const errorData = (err && err.response && err.response.data) || err || {};
       let { problems, messages } = errorData;
       if (!problems) problems = { unknown: true };
       if (!messages) messages = ['An unknown problem has occurred.'];
