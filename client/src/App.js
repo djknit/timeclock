@@ -10,6 +10,9 @@ import MainApp from './components/MainApp';
 import NotFound from './components/NotFound';
 import Footer from './components/Footer';
 
+import sharedResources from 'timeclock-shared-resources';
+console.log(sharedResources.testValue)
+
 class App extends Component {
   constructor() {
     super();
