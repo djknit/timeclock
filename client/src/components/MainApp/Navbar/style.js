@@ -34,7 +34,7 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       color: textColor
     },
     logoutButton: {
-      marginLeft: 10
+      innate: { marginLeft: 10 }
     }
   };
 };

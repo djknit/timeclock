@@ -61,3 +61,5 @@ function addPseudoPseudoClasses(ComponentToWrap) {
 }
 
 export default addPseudoPseudoClasses;
+
+export { calculateStyleForPseudoClassState } from './style';

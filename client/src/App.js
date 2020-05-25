@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
-import './App.css';
 import getStyle from './AppStyle';
 import { windowWidthService } from './data';
 import LandingPage from './components/LandingPage';

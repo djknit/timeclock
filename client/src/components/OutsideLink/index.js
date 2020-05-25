@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
-import getStyle from './style';
-import { addPseudoPseudoClasses} from '../higherOrder';
+import React from 'react';
+import { addPseudoPseudoClasses, calculateStyleForPseudoClassState } from '../higherOrder';
 
 function _OutsideLink_neeedsPseudo({
   styles,
@@ -10,7 +9,7 @@ function _OutsideLink_neeedsPseudo({
   pseudoHandlers
 }) {
 
-  const style = getStyle(styles, pseudoState);
+  const style = calculateStyleForPseudoClassState(styles, pseudoState);
 
   return (
     <a

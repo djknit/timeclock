@@ -1,3 +1,7 @@
-export default function getStyle() {
-
+export default function getStyle(additionalStyle) {
+  return {
+    contentArea: {
+      ...additionalStyle
+    }
+  };
 };

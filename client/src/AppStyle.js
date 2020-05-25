@@ -24,6 +24,7 @@ export default function getStyle() {
     wholeApp: {
       backgroundColor: mainBackgroundColor,
       minHeight: '100vh',
+      minWidth: 350,
       textAlign: 'center'
     },
     allExceptFooter: {

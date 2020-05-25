@@ -67,7 +67,7 @@ class _Navbar_needsData extends Component {
             </span>
           </div>
 
-          <a
+          {/* <a
             role="button"
             className="navbar-burger burger"
             aria-label="menu"
@@ -77,7 +77,7 @@ class _Navbar_needsData extends Component {
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
-          </a>
+          </a> */}
         </div>
   
         <div id="navbarBasicExample" className="navbar-menu">
@@ -125,7 +125,13 @@ class _Navbar_needsData extends Component {
                 }
               </span>
               {isLoggedIn &&
-                <Button size="none" color="white" onClick={this.submitLogout} isLoading={isLoading} style={style.logoutButton}>
+                <Button
+                  size="none"
+                  // color="white"
+                  onClick={this.submitLogout}
+                  isLoading={isLoading}
+                  styles={style.logoutButton}
+                >
                   Sign Out
                 </Button>
               }

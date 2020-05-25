@@ -2,21 +2,35 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import moment from 'moment';
 import { jobsService } from '../../../../data';
-import ContentArea from '../../ContentArea';
+import ContentArea, { ContentAreaTitle } from '../../ContentArea';
+import Button from '../../../Button';
+import TableRow from './TableRow';
 import { addData } from '../../../higherOrder';
 
 class _Jobs_needsData extends Component {
   constructor(props) {
     super(props);
+    this.jobClickHandlerFactory = this.jobClickHandlerFactory.bind(this);
+  };
+
+  jobClickHandlerFactory(jobId) {
+    return (event) => {
+      console.log(event.target)
+      console.log(jobId)
+    };
   };
 
   render() {
-    const style = getStyle();
+    const style = getStyle(this.props.style);
 
     const { jobs } = this.props;
 
     return (
-      <ContentArea title="YOUR JOBS">
+      <ContentArea style={style.contentArea}>
+        <ContentAreaTitle style={style.areaTitle}>Your Jobs</ContentAreaTitle>
+        <Button styles={style.addJobButton} color="primary">
+          <i className="fas fa-plus"></i> New
+        </Button>
         <table className="table is-fullwidth" style={style.table}>
           <thead>
             <tr>
@@ -27,10 +41,14 @@ class _Jobs_needsData extends Component {
           <tbody>
             {jobs && jobs.map(
               job => (
-                <tr key={job._id}>
+                <TableRow
+                  key={job._id}
+                  styles={style.trStyles}
+                  onClick={this.jobClickHandlerFactory(job._id)}
+                >
                   <td>{job.name}</td>
                   <td>{moment(job.startDate).format('MMM D, YYYY')}</td>
-                </tr>
+                </TableRow>
               )
             )}
           </tbody>

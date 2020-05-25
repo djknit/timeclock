@@ -1,27 +1,35 @@
 import React, { Component } from 'react';
 import getStyle from './style';
+import { windowWidthService } from '../../../data'
 import ContentArea, { ContentAreaTitle } from  '../ContentArea';
 import Jobs from './Jobs';
 import Account from './Account';
+import { addData } from '../../higherOrder';
 
-class Dashboard extends Component {
+class _Dashboard_needsData extends Component {
   constructor(props) {
     super(props);
   };
 
   render() {
-    const style = getStyle();
+    const style = getStyle(this.props.windowWidth);
 
     return (
       <>
         <ContentArea style={style.pageTitleArea}>
-          <ContentAreaTitle style={style.pageTitle} size={2}>DASHBOARD</ContentAreaTitle>
+          <ContentAreaTitle style={style.pageTitle} size={2}>
+            DASHBOARD
+          </ContentAreaTitle>
         </ContentArea>
-        <Jobs />
-        <Account />
+        <div style={style.contentAreasRow}>
+          <Account style={style.account} />
+          <Jobs style={style.jobs} />
+        </div>
       </>
     );
   };
 }
+
+const Dashboard = addData(_Dashboard_needsData, 'windowWidth', windowWidthService);
 
 export default Dashboard;

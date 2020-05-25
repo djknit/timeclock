@@ -1,4 +1,4 @@
-export default function getStyle(styles, state) {
+function calculateStyleForPseudoClassState(styles, state) {
   if (!styles) return {};
   const innateStyle = styles.innate || {};
   const activeStyle = (state.isActive && styles.active) || {};
@@ -11,4 +11,6 @@ export default function getStyle(styles, state) {
     ...focusStyle,
     ...activeStyle
   };
-};
+}
+
+export { calculateStyleForPseudoClassState };
