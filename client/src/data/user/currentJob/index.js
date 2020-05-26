@@ -9,12 +9,12 @@ let id, name, timezone, wage, dayCutoff, weekBegins;
 const service = dataServiceFactory({
   readFunction: () => (
     id ?
-    {} :
+    { id, name, timezone, wage, dayCutoff, weekBegins } :
     null
   ),
   methods: {
     setCurrentJob(currentJob) {
-      id = currentJob.id;
+      id = currentJob._id.toString();
       name = currentJob.name;
       timezone = currentJob.timezone;
       wage = currentJob.wage;

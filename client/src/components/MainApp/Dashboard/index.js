@@ -23,7 +23,7 @@ class _Dashboard_needsData extends Component {
         </ContentArea>
         <div style={style.contentAreasRow}>
           <Account style={style.account} />
-          <Jobs style={style.jobs} />
+          <Jobs style={style.jobs} {...{ redirectToJobPage }} />
         </div>
       </>
     );

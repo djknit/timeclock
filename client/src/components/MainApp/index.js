@@ -49,6 +49,10 @@ class MainApp extends Component {
 
     const buildPath = subpath => `${match.path}/${subpath}`;
 
+    const redirectToJobPage = jobId => history.push(buildPath(`job/${jobId}`));
+
+    const renderDashboard = props => <Dashboard {...{ ...props, redirectToJobPage }} />;
+
     return (
       <>
         <Navbar
@@ -60,16 +64,16 @@ class MainApp extends Component {
           <Switch>
             <Route
               path={buildPath(dashboardPathName)}
-              render={props => <Dashboard {...props} />}
+              render={renderDashboard}
             />
             {/* '/app' is redirected to '/app/dashboard' in componentDidMount. Next route prevents glitchy looking effect of rendering the 404 page momentarily before redirecting to '/app/dashboard'. */}
             <Route
               exact
               path={buildPath('')}
-              render={props => <Dashboard {...props} />}
+              render={renderDashboard}
             />
             <Route
-              path={buildPath('job/:jobName')}
+              path={buildPath('job/:jobId')}
               render={props => <JobPage {...props} />}
             />
             <Route component={NotFoundPage} />

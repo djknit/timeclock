@@ -5,7 +5,7 @@ const textColor = '#ffffff';
 export default function getStyle(brandItemInnerHeight, totalHeight) {
   return {
     nav: {
-      backgroundColor: '#6141D1',
+      backgroundColor: secondaryBackgroundColor,
       ...shadow(7, {})
     },
     brandTextItem: {

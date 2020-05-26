@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import { TextInput } from '../../formFields';
+import { TextInput } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
 import { api, constants } from '../utilities';
 import { userService } from '../../../data';
