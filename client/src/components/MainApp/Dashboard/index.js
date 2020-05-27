@@ -12,7 +12,9 @@ class _Dashboard_needsData extends Component {
   };
 
   render() {
+
     const style = getStyle(this.props.windowWidth);
+    const { redirectToJobPage, openNewJobModal } = this.props;
 
     return (
       <>
@@ -23,7 +25,7 @@ class _Dashboard_needsData extends Component {
         </ContentArea>
         <div style={style.contentAreasRow}>
           <Account style={style.account} />
-          <Jobs style={style.jobs} {...{ redirectToJobPage }} />
+          <Jobs style={style.jobs} {...{ redirectToJobPage, openNewJobModal }} />
         </div>
       </>
     );

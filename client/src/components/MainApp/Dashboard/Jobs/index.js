@@ -44,13 +44,13 @@ class _Jobs_needsData extends Component {
   render() {
     const style = getStyle(this.props.style);
 
-    const { jobs } = this.props;
+    const { jobs, openNewJobModal } = this.props;
     console.log(jobs)
 
     return (
       <ContentArea style={style.contentArea}>
         <ContentAreaTitle style={style.areaTitle}>Your Jobs</ContentAreaTitle>
-        <Button styles={style.addJobButton} color="primary">
+        <Button styles={style.addJobButton} color="primary" onClick={openNewJobModal}>
           <i className="fas fa-plus"></i> New
         </Button>
         <table className="table is-fullwidth" style={style.table}>

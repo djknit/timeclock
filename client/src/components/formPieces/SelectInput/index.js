@@ -30,14 +30,14 @@ function selectInput({
       }}
       hasIcon={iconClass ? 'left' : false}
     >
-      <div className="select is-fullwidth">
+      <div className={`select is-fullwidth${hasProblem ? ' is-danger' : ''}`}>
         <select
+          name={name}
           id={inputId}
           ref={inputRef}
           value={value}
-          onChange={({ target }) => {
-            handleChange(target.value === '' ? null : target.value);
-          }}
+          onChange={handleChange}
+          disabled={!isActive}
         >
           {
             placeholder && (
@@ -59,6 +59,14 @@ function selectInput({
           }
         </select>
       </div>
+      {iconClass &&
+        <span className="icon is-small is-left">
+          <i className={iconClass}></i>
+        </span>
+      }
+      {helpText &&
+        <p className="help">{helpText}</p>
+      }
     </BoxInputFrame>
   );
 }

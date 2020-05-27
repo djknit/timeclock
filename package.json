@@ -12,7 +12,9 @@
     "dev": "cd client && npm start",
     "easy-serve": "npm install && npm run link-shared && cd client && npm run build && cd .. && node app.js",
     "api": "nodemon app.js",
-    "link-shared": "cd shared && npm link && cd ../client && npm link timeclock-shared-resources"
+    "link-shared": "cd shared && npm link && cd ../client && npm link timeclock-shared-resources",
+    "i-client": "cd client && npm i",
+    "posti-client": "npm run link-shared"
   },
   "repository": {
     "type": "git",
