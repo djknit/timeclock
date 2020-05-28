@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import { api, constants, getValidTimezones, guessUserTimezone, getTimezoneAbbreviation } from '../utilities';
+import {
+  api, constants, getValidTimezones, guessUserTimezone, getTimezoneAbbreviation, currencyValueStoreFactory
+} from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
 import { TextInput, SelectInput, DateInput } from '../../formPieces';
 import { jobsService, currentJobService } from '../../../data';
@@ -14,13 +16,13 @@ const startingState = {
   timezone: guessUserTimezone() || '',
   useWage: false,
   wage: {
-    rate: undefined,
+    rate: currencyValueStoreFactory(),
     currency: 'USD',
     useOvertime: true,
     overtime: {
       useMultiplier: true,
       multiplier: 1.5,
-      rate: undefined,
+      rate: currencyValueStoreFactory(),
       cutoff: 40
     }
   },

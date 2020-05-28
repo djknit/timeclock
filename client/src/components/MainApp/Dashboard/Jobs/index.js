@@ -31,6 +31,7 @@ class _Jobs_needsData extends Component {
         this.props.redirectToJobPage(jobId);
       })
       .catch(err => {
+        if (this.props.catchApiUnauthorized(err)) return;
         this.setState({
           isLoading: false,
           hasProblem: true,

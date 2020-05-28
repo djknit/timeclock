@@ -18,6 +18,7 @@ class MainApp extends Component {
     this.setNavHeight = this.setNavHeight.bind(this);
     this.toggleNewJobModal = this.toggleNewJobModal.bind(this);
     this.focusNewJobModal = this.focusNewJobModal.bind(this);
+    this.catchApiUnauthorized = this.catchApiUnauthorized.bind(this);
     this.newJobInputRef = React.createRef();
     this.state = {
       navHeight: undefined,
@@ -43,6 +44,16 @@ class MainApp extends Component {
     this.newJobInputRef.current.focus();
   };
 
+  catchApiUnauthorized(err) {
+    console.log('CATCH API 401')
+    if (err && err.response && err.response.status === 401) {
+      userService.clearUser();
+      this.props.history.push('/');
+      return true;
+    }
+    return false;
+  }
+
   componentDidMount() {
     console.log(this.newJobInputRef)
     api.auth.test()
@@ -62,7 +73,7 @@ class MainApp extends Component {
   }
 
   render() {
-    const { props, state, toggleNewJobModal, newJobInputRef } = this;
+    const { props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized } = this;
     const { history, match } = props;
     const { navHeight, isNewJobModalActive } = state;
 
@@ -75,7 +86,7 @@ class MainApp extends Component {
     const openNewJobModal = () => toggleNewJobModal(true);
 
     const renderDashboard = props => (
-      <Dashboard {...{ ...props, redirectToJobPage, openNewJobModal }} />
+      <Dashboard {...{ ...props, redirectToJobPage, openNewJobModal, catchApiUnauthorized }} />
     );
 
     return (
@@ -84,6 +95,7 @@ class MainApp extends Component {
           history={history}
           totalHeight={navHeight}
           reportHeight={this.setNavHeight}
+          {...{ catchApiUnauthorized }}
         />
         <div style={style.mainContentArea}>
           <Switch>
@@ -99,7 +111,7 @@ class MainApp extends Component {
             />
             <Route
               path={buildPath('job/:jobId')}
-              render={props => <JobPage {...props} />}
+              render={props => <JobPage {...{ ...props, catchApiUnauthorized }} />}
             />
             <Route component={NotFoundPage} />
           </Switch>
@@ -109,6 +121,7 @@ class MainApp extends Component {
           closeModal={() => toggleNewJobModal(false)}
           redirectToJobPage={redirectToJobPage}
           inputRef={newJobInputRef}
+          {...{ catchApiUnauthorized }}
         />
       </>
     );

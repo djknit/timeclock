@@ -35,6 +35,7 @@ class _Navbar_needsData extends Component {
       this.props.history.push('/');
     })
     .catch(err => {
+      if (this.props.catchApiUnauthorized(err)) return;
       this.setState({
         isLoading: false,
         hasProblem: true
