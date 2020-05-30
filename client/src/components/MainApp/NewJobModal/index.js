@@ -3,10 +3,10 @@ import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import {
-  api, constants, getValidTimezones, guessUserTimezone, getTimezoneAbbreviation, currencyValueStoreFactory
+  api, constants, getValidTimezones, guessUserTimezone, getTimezoneAbbreviation, processCurrencyInputValue
 } from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
-import { TextInput, SelectInput, DateInput } from '../../formPieces';
+import { TextInput, SelectInput, DateInput, WageInput } from '../../formPieces';
 import { jobsService, currentJobService } from '../../../data';
 
 const formId = 'new-user-form';
@@ -16,13 +16,13 @@ const startingState = {
   timezone: guessUserTimezone() || '',
   useWage: false,
   wage: {
-    rate: currencyValueStoreFactory(),
+    rate: '',
     currency: 'USD',
     useOvertime: true,
     overtime: {
       useMultiplier: true,
       multiplier: 1.5,
-      rate: currencyValueStoreFactory(),
+      rate: '',
       cutoff: 40
     }
   },
@@ -37,18 +37,15 @@ const startingState = {
   hasBeenSubmitted: false,
   secondsUntilRedirect: undefined
 };
-
-function getTimezoneOptions() {
-  return getValidTimezones().map(
-    tzName => {
-      const abbreviation = getTimezoneAbbreviation(tzName);
-      return {
-        name: `${tzName} (${abbreviation})`,
-        value: tzName
-      };
-    }
-  );
-}
+const timezoneOptions = getValidTimezones().map(
+  tzName => {
+    const abbreviation = getTimezoneAbbreviation(tzName);
+    return {
+      name: `${tzName} (${abbreviation})`,
+      value: tzName
+    };
+  }
+);
 
 class NewJobModal extends Component {
   constructor(props) {
@@ -59,8 +56,8 @@ class NewJobModal extends Component {
 
   handleChange(event) {
     const { name, value } = event.target;
-    console.log(name)
-    console.log(value)
+    // console.log(name)
+    // console.log(value)
     this.setState({
       [name]: value
     });
@@ -75,6 +72,8 @@ class NewJobModal extends Component {
     const { isActive, closeModal, inputRef } = props;
 
     const isFormActive = isActive && !isLoading && !hasSuccess;
+
+    const style = getStyle();
 
     return (
       <ModalSkeleton
@@ -114,7 +113,7 @@ class NewJobModal extends Component {
           <SelectInput
             name="timezone"
             value={timezone}
-            options={getTimezoneOptions()}
+            options={timezoneOptions}
             {...{
               handleChange,
               formId
@@ -124,6 +123,18 @@ class NewJobModal extends Component {
             placeholder="The timezone your hours are counted in..."
             isActive={isFormActive}
             hasProblem={problems && problems.timezone}
+          />
+          <hr style={style.hr} />
+          <WageInput
+            name="wage"
+            value={wage}
+            {...{
+              handleChange,
+              formId
+            }}
+            isActive={isFormActive}
+            hasProblem={problems && problems.wage}
+            problems={problems && problems.wage}
           />
         </form>
       </ModalSkeleton>

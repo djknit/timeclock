@@ -1,7 +1,6 @@
 import moment from 'moment-timezone';
 import * as utilities from '../../utilities';
 
-export * from './formData';
 export * from '../../utilities';
 
 function formatMyDate(myDate) {

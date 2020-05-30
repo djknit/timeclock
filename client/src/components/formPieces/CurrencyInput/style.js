@@ -8,7 +8,8 @@ export default function getStyle() {
     width: '50%',
     padding: '.375rem .75rem 0',
     fontWeight: 400,
-    lineHeight: 1.5
+    lineHeight: 1.5,
+    fontSize: '2rem'
   };
   
   return {

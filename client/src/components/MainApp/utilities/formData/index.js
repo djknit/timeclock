@@ -1,1 +1,0 @@
-export { currencyValueStoreFactory } from './currency';
