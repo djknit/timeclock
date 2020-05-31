@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import { TextInput } from '../../formFields';
+import { TextInput } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
 import { api, constants } from '../utilities';
 import { userService } from '../../../data';
@@ -64,7 +64,7 @@ function getTakenUsernameDisplayMessage(username) {
 function getTakenEmailDisplayMessage(email) {
   return `There is already an account for the email address "${email}".`;
 }
-const { secondsToDelayRedirect } = constants;
+const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 class NewUserModal extends Component {
   constructor(props) {
@@ -176,18 +176,21 @@ class NewUserModal extends Component {
         secondsUntilRedirect
       });
       userService.setUser(res.data.user);
-      const intervalId = setInterval(() => {
-        secondsUntilRedirect--;
-        this.setState({ secondsUntilRedirect });
-        if (secondsUntilRedirect === 0) {
-          clearInterval(intervalId);
-          this.setState(startingState);
-          this.props.history.push('/app');
-        }
-      }, 1000);
+      const intervalId = setInterval(
+        () => {
+          secondsUntilRedirect -= stepSizeOfRedirectDelay;
+          this.setState({ secondsUntilRedirect });
+          if (secondsUntilRedirect <= 0) {
+            clearInterval(intervalId);
+            this.setState(startingState);
+            this.props.history.push('/app');
+          }
+        },
+        1000 * stepSizeOfRedirectDelay
+      );
     })
     .catch(err => {
-      const errorData = (err && err.response && err.response.data) || {};
+      const errorData = (err && err.response && err.response.data) || err || {};
       let { problems, messages } = errorData;
       if (!problems) problems = { unknown: true };
       if (!messages) messages = ['An unknown problem has occurred.'];
@@ -298,7 +301,7 @@ class NewUserModal extends Component {
                 You are now signed in.
               </NotificationText>
               <NotificationText>
-                You will be redirected in {secondsUntilRedirect} seconds...
+                You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
               </NotificationText>
               <progress
                 className="progress is-success"

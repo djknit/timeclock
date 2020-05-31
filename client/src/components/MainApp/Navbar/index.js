@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo192.png';
 import { isLoggedInService, profileService, userService } from '../../../data';
-import { api } from '../../../utilities';
+import { api } from '../utilities';
 import getStyle from './style';
 import Button from '../../Button';
 import { addData } from '../../higherOrder';
@@ -15,7 +15,6 @@ class _Navbar_needsData extends Component {
     this.submitLogout = this.submitLogout.bind(this);
     this.state = {
       brandItemInnerHeight: undefined,
-      totalHeight: undefined,
       isLoading: false,
       hasProblem: false
     };
@@ -36,6 +35,7 @@ class _Navbar_needsData extends Component {
       this.props.history.push('/');
     })
     .catch(err => {
+      if (this.props.catchApiUnauthorized(err)) return;
       this.setState({
         isLoading: false,
         hasProblem: true
@@ -45,14 +45,14 @@ class _Navbar_needsData extends Component {
 
   componentDidMount() {
     this.setState({
-      brandItemInnerHeight: this.brandText.current.clientHeight,
-      totalHeight: this.brandItem.current.clientHeight
+      brandItemInnerHeight: this.brandText.current.clientHeight
     });
+    this.props.reportHeight(this.brandItem.current.clientHeight);
   };
 
   render() {
-    const { isLoggedIn, profileData } = this.props;
-    const { brandItemInnerHeight, totalHeight, isLoading, hasProblem } = this.state;
+    const { isLoggedIn, profileData, totalHeight } = this.props;
+    const { brandItemInnerHeight, isLoading, hasProblem } = this.state;
 
     const style = getStyle(brandItemInnerHeight, totalHeight);
 
@@ -68,7 +68,7 @@ class _Navbar_needsData extends Component {
             </span>
           </div>
 
-          <a
+          {/* <a
             role="button"
             className="navbar-burger burger"
             aria-label="menu"
@@ -78,7 +78,7 @@ class _Navbar_needsData extends Component {
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
-          </a>
+          </a> */}
         </div>
   
         <div id="navbarBasicExample" className="navbar-menu">
@@ -126,7 +126,13 @@ class _Navbar_needsData extends Component {
                 }
               </span>
               {isLoggedIn &&
-                <Button size="none" color="white" onClick={this.submitLogout} isLoading={isLoading} style={style.logoutButton}>
+                <Button
+                  size="none"
+                  // color="white"
+                  onClick={this.submitLogout}
+                  isLoading={isLoading}
+                  styles={style.logoutButton}
+                >
                   Sign Out
                 </Button>
               }

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import logo from '../../logo_wide.png'
-import { windowWidthService } from '../../data';
+import { windowWidthService, userService } from '../../data';
 import getStyle from './style';
+import { api } from './utilities';
 import Button from '../Button';
 import NewUserModal from './NewUserModal';
 import LoginModal from './LoginModal';
@@ -50,6 +51,16 @@ class _LandingPage_needsData extends Component {
     this.newUserInputRef.current.focus();
   };
 
+  componentDidMount() {
+    api.auth.test()
+    .then(res => {
+      if (!res.data.user) return console.error('Missing user.');
+      userService.setUser(res.data.user);
+      this.props.history.push('/app');
+    })
+    .catch(err => {});
+  };
+
   render() {
 
     const { state, props, toggleLoginModal, toggleNewUserModal, loginInputRef, newUserInputRef } = this;
@@ -66,7 +77,7 @@ class _LandingPage_needsData extends Component {
         <div style={style.buttonsArea}>
           <Button
             size="large"
-            style={style.leftButton}
+            styles={style.leftButton}
             onClick={() => toggleNewUserModal(true)}
             allowTabFocus={!isAnyModalActive}
           >
@@ -74,6 +85,7 @@ class _LandingPage_needsData extends Component {
           </Button>
           <Button
             size="large"
+            styles={style.rightButton}
             onClick={() => toggleLoginModal(true)}
             allowTabFocus={!isAnyModalActive}
           >

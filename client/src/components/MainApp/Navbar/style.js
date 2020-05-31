@@ -5,7 +5,7 @@ const textColor = '#ffffff';
 export default function getStyle(brandItemInnerHeight, totalHeight) {
   return {
     nav: {
-      backgroundColor: '#6141D1',
+      backgroundColor: secondaryBackgroundColor,
       ...shadow(7, {})
     },
     brandTextItem: {
@@ -15,7 +15,7 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       display: 'inline-block',
       height: '100%',
       fontFamily: headingFontFam,
-      fontSize: brandItemInnerHeight && (brandItemInnerHeight / 2)  ,
+      fontSize: brandItemInnerHeight && (brandItemInnerHeight / 2),
       lineHeight: 1,
       textAlign: 'left',
       color: textColor
@@ -34,7 +34,7 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       color: textColor
     },
     logoutButton: {
-      marginLeft: 10
+      innate: { marginLeft: 10 }
     }
   };
 };

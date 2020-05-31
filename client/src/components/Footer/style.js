@@ -10,6 +10,13 @@ export default function getStyle() {
     zIndex: 2
   };
 
+  const contentPadding = `calc(${footerHeight / 2}px - .75em)`; // = (1/2) * (footerHeight - (lineHeight * fontSize))
+
+  const textStyle = {
+    display: 'inline-block',
+    position: 'absolute'
+  };
+
   return {
     footer: {
       height: footerHeight,
@@ -18,13 +25,40 @@ export default function getStyle() {
     content: {
       ...childDiv,
       zIndex: 2,
-      padding: 10
+      padding: contentPadding,
+      // color: '#000000',
+      verticalAlign: 'middle'
+    },
+    leftText: {
+      ...textStyle,
+      left: contentPadding
+    },
+    rightText: {
+      ...textStyle,
+      right: contentPadding
     },
     background: {
       ...childDiv,
       zIndex: 1,
       opacity: .1,
       backgroundColor: '#202020'
+    },
+    linkStyles: {
+      innate: {
+        color: '#666666',
+        textDecoration: 'none'
+      },
+      active: {
+        color: '#b0b0b0'
+      },
+      hover: {
+        color: '#000000'
+      },
+      focus: {
+        color: '#202020',
+        outline: 'none',
+        textDecoration: 'underline'
+      }
     }
   };
 };

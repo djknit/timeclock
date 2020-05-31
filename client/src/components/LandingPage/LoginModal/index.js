@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import { TextInput } from '../../formFields';
+import { TextInput } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
 import { api, constants } from '../utilities';
 import { userService } from '../../../data';
@@ -40,7 +40,7 @@ const startingState = {
   hasBeenSubmitted: false,
   secondsUntilRedirect: undefined
 };
-const { secondsToDelayRedirect } = constants;
+const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 class LoginModal extends Component {
   constructor(props) {
@@ -103,7 +103,7 @@ class LoginModal extends Component {
         resolve
       );
     });
-  }
+  };
 
   submit(event) {
     event.preventDefault();
@@ -132,18 +132,21 @@ class LoginModal extends Component {
         secondsUntilRedirect
       });
       userService.setUser(res.data.user);
-      const intervalId = setInterval(() => {
-        secondsUntilRedirect--;
-        this.setState({ secondsUntilRedirect });
-        if (secondsUntilRedirect === 0) {
-          clearInterval(intervalId);
-          this.setState(startingState);
-          this.props.history.push('/app');
-        }
-      }, 1000);
+      const intervalId = setInterval(
+        () => {
+          secondsUntilRedirect -= stepSizeOfRedirectDelay;
+          this.setState({ secondsUntilRedirect });
+          if (secondsUntilRedirect <= 0) {
+            clearInterval(intervalId);
+            this.setState(startingState);
+            this.props.history.push('/app/dashboard');
+          }
+        },
+        1000 * stepSizeOfRedirectDelay
+      );
     })
     .catch(err => {
-      const errorData = (err && err.response && err.response.data) || {};
+      const errorData = (err && err.response && err.response.data) || err || {};
       const { problems, messages } = errorData;
       this.setState({
         unavailableEmails,
@@ -218,7 +221,7 @@ class LoginModal extends Component {
                 <strong>Success!</strong> You are signed in.
               </NotificationText>
               <NotificationText>
-                You will be redirected in {secondsUntilRedirect} seconds...
+                You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
               </NotificationText>
               <progress
                 className="progress is-success"
