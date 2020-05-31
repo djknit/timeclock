@@ -1,9 +1,7 @@
 import React from 'react';
 import getStyle from './style';
-import { windowWidthService } from '../../../../data';
-import { addData } from '../../../higherOrder';
 
-function _Control_needsData({
+function Control({
   isInline,
   hasIcon,
   children,
@@ -19,7 +17,7 @@ function _Control_needsData({
       ' has-icons-right' :
       ' has-icons-left';
   }
-  const completeStyle = getStyle(style, isRadio, windowWidth);
+  const completeStyle = getStyle(style, isRadio, isInline, windowWidth);
 
   return (
     <div className={className} style={completeStyle.control}>
@@ -27,7 +25,5 @@ function _Control_needsData({
     </div>
   );
 }
-
-const Control = addData(_Control_needsData, 'windowWidth', windowWidthService);
 
 export default Control;

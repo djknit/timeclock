@@ -67,7 +67,7 @@ function CurrencyInput({
           </div>
         )) || (processedValue.display !== null && (
           <div style={style.amountDisplay}>
-            $ {processedValue.display}
+            {currencySymbol} {processedValue.display}
           </div>
         ))
       }

@@ -11,9 +11,14 @@ function RadioInput({
   helpText,
   hasProblem,
   isActive,
-  inputRef,
   isInline
 }) {
+
+  function getSelectedOptionRef() {
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].value === value) return options[i].ref;
+    }
+  }
 
   return (
     <BoxInputFrame
@@ -23,6 +28,7 @@ function RadioInput({
         sublabel,
         isInline
       }}
+      selectedRadioInput={getSelectedOptionRef()}
     >
       {options.map(
         (option, index) => (
@@ -44,9 +50,9 @@ function RadioInput({
                   }
                 })
               }
+              ref={option.ref}
               className={hasProblem ? 'is-danger' : undefined}
               disabled={!isActive}
-              ref={(index === 0 && inputRef) || undefined}
             />
             {option.label}
           </label>
@@ -80,7 +86,7 @@ function RadioInput({
                 }
                 className={hasProblem ? 'is-danger' : undefined}
                 disabled={!isActive}
-                ref={(index === 0 && inputRef) || undefined}
+                // ref={(index === 0 && inputRef) || undefined}
               />
               {option.label}
             </label>

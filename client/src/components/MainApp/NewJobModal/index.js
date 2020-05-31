@@ -51,6 +51,8 @@ class NewJobModal extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    this.radioUseWageTrue = React.createRef();
+    this.radioUseWageFalse = React.createRef();
     this.state = startingState;
   };
 
@@ -131,10 +133,12 @@ class NewJobModal extends Component {
             options={[
               {
                 value: true,
-                label: 'Yes'
+                label: 'Yes',
+                ref: this.radioUseWageTrue
               }, {
                 value: false,
-                label: 'No'
+                label: 'No',
+                ref: this.radioUseWageFalse
               }
             ]}
             {...{ handleChange }}

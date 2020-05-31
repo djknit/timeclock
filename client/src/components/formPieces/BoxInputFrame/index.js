@@ -2,8 +2,10 @@ import React from 'react';
 import getStyle from './style';
 import Control from './Control';
 import Label from './Label';
+import { windowWidthService } from '../../../data';
+import { addData } from '../../higherOrder';
 
-function BoxInputFrame({
+function _BoxInputFrame_needsData({
   label,
   sublabel,
   isInline,
@@ -12,7 +14,9 @@ function BoxInputFrame({
   children,
   hasIcon,
   styles,
-  isRadio
+  isRadio,
+  windowWidth,
+  selectedRadioInput
   // hasSmallMargins,
   // isLastChild
 }) {
@@ -20,41 +24,48 @@ function BoxInputFrame({
   // no need for inline when there is no label
   if (label === undefined) isInline = false;
 
-  const style = getStyle(styles);
+  const style = getStyle(styles, windowWidth);
 
   const labelProps = { style: style.label, label, inputId, sublabel };
 
+  let fieldAttributes = (
+    isRadio ?
+    {
+      role: 'group',
+      'aria-label': `${label} ${sublabel || ''}`
+    } :
+    {}
+  );
+  const labelAttributes = { ...labelProps, isRadio, windowWidth, selectedRadioInput };
+
   return isInline ?
     (
-      <Field className="field is-horizontal">
+      <div
+        className="field is-horizontal"
+        {...fieldAttributes}
+      >
         <div className="field-label is-normal">
-          <Label {...{ ...labelProps, isRadio }} />
+          <Label {...labelAttributes} />
         </div>
         <div className="field-body">
           <div className="field">
-            <Control isInline {...{ isRadio, hasIcon }}>
+            <Control isInline {...{ isRadio, hasIcon, windowWidth }}>
               {children}
             </Control>
           </div>
         </div>
-      </Field>
+      </div>
     ) :
     (
-      <Field className="field">
-        <Label {...{ ...labelProps, isRadio }} />
-        <Control hasIcon={hasIcon}>
+      <div className="field" {...fieldAttributes}>
+        <Label {...labelAttributes} />
+        <Control {...{ isRadio, hasIcon, windowWidth }}>
           {children}
         </Control>
-      </Field>
+      </div>
     );
 }
 
-export default BoxInputFrame;
+const BoxInputFrame = addData(_BoxInputFrame_needsData, 'windowWidth', windowWidthService);
 
-function Field({ isRadio, children, ...attributes }) {
-  return (
-    isRadio ?
-    <fieldset {...attributes}>{children}</fieldset> :
-    <div {...attributes}>{children}</div>
-  );
-}
+export default BoxInputFrame;
