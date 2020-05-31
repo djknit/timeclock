@@ -12,6 +12,7 @@ function BoxInputFrame({
   children,
   hasIcon,
   styles,
+  isRadio
   // hasSmallMargins,
   // isLastChild
 }) {
@@ -25,27 +26,35 @@ function BoxInputFrame({
 
   return isInline ?
     (
-      <div className="field is-horizontal">
+      <Field className="field is-horizontal">
         <div className="field-label is-normal">
-          <Label {...labelProps} />
+          <Label {...{ ...labelProps, isRadio }} />
         </div>
         <div className="field-body">
           <div className="field">
-            <Control isInline hasIcon={hasIcon}>
+            <Control isInline {...{ isRadio, hasIcon }}>
               {children}
             </Control>
           </div>
         </div>
-      </div>
+      </Field>
     ) :
     (
-      <div className="field">
-        <Label {...labelProps} />
+      <Field className="field">
+        <Label {...{ ...labelProps, isRadio }} />
         <Control hasIcon={hasIcon}>
           {children}
         </Control>
-      </div>
+      </Field>
     );
 }
 
 export default BoxInputFrame;
+
+function Field({ isRadio, children, ...attributes }) {
+  return (
+    isRadio ?
+    <fieldset {...attributes}>{children}</fieldset> :
+    <div {...attributes}>{children}</div>
+  );
+}

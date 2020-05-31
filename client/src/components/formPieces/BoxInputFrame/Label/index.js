@@ -4,11 +4,13 @@ function Label({
   inputId,
   style,
   label,
-  sublabel
+  sublabel,
+  isRadio
 }) {
 
   return label ? (
-    <label
+    <TopLevelElement
+      {...{ isRadio }}
       htmlFor={inputId}
       className="label"
       style={style}
@@ -19,10 +21,18 @@ function Label({
           &nbsp;({sublabel})
         </span>
       )}
-    </label>
+    </TopLevelElement>
   ) : (
     <></>
   );
 }
 
 export default Label;
+
+function TopLevelElement({ children, isRadio, ...attributes }) {
+  return (
+    isRadio ?
+    <legend {...attributes}>{children}</legend> :
+    <label {...attributes}>{children}</label>
+  );
+}

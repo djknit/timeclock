@@ -6,7 +6,7 @@ import {
   api, constants, getValidTimezones, guessUserTimezone, getTimezoneAbbreviation, processCurrencyInputValue
 } from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
-import { TextInput, SelectInput, DateInput, WageInput } from '../../formPieces';
+import { TextInput, SelectInput, DateInput, WageInput, RadioInput } from '../../formPieces';
 import { jobsService, currentJobService } from '../../../data';
 
 const formId = 'new-user-form';
@@ -56,8 +56,8 @@ class NewJobModal extends Component {
 
   handleChange(event) {
     const { name, value } = event.target;
-    // console.log(name)
-    // console.log(value)
+    console.log(name)
+    console.log(value)
     this.setState({
       [name]: value
     });
@@ -101,28 +101,45 @@ class NewJobModal extends Component {
             name="startDate"
             value={startDate}
             label="Start Date:"
+            placeholder="Type or select date..."
             {...{
               handleChange,
               formId
             }}
             isActive={isFormActive}
             hasProblem={problems && problems.startDate}
-            placeholder="Type or select date..."
             helpText="If not sure, just guess. An incorrect date will not cause problems."
           />
           <SelectInput
             name="timezone"
             value={timezone}
+            label="Timezone:"
+            placeholder="The timezone your hours are counted in..."
             options={timezoneOptions}
             {...{
               handleChange,
               formId
             }}
             isInline
-            label="Timezone:"
-            placeholder="The timezone your hours are counted in..."
             isActive={isFormActive}
             hasProblem={problems && problems.timezone}
+          />
+          <RadioInput
+            name="useWage"
+            value={useWage}
+            label="Track Pay?"
+            options={[
+              {
+                value: true,
+                label: 'Yes'
+              }, {
+                value: false,
+                label: 'No'
+              }
+            ]}
+            {...{ handleChange }}
+            isInline
+            isActive={isFormActive}
           />
           <hr style={style.hr} />
           <WageInput
