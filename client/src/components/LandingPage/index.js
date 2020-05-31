@@ -77,7 +77,7 @@ class _LandingPage_needsData extends Component {
         <div style={style.buttonsArea}>
           <Button
             size="large"
-            style={style.leftButton}
+            styles={style.leftButton}
             onClick={() => toggleNewUserModal(true)}
             allowTabFocus={!isAnyModalActive}
           >
@@ -85,6 +85,7 @@ class _LandingPage_needsData extends Component {
           </Button>
           <Button
             size="large"
+            styles={style.rightButton}
             onClick={() => toggleLoginModal(true)}
             allowTabFocus={!isAnyModalActive}
           >

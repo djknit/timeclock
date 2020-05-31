@@ -1,4 +1,4 @@
-import { api } from '../../../utilities';
+import { api } from '../../utilities';
 
 const constants = {
   secondsToDelayRedirect: 2.7,

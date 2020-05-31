@@ -5,7 +5,7 @@ const textColor = '#ffffff';
 export default function getStyle(brandItemInnerHeight, totalHeight) {
   return {
     nav: {
-      backgroundColor: '#6141D1',
+      backgroundColor: secondaryBackgroundColor,
       ...shadow(7, {})
     },
     brandTextItem: {
@@ -34,7 +34,7 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       color: textColor
     },
     logoutButton: {
-      marginLeft: 10
+      innate: { marginLeft: 10 }
     }
   };
 };

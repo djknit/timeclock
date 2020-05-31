@@ -1,6 +1,8 @@
+ // NEXT 2 COLORS ALSO DEFINED IN `App.css`. IF CHANGED, THEY MUST BE CHANGED BOTH PLACES!
 const mainBackgroundColor = '#f6e653';
-const secondaryBackgroundColor = '#A749D1';
-const tertiaryColor = '#6141D1';
+const secondaryBackgroundColor = '#6141D1';
+
+const tertiaryColor = '#A749D1';
 const quaternaryColor = '#B2D158';
 const headingFontFam = 'Averia Serif Libre, Alice, IM Fell English, Overlock, serif, Times';
 const sectionHeadingFontFam = 'Averia Serif Libre, IM Fell English, serif';
@@ -24,6 +26,7 @@ export default function getStyle() {
     wholeApp: {
       backgroundColor: mainBackgroundColor,
       minHeight: '100vh',
+      minWidth: 350,
       textAlign: 'center'
     },
     allExceptFooter: {

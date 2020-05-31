@@ -8,11 +8,12 @@ module.exports = {
 };
 
 function cleanUser(user) {
-  const { username, email, jobs } = user;
+  const { username, email, jobs, _id } = user;
   return {
     username,
     email,
-    jobs: cleanJobsExtra(jobs)
+    jobs: cleanJobsExtra(jobs),
+    timeCreated: _id.getTimestamp().getTime()
   };
 }
 

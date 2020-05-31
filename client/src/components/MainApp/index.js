@@ -7,6 +7,7 @@ import Navbar from './Navbar';
 import Dashboard from './Dashboard';
 import JobPage from './JobPage';
 import NotFoundPage from '../NotFound';
+import NewJobModal from './NewJobModal';
 // import { addData } from '../higherOrder';
 
 const dashboardPathName = 'dashboard';
@@ -15,8 +16,13 @@ class MainApp extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
+    this.toggleNewJobModal = this.toggleNewJobModal.bind(this);
+    this.focusNewJobModal = this.focusNewJobModal.bind(this);
+    this.catchApiUnauthorized = this.catchApiUnauthorized.bind(this);
+    this.newJobInputRef = React.createRef();
     this.state = {
-      navHeight: undefined
+      navHeight: undefined,
+      isNewJobModalActive: false
     };
   };
 
@@ -24,7 +30,32 @@ class MainApp extends Component {
     this.setState({ navHeight });
   };
 
+  toggleNewJobModal(isActiveAfterToggle) {
+    this.setState({ isNewJobModalActive: isActiveAfterToggle });
+    if (isActiveAfterToggle) {
+      setTimeout(
+        () => this.focusNewJobModal(),
+        250
+      );
+    }
+  };
+
+  focusNewJobModal() {
+    this.newJobInputRef.current.focus();
+  };
+
+  catchApiUnauthorized(err) {
+    console.log('CATCH API 401')
+    if (err && err.response && err.response.status === 401) {
+      userService.clearUser();
+      this.props.history.push('/');
+      return true;
+    }
+    return false;
+  }
+
   componentDidMount() {
+    console.log(this.newJobInputRef)
     api.auth.test()
     .then(res => {
       const { match, history } = this.props
@@ -42,12 +73,21 @@ class MainApp extends Component {
   }
 
   render() {
-    const { history, match } = this.props;
-    const { navHeight } = this.state;
+    const { props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized } = this;
+    const { history, match } = props;
+    const { navHeight, isNewJobModalActive } = state;
 
     const style = getStyle(navHeight);
 
     const buildPath = subpath => `${match.path}/${subpath}`;
+
+    const redirectToJobPage = jobId => history.push(buildPath(`job/${jobId}`));
+
+    const openNewJobModal = () => toggleNewJobModal(true);
+
+    const renderDashboard = props => (
+      <Dashboard {...{ ...props, redirectToJobPage, openNewJobModal, catchApiUnauthorized }} />
+    );
 
     return (
       <>
@@ -55,26 +95,34 @@ class MainApp extends Component {
           history={history}
           totalHeight={navHeight}
           reportHeight={this.setNavHeight}
+          {...{ catchApiUnauthorized }}
         />
         <div style={style.mainContentArea}>
           <Switch>
             <Route
               path={buildPath(dashboardPathName)}
-              render={props => <Dashboard {...props} />}
+              render={renderDashboard}
             />
             {/* '/app' is redirected to '/app/dashboard' in componentDidMount. Next route prevents glitchy looking effect of rendering the 404 page momentarily before redirecting to '/app/dashboard'. */}
             <Route
               exact
               path={buildPath('')}
-              render={props => <Dashboard {...props} />}
+              render={renderDashboard}
             />
             <Route
-              path={buildPath('job/:jobName')}
-              render={props => <JobPage {...props} />}
+              path={buildPath('job/:jobId')}
+              render={props => <JobPage {...{ ...props, catchApiUnauthorized }} />}
             />
             <Route component={NotFoundPage} />
           </Switch>
         </div>
+        <NewJobModal
+          isActive={isNewJobModalActive}
+          closeModal={() => toggleNewJobModal(false)}
+          redirectToJobPage={redirectToJobPage}
+          inputRef={newJobInputRef}
+          {...{ catchApiUnauthorized }}
+        />
       </>
     );
   };

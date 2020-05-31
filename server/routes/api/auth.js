@@ -100,16 +100,14 @@ router.get(
   '/test',
   verifyLogin,
   (req, res) => {
-    const { user } = req;
-    if (user) {
+    UserController.getWithJobBasics(req.user._id)
+    .then(user => {
       res.json({
         message: 'You are logged in.',
         user: cleanUser(user)
       });
-    }
-    else {
-      res.status(401).json({ messages: ['User not found.'] });
-    }
+    })
+    .catch(() => res.status(401).json({ messages: ['User not found.'] }));
   }
 );
 

@@ -55,7 +55,9 @@ export default function getStyle() {
         color: '#000000'
       },
       focus: {
-        color: '#202020'
+        color: '#202020',
+        outline: 'none',
+        textDecoration: 'underline'
       }
     }
   };

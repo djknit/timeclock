@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import { TextInput } from '../../formFields';
+import { TextInput } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
 import { api, constants } from '../utilities';
 import { userService } from '../../../data';
@@ -103,7 +103,7 @@ class LoginModal extends Component {
         resolve
       );
     });
-  }
+  };
 
   submit(event) {
     event.preventDefault();
@@ -146,7 +146,7 @@ class LoginModal extends Component {
       );
     })
     .catch(err => {
-      const errorData = (err && err.response && err.response.data) || {};
+      const errorData = (err && err.response && err.response.data) || err || {};
       const { problems, messages } = errorData;
       this.setState({
         unavailableEmails,

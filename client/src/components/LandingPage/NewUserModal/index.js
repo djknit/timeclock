@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import { TextInput } from '../../formFields';
+import { TextInput } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
 import { api, constants } from '../utilities';
 import { userService } from '../../../data';
@@ -190,7 +190,7 @@ class NewUserModal extends Component {
       );
     })
     .catch(err => {
-      const errorData = (err && err.response && err.response.data) || {};
+      const errorData = (err && err.response && err.response.data) || err || {};
       let { problems, messages } = errorData;
       if (!problems) problems = { unknown: true };
       if (!messages) messages = ['An unknown problem has occurred.'];

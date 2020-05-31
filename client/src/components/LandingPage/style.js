@@ -3,6 +3,15 @@ import { headingFontFam } from '../../AppStyle';
 export default function getStyle(windowWidth) {
   const buttonsAreaXPadding = windowWidth > 700 ? '25%' : '10%';
 
+  // const buttonStyles = {
+  //   focus: {
+  //     backgroundColor: '#e7e7e7'
+  //   },
+  //   active: {
+  //     backgroundColor: '#f8f8f8'
+  //   }
+  // };
+
   return {
     container: {
       paddingTop: 20
@@ -21,7 +30,10 @@ export default function getStyle(windowWidth) {
       padding: `20px ${buttonsAreaXPadding} 0`
     },
     leftButton: {
-      marginRight: 'calc(24% - 40px)'
+      innate: { marginRight: 'calc(24% - 40px)' },
+    },
+    rightButton: {
+      
     }
   };
 };
