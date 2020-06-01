@@ -14,12 +14,12 @@ const startingState = {
   name: '',
   startDate: null,
   timezone: guessUserTimezone() || '',
-  useWage: false,
   wage: {
+    useWage: false,
     rate: '',
     currency: 'USD',
-    useOvertime: true,
     overtime: {
+      useOvertime: true,
       useMultiplier: true,
       multiplier: 1.5,
       rate: '',
@@ -53,6 +53,10 @@ class NewJobModal extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.radioUseWageTrue = React.createRef();
     this.radioUseWageFalse = React.createRef();
+    this.radioUseOvertimeTrue = React.createRef();
+    this.radioUseOvertimeFalse = React.createRef();
+    this.radioUseMultiplierTrue = React.createRef();
+    this.radioUseMultiplierFalse = React.createRef();
     this.state = startingState;
   };
 
@@ -126,26 +130,6 @@ class NewJobModal extends Component {
             isActive={isFormActive}
             hasProblem={problems && problems.timezone}
           />
-          <RadioInput
-            name="useWage"
-            value={useWage}
-            label="Track Pay?"
-            options={[
-              {
-                value: true,
-                label: 'Yes',
-                ref: this.radioUseWageTrue
-              }, {
-                value: false,
-                label: 'No',
-                ref: this.radioUseWageFalse
-              }
-            ]}
-            {...{ handleChange }}
-            isInline
-            isActive={isFormActive}
-          />
-          <hr style={style.hr} />
           <WageInput
             name="wage"
             value={wage}
@@ -156,6 +140,12 @@ class NewJobModal extends Component {
             isActive={isFormActive}
             hasProblem={problems && problems.wage}
             problems={problems && problems.wage}
+            radioUseWageTrueRef={this.radioUseWageTrue}
+            radioUseWageFalseRef={this.radioUseWageFalse}
+            radioUseOvertimeTrueRef={this.radioUseOvertimeTrue}
+            radioUseOvertimeFalseRef={this.radioUseOvertimeFalse}
+            radioUseMultiplierTrueRef={this.radioUseMultiplierTrue}
+            radioUseMultiplierFalseRef={this.radioUseMultiplierFalse}
           />
         </form>
       </ModalSkeleton>

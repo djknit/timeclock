@@ -8,10 +8,15 @@ const EventEmitter = require('events');
 export default function dataServiceFactory({
   readFunction,
   methods,
-  isAsync
+  isAsync,
+  maxListeners
 }) {
 
   const emitter = new EventEmitter();
+
+  if (maxListeners) {
+    emitter.setMaxListeners(maxListeners);
+  }
 
   let dataService = {
     getValue: readFunction,

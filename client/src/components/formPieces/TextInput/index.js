@@ -4,6 +4,7 @@ import BoxInputFrame from '../BoxInputFrame';
 
 function TextInput({
   name,
+  sectionName,
   value,
   label,
   sublabel,
@@ -19,7 +20,7 @@ function TextInput({
   isInline
 }) {
 
-  const inputId = `${name}-input-${formId}`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${name}-input-${formId}`;
 
   let typeAttrVal, autocompleteAttrVal;
   if (type === 'password' || type === 'newPassword') {

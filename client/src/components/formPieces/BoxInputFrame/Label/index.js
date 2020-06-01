@@ -48,6 +48,10 @@ function TopLevelElement({ children, isRadio, selectedRadioInput, ...attributes 
         if (selectedRadioInput && selectedRadioInput.current) {
           console.log('if')
           selectedRadioInput.current.focus();
+          setTimeout(
+            () => selectedRadioInput.current.focus(),
+            250
+          );
         }
       }}
     >

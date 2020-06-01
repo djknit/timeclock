@@ -3,6 +3,7 @@ import BoxInputFrame from '../BoxInputFrame';
 
 function selectInput({
   name,
+  sectionName,
   value,
   options,
   handleChange,
@@ -18,7 +19,7 @@ function selectInput({
   isInline
 }) {
 
-  const inputId = `${name}-input-${formId}`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${name}-input-${formId}`;
 
   return (
     <BoxInputFrame
