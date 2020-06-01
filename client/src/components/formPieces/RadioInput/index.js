@@ -1,4 +1,5 @@
 import React from 'react';
+import getStyle from './style';
 import BoxInputFrame from '../BoxInputFrame';
 
 function RadioInput({
@@ -11,9 +12,20 @@ function RadioInput({
   helpText,
   hasProblem,
   isActive,
-  inputRef,
-  isInline
+  isInline,
+  isSubsection
 }) {
+
+  function getSelectedOptionRef() {
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].value === value) return options[i].ref;
+    }
+  }
+
+  const style = getStyle();
+
+  console.log(name)
+  console.log(isActive)
 
   return (
     <BoxInputFrame
@@ -21,12 +33,14 @@ function RadioInput({
       {...{
         label,
         sublabel,
-        isInline
+        isInline,
+        isSubsection
       }}
+      selectedRadioInput={getSelectedOptionRef()}
     >
       {options.map(
         (option, index) => (
-          <label className="radio" disabled={!isActive} key={option.value}>
+          <label className="radio" disabled={!isActive} key={option.value} style={style.label}>
             <input
               type="radio"
               name={name}
@@ -44,9 +58,10 @@ function RadioInput({
                   }
                 })
               }
+              ref={option.ref}
               className={hasProblem ? 'is-danger' : undefined}
               disabled={!isActive}
-              ref={(index === 0 && inputRef) || undefined}
+              style={style.input}
             />
             {option.label}
           </label>
@@ -80,7 +95,7 @@ function RadioInput({
                 }
                 className={hasProblem ? 'is-danger' : undefined}
                 disabled={!isActive}
-                ref={(index === 0 && inputRef) || undefined}
+                // ref={(index === 0 && inputRef) || undefined}
               />
               {option.label}
             </label>

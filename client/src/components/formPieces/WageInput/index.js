@@ -1,7 +1,10 @@
 import React from 'react';
 import ccData from 'currency-codes/data';
+import getStyle from './style';
 import SelectInput from '../SelectInput';
-import CurrencyInput from '../CurrencyInput'; 
+import CurrencyInput from '../CurrencyInput';
+import RadioInput from '../RadioInput';
+import OvertimeInput from './OvertimeInput';
 
 const currencyOptions = [
   {
@@ -24,54 +27,112 @@ function WageInput({
   handleChange,
   isActive,
   formId,
+  radioUseWageTrueRef,
+  radioUseWageFalseRef,
+  radioUseOvertimeTrueRef,
+  radioUseOvertimeFalseRef,
+  radioUseMultiplierTrueRef,
+  radioUseMultiplierFalseRef,
+  windowWidth
 }) {
 
-  const { rate, currency, useOvertime, overtime } = value;
+  const { rate, currency, overtime, useWage } = value;
 
-  function reportChange(event) {
-    let _value = { ...value };
-    _value[event.target.name] = event.target.value;
-    handleChange({
-      target: {
-        name,
-        value: _value
-      }
-    });
+  function changeReporterFactory(_handleChange, sectionPropName, sectionValue) {
+    return function(event) {
+      let _value = { ...sectionValue };
+      _value[event.target.name] = event.target.value;
+      _handleChange({
+        target: {
+          name: sectionPropName,
+          value: _value
+        }
+      });
+    };
   }
 
+  const reportChange = changeReporterFactory(handleChange, name, value);
+
+  const style = getStyle();
+
   return (
-    <fieldset>
-      <legend className="label">Wage</legend>
-      <SelectInput
-        name="currency"
-        value={currency}
-        options={currencyOptions}
-        handleChange={reportChange}
-        label="Currency:"
-        placeholder="Select currency..."
-        helpText='Select "other" to skip or if you need to enter values smaller than the currency you use typically supports (e.g. fractions of a cent in USD).'
-        hasProblem={problems && problems.currency}
-        {...{
-          isActive,
-          formId
-        }}
-        isInline
-      />
-      <CurrencyInput
-        name="rate"
-        value={rate}
-        label="Hourly Rate:"
-        placeholder="Pay per hour..."
-        hasProblem={problems && problems.rate}
-        handleChange={reportChange}
-        {...{
-          isActive,
-          formId,
-          currency
-        }}
-        isInline
-      />
-    </fieldset>
+    <>
+      <div className="label" style={style.sectionLabel}>
+        &nbsp;
+        <span style={style.sectionLabelText}>Wage</span>
+        <hr style={style.sectionLabelHr} />
+      </div>
+      <div>
+        <RadioInput
+          name="useWage"
+          sectionName={name}
+          value={useWage}
+          label="Track Pay?"
+          options={[
+            {
+              value: true,
+              label: 'Yes',
+              ref: radioUseWageTrueRef
+            }, {
+              value: false,
+              label: 'No',
+              ref: radioUseWageFalseRef
+            }
+          ]}
+          handleChange={reportChange}
+          isInline
+          hasProblem={problems && problems.useWage}
+          {...{ isActive }}
+        />
+        <SelectInput
+          name="currency"
+          sectionName={name}
+          value={currency}
+          options={currencyOptions}
+          handleChange={reportChange}
+          label="Currency:"
+          placeholder="Select currency..."
+          helpText='Select "other" (1st option) to skip or if you need to enter values smaller than the currency typically supports (e.g. fractions of a cent in USD).'
+          hasProblem={problems && problems.currency}
+          {...{ formId }}
+          isInline
+          isActive={isActive && useWage}
+        />
+        <CurrencyInput
+          name="rate"
+          sectionName={name}
+          value={rate}
+          label="Hourly Rate:"
+          placeholder="Pay per hour..."
+          hasProblem={problems && problems.rate}
+          handleChange={reportChange}
+          {...{
+            formId,
+            currency
+          }}
+          isInline
+          isActive={isActive && useWage}
+        />
+        <OvertimeInput
+          name="overtime"
+          sectionName={name}
+          value={overtime}
+          hasProblem={problems && problems.overtime}
+          problems={(problems && problems.overtime) || {}}
+          reportChange={changeReporterFactory(reportChange, 'overtime', overtime)}
+          {...{
+            formId,
+            radioUseOvertimeTrueRef,
+            radioUseOvertimeFalseRef,
+            radioUseMultiplierTrueRef,
+            radioUseMultiplierFalseRef,
+            currency
+          }}
+          isActive={isActive && useWage}
+          rawRate={rate}
+        />
+      </div>
+    </>
   );
 }
 

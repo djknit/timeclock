@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import getStyle from './style';
 import BoxInputFrame from '../BoxInputFrame';
-import { processCurrencyInputValue } from '../../utilities';
+import { processCurrencyInputValue, processCurrencyMultiplierInputValue, getCurrencySymbol } from '../../utilities';
 
 function CurrencyInput({
   name,
+  sectionName,
   value,
   label,
   sublabel,
@@ -16,20 +17,23 @@ function CurrencyInput({
   formId,
   inputRef,
   isInline,
-  currency
+  currency,
+  showCurrencyCode,
+  isMultiplier,
+  wageToMultiply
 }) {
 
-  const inputId = `${name}-input-${formId}`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${name}-input-${formId}`;
 
   const style = getStyle();
 
-  const processedValue = processCurrencyInputValue(value, currency);
+  const processedValue = (
+    isMultiplier ?
+    processCurrencyInputValue(value, currency) :
+    processCurrencyMultiplierInputValue(value, wageToMultiply)
+  );
 
-  let currencySymbol;
-  if (currency === 'USD') currencySymbol = '$';
-  else if (currency === 'EUR') currencySymbol = <>&euro;</>;
-  else if (currency === 'GBP') currencySymbol = <>&pound;</>;
-  else if (currency === 'JPY') currencySymbol = <>&yen;</>;
+  const currencySymbol = isMultiplier ? getCurrencySymbol(currency) : undefined;
 
   return (
     <BoxInputFrame
@@ -67,7 +71,8 @@ function CurrencyInput({
           </div>
         )) || (processedValue.display !== null && (
           <div style={style.amountDisplay}>
-            $ {processedValue.display}
+            {processedValue.display}
+            {showCurrencyCode && currency !== 'X' && ` ${currency}`}
           </div>
         ))
       }

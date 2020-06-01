@@ -1,1 +1,1 @@
-export { processCurrencyInputValue } from './currency';
+export * from './currency';

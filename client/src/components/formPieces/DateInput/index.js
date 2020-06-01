@@ -8,6 +8,7 @@ const { convertDateToMyDate, getDate } = dateUtilities;
 
 function DateInput({
   name,
+  sectionName,
   value,
   label,
   sublabel,
@@ -30,7 +31,7 @@ function DateInput({
     });
   }
 
-  const inputId = `${formId}-${name}-input`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${name}-input-${formId}`;
   let inputClassName = 'input';
   if (hasProblem) inputClassName += ' is-danger';
 
