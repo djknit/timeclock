@@ -1,5 +1,6 @@
 import React from 'react';
 import cc from 'currency-codes';
+import getSymbolFromCurrency from 'currency-symbol-map';
 
 function processCurrencyInputValue(raw, currencyCode) {
   const parsedValue = parseFloat(raw);
@@ -20,18 +21,22 @@ function processCurrencyInputValue(raw, currencyCode) {
     };
   }
   else {
-    const numDecimalDigits = getDecimalDigits(currencyCode);
+    const numDecimalDigits = getDecimalDigits(currencyCode || '');
     let display = (
       numDecimalDigits || numDecimalDigits === 0 ?
       parsedValue.toFixed(numDecimalDigits) :
       parsedValue.toString()
     );
+    const rounded = parseFloat(display);
     const currencySymbol = getCurrencySymbol(currencyCode);
-    if (currencySymbol) display = currencySymbol + display;
     return {
       raw,
-      display,
-      rounded: parseFloat(display),
+      display: (
+        currencySymbol ?
+        <>{currencySymbol}&nbsp;{display}</> :
+        display
+      ),
+      rounded,
       problem: null
     };
   }
@@ -56,21 +61,31 @@ function processCurrencyMultiplierInputValue(rawMultiplierValue, wageToMultiply)
       problem: 'no-rate'
     };
   }
-  const multipliedRate = processedRate.rounded * processedMultiplierValue.rounded;
+  const parsedMultiplier = processedMultiplierValue.rounded;
+  const multipliedRate = processedRate.rounded * parsedMultiplier;
   const processedMultipliedRate = processCurrencyInputValue(multipliedRate, currency);
+  let multiplierDisplayValue = (
+    parsedMultiplier.toString().length <= parsedMultiplier.toFixed(5).length ?
+    parsedMultiplier :
+    `(${parsedMultiplier.toFixed(3)}...)`
+  );
+  // Currency characters from Arabic countries were causing big headache with display reordering seemingly at random due to quirks of text direction. The following mess seems to solve the problem while still preventing line-breaks at undesirable places. Not sure if it's all necessary.
+  const noWrapStyle = { whiteSpace: 'nowrap', direction: 'ltr', unicodeBidi: 'isolate' };
   return {
     raw: rawMultiplierValue,
-    display: <>{rawMultiplierValue} x {processedRate.display} = {processedMultipliedRate.display}</>,
+    display: <>
+      {multiplierDisplayValue}
+      <span style={noWrapStyle}> x {processedRate.display}</span>
+      <span> </span>
+      <span style={noWrapStyle}><span style={noWrapStyle}>= </span> <span>{processedMultipliedRate.display}</span></span>
+    </>,
     rounded: processedMultipliedRate.rounded,
     problem: null
   };
 }
 
 function getCurrencySymbol(currencyCode) {
-  if (currencyCode === 'USD') return '$';
-  else if (currencyCode === 'EUR') return <>&euro;</>;
-  else if (currencyCode === 'GBP') return <>&pound;</>;
-  else if (currencyCode === 'JPY') return <>&yen;</>;
+  return getSymbolFromCurrency(currencyCode);
 }
 
 export {

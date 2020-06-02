@@ -17,7 +17,7 @@ function _BoxInputFrame_needsData({
   isRadio,
   windowWidth,
   selectedRadioInput,
-  isSubsection
+  fieldToLabelRatio
   // hasSmallMargins,
   // isLastChild
 }) {
@@ -25,7 +25,7 @@ function _BoxInputFrame_needsData({
   // no need for inline when there is no label
   if (label === undefined) isInline = false;
 
-  const style = getStyle(styles, windowWidth, isSubsection);
+  const style = getStyle(styles, windowWidth, fieldToLabelRatio);
 
   const labelProps = { style: style.label, label, inputId, sublabel };
 
@@ -45,7 +45,7 @@ function _BoxInputFrame_needsData({
         className="field is-horizontal"
         {...fieldAttributes}
       >
-        <div className="field-label is-normal" style={style.subSectionFieldLabel}>
+        <div className="field-label is-normal">
           <Label {...labelAttributes} />
         </div>
         <div className="field-body" style={style.subSectionFieldBody}>

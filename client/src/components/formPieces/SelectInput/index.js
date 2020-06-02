@@ -16,7 +16,8 @@ function selectInput({
   isActive,
   formId,
   inputRef,
-  isInline
+  isInline,
+  fieldToLabelRatio
 }) {
 
   const inputId = `${sectionName ? sectionName + '-' : ''}${name}-input-${formId}`;
@@ -27,7 +28,8 @@ function selectInput({
         label,
         inputId,
         sublabel,
-        isInline
+        isInline,
+        fieldToLabelRatio
       }}
       hasIcon={iconClass ? 'left' : false}
     >

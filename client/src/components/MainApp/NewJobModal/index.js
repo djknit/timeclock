@@ -79,6 +79,8 @@ class NewJobModal extends Component {
 
     const isFormActive = isActive && !isLoading && !hasSuccess;
 
+    const topLevelFieldLabelRatio = 5.8;
+
     const style = getStyle();
 
     return (
@@ -88,6 +90,8 @@ class NewJobModal extends Component {
         closeModal={closeModal}
       >
         <form id={formId}>
+          
+          
           <TextInput
             name="name"
             value={name}
@@ -101,6 +105,7 @@ class NewJobModal extends Component {
             isInline
             isActive={isFormActive}
             hasProblem={problems && problems.name}
+            fieldToLabelRatio={topLevelFieldLabelRatio}
           />
           <DateInput
             isInline
@@ -115,6 +120,7 @@ class NewJobModal extends Component {
             isActive={isFormActive}
             hasProblem={problems && problems.startDate}
             helpText="If not sure, just guess. An incorrect date will not cause problems."
+            fieldToLabelRatio={topLevelFieldLabelRatio}
           />
           <SelectInput
             name="timezone"
@@ -129,13 +135,15 @@ class NewJobModal extends Component {
             isInline
             isActive={isFormActive}
             hasProblem={problems && problems.timezone}
+            fieldToLabelRatio={topLevelFieldLabelRatio}
           />
           <WageInput
             name="wage"
             value={wage}
             {...{
               handleChange,
-              formId
+              formId,
+              topLevelFieldLabelRatio
             }}
             isActive={isFormActive}
             hasProblem={problems && problems.wage}

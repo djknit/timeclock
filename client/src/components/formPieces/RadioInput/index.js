@@ -13,7 +13,7 @@ function RadioInput({
   hasProblem,
   isActive,
   isInline,
-  isSubsection
+  fieldToLabelRatio
 }) {
 
   function getSelectedOptionRef() {
@@ -34,7 +34,7 @@ function RadioInput({
         label,
         sublabel,
         isInline,
-        isSubsection
+        fieldToLabelRatio
       }}
       selectedRadioInput={getSelectedOptionRef()}
     >
@@ -67,6 +67,9 @@ function RadioInput({
           </label>
         )
       )}
+      {helpText &&
+        <p className="help">{helpText}</p>
+      }
     </BoxInputFrame>
   );
 

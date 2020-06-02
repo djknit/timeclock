@@ -17,12 +17,15 @@ function OvertimeInput({
   radioUseMultiplierTrueRef,
   radioUseMultiplierFalseRef,
   formId,
-  rawRate
+  rawBaseRate,
+  secondLevelFieldLabelRatio
 }) {
 
   const thisSectionName = `${sectionName}-${name}`;
 
   const { useOvertime, useMultiplier, multiplier, rate, cutoff } = value;
+
+  const thirdLevelFieldLabelRatio = 3.5;
 
   const rateInputTypeDependentProps = (
     useMultiplier ?
@@ -33,7 +36,10 @@ function OvertimeInput({
       placeholder: 'OT rate multiplier...',
       hasProblem: problems && problems.multiplier,
       isMultiplier: true,
-      wageToMultiply: rawRate
+      wageToMultiply: {
+        rate: rawBaseRate,
+        currency
+      }
     } :
     {
       name: 'rate',
@@ -50,7 +56,9 @@ function OvertimeInput({
     isActive: isActive && useOvertime,
     formId,
     isInline: true,
-    currency
+    currency,
+    isSubsection: true,
+    fieldToLabelRatio: thirdLevelFieldLabelRatio
   };
 
   return (
@@ -75,6 +83,8 @@ function OvertimeInput({
         handleChange={reportChange}
         isInline
         {...{ isActive }}
+        fieldToLabelRatio={secondLevelFieldLabelRatio}
+        helpText='If overtime is "off" all hours will be assigned the same pay rate regardless of the number of hours worked in that week.'
       />
       <RadioInput
         name="useMultiplier"
@@ -97,6 +107,8 @@ function OvertimeInput({
         isInline
         isSubsection
         isActive={isActive && useOvertime}
+        fieldToLabelRatio={thirdLevelFieldLabelRatio}
+        helpText="OT pay  rate can either be a multiple of the base rate, or you may enter the exact hourly OT rate instead."
       />
       <CurrencyInput {...rateInputProps} />
       <CurrencyInput

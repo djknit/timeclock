@@ -16,6 +16,8 @@ const currencyOptions = [
       name: `${_data.currency} (${_data.code})`,
       value: _data.code
     })
+  ).filter(
+    _data => _data.value !== 'XTS' && _data.value !== 'XXX'
   )
 ];
 
@@ -33,7 +35,8 @@ function WageInput({
   radioUseOvertimeFalseRef,
   radioUseMultiplierTrueRef,
   radioUseMultiplierFalseRef,
-  windowWidth
+  windowWidth,
+  topLevelFieldLabelRatio
 }) {
 
   const { rate, currency, overtime, useWage } = value;
@@ -54,6 +57,8 @@ function WageInput({
   const reportChange = changeReporterFactory(handleChange, name, value);
 
   const style = getStyle();
+
+  const secondLevelFieldLabelRatio = 4.7;
 
   return (
     <>
@@ -82,6 +87,7 @@ function WageInput({
           handleChange={reportChange}
           isInline
           hasProblem={problems && problems.useWage}
+          fieldToLabelRatio={topLevelFieldLabelRatio}
           {...{ isActive }}
         />
         <SelectInput
@@ -97,6 +103,7 @@ function WageInput({
           {...{ formId }}
           isInline
           isActive={isActive && useWage}
+          fieldToLabelRatio={secondLevelFieldLabelRatio}
         />
         <CurrencyInput
           name="rate"
@@ -112,6 +119,7 @@ function WageInput({
           }}
           isInline
           isActive={isActive && useWage}
+          fieldToLabelRatio={secondLevelFieldLabelRatio}
         />
         <OvertimeInput
           name="overtime"
@@ -126,10 +134,11 @@ function WageInput({
             radioUseOvertimeFalseRef,
             radioUseMultiplierTrueRef,
             radioUseMultiplierFalseRef,
-            currency
+            currency,
+            secondLevelFieldLabelRatio
           }}
           isActive={isActive && useWage}
-          rawRate={rate}
+          rawBaseRate={rate}
         />
       </div>
     </>

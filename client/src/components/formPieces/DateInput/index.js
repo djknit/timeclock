@@ -19,7 +19,8 @@ function DateInput({
   isActive,
   formId,
   isInline,
-  inputRef
+  inputRef,
+  fieldToLabelRatio
 }) {
 
   function reportChange(date) {
@@ -41,7 +42,8 @@ function DateInput({
         label,
         sublabel,
         isInline,
-        inputId
+        inputId,
+        fieldToLabelRatio
       }}
     >
       <DatePicker
