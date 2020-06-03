@@ -1,6 +1,7 @@
 import React from 'react';
 import ccData from 'currency-codes/data';
 import getStyle from './style';
+import { changeHandlerFactoryForChildrenFactory } from '../../utilities';
 import SelectInput from '../SelectInput';
 import CurrencyInput from '../CurrencyInput';
 import RadioInput from '../RadioInput';
@@ -22,11 +23,11 @@ const currencyOptions = [
 ];
 
 function WageInput({
-  name,
+  propName,
   value,
   hasProblem,
   problems,
-  handleChange,
+  changeHandlerFactory,
   isActive,
   formId,
   radioUseWageTrueRef,
@@ -35,26 +36,20 @@ function WageInput({
   radioUseOvertimeFalseRef,
   radioUseMultiplierTrueRef,
   radioUseMultiplierFalseRef,
-  windowWidth,
   topLevelFieldLabelRatio
 }) {
 
   const { rate, currency, overtime, useWage } = value;
 
-  function changeReporterFactory(_handleChange, sectionPropName, sectionValue) {
-    return function(event) {
-      let _value = { ...sectionValue };
-      _value[event.target.name] = event.target.value;
-      _handleChange({
-        target: {
-          name: sectionPropName,
-          value: _value
-        }
-      });
-    };
-  }
+  const reportChange = changeHandlerFactory(propName, false);
 
-  const reportChange = changeReporterFactory(handleChange, name, value);
+  const changeHandlerFactoryForChildren = changeHandlerFactoryForChildrenFactory(
+    function(childPropName, childPropValue) {
+      let _value = { ...value };
+      _value[childPropName] = childPropValue;
+      reportChange(_value);
+    }
+  );
 
   const style = getStyle();
 
@@ -69,8 +64,8 @@ function WageInput({
       </div>
       <div>
         <RadioInput
-          name="useWage"
-          sectionName={name}
+          propName="useWage"
+          sectionName={propName}
           value={useWage}
           label="Track Pay?"
           options={[
@@ -84,18 +79,18 @@ function WageInput({
               ref: radioUseWageFalseRef
             }
           ]}
-          handleChange={reportChange}
+          changeHandlerFactory={changeHandlerFactoryForChildren}
           isInline
           hasProblem={problems && problems.useWage}
           fieldToLabelRatio={topLevelFieldLabelRatio}
           {...{ isActive }}
         />
         <SelectInput
-          name="currency"
-          sectionName={name}
+          propName="currency"
+          sectionName={propName}
           value={currency}
           options={currencyOptions}
-          handleChange={reportChange}
+          changeHandlerFactory={changeHandlerFactoryForChildren}
           label="Currency:"
           placeholder="Select currency..."
           helpText='Select "other" (1st option) to skip or if you need to enter values smaller than the currency typically supports (e.g. fractions of a cent in USD).'
@@ -106,13 +101,13 @@ function WageInput({
           fieldToLabelRatio={secondLevelFieldLabelRatio}
         />
         <CurrencyInput
-          name="rate"
-          sectionName={name}
+          propName="rate"
+          sectionName={propName}
           value={rate}
           label="Hourly Rate:"
           placeholder="Pay per hour..."
           hasProblem={problems && problems.rate}
-          handleChange={reportChange}
+          changeHandlerFactory={changeHandlerFactoryForChildren}
           {...{
             formId,
             currency
@@ -122,12 +117,12 @@ function WageInput({
           fieldToLabelRatio={secondLevelFieldLabelRatio}
         />
         <OvertimeInput
-          name="overtime"
-          sectionName={name}
+          propName="overtime"
+          sectionName={propName}
           value={overtime}
           hasProblem={problems && problems.overtime}
           problems={(problems && problems.overtime) || {}}
-          reportChange={changeReporterFactory(reportChange, 'overtime', overtime)}
+          changeHandlerFactory={changeHandlerFactoryForChildren}
           {...{
             formId,
             radioUseOvertimeTrueRef,

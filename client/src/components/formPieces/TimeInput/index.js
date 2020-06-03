@@ -3,7 +3,7 @@ import BoxInputFrame from '../BoxInputFrame';
 import getStyle from './style';
 
 function TimeInput({
-  name,
+  propName,
   sectionName,
   value,
   label,
@@ -18,14 +18,14 @@ function TimeInput({
   fieldToLabelRatio
 }) {
 
-  const hoursInputId = `${sectionName ? sectionName + '-' : ''}${name}-hours-input-${formId}`;
+  const hoursInputId = `${sectionName ? sectionName + '-' : ''}${propName}-hours-input-${formId}`;
 
   const { hours, minutes, is24hr } = value;
 
   const style = getStyle();
 
   function reportChange() {
-    
+
   }
 
   return (
@@ -46,6 +46,7 @@ function TimeInput({
         onChange={handleChange}
         disabled={!isActive}
         ref={inputRef}
+        step={1}
       />
       {helpText &&
         <p className="help">{helpText}</p>

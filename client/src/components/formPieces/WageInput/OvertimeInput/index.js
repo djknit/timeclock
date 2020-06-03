@@ -1,15 +1,16 @@
 import React from 'react';
+import { changeHandlerFactoryForChildrenFactory } from '../../../utilities';
 import RadioInput from '../../RadioInput';
 import CurrencyInput from '../../CurrencyInput';
 import TextInput from '../../TextInput';
 
 function OvertimeInput({
-  name,
+  propName,
   sectionName,
   value,
   hasProblem,
   problems,
-  reportChange,
+  changeHandlerFactory,
   isActive,
   currency,
   radioUseOvertimeTrueRef,
@@ -21,16 +22,26 @@ function OvertimeInput({
   secondLevelFieldLabelRatio
 }) {
 
-  const thisSectionName = `${sectionName}-${name}`;
+  const thisSectionName = `${sectionName}-${propName}`;
 
   const { useOvertime, useMultiplier, multiplier, rate, cutoff } = value;
+
+  const reportChange = changeHandlerFactory(propName, false);
+
+  const changeHandlerFactoryForChildren = changeHandlerFactoryForChildrenFactory(
+    function(childPropName, childPropValue) {
+      let _value = { ...value };
+      _value[childPropName] = childPropValue;
+      reportChange(_value);
+    }
+  );
 
   const thirdLevelFieldLabelRatio = 3.5;
 
   const rateInputTypeDependentProps = (
     useMultiplier ?
     {
-      name: 'multiplier',
+      propName: 'multiplier',
       value: multiplier,
       label: 'Multiplier:',
       placeholder: 'OT rate multiplier...',
@@ -42,7 +53,7 @@ function OvertimeInput({
       }
     } :
     {
-      name: 'rate',
+      propName: 'rate',
       value: rate,
       label: 'Overtime Rate:',
       placeholder: 'Pay per OT hour...',
@@ -52,7 +63,7 @@ function OvertimeInput({
   const rateInputProps = {
     ...rateInputTypeDependentProps,
     sectionName: thisSectionName,
-    handleChange: reportChange,
+    changeHandlerFactory: changeHandlerFactoryForChildren,
     isActive: isActive && useOvertime,
     formId,
     isInline: true,
@@ -64,7 +75,7 @@ function OvertimeInput({
   return (
     <>
       <RadioInput
-        name="useOvertime"
+        propName="useOvertime"
         sectionName={thisSectionName}
         value={useOvertime}
         label="Overtime:"
@@ -80,14 +91,14 @@ function OvertimeInput({
           }
         ]}
         hasProblem={problems && problems.useOvertime}
-        handleChange={reportChange}
+        changeHandlerFactory={changeHandlerFactoryForChildren}
         isInline
         {...{ isActive }}
         fieldToLabelRatio={secondLevelFieldLabelRatio}
         helpText='If overtime is "off" all hours will be assigned the same pay rate regardless of the number of hours worked in that week.'
       />
       <RadioInput
-        name="useMultiplier"
+        propName="useMultiplier"
         sectionName={thisSectionName}
         value={useMultiplier}
         label="Use Multiplier?"
@@ -103,7 +114,7 @@ function OvertimeInput({
           }
         ]}
         hasProblem={problems && problems.useMultiplier}
-        handleChange={reportChange}
+        changeHandlerFactory={changeHandlerFactoryForChildren}
         isInline
         isSubsection
         isActive={isActive && useOvertime}
@@ -111,9 +122,9 @@ function OvertimeInput({
         helpText="OT pay  rate can either be a multiple of the base rate, or you may enter the exact hourly OT rate instead."
       />
       <CurrencyInput {...rateInputProps} />
-      <CurrencyInput
-
-      />
+      {/* <CurrencyInput
+        
+      /> */}
     </>
   );
 }

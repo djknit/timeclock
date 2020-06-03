@@ -2,11 +2,11 @@ import React from 'react';
 import BoxInputFrame from '../BoxInputFrame';
 
 function selectInput({
-  name,
+  propName,
   sectionName,
   value,
   options,
-  handleChange,
+  changeHandlerFactory,
   label,
   sublabel,
   helpText,
@@ -20,7 +20,7 @@ function selectInput({
   fieldToLabelRatio
 }) {
 
-  const inputId = `${sectionName ? sectionName + '-' : ''}${name}-input-${formId}`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
 
   return (
     <BoxInputFrame
@@ -35,11 +35,10 @@ function selectInput({
     >
       <div className={`select is-fullwidth${hasProblem ? ' is-danger' : ''}`}>
         <select
-          name={name}
           id={inputId}
           ref={inputRef}
           value={value}
-          onChange={handleChange}
+          onChange={changeHandlerFactory(propName, true)}
           disabled={!isActive}
         >
           {

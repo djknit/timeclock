@@ -3,7 +3,7 @@ import getStyle from './style';
 import BoxInputFrame from '../BoxInputFrame';
 
 function TextInput({
-  name,
+  propName,
   sectionName,
   value,
   label,
@@ -12,7 +12,7 @@ function TextInput({
   hasProblem,
   iconClass,
   helpText,
-  handleChange,
+  changeHandlerFactory,
   isActive,
   formId,
   type,
@@ -21,7 +21,7 @@ function TextInput({
   fieldToLabelRatio
 }) {
 
-  const inputId = `${sectionName ? sectionName + '-' : ''}${name}-input-${formId}`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
 
   let typeAttrVal, autocompleteAttrVal;
   if (type === 'password' || type === 'newPassword') {
@@ -52,10 +52,9 @@ function TextInput({
     >
       <input
         id={inputId}
-        name={name}
         value={value}
         placeholder={placeholder}
-        onChange={handleChange}
+        onChange={changeHandlerFactory && changeHandlerFactory(propName, true)}
         disabled={!isActive}
         className={hasProblem ? 'input is-danger' : 'input'}
         type={typeAttrVal}

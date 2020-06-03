@@ -4,7 +4,7 @@ import BoxInputFrame from '../BoxInputFrame';
 import { processCurrencyInputValue, processCurrencyMultiplierInputValue, getCurrencySymbol } from '../../utilities';
 
 function CurrencyInput({
-  name,
+  propName,
   sectionName,
   value,
   label,
@@ -12,7 +12,7 @@ function CurrencyInput({
   placeholder,
   hasProblem,
   helpText,
-  handleChange,
+  changeHandlerFactory,
   isActive,
   formId,
   inputRef,
@@ -24,7 +24,7 @@ function CurrencyInput({
   fieldToLabelRatio
 }) {
 
-  const inputId = `${sectionName ? sectionName + '-' : ''}${name}-input-${formId}`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
 
   const style = getStyle();
 
@@ -53,11 +53,10 @@ function CurrencyInput({
         className={hasProblem ? 'input is-danger' : 'input'}
         type="number"
         style={style.input}
-        onChange={handleChange}
+        onChange={changeHandlerFactory(propName, true)}
         disabled={!isActive}
         ref={inputRef}
         {...{
-          name,
           placeholder,
           value
         }}

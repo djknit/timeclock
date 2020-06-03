@@ -3,7 +3,13 @@ import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import {
-  api, constants, getValidTimezones, guessUserTimezone, getTimezoneAbbreviation, processCurrencyInputValue
+  api,
+  constants,
+  getValidTimezones,
+  guessUserTimezone,
+  getTimezoneAbbreviation,
+  processCurrencyInputValue,
+  changeHandlerFactoryFactory
 } from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
 import { TextInput, SelectInput, DateInput, WageInput, RadioInput } from '../../formPieces';
@@ -50,7 +56,8 @@ const timezoneOptions = getValidTimezones().map(
 class NewJobModal extends Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
+    // this.changeHandlerFactory = this.changeHandlerFactory.bind(this);
     this.radioUseWageTrue = React.createRef();
     this.radioUseWageFalse = React.createRef();
     this.radioUseOvertimeTrue = React.createRef();
@@ -60,18 +67,9 @@ class NewJobModal extends Component {
     this.state = startingState;
   };
 
-  handleChange(event) {
-    const { name, value } = event.target;
-    console.log(name)
-    console.log(value)
-    this.setState({
-      [name]: value
-    });
-  };
-
   render() {
 
-    const { state, props, handleChange } = this;
+    const { state, props, changeHandlerFactory } = this;
     const {
       name, startDate, timezone, useWage, wage, dayCutoff, weekBegins, problems, hasProblem, isLoading, hasSuccess,  problemMessages, showMessage, secondsUntilRedirect
     } = state;
@@ -90,15 +88,13 @@ class NewJobModal extends Component {
         closeModal={closeModal}
       >
         <form id={formId}>
-          
-          
           <TextInput
-            name="name"
+            propName="name"
             value={name}
             label="Name:"
             placeholder="Name this job..."
             {...{
-              handleChange,
+              changeHandlerFactory,
               inputRef,
               formId
             }}
@@ -109,12 +105,12 @@ class NewJobModal extends Component {
           />
           <DateInput
             isInline
-            name="startDate"
+            propName="startDate"
             value={startDate}
             label="Start Date:"
             placeholder="Type or select date..."
             {...{
-              handleChange,
+              changeHandlerFactory,
               formId
             }}
             isActive={isFormActive}
@@ -123,13 +119,13 @@ class NewJobModal extends Component {
             fieldToLabelRatio={topLevelFieldLabelRatio}
           />
           <SelectInput
-            name="timezone"
+            propName="timezone"
             value={timezone}
             label="Timezone:"
             placeholder="The timezone your hours are counted in..."
             options={timezoneOptions}
             {...{
-              handleChange,
+              changeHandlerFactory,
               formId
             }}
             isInline
@@ -138,10 +134,10 @@ class NewJobModal extends Component {
             fieldToLabelRatio={topLevelFieldLabelRatio}
           />
           <WageInput
-            name="wage"
+            propName="wage"
             value={wage}
             {...{
-              handleChange,
+              changeHandlerFactory,
               formId,
               topLevelFieldLabelRatio
             }}

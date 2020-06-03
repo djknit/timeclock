@@ -1,4 +1,4 @@
-import { api } from '../../utilities';
+export * from '../../utilities';
 
 const constants = {
   secondsToDelayRedirect: 2.7,
@@ -6,6 +6,5 @@ const constants = {
 };
 
 export {
-  api,
   constants
 };
