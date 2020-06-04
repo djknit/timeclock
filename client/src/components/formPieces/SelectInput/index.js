@@ -49,7 +49,7 @@ function selectInput({
             )
           }
           {
-            options.map((option, index) => (
+            options.map(option => (
               <option
                 key={option.value}
                 value={option.value}

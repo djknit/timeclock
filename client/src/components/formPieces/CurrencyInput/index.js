@@ -33,7 +33,6 @@ function CurrencyInput({
     processCurrencyMultiplierInputValue(value, wageToMultiply) :
     processCurrencyInputValue(value, currency)
   );
-  console.log(processedValue)
 
   const currencySymbol = isMultiplier ? undefined : getCurrencySymbol(currency);
 

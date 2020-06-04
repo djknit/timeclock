@@ -13,9 +13,11 @@ function Control({
   let className = 'control';
   if (isInline) className += ' is-expanded';
   if (hasIcon) {
-    className += hasIcon === 'right' ?
+    className += (
+      hasIcon === 'right' ?
       ' has-icons-right' :
-      ' has-icons-left';
+      ' has-icons-left'
+    );
   }
   const completeStyle = getStyle(style, isRadio, isInline, windowWidth);
 

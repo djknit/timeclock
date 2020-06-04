@@ -3,6 +3,7 @@ import { changeHandlerFactoryForChildrenFactory } from '../../../utilities';
 import RadioInput from '../../RadioInput';
 import CurrencyInput from '../../CurrencyInput';
 import TextInput from '../../TextInput';
+import TimeInput from '../../TimeInput';
 
 function OvertimeInput({
   propName,
@@ -122,9 +123,20 @@ function OvertimeInput({
         helpText="OT pay  rate can either be a multiple of the base rate, or you may enter the exact hourly OT rate instead."
       />
       <CurrencyInput {...rateInputProps} />
-      {/* <CurrencyInput
-        
-      /> */}
+      <TimeInput
+        propName="cutoff"
+        sectionName={thisSectionName}
+        value={cutoff}
+        label="OT cutoff:"
+        hasProblem={problems && problems.cutoff}
+        problems={problems && problems.cutoff}
+        changeHandlerFactory={changeHandlerFactoryForChildren}
+        isInline
+        isSubsection
+        isActive={isActive && useOvertime}
+        fieldToLabelRatio={thirdLevelFieldLabelRatio}
+        helpText="How many hours need to be worked in a week before overtime kicks in?"
+      />
     </>
   );
 }

@@ -29,7 +29,10 @@ const startingState = {
       useMultiplier: true,
       multiplier: 1.5,
       rate: '',
-      cutoff: 40
+      cutoff: {
+        hours: 40,
+        minutes: 0
+      }
     }
   },
   dayCutoff: 0,
@@ -57,21 +60,33 @@ class NewJobModal extends Component {
   constructor(props) {
     super(props);
     this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
-    // this.changeHandlerFactory = this.changeHandlerFactory.bind(this);
     this.radioUseWageTrue = React.createRef();
     this.radioUseWageFalse = React.createRef();
     this.radioUseOvertimeTrue = React.createRef();
     this.radioUseOvertimeFalse = React.createRef();
     this.radioUseMultiplierTrue = React.createRef();
     this.radioUseMultiplierFalse = React.createRef();
-    this.state = startingState;
+    this.state = { ...startingState };
   };
 
   render() {
 
     const { state, props, changeHandlerFactory } = this;
     const {
-      name, startDate, timezone, useWage, wage, dayCutoff, weekBegins, problems, hasProblem, isLoading, hasSuccess,  problemMessages, showMessage, secondsUntilRedirect
+      name,
+      startDate,
+      timezone,
+      useWage,
+      wage,
+      dayCutoff,
+      weekBegins,
+      problems,
+      hasProblem,
+      isLoading,
+      hasSuccess, 
+      problemMessages,
+      showMessage,
+      secondsUntilRedirect
     } = state;
     const { isActive, closeModal, inputRef } = props;
 
