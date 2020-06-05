@@ -11,10 +11,10 @@ function getHoursAndMinutesFromMinutes(numMinutes) {
 }
 
 function getTextOfHoursAndMinutes({ hours, minutes}) {
-  let timeText = hours ? `${hours} hour` : '';
-  if (hours === 1) timeText += 's';
-  if (minutes) timeText += ` and ${minutes} minute`;
-  if (minutes === 1) timeText += 's';
+  let timeText = `${hours || 0} hour`;
+  if (parseInt(hours) !== 1) timeText += 's';
+  timeText += ` and ${minutes || 0} minute`;
+  if (parseInt(minutes) !== 1) timeText += 's';
   return timeText;
 }
 

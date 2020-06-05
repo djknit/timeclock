@@ -127,6 +127,8 @@ function OvertimeInput({
         propName="cutoff"
         sectionName={thisSectionName}
         value={cutoff}
+        max={10079}
+        min={1}
         label="OT cutoff:"
         hasProblem={problems && problems.cutoff}
         problems={problems && problems.cutoff}

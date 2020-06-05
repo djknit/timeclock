@@ -6,6 +6,7 @@ import SelectInput from '../SelectInput';
 import CurrencyInput from '../CurrencyInput';
 import RadioInput from '../RadioInput';
 import OvertimeInput from './OvertimeInput';
+import { addPseudoPseudoClasses } from '../../higherOrder';
 
 const currencyOptions = [
   {
@@ -22,7 +23,7 @@ const currencyOptions = [
   )
 ];
 
-function WageInput({
+function _WageInput_needsPseudo({
   propName,
   value,
   hasProblem,
@@ -36,7 +37,12 @@ function WageInput({
   radioUseOvertimeFalseRef,
   radioUseMultiplierTrueRef,
   radioUseMultiplierFalseRef,
-  topLevelFieldLabelRatio
+  wageSectionContentRef,
+  wageSectionContentHeight,
+  isExpanded,
+  topLevelFieldLabelRatio,
+  pseudoState, // for section content toggle arrow
+  pseudoHandlers
 }) {
 
   const { rate, currency, overtime, useWage } = value;
@@ -51,7 +57,7 @@ function WageInput({
     }
   );
 
-  const style = getStyle();
+  const style = getStyle(wageSectionContentHeight, isExpanded, pseudoState);
 
   const secondLevelFieldLabelRatio = 4.7;
 
@@ -62,7 +68,7 @@ function WageInput({
         <span style={style.sectionLabelText}>Wage</span>
         <hr style={style.sectionLabelHr} />
       </div>
-      <div>
+      <div style={style.sectionContent} ref={wageSectionContentRef}>
         <RadioInput
           propName="useWage"
           sectionName={propName}
@@ -136,8 +142,18 @@ function WageInput({
           rawBaseRate={rate}
         />
       </div>
+      <div style={style.sectionFooter}>
+        <hr style={style.footerHr} />
+        <i
+          className="fas fa-chevron-up"
+          style={style.sectionToggle}
+          {...pseudoHandlers}
+        />
+      </div>
     </>
   );
 }
+
+const WageInput = addPseudoPseudoClasses(_WageInput_needsPseudo);
 
 export default WageInput;

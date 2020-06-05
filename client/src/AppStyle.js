@@ -8,6 +8,9 @@ const headingFontFam = 'Averia Serif Libre, Alice, IM Fell English, Overlock, se
 const sectionHeadingFontFam = 'Averia Serif Libre, IM Fell English, serif';
 const footerHeight = 50;
 
+const bulmaFormBlue = '#3273dc';
+const bulmaFormBlack = '#363636';
+
 function shadow(blur, offsetDirection, color) {
   const _blur = `${blur || 5}px`;
   const { x, y } = offsetDirection || {};
@@ -42,5 +45,7 @@ export {
   headingFontFam,
   sectionHeadingFontFam,
   footerHeight,
+  bulmaFormBlue,
+  bulmaFormBlack,
   shadow
 };

@@ -88,7 +88,14 @@ class NewJobModal extends Component {
       showMessage,
       secondsUntilRedirect
     } = state;
-    const { isActive, closeModal, inputRef } = props;
+    const {
+      isActive,
+      closeModal,
+      inputRef,
+      wageSectionContentRef,
+      wageSectionContentHeight,
+      isWageSectionExpanded
+    } = props;
 
     const isFormActive = isActive && !isLoading && !hasSuccess;
 
@@ -151,14 +158,17 @@ class NewJobModal extends Component {
           <WageInput
             propName="wage"
             value={wage}
-            {...{
-              changeHandlerFactory,
-              formId,
-              topLevelFieldLabelRatio
-            }}
             isActive={isFormActive}
             hasProblem={problems && problems.wage}
             problems={problems && problems.wage}
+            isExpanded={isWageSectionExpanded}
+            {...{
+              wageSectionContentHeight,
+              changeHandlerFactory,
+              formId,
+              topLevelFieldLabelRatio,
+              wageSectionContentRef,
+            }}
             radioUseWageTrueRef={this.radioUseWageTrue}
             radioUseWageFalseRef={this.radioUseWageFalse}
             radioUseOvertimeTrueRef={this.radioUseOvertimeTrue}
