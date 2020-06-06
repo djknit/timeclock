@@ -13,7 +13,8 @@ function RadioInput({
   hasProblem,
   isActive,
   isInline,
-  fieldToLabelRatio
+  fieldToLabelRatio,
+  fieldStyle
 }) {
 
   function getSelectedOptionRef() {
@@ -42,6 +43,7 @@ function RadioInput({
         fieldToLabelRatio
       }}
       selectedRadioInput={getSelectedOptionRef()}
+      styles={{ field: fieldStyle }}
     >
       {options.map(
         (option, index) => (

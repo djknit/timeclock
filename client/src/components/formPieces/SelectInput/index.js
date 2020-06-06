@@ -17,7 +17,8 @@ function selectInput({
   formId,
   inputRef,
   isInline,
-  fieldToLabelRatio
+  fieldToLabelRatio,
+  fieldStyle
 }) {
 
   const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
@@ -32,6 +33,7 @@ function selectInput({
         fieldToLabelRatio
       }}
       hasIcon={iconClass ? 'left' : false}
+      styles={{ field: fieldStyle }}
     >
       <div className={`select is-fullwidth${hasProblem ? ' is-danger' : ''}`}>
         <select

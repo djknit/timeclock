@@ -42,7 +42,9 @@ function _WageInput_needsPseudo({
   isExpanded,
   topLevelFieldLabelRatio,
   pseudoState, // for section content toggle arrow
-  pseudoHandlers
+  pseudoHandlers,
+  isWageContentAnimationOn,
+  toggleSectionContent
 }) {
 
   const { rate, currency, overtime, useWage } = value;
@@ -57,7 +59,7 @@ function _WageInput_needsPseudo({
     }
   );
 
-  const style = getStyle(wageSectionContentHeight, isExpanded, pseudoState);
+  const style = getStyle(wageSectionContentHeight, isExpanded, pseudoState, isWageContentAnimationOn);
 
   const secondLevelFieldLabelRatio = 4.7;
 
@@ -68,29 +70,30 @@ function _WageInput_needsPseudo({
         <span style={style.sectionLabelText}>Wage</span>
         <hr style={style.sectionLabelHr} />
       </div>
+      <RadioInput
+        propName="useWage"
+        sectionName={propName}
+        value={useWage}
+        label="Track Pay?"
+        options={[
+          {
+            value: true,
+            label: 'Yes',
+            ref: radioUseWageTrueRef
+          }, {
+            value: false,
+            label: 'No',
+            ref: radioUseWageFalseRef
+          }
+        ]}
+        changeHandlerFactory={changeHandlerFactoryForChildren}
+        isInline
+        hasProblem={problems && problems.useWage}
+        fieldToLabelRatio={topLevelFieldLabelRatio}
+        {...{ isActive }}
+        fieldStyle={style.useWageInputField}
+      />
       <div style={style.sectionContent} ref={wageSectionContentRef}>
-        <RadioInput
-          propName="useWage"
-          sectionName={propName}
-          value={useWage}
-          label="Track Pay?"
-          options={[
-            {
-              value: true,
-              label: 'Yes',
-              ref: radioUseWageTrueRef
-            }, {
-              value: false,
-              label: 'No',
-              ref: radioUseWageFalseRef
-            }
-          ]}
-          changeHandlerFactory={changeHandlerFactoryForChildren}
-          isInline
-          hasProblem={problems && problems.useWage}
-          fieldToLabelRatio={topLevelFieldLabelRatio}
-          {...{ isActive }}
-        />
         <SelectInput
           propName="currency"
           sectionName={propName}
@@ -105,6 +108,7 @@ function _WageInput_needsPseudo({
           isInline
           isActive={isActive && useWage}
           fieldToLabelRatio={secondLevelFieldLabelRatio}
+          fieldStyle={style.firstInputInSection}
         />
         <CurrencyInput
           propName="rate"
@@ -148,6 +152,7 @@ function _WageInput_needsPseudo({
           className="fas fa-chevron-up"
           style={style.sectionToggle}
           {...pseudoHandlers}
+          onClick={() => toggleSectionContent()}
         />
       </div>
     </>

@@ -27,7 +27,8 @@ class MainApp extends Component {
       navHeight: undefined,
       isNewJobModalActive: false,
       newJobModalWageContentHeight: undefined,
-      newJobModalIsWageContentExpanded: true
+      newJobModalIsWageContentExpanded: false,
+      isWageContentAnimationOn: false
     };
   };
 
@@ -39,10 +40,19 @@ class MainApp extends Component {
     if (isActiveAfterToggle) {
       this.setState(
         { isNewJobModalActive: isActiveAfterToggle },
-        () => this.focusNewJobModal()
+        () => {
+          this.focusNewJobModal();
+          this.setWageContentHeight();
+        }
       );
     }
-    else this.setState({ isNewJobModalActive: isActiveAfterToggle });
+    else {
+      this.setState({
+        isNewJobModalActive: isActiveAfterToggle,
+        newJobModalWageContentHeight: undefined,
+        isWageContentAnimationOn: false
+      });
+    }
   };
 
   focusNewJobModal() {
@@ -52,19 +62,21 @@ class MainApp extends Component {
   setWageContentHeight() {
     this.setState({
       newJobModalWageContentHeight: this.newJobModalWageContentRef.current.scrollHeight,
-      newJobModalIsWageContentExpanded: !!this.state.newJobModalIsWageContentExpanded
-    });
+      newJobModalIsWageContentExpanded: !!this.state.newJobModalIsWageContentExpanded // set to false if currently undefined
+    }, () => {console.log('setWageContentHeight');console.log(this.state)});
   };
 
   toggleNewJobModalWageContent(newIsExpandedValue) {
+    console.log('toggleNewJobModalWageContent')
     const wasNewValueProvided = !!newIsExpandedValue || newIsExpandedValue === false;
     this.setState({ // use parameter if provided or toggle opposite current value when no value is provided
       newJobModalIsWageContentExpanded: (
         wasNewValueProvided ?
         newIsExpandedValue :
         !this.state.newJobModalIsWageContentExpanded
-      )
-    });
+      ),
+      isWageContentAnimationOn: true
+    }, () => console.log(this.state));
   };
 
   catchApiUnauthorized(err) {
@@ -97,13 +109,13 @@ class MainApp extends Component {
 
   render() {
     const {
-      props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized, newJobModalWageContentRef
+      props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized, newJobModalWageContentRef, toggleNewJobModalWageContent
     } = this;
     const {
       history, match
     } = props;
     const {
-      navHeight, isNewJobModalActive, newJobModalIsWageContentExpanded, newJobModalWageContentHeight
+      navHeight, isNewJobModalActive, newJobModalIsWageContentExpanded, newJobModalWageContentHeight, isWageContentAnimationOn
     } = state;
 
     const style = getStyle(navHeight);
@@ -151,11 +163,13 @@ class MainApp extends Component {
           redirectToJobPage={redirectToJobPage}
           inputRef={newJobInputRef}
           {...{
-            catchApiUnauthorized
+            catchApiUnauthorized,
+            isWageContentAnimationOn
           }}
           wageSectionContentRef={newJobModalWageContentRef}
           wageSectionContentHeight={newJobModalWageContentHeight}
           isWageSectionExpanded={newJobModalIsWageContentExpanded}
+          toggleWageContent={toggleNewJobModalWageContent}
         />
       </>
     );

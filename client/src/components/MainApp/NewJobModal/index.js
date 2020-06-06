@@ -44,7 +44,8 @@ const startingState = {
   problemMessages: [],
   showMessage: true,
   hasBeenSubmitted: false,
-  secondsUntilRedirect: undefined
+  secondsUntilRedirect: undefined,
+  hasUseWageBeenChanged: false
 };
 const timezoneOptions = getValidTimezones().map(
   tzName => {
@@ -59,7 +60,8 @@ const timezoneOptions = getValidTimezones().map(
 class NewJobModal extends Component {
   constructor(props) {
     super(props);
-    this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
+    this.checkIfWageTurnedOnForFirstTime = this.checkIfWageTurnedOnForFirstTime.bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory(this.checkIfWageTurnedOnForFirstTime).bind(this);
     this.radioUseWageTrue = React.createRef();
     this.radioUseWageFalse = React.createRef();
     this.radioUseOvertimeTrue = React.createRef();
@@ -67,6 +69,14 @@ class NewJobModal extends Component {
     this.radioUseMultiplierTrue = React.createRef();
     this.radioUseMultiplierFalse = React.createRef();
     this.state = { ...startingState };
+  };
+
+  checkIfWageTurnedOnForFirstTime(changedPropName) {
+    if (changedPropName !== 'wage' || !this.state.wage.useWage) return;
+    if (!this.state.hasUseWageBeenChanged) {
+      this.props.toggleWageContent(true);
+      this.setState({ hasUseWageBeenChanged: true });
+    }
   };
 
   render() {
@@ -88,13 +98,16 @@ class NewJobModal extends Component {
       showMessage,
       secondsUntilRedirect
     } = state;
+
     const {
       isActive,
       closeModal,
       inputRef,
       wageSectionContentRef,
       wageSectionContentHeight,
-      isWageSectionExpanded
+      isWageSectionExpanded,
+      isWageContentAnimationOn,
+      toggleWageContent
     } = props;
 
     const isFormActive = isActive && !isLoading && !hasSuccess;
@@ -168,6 +181,7 @@ class NewJobModal extends Component {
               formId,
               topLevelFieldLabelRatio,
               wageSectionContentRef,
+              isWageContentAnimationOn
             }}
             radioUseWageTrueRef={this.radioUseWageTrue}
             radioUseWageFalseRef={this.radioUseWageFalse}
@@ -175,6 +189,7 @@ class NewJobModal extends Component {
             radioUseOvertimeFalseRef={this.radioUseOvertimeFalse}
             radioUseMultiplierTrueRef={this.radioUseMultiplierTrue}
             radioUseMultiplierFalseRef={this.radioUseMultiplierFalse}
+            toggleSectionContent={toggleWageContent}
           />
         </form>
       </ModalSkeleton>

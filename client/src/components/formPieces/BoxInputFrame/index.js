@@ -37,6 +37,7 @@ function _BoxInputFrame_needsData({
     } :
     {}
   );
+  fieldAttributes.style = style.field;
   const labelAttributes = { ...labelProps, isRadio, windowWidth, selectedRadioInput };
 
   return isInline ?
