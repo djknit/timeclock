@@ -49,7 +49,8 @@ function getSectionContentStyle(heightState, isExpanded, isAnimationOn) {
   if (!isAnimationOn && !isExpanded) {
     variableStyles = {
       position: 'absolute',
-      opacity: 0
+      opacity: 0,
+      zIndex: 0
     };
   }
   else if (isAnimationOn) {

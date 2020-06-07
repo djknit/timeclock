@@ -77,7 +77,7 @@ class _NewJobModal_needsCollapsing extends Component {
   };
 
   checkIfSectionTurnedOnForFirstTime(changedPropName) {
-    // if `useWage` is set to true and wage section has never been expanded, expand it automatically; same for cutoffs section
+    // If `useWage` is set to true and wage section has never been expanded, expand it automatically. Same goes for cutoffs section.
     const { wage, cutoffs } = this.state;
     const { wageContentToggle, cutoffsContentToggle } = this.props;
     if (changedPropName === 'wage' && wage.useWage && !wageContentToggle.hasBeenExpanded) {
@@ -131,6 +131,7 @@ class _NewJobModal_needsCollapsing extends Component {
     const isFormActive = isActive && !isLoading && !hasSuccess;
 
     const topLevelFieldLabelRatio = 5.8;
+    const secondLevelFieldLabelRatio = 4.7;
 
     const style = getStyle();
 
@@ -196,6 +197,7 @@ class _NewJobModal_needsCollapsing extends Component {
               changeHandlerFactory,
               formId,
               topLevelFieldLabelRatio,
+              secondLevelFieldLabelRatio
             }}
             radioUseWageTrueRef={this.radioUseWageTrue}
             radioUseWageFalseRef={this.radioUseWageFalse}
@@ -214,7 +216,8 @@ class _NewJobModal_needsCollapsing extends Component {
             {...{
               changeHandlerFactory,
               formId,
-              topLevelFieldLabelRatio
+              topLevelFieldLabelRatio,
+              secondLevelFieldLabelRatio
             }}
             radioUseDefaultCutoffsTrueRef={this.radioUseDefaultCutoffsTrue}
             radioUseDefaultCutoffsFalseRef={this.radioUseDefaultCutoffsFalse}

@@ -46,7 +46,7 @@ function _BoxInputFrame_needsData({
         className="field is-horizontal"
         {...fieldAttributes}
       >
-        <div className="field-label is-normal">
+        <div className="field-label is-normal" style={style.fieldLabel}>
           <Label {...labelAttributes} />
         </div>
         <div className="field-body" style={style.subSectionFieldBody}>

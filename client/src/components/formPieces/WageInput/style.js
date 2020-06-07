@@ -1,10 +1,12 @@
+import { collapsableSectionStyles } from '../style';
+
 export default function getStyle() {
   return {
     useWageInputField: {
-      marginBottom: 0
+      ...collapsableSectionStyles.outsideField
     },
     firstInputInSection: {
-      marginTop: '.75rem' // matches Bulma field bottom margin
+      ...collapsableSectionStyles.firstInsideField
     }
   };
 };

@@ -38,6 +38,7 @@ function WageInput({
   radioUseMultiplierTrueRef,
   radioUseMultiplierFalseRef,
   topLevelFieldLabelRatio,
+  secondLevelFieldLabelRatio,
   contentToggle
 }) {
 
@@ -55,7 +56,9 @@ function WageInput({
 
   const style = getStyle();
 
-  const secondLevelFieldLabelRatio = 4.7;
+  const { isExpanded } = contentToggle || {};
+
+  const areInsideInputsActive = isActive && useWage && isExpanded;
 
   return (
     <CollapsableSection
@@ -99,7 +102,7 @@ function WageInput({
         hasProblem={problems && problems.currency}
         {...{ formId }}
         isInline
-        isActive={isActive && useWage}
+        isActive={areInsideInputsActive}
         fieldToLabelRatio={secondLevelFieldLabelRatio}
         fieldStyle={style.firstInputInSection}
       />
@@ -116,7 +119,7 @@ function WageInput({
           currency
         }}
         isInline
-        isActive={isActive && useWage}
+        isActive={areInsideInputsActive}
         fieldToLabelRatio={secondLevelFieldLabelRatio}
       />
       <OvertimeInput
@@ -135,7 +138,7 @@ function WageInput({
           currency,
           secondLevelFieldLabelRatio
         }}
-        isActive={isActive && useWage}
+        isActive={areInsideInputsActive}
         rawBaseRate={rate}
       />
     </CollapsableSection>

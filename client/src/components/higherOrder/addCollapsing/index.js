@@ -92,7 +92,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
           toggle,
           styles,
           setIsExpanded,
-          hasBeenExpanded
+          hasBeenExpanded,
+          isExpanded
         }
       };
 

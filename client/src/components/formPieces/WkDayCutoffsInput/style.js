@@ -1,10 +1,15 @@
+import { collapsableSectionStyles } from '../style';
+
 export default function getStyle() {
   return {
     useDefaultsInputField: {
-      marginBottom: 0
+      ...collapsableSectionStyles.outsideField
     },
     firstInputInSection: {
-      marginTop: '.75rem' // matches Bulma field bottom margin
+      ...collapsableSectionStyles.firstInsideField
+    },
+    weekBeginsLabel: {
+      paddingTop: 0
     }
   };
 };
