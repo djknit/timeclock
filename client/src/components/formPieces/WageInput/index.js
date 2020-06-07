@@ -1,10 +1,13 @@
 import React from 'react';
 import ccData from 'currency-codes/data';
 import getStyle from './style';
+import { changeHandlerFactoryForChildrenFactory } from '../../utilities';
+import SectionLabel from '../SectionLabel';
 import SelectInput from '../SelectInput';
 import CurrencyInput from '../CurrencyInput';
 import RadioInput from '../RadioInput';
 import OvertimeInput from './OvertimeInput';
+import { addPseudoPseudoClasses } from '../../higherOrder';
 
 const currencyOptions = [
   {
@@ -16,15 +19,17 @@ const currencyOptions = [
       name: `${_data.currency} (${_data.code})`,
       value: _data.code
     })
+  ).filter(
+    _data => _data.value !== 'XTS' && _data.value !== 'XXX'
   )
 ];
 
-function WageInput({
-  name,
+function _WageInput_needsPseudo({
+  propName,
   value,
   hasProblem,
   problems,
-  handleChange,
+  changeHandlerFactory,
   isActive,
   formId,
   radioUseWageTrueRef,
@@ -33,63 +38,66 @@ function WageInput({
   radioUseOvertimeFalseRef,
   radioUseMultiplierTrueRef,
   radioUseMultiplierFalseRef,
-  windowWidth
+  // wageSectionContentRef,
+  // wageSectionContentHeight,
+  // isExpanded,
+  topLevelFieldLabelRatio,
+  pseudoState, // for section content toggle arrow
+  pseudoHandlers,
+  // isWageContentAnimationOn,
+  // toggleSectionContent
+  contentToggle
 }) {
 
   const { rate, currency, overtime, useWage } = value;
 
-  function changeReporterFactory(_handleChange, sectionPropName, sectionValue) {
-    return function(event) {
-      let _value = { ...sectionValue };
-      _value[event.target.name] = event.target.value;
-      _handleChange({
-        target: {
-          name: sectionPropName,
-          value: _value
-        }
-      });
-    };
-  }
+  const reportChange = changeHandlerFactory(propName, false);
 
-  const reportChange = changeReporterFactory(handleChange, name, value);
+  const changeHandlerFactoryForChildren = changeHandlerFactoryForChildrenFactory(
+    function(childPropName, childPropValue) {
+      let _value = { ...value };
+      _value[childPropName] = childPropValue;
+      reportChange(_value);
+    }
+  );
 
-  const style = getStyle();
+  const style = getStyle(contentToggle.styles, pseudoState);
+
+  const secondLevelFieldLabelRatio = 4.7;
 
   return (
     <>
-      <div className="label" style={style.sectionLabel}>
-        &nbsp;
-        <span style={style.sectionLabelText}>Wage</span>
-        <hr style={style.sectionLabelHr} />
-      </div>
-      <div>
-        <RadioInput
-          name="useWage"
-          sectionName={name}
-          value={useWage}
-          label="Track Pay?"
-          options={[
-            {
-              value: true,
-              label: 'Yes',
-              ref: radioUseWageTrueRef
-            }, {
-              value: false,
-              label: 'No',
-              ref: radioUseWageFalseRef
-            }
-          ]}
-          handleChange={reportChange}
-          isInline
-          hasProblem={problems && problems.useWage}
-          {...{ isActive }}
-        />
+      <SectionLabel>Wage</SectionLabel>
+      <RadioInput
+        propName="useWage"
+        sectionName={propName}
+        value={useWage}
+        label="Track Pay?"
+        options={[
+          {
+            value: true,
+            label: 'Yes',
+            ref: radioUseWageTrueRef
+          }, {
+            value: false,
+            label: 'No',
+            ref: radioUseWageFalseRef
+          }
+        ]}
+        changeHandlerFactory={changeHandlerFactoryForChildren}
+        isInline
+        hasProblem={problems && problems.useWage}
+        fieldToLabelRatio={topLevelFieldLabelRatio}
+        {...{ isActive }}
+        fieldStyle={style.useWageInputField}
+      />
+      <div style={style.sectionContent} ref={contentToggle.containerRef}>
         <SelectInput
-          name="currency"
-          sectionName={name}
+          propName="currency"
+          sectionName={propName}
           value={currency}
           options={currencyOptions}
-          handleChange={reportChange}
+          changeHandlerFactory={changeHandlerFactoryForChildren}
           label="Currency:"
           placeholder="Select currency..."
           helpText='Select "other" (1st option) to skip or if you need to enter values smaller than the currency typically supports (e.g. fractions of a cent in USD).'
@@ -97,43 +105,58 @@ function WageInput({
           {...{ formId }}
           isInline
           isActive={isActive && useWage}
+          fieldToLabelRatio={secondLevelFieldLabelRatio}
+          fieldStyle={style.firstInputInSection}
         />
         <CurrencyInput
-          name="rate"
-          sectionName={name}
+          propName="rate"
+          sectionName={propName}
           value={rate}
           label="Hourly Rate:"
           placeholder="Pay per hour..."
           hasProblem={problems && problems.rate}
-          handleChange={reportChange}
+          changeHandlerFactory={changeHandlerFactoryForChildren}
           {...{
             formId,
             currency
           }}
           isInline
           isActive={isActive && useWage}
+          fieldToLabelRatio={secondLevelFieldLabelRatio}
         />
         <OvertimeInput
-          name="overtime"
-          sectionName={name}
+          propName="overtime"
+          sectionName={propName}
           value={overtime}
           hasProblem={problems && problems.overtime}
           problems={(problems && problems.overtime) || {}}
-          reportChange={changeReporterFactory(reportChange, 'overtime', overtime)}
+          changeHandlerFactory={changeHandlerFactoryForChildren}
           {...{
             formId,
             radioUseOvertimeTrueRef,
             radioUseOvertimeFalseRef,
             radioUseMultiplierTrueRef,
             radioUseMultiplierFalseRef,
-            currency
+            currency,
+            secondLevelFieldLabelRatio
           }}
           isActive={isActive && useWage}
-          rawRate={rate}
+          rawBaseRate={rate}
+        />
+      </div>
+      <div style={style.sectionFooter}>
+        <hr style={style.footerHr} />
+        <i
+          className="fas fa-chevron-up"
+          style={style.sectionToggle}
+          {...pseudoHandlers}
+          onClick={contentToggle.toggle}
         />
       </div>
     </>
   );
 }
+
+const WageInput = addPseudoPseudoClasses(_WageInput_needsPseudo);
 
 export default WageInput;

@@ -1,26 +1,38 @@
 export default function getStyle() {
 
-  const displays = {
+  // Match `amountDisplay` height to Bulma .input height, then add a few px on both top and bottom (next line)
+  const displayHeightAdjustment = 6;
+  // Bulma .input styles:
+    // font-size 1rem, line-height 1.5 x fontsize = 1.5 x 1rem = 1.5rem
+    // padding-top & bottom: calc(.5em - 1px) = .5 x 1rem - 1px = .5rem - 1px
+    // border: 1px
+    // height: 1.5rem + 2 x (.5rem - 1px) + 2 x 1px = 1.5rem + 1rem - 2px + 2px = 2.5rem;
+  const displayHeight = `calc(2.5rem + ${2 * displayHeightAdjustment}px)`;
+  
+  const displayText = {
     display: 'inline-block',
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    width: '50%',
-    // Next Line: Matches Bulma .input style for y-axis (top/bottom) (this is 1.2x input font size, so instead of `.5em`, it should be (.5 / 1.2)em = .625em)
-    padding: 'calc(.625em - 1px) .75rem',
-    fontWeight: 400,
-    lineHeight: 1,
+    verticalAlign: 'middle',
     fontSize: '1.2rem',
-    verticalAlign: 'middle'
+    lineHeight: 1.3
   };
   
   return {
     amountDisplay: {
-      ...displays
+      display: 'inline-block',
+      position: 'absolute',
+      right: 0,
+      bottom: -displayHeightAdjustment,
+      width: '50%',
+      padding: '0',
+      fontWeight: 400,
+      // source for v-centering text: https://stackoverflow.com/questions/8865458/ how-do-i-vertically-center-text-with-css
+      height: displayHeight,
+      lineHeight: displayHeight
     },
-    amountDisplayNegative: {
+    displayText,
+    displayTextNegative: {
       color: '#dc3545',
-      ...displays
+      ...displayText
     },
     input: {
       display: 'inline-block',

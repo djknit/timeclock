@@ -7,7 +7,7 @@ import BoxInputFrame from '../BoxInputFrame';
 const { convertDateToMyDate, getDate } = dateUtilities;
 
 function DateInput({
-  name,
+  propName,
   sectionName,
   value,
   label,
@@ -15,23 +15,19 @@ function DateInput({
   placeholder,
   hasProblem,
   helpText,
-  handleChange,
+  changeHandlerFactory,
   isActive,
   formId,
   isInline,
-  inputRef
+  inputRef,
+  fieldToLabelRatio
 }) {
 
-  function reportChange(date) {
-    handleChange({
-      target: {
-        name,
-        value: date ? convertDateToMyDate(date) : null
-      }
-    });
+  function processInput(inputDate) {
+    return inputDate ? convertDateToMyDate(inputDate) : null;
   }
 
-  const inputId = `${sectionName ? sectionName + '-' : ''}${name}-input-${formId}`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
   let inputClassName = 'input';
   if (hasProblem) inputClassName += ' is-danger';
 
@@ -41,13 +37,14 @@ function DateInput({
         label,
         sublabel,
         isInline,
-        inputId
+        inputId,
+        fieldToLabelRatio
       }}
     >
       <DatePicker
         disabled={!isActive}
         className={inputClassName}
-        onChange={reportChange}
+        onChange={changeHandlerFactory(propName, false, processInput)}
         selected={value ? getDate(value) : null}
         placeholderText={placeholder}
         id={inputId}

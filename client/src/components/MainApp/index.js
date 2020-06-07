@@ -8,11 +8,11 @@ import Dashboard from './Dashboard';
 import JobPage from './JobPage';
 import NotFoundPage from '../NotFound';
 import NewJobModal from './NewJobModal';
-// import { addData } from '../higherOrder';
+import { addCollapsing } from '../higherOrder';
 
 const dashboardPathName = 'dashboard';
 
-class MainApp extends Component {
+class _MainApp_neeedsCollapsing extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
@@ -31,12 +31,11 @@ class MainApp extends Component {
   };
 
   toggleNewJobModal(isActiveAfterToggle) {
-    this.setState({ isNewJobModalActive: isActiveAfterToggle });
     if (isActiveAfterToggle) {
-      setTimeout(
-        () => this.focusNewJobModal(),
-        250
-      );
+      this.setState({ isNewJobModalActive: true }, this.focusNewJobModal);
+    }
+    else {
+      this.setState({ isNewJobModalActive: false });
     }
   };
 
@@ -45,7 +44,6 @@ class MainApp extends Component {
   };
 
   catchApiUnauthorized(err) {
-    console.log('CATCH API 401')
     if (err && err.response && err.response.status === 401) {
       userService.clearUser();
       this.props.history.push('/');
@@ -55,7 +53,6 @@ class MainApp extends Component {
   }
 
   componentDidMount() {
-    console.log(this.newJobInputRef)
     api.auth.test()
     .then(res => {
       const { match, history } = this.props
@@ -73,9 +70,15 @@ class MainApp extends Component {
   }
 
   render() {
-    const { props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized } = this;
-    const { history, match } = props;
-    const { navHeight, isNewJobModalActive } = state;
+    const {
+      props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized
+    } = this;
+    const {
+      history, match, newJobModalWageContentToggle
+    } = props;
+    const {
+      navHeight, isNewJobModalActive
+    } = state;
 
     const style = getStyle(navHeight);
 
@@ -121,11 +124,16 @@ class MainApp extends Component {
           closeModal={() => toggleNewJobModal(false)}
           redirectToJobPage={redirectToJobPage}
           inputRef={newJobInputRef}
-          {...{ catchApiUnauthorized }}
+          {...{
+            catchApiUnauthorized
+          }}
+          wageContentToggle={newJobModalWageContentToggle}
         />
       </>
     );
   };
 }
+
+const MainApp = addCollapsing(_MainApp_neeedsCollapsing, 'newJobModalWageContentToggle', false, true);
 
 export default MainApp;

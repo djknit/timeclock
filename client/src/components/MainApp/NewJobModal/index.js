@@ -3,10 +3,16 @@ import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import {
-  api, constants, getValidTimezones, guessUserTimezone, getTimezoneAbbreviation, processCurrencyInputValue
+  api,
+  constants,
+  getValidTimezones,
+  guessUserTimezone,
+  getTimezoneAbbreviation,
+  processCurrencyInputValue,
+  changeHandlerFactoryFactory
 } from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
-import { TextInput, SelectInput, DateInput, WageInput, RadioInput } from '../../formPieces';
+import { TextInput, SelectInput, DateInput, WageInput, RadioInput, WkDayCutoffsInput } from '../../formPieces';
 import { jobsService, currentJobService } from '../../../data';
 
 const formId = 'new-user-form';
@@ -23,7 +29,10 @@ const startingState = {
       useMultiplier: true,
       multiplier: 1.5,
       rate: '',
-      cutoff: 40
+      cutoff: {
+        hours: 40,
+        minutes: 0
+      }
     }
   },
   dayCutoff: 0,
@@ -35,7 +44,8 @@ const startingState = {
   problemMessages: [],
   showMessage: true,
   hasBeenSubmitted: false,
-  secondsUntilRedirect: undefined
+  secondsUntilRedirect: undefined,
+  hasUseWageBeenChanged: false
 };
 const timezoneOptions = getValidTimezones().map(
   tzName => {
@@ -50,34 +60,66 @@ const timezoneOptions = getValidTimezones().map(
 class NewJobModal extends Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
+    this.checkIfWageTurnedOnForFirstTime = this.checkIfWageTurnedOnForFirstTime.bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory(this.checkIfWageTurnedOnForFirstTime).bind(this);
     this.radioUseWageTrue = React.createRef();
     this.radioUseWageFalse = React.createRef();
     this.radioUseOvertimeTrue = React.createRef();
     this.radioUseOvertimeFalse = React.createRef();
     this.radioUseMultiplierTrue = React.createRef();
     this.radioUseMultiplierFalse = React.createRef();
-    this.state = startingState;
+    this.state = { ...startingState };
   };
 
-  handleChange(event) {
-    const { name, value } = event.target;
-    console.log(name)
-    console.log(value)
-    this.setState({
-      [name]: value
-    });
+  checkIfWageTurnedOnForFirstTime(changedPropName) {
+    if (changedPropName !== 'wage' || !this.state.wage.useWage) return;
+    if (!this.state.hasUseWageBeenChanged) {
+      this.props.wageContentToggle.setIsExpanded(true);
+      this.setState({ hasUseWageBeenChanged: true });
+    }
+  };
+
+  componentDidUpdate(prevProps) {
+    // set collapsing container height each time modal is opened and clear each time modal is closed
+    const { isActive, wageContentToggle } = this.props;
+    if (isActive === prevProps.isActive) return;
+    else if (isActive) {
+      wageContentToggle.setHeight();
+    }
+    else {
+      wageContentToggle.clearHeight();
+    }
   };
 
   render() {
 
-    const { state, props, handleChange } = this;
+    const { state, props, changeHandlerFactory } = this;
     const {
-      name, startDate, timezone, useWage, wage, dayCutoff, weekBegins, problems, hasProblem, isLoading, hasSuccess,  problemMessages, showMessage, secondsUntilRedirect
+      name,
+      startDate,
+      timezone,
+      wage,
+      dayCutoff,
+      weekBegins,
+      problems,
+      hasProblem,
+      isLoading,
+      hasSuccess, 
+      problemMessages,
+      showMessage,
+      secondsUntilRedirect
     } = state;
-    const { isActive, closeModal, inputRef } = props;
+
+    const {
+      isActive,
+      closeModal,
+      inputRef,
+      wageContentToggle
+    } = props;
 
     const isFormActive = isActive && !isLoading && !hasSuccess;
+
+    const topLevelFieldLabelRatio = 5.8;
 
     const style = getStyle();
 
@@ -89,64 +131,74 @@ class NewJobModal extends Component {
       >
         <form id={formId}>
           <TextInput
-            name="name"
+            propName="name"
             value={name}
             label="Name:"
             placeholder="Name this job..."
             {...{
-              handleChange,
+              changeHandlerFactory,
               inputRef,
               formId
             }}
             isInline
             isActive={isFormActive}
             hasProblem={problems && problems.name}
+            fieldToLabelRatio={topLevelFieldLabelRatio}
           />
           <DateInput
             isInline
-            name="startDate"
+            propName="startDate"
             value={startDate}
             label="Start Date:"
             placeholder="Type or select date..."
             {...{
-              handleChange,
+              changeHandlerFactory,
               formId
             }}
             isActive={isFormActive}
             hasProblem={problems && problems.startDate}
             helpText="If not sure, just guess. An incorrect date will not cause problems."
+            fieldToLabelRatio={topLevelFieldLabelRatio}
           />
           <SelectInput
-            name="timezone"
+            propName="timezone"
             value={timezone}
             label="Timezone:"
             placeholder="The timezone your hours are counted in..."
             options={timezoneOptions}
             {...{
-              handleChange,
+              changeHandlerFactory,
               formId
             }}
             isInline
             isActive={isFormActive}
             hasProblem={problems && problems.timezone}
+            fieldToLabelRatio={topLevelFieldLabelRatio}
           />
           <WageInput
-            name="wage"
+            propName="wage"
             value={wage}
-            {...{
-              handleChange,
-              formId
-            }}
             isActive={isFormActive}
             hasProblem={problems && problems.wage}
             problems={problems && problems.wage}
+            // isExpanded={isWageSectionExpanded}
+            {...{
+              // wageSectionContentHeight,
+              changeHandlerFactory,
+              formId,
+              topLevelFieldLabelRatio,
+              // wageSectionContentRef,
+              // isWageContentAnimationOn
+            }}
             radioUseWageTrueRef={this.radioUseWageTrue}
             radioUseWageFalseRef={this.radioUseWageFalse}
             radioUseOvertimeTrueRef={this.radioUseOvertimeTrue}
             radioUseOvertimeFalseRef={this.radioUseOvertimeFalse}
             radioUseMultiplierTrueRef={this.radioUseMultiplierTrue}
             radioUseMultiplierFalseRef={this.radioUseMultiplierFalse}
+            contentToggle={wageContentToggle}
           />
+          <WkDayCutoffsInput />
         </form>
       </ModalSkeleton>
     );

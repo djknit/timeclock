@@ -4,7 +4,7 @@ import BoxInputFrame from '../BoxInputFrame';
 import { processCurrencyInputValue, processCurrencyMultiplierInputValue, getCurrencySymbol } from '../../utilities';
 
 function CurrencyInput({
-  name,
+  propName,
   sectionName,
   value,
   label,
@@ -12,7 +12,7 @@ function CurrencyInput({
   placeholder,
   hasProblem,
   helpText,
-  handleChange,
+  changeHandlerFactory,
   isActive,
   formId,
   inputRef,
@@ -20,20 +20,21 @@ function CurrencyInput({
   currency,
   showCurrencyCode,
   isMultiplier,
-  wageToMultiply
+  wageToMultiply,
+  fieldToLabelRatio
 }) {
 
-  const inputId = `${sectionName ? sectionName + '-' : ''}${name}-input-${formId}`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
 
   const style = getStyle();
 
   const processedValue = (
     isMultiplier ?
-    processCurrencyInputValue(value, currency) :
-    processCurrencyMultiplierInputValue(value, wageToMultiply)
+    processCurrencyMultiplierInputValue(value, wageToMultiply) :
+    processCurrencyInputValue(value, currency)
   );
 
-  const currencySymbol = isMultiplier ? getCurrencySymbol(currency) : undefined;
+  const currencySymbol = isMultiplier ? undefined : getCurrencySymbol(currency);
 
   return (
     <BoxInputFrame
@@ -41,7 +42,8 @@ function CurrencyInput({
         label,
         inputId,
         sublabel,
-        isInline
+        isInline,
+        fieldToLabelRatio
       }}
       hasIcon={currencySymbol ? 'left' : false}
     >
@@ -50,11 +52,10 @@ function CurrencyInput({
         className={hasProblem ? 'input is-danger' : 'input'}
         type="number"
         style={style.input}
-        onChange={handleChange}
+        onChange={changeHandlerFactory(propName, true)}
         disabled={!isActive}
         ref={inputRef}
         {...{
-          name,
           placeholder,
           value
         }}
@@ -64,18 +65,19 @@ function CurrencyInput({
           {currencySymbol}
         </span>
       }
-      {
-        (processedValue.display === 'negative' && (
-          <div style={style.amountDisplayNegative}>
-            Negative values are not allowed
-          </div>
-        )) || (processedValue.display !== null && (
-          <div style={style.amountDisplay}>
-            {processedValue.display}
-            {showCurrencyCode && currency !== 'X' && ` ${currency}`}
-          </div>
-        ))
-      }
+      <div style={style.amountDisplay}>
+        {
+          (processedValue.display === 'negative' && (
+            <span style={style.displayTextNegative}>
+              Negative values are not allowed
+            </span>
+          )) || (processedValue.display !== null && (
+            <span style={style.displayText}>
+              {processedValue.display} {showCurrencyCode && currency !== 'X' && ` ${currency}`}
+            </span>
+          ))
+        }
+      </div>
       {helpText &&
         <p className="help">{helpText}</p>
       }
