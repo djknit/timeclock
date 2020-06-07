@@ -14,6 +14,7 @@ import {
 import Notification, { NotificationText } from '../../Notification';
 import { TextInput, SelectInput, DateInput, WageInput, RadioInput, WkDayCutoffsInput } from '../../formPieces';
 import { jobsService, currentJobService } from '../../../data';
+import { addCollapsing } from '../../higherOrder';
 
 const formId = 'new-user-form';
 const startingState = {
@@ -35,8 +36,11 @@ const startingState = {
       }
     }
   },
-  dayCutoff: 0,
-  weekBegins: 0,
+  cutoffs: {
+    useDefaults: true,
+    dayCutoff: 0,
+    weekBegins: 0
+  },
   problems: {},
   hasSuccess: false,
   isLoading: false,
@@ -44,8 +48,7 @@ const startingState = {
   problemMessages: [],
   showMessage: true,
   hasBeenSubmitted: false,
-  secondsUntilRedirect: undefined,
-  hasUseWageBeenChanged: false
+  secondsUntilRedirect: undefined
 };
 const timezoneOptions = getValidTimezones().map(
   tzName => {
@@ -57,37 +60,45 @@ const timezoneOptions = getValidTimezones().map(
   }
 );
 
-class NewJobModal extends Component {
+class _NewJobModal_needsCollapsing extends Component {
   constructor(props) {
     super(props);
-    this.checkIfWageTurnedOnForFirstTime = this.checkIfWageTurnedOnForFirstTime.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory(this.checkIfWageTurnedOnForFirstTime).bind(this);
+    this.checkIfSectionTurnedOnForFirstTime = this.checkIfSectionTurnedOnForFirstTime.bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory(this.checkIfSectionTurnedOnForFirstTime).bind(this);
     this.radioUseWageTrue = React.createRef();
     this.radioUseWageFalse = React.createRef();
     this.radioUseOvertimeTrue = React.createRef();
     this.radioUseOvertimeFalse = React.createRef();
     this.radioUseMultiplierTrue = React.createRef();
     this.radioUseMultiplierFalse = React.createRef();
+    this.radioUseDefaultCutoffsTrue = React.createRef();
+    this.radioUseDefaultCutoffsFalse = React.createRef();
     this.state = { ...startingState };
   };
 
-  checkIfWageTurnedOnForFirstTime(changedPropName) {
-    if (changedPropName !== 'wage' || !this.state.wage.useWage) return;
-    if (!this.state.hasUseWageBeenChanged) {
-      this.props.wageContentToggle.setIsExpanded(true);
-      this.setState({ hasUseWageBeenChanged: true });
+  checkIfSectionTurnedOnForFirstTime(changedPropName) {
+    // If `useWage` is set to true and wage section has never been expanded, expand it automatically. Same goes for cutoffs section.
+    const { wage, cutoffs } = this.state;
+    const { wageContentToggle, cutoffsContentToggle } = this.props;
+    if (changedPropName === 'wage' && wage.useWage && !wageContentToggle.hasBeenExpanded) {
+      wageContentToggle.setIsExpanded(true);
+    }
+    else if (changedPropName === 'cutoffs' && !cutoffs.useDefaults && !cutoffsContentToggle.hasBeenExpanded) {
+      cutoffsContentToggle.setIsExpanded(true);
     }
   };
 
   componentDidUpdate(prevProps) {
     // set collapsing container height each time modal is opened and clear each time modal is closed
-    const { isActive, wageContentToggle } = this.props;
+    const { isActive, wageContentToggle, cutoffsContentToggle } = this.props;
     if (isActive === prevProps.isActive) return;
     else if (isActive) {
       wageContentToggle.setHeight();
+      cutoffsContentToggle.setHeight();
     }
     else {
       wageContentToggle.clearHeight();
+      cutoffsContentToggle.clearHeight();
     }
   };
 
@@ -99,8 +110,7 @@ class NewJobModal extends Component {
       startDate,
       timezone,
       wage,
-      dayCutoff,
-      weekBegins,
+      cutoffs,
       problems,
       hasProblem,
       isLoading,
@@ -114,12 +124,14 @@ class NewJobModal extends Component {
       isActive,
       closeModal,
       inputRef,
-      wageContentToggle
+      wageContentToggle,
+      cutoffsContentToggle
     } = props;
 
     const isFormActive = isActive && !isLoading && !hasSuccess;
 
     const topLevelFieldLabelRatio = 5.8;
+    const secondLevelFieldLabelRatio = 4.7;
 
     const style = getStyle();
 
@@ -181,14 +193,11 @@ class NewJobModal extends Component {
             isActive={isFormActive}
             hasProblem={problems && problems.wage}
             problems={problems && problems.wage}
-            // isExpanded={isWageSectionExpanded}
             {...{
-              // wageSectionContentHeight,
               changeHandlerFactory,
               formId,
               topLevelFieldLabelRatio,
-              // wageSectionContentRef,
-              // isWageContentAnimationOn
+              secondLevelFieldLabelRatio
             }}
             radioUseWageTrueRef={this.radioUseWageTrue}
             radioUseWageFalseRef={this.radioUseWageFalse}
@@ -198,11 +207,34 @@ class NewJobModal extends Component {
             radioUseMultiplierFalseRef={this.radioUseMultiplierFalse}
             contentToggle={wageContentToggle}
           />
-          <WkDayCutoffsInput />
+          <WkDayCutoffsInput
+            propName="cutoffs"
+            value={cutoffs}
+            isActive={isFormActive}
+            hasProblem={problems && problems.cutoffs}
+            problems={problems && problems.cutoffs}
+            {...{
+              changeHandlerFactory,
+              formId,
+              topLevelFieldLabelRatio,
+              secondLevelFieldLabelRatio
+            }}
+            radioUseDefaultCutoffsTrueRef={this.radioUseDefaultCutoffsTrue}
+            radioUseDefaultCutoffsFalseRef={this.radioUseDefaultCutoffsFalse}
+            contentToggle={cutoffsContentToggle}
+          />
         </form>
       </ModalSkeleton>
     );
   };
 }
+
+const _NewJobModal_needsMoreCollapsing = (
+  addCollapsing(_NewJobModal_needsCollapsing, 'wageContentToggle', false, true)
+);
+
+const NewJobModal = (
+  addCollapsing(_NewJobModal_needsMoreCollapsing, 'cutoffsContentToggle', false, true)
+);
 
 export default NewJobModal;

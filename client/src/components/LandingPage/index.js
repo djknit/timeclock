@@ -24,23 +24,17 @@ class _LandingPage_needsData extends Component {
   };
 
   toggleLoginModal(isActiveAfterToggle) {
-    this.setState({ isLoginModalActive: isActiveAfterToggle });
-    if (isActiveAfterToggle) {
-      setTimeout(
-        () => this.focusLoginModal(),
-        250
-      );
-    }
+    this.setState(
+      { isLoginModalActive: isActiveAfterToggle },
+      this.focusLoginModal
+    );
   };
 
   toggleNewUserModal(isActiveAfterToggle) {
-    this.setState({ isNewUserModalActive: isActiveAfterToggle });
-    if (isActiveAfterToggle) {
-      setTimeout(
-        () => this.focusNewUserModal(),
-        250
-      );
-    }
+    this.setState(
+      { isNewUserModalActive: isActiveAfterToggle },
+      this.focusNewUserModal
+    );
   };
 
   focusLoginModal() {

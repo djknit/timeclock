@@ -2,11 +2,14 @@ import { collapsableSectionStyles } from '../style';
 
 export default function getStyle() {
   return {
-    useWageInputField: {
+    useDefaultsInputField: {
       ...collapsableSectionStyles.outsideField
     },
     firstInputInSection: {
       ...collapsableSectionStyles.firstInsideField
+    },
+    weekBeginsLabel: {
+      paddingTop: 0
     }
   };
 };

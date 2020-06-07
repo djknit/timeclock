@@ -18,8 +18,13 @@ function getTextOfHoursAndMinutes({ hours, minutes}) {
   return timeText;
 }
 
+const getWeekdays = () => (
+  ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+);
+
 export {
   getMinutesFromHoursAndMinutes,
   getHoursAndMinutesFromMinutes,
-  getTextOfHoursAndMinutes
+  getTextOfHoursAndMinutes,
+  getWeekdays
 };
