@@ -4,18 +4,18 @@ import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import { TextInput } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
-import { api, constants } from '../utilities';
+import { api, constants, changeHandlerFactoryFactory } from '../utilities';
 import { userService } from '../../../data';
 
 const fieldsInfo = [
   {
-    name: 'usernameOrEmail',
+    propName: 'usernameOrEmail',
     label: 'Enter Your Username or Email',
     type: 'username',
     placeholder: 'Your username or email...'
   },
   {
-    name: 'password',
+    propName: 'password',
     label: 'Enter Your Password',
     type: 'password',
     placeholder: 'Your password...'
@@ -45,7 +45,8 @@ const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 class LoginModal extends Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
+    this.afterChange = this.afterChange.bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
     this.getInputProblems = this.getInputProblems.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
@@ -53,23 +54,17 @@ class LoginModal extends Component {
     this.state = { ...startingState };
   };
 
-  handleChange(event) {
-    const { name, value } = event.target;
-    this.setState(
-      { [name]: value },
-      () => {
-        const { problems, hasBeenSubmitted, problemMessages } = this.state;
-        if (!hasBeenSubmitted) return;
-        let problemsToKeep, problemMessagesToKeep;
-        if (name === 'password' && problems.usernameOrEmail) {
-          problemsToKeep = { usernameOrEmail: true };
-          problemMessagesToKeep = problemMessages.filter(
-            message => message.toLowerCase().indexOf('password') === -1
-          );
-        }
-        this.setState(this.getInputProblems(problemsToKeep, problemMessagesToKeep));
-      }
-    );
+  afterChange(propName) {
+    const { problems, hasBeenSubmitted, problemMessages } = this.state;
+    if (!hasBeenSubmitted) return;
+    let problemsToKeep, problemMessagesToKeep;
+    if (propName === 'password' && problems.usernameOrEmail) {
+      problemsToKeep = { usernameOrEmail: true };
+      problemMessagesToKeep = problemMessages.filter(
+        message => message.toLowerCase().indexOf('password') === -1
+      );
+    }
+    this.setState(this.getInputProblems(problemsToKeep, problemMessagesToKeep));
   };
 
   getInputProblems(problemsToKeep, problemMessagesToKeep) {
@@ -237,9 +232,9 @@ class LoginModal extends Component {
                 {...field}
                 formId={formId}
                 value={this.state[field.name]}
-                handleChange={this.handleChange}
+                changeHandlerFactory={this.changeHandlerFactory}
                 isActive={isActive && !isLoading && !hasSuccess}
-                hasProblem={problems[field.name]}
+                hasProblem={problems[field.propName]}
                 key={index}
                 inputRef={index === 0 ? inputRef : undefined}
                 iconClass={getIconClass(field.name, hasSuccess)}

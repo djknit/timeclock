@@ -1,35 +1,40 @@
 import React, { Component } from 'react';
 import getStyle from './style';
 import BoxInputFrame from '../BoxInputFrame';
-import { processCurrencyInputValue } from '../../utilities';
+import { processCurrencyInputValue, processCurrencyMultiplierInputValue, getCurrencySymbol } from '../../utilities';
 
 function CurrencyInput({
-  name,
+  propName,
+  sectionName,
   value,
   label,
   sublabel,
   placeholder,
   hasProblem,
   helpText,
-  handleChange,
+  changeHandlerFactory,
   isActive,
   formId,
   inputRef,
   isInline,
-  currency
+  currency,
+  showCurrencyCode,
+  isMultiplier,
+  wageToMultiply,
+  fieldToLabelRatio
 }) {
 
-  const inputId = `${name}-input-${formId}`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
 
   const style = getStyle();
 
-  const processedValue = processCurrencyInputValue(value, currency);
+  const processedValue = (
+    isMultiplier ?
+    processCurrencyMultiplierInputValue(value, wageToMultiply) :
+    processCurrencyInputValue(value, currency)
+  );
 
-  let currencySymbol;
-  if (currency === 'USD') currencySymbol = '$';
-  else if (currency === 'EUR') currencySymbol = <>&euro;</>;
-  else if (currency === 'GBP') currencySymbol = <>&pound;</>;
-  else if (currency === 'JPY') currencySymbol = <>&yen;</>;
+  const currencySymbol = isMultiplier ? undefined : getCurrencySymbol(currency);
 
   return (
     <BoxInputFrame
@@ -37,7 +42,8 @@ function CurrencyInput({
         label,
         inputId,
         sublabel,
-        isInline
+        isInline,
+        fieldToLabelRatio
       }}
       hasIcon={currencySymbol ? 'left' : false}
     >
@@ -46,11 +52,10 @@ function CurrencyInput({
         className={hasProblem ? 'input is-danger' : 'input'}
         type="number"
         style={style.input}
-        onChange={handleChange}
+        onChange={changeHandlerFactory(propName, true)}
         disabled={!isActive}
         ref={inputRef}
         {...{
-          name,
           placeholder,
           value
         }}
@@ -60,17 +65,19 @@ function CurrencyInput({
           {currencySymbol}
         </span>
       }
-      {
-        (processedValue.display === 'negative' && (
-          <div style={style.amountDisplayNegative}>
-            Negative values are not allowed
-          </div>
-        )) || (processedValue.display !== null && (
-          <div style={style.amountDisplay}>
-            $ {processedValue.display}
-          </div>
-        ))
-      }
+      <div style={style.amountDisplay}>
+        {
+          (processedValue.display === 'negative' && (
+            <span style={style.displayTextNegative}>
+              Negative values are not allowed
+            </span>
+          )) || (processedValue.display !== null && (
+            <span style={style.displayText}>
+              {processedValue.display} {showCurrencyCode && currency !== 'X' && ` ${currency}`}
+            </span>
+          ))
+        }
+      </div>
       {helpText &&
         <p className="help">{helpText}</p>
       }

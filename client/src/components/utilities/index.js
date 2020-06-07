@@ -5,4 +5,6 @@ function promiseToSetState(component, updatedState) {
   return new Promise(resolve => component.setState(updatedState, resolve));
 }
 
-export { promiseToSetState };
+export {
+  promiseToSetState
+};

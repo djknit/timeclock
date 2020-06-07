@@ -1,19 +1,37 @@
 import React from 'react';
+import getStyle from './style';
 import BoxInputFrame from '../BoxInputFrame';
 
 function RadioInput({
-  name,
+  propName,
   value,
   options,
-  handleChange,
+  changeHandlerFactory,
   label,
   sublabel,
   helpText,
   hasProblem,
   isActive,
-  inputRef,
-  isInline
+  isInline,
+  fieldToLabelRatio,
+  fieldStyle
 }) {
+
+  function getSelectedOptionRef() {
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].value === value) return options[i].ref;
+    }
+  }
+
+  const style = getStyle();
+
+  function processValue(_value) {
+    return (
+      (_value === 'true' || _value === 'false') ?
+      _value === 'true' :
+      _value
+    );
+  }
 
   return (
     <BoxInputFrame
@@ -21,76 +39,34 @@ function RadioInput({
       {...{
         label,
         sublabel,
-        isInline
+        isInline,
+        fieldToLabelRatio
       }}
+      selectedRadioInput={getSelectedOptionRef()}
+      styles={{ field: fieldStyle }}
     >
       {options.map(
         (option, index) => (
-          <label className="radio" disabled={!isActive} key={option.value}>
+          <label className="radio" disabled={!isActive} key={option.value} style={style.label}>
             <input
               type="radio"
-              name={name}
+              name={propName}
               value={option.value}
               checked={value === option.value}
-              onChange={
-                ({ target }) => handleChange({
-                  target: {
-                    name,
-                    value: ( // if boolean values, convert string representations back to boolean 
-                      (target.value === 'true' || target.value === 'false') ?
-                      target.value === 'true' :
-                      target.value
-                    )
-                  }
-                })
-              }
+              onChange={changeHandlerFactory(propName, true, processValue)}
+              ref={option.ref}
               className={hasProblem ? 'is-danger' : undefined}
               disabled={!isActive}
-              ref={(index === 0 && inputRef) || undefined}
+              style={style.input}
             />
             {option.label}
           </label>
         )
       )}
-    </BoxInputFrame>
-  );
-
-  return (
-    <Wrapper {...{ label }}>
-      <div className="control">
-        {options.map(
-          (option, index) => (
-            <label className="radio" disabled={!isActive} key={option.value}>
-              <input
-                type="radio"
-                name={name}
-                value={option.value}
-                checked={value === option.value}
-                onChange={
-                  ({ target }) => handleChange({
-                    target: {
-                      name,
-                      value: ( // if boolean values, convert string representations back to boolean 
-                        (target.value === 'true' || target.value === 'false') ?
-                        target.value === 'true' :
-                        target.value
-                      )
-                    }
-                  })
-                }
-                className={hasProblem ? 'is-danger' : undefined}
-                disabled={!isActive}
-                ref={(index === 0 && inputRef) || undefined}
-              />
-              {option.label}
-            </label>
-          )
-        )}
-      </div>
       {helpText &&
         <p className="help">{helpText}</p>
       }
-    </Wrapper>
+    </BoxInputFrame>
   );
 }
 

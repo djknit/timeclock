@@ -2,3 +2,12 @@
   background-color: #6141D1;
   color: #f6e653;
 }
+
+input.no-spin {
+  -moz-appearance: textfield;
+}
+input.no-spin::-webkit-outer-spin-button,
+input.no-spin::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

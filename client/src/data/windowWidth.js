@@ -8,7 +8,8 @@ const service = dataServiceFactory({
     reportChange(newWidth) {
       windowWidth = newWidth;
     }
-  }
+  },
+  maxListeners: 40
 });
 
 export default service;

@@ -1,7 +1,10 @@
-export default function getStyle(additionalStyle, isRadio, windowWidth) {
+import { isWindowWide } from '../../style';
+
+export default function getStyle(additionalStyle, isRadio, isInline, windowWidth) {
   return {
     control: {
-      paddingTop: isRadio && windowWidth >= 769 ? '.375rem' : undefined, // matches Bulma `.field-label.is-normal` style
+      // next line: matches Bulma `.field-label.is-normal` style
+      paddingTop: isRadio && isInline && isWindowWide(windowWidth) ? '.375rem' : undefined,
       ...additionalStyle
     }
   };

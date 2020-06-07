@@ -4,12 +4,12 @@ import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import { TextInput } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
-import { api, constants } from '../utilities';
+import { api, constants, changeHandlerFactoryFactory } from '../utilities';
 import { userService } from '../../../data';
 
 const fieldsInfo = [
   {
-    name: 'username',
+    propName: 'username',
     label: 'Create a Username...',
     type: 'username',
     placeholder: 'Your username...',
@@ -17,7 +17,7 @@ const fieldsInfo = [
     helpText: '4 characters minimum. Case-sensitive.'
   },
   {
-    name: 'email',
+    propName: 'email',
     label: 'And/or Enter Your Email',
     type: 'email',
     placeholder: 'example@email.com',
@@ -25,7 +25,7 @@ const fieldsInfo = [
     helpText: 'Not case-sensitive.'
   },
   {
-    name: 'password',
+    propName: 'password',
     label: 'Create a Password',
     type: 'newPassword',
     placeholder: 'Your password...',
@@ -33,7 +33,7 @@ const fieldsInfo = [
     helpText: '7 characters minimum.'
   },
   {
-    name: 'verifyPassword',
+    propName: 'verifyPassword',
     label: 'Confirm Your Password',
     type: 'newPassword',
     placeholder: 'Retype password...',
@@ -69,7 +69,8 @@ const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 class NewUserModal extends Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
+    this.afterChange = this.afterChange.bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
     this.getInputProblems = this.getInputProblems.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
@@ -77,16 +78,10 @@ class NewUserModal extends Component {
     this.state = { ...startingState };
   };
 
-  handleChange(event) {
-    const { name, value } = event.target;
-    this.setState(
-      { [name]: value },
-      () => {
-        if (this.state.hasBeenSubmitted) {
-          this.setState(this.getInputProblems());
-        }
-      }
-    );
+  afterChange() {
+    if (this.state.hasBeenSubmitted) {
+      this.setState(this.getInputProblems());
+    }
   };
 
   getInputProblems() {
@@ -317,9 +312,9 @@ class NewUserModal extends Component {
                 {...field}
                 formId={formId}
                 value={this.state[field.name]}
-                handleChange={this.handleChange}
+                changeHandlerFactory={this.changeHandlerFactory}
                 isActive={isActive && !isLoading && !hasSuccess}
-                hasProblem={problems[field.name]}
+                hasProblem={problems[field.propName]}
                 key={index}
                 inputRef={index === 0 ? inputRef : undefined}
               />

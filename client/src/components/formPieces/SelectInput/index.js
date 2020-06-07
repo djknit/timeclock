@@ -2,10 +2,11 @@ import React from 'react';
 import BoxInputFrame from '../BoxInputFrame';
 
 function selectInput({
-  name,
+  propName,
+  sectionName,
   value,
   options,
-  handleChange,
+  changeHandlerFactory,
   label,
   sublabel,
   helpText,
@@ -15,10 +16,12 @@ function selectInput({
   isActive,
   formId,
   inputRef,
-  isInline
+  isInline,
+  fieldToLabelRatio,
+  fieldStyle
 }) {
 
-  const inputId = `${name}-input-${formId}`;
+  const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
 
   return (
     <BoxInputFrame
@@ -26,17 +29,18 @@ function selectInput({
         label,
         inputId,
         sublabel,
-        isInline
+        isInline,
+        fieldToLabelRatio
       }}
       hasIcon={iconClass ? 'left' : false}
+      styles={{ field: fieldStyle }}
     >
       <div className={`select is-fullwidth${hasProblem ? ' is-danger' : ''}`}>
         <select
-          name={name}
           id={inputId}
           ref={inputRef}
           value={value}
-          onChange={handleChange}
+          onChange={changeHandlerFactory(propName, true)}
           disabled={!isActive}
         >
           {
@@ -47,7 +51,7 @@ function selectInput({
             )
           }
           {
-            options.map((option, index) => (
+            options.map(option => (
               <option
                 key={option.value}
                 value={option.value}
