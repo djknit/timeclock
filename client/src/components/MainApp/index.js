@@ -8,27 +8,21 @@ import Dashboard from './Dashboard';
 import JobPage from './JobPage';
 import NotFoundPage from '../NotFound';
 import NewJobModal from './NewJobModal';
-// import { addData } from '../higherOrder';
+import { addCollapsing } from '../higherOrder';
 
 const dashboardPathName = 'dashboard';
 
-class MainApp extends Component {
+class _MainApp_neeedsCollapsing extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
     this.toggleNewJobModal = this.toggleNewJobModal.bind(this);
     this.focusNewJobModal = this.focusNewJobModal.bind(this);
-    this.setWageContentHeight = this.setWageContentHeight.bind(this);
-    this.toggleNewJobModalWageContent = this.toggleNewJobModalWageContent.bind(this);
     this.catchApiUnauthorized = this.catchApiUnauthorized.bind(this);
     this.newJobInputRef = React.createRef();
-    this.newJobModalWageContentRef = React.createRef();
     this.state = {
       navHeight: undefined,
-      isNewJobModalActive: false,
-      newJobModalWageContentHeight: undefined,
-      newJobModalIsWageContentExpanded: false,
-      isWageContentAnimationOn: false
+      isNewJobModalActive: false
     };
   };
 
@@ -38,20 +32,10 @@ class MainApp extends Component {
 
   toggleNewJobModal(isActiveAfterToggle) {
     if (isActiveAfterToggle) {
-      this.setState(
-        { isNewJobModalActive: isActiveAfterToggle },
-        () => {
-          this.focusNewJobModal();
-          this.setWageContentHeight();
-        }
-      );
+      this.setState({ isNewJobModalActive: true }, this.focusNewJobModal);
     }
     else {
-      this.setState({
-        isNewJobModalActive: isActiveAfterToggle,
-        newJobModalWageContentHeight: undefined,
-        isWageContentAnimationOn: false
-      });
+      this.setState({ isNewJobModalActive: false });
     }
   };
 
@@ -59,28 +43,7 @@ class MainApp extends Component {
     this.newJobInputRef.current.focus();
   };
 
-  setWageContentHeight() {
-    this.setState({
-      newJobModalWageContentHeight: this.newJobModalWageContentRef.current.scrollHeight,
-      newJobModalIsWageContentExpanded: !!this.state.newJobModalIsWageContentExpanded // set to false if currently undefined
-    }, () => {console.log('setWageContentHeight');console.log(this.state)});
-  };
-
-  toggleNewJobModalWageContent(newIsExpandedValue) {
-    console.log('toggleNewJobModalWageContent')
-    const wasNewValueProvided = !!newIsExpandedValue || newIsExpandedValue === false;
-    this.setState({ // use parameter if provided or toggle opposite current value when no value is provided
-      newJobModalIsWageContentExpanded: (
-        wasNewValueProvided ?
-        newIsExpandedValue :
-        !this.state.newJobModalIsWageContentExpanded
-      ),
-      isWageContentAnimationOn: true
-    }, () => console.log(this.state));
-  };
-
   catchApiUnauthorized(err) {
-    console.log('CATCH API 401')
     if (err && err.response && err.response.status === 401) {
       userService.clearUser();
       this.props.history.push('/');
@@ -90,7 +53,6 @@ class MainApp extends Component {
   }
 
   componentDidMount() {
-    console.log(this.newJobInputRef)
     api.auth.test()
     .then(res => {
       const { match, history } = this.props
@@ -109,13 +71,13 @@ class MainApp extends Component {
 
   render() {
     const {
-      props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized, newJobModalWageContentRef, toggleNewJobModalWageContent
+      props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized
     } = this;
     const {
-      history, match
+      history, match, newJobModalWageContentToggle
     } = props;
     const {
-      navHeight, isNewJobModalActive, newJobModalIsWageContentExpanded, newJobModalWageContentHeight, isWageContentAnimationOn
+      navHeight, isNewJobModalActive
     } = state;
 
     const style = getStyle(navHeight);
@@ -163,17 +125,15 @@ class MainApp extends Component {
           redirectToJobPage={redirectToJobPage}
           inputRef={newJobInputRef}
           {...{
-            catchApiUnauthorized,
-            isWageContentAnimationOn
+            catchApiUnauthorized
           }}
-          wageSectionContentRef={newJobModalWageContentRef}
-          wageSectionContentHeight={newJobModalWageContentHeight}
-          isWageSectionExpanded={newJobModalIsWageContentExpanded}
-          toggleWageContent={toggleNewJobModalWageContent}
+          wageContentToggle={newJobModalWageContentToggle}
         />
       </>
     );
   };
 }
+
+const MainApp = addCollapsing(_MainApp_neeedsCollapsing, 'newJobModalWageContentToggle', false, true);
 
 export default MainApp;

@@ -12,7 +12,7 @@ import {
   changeHandlerFactoryFactory
 } from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
-import { TextInput, SelectInput, DateInput, WageInput, RadioInput } from '../../formPieces';
+import { TextInput, SelectInput, DateInput, WageInput, RadioInput, WkDayCutoffsInput } from '../../formPieces';
 import { jobsService, currentJobService } from '../../../data';
 
 const formId = 'new-user-form';
@@ -74,8 +74,20 @@ class NewJobModal extends Component {
   checkIfWageTurnedOnForFirstTime(changedPropName) {
     if (changedPropName !== 'wage' || !this.state.wage.useWage) return;
     if (!this.state.hasUseWageBeenChanged) {
-      this.props.toggleWageContent(true);
+      this.props.wageContentToggle.setIsExpanded(true);
       this.setState({ hasUseWageBeenChanged: true });
+    }
+  };
+
+  componentDidUpdate(prevProps) {
+    // set collapsing container height each time modal is opened and clear each time modal is closed
+    const { isActive, wageContentToggle } = this.props;
+    if (isActive === prevProps.isActive) return;
+    else if (isActive) {
+      wageContentToggle.setHeight();
+    }
+    else {
+      wageContentToggle.clearHeight();
     }
   };
 
@@ -86,7 +98,6 @@ class NewJobModal extends Component {
       name,
       startDate,
       timezone,
-      useWage,
       wage,
       dayCutoff,
       weekBegins,
@@ -103,11 +114,7 @@ class NewJobModal extends Component {
       isActive,
       closeModal,
       inputRef,
-      wageSectionContentRef,
-      wageSectionContentHeight,
-      isWageSectionExpanded,
-      isWageContentAnimationOn,
-      toggleWageContent
+      wageContentToggle
     } = props;
 
     const isFormActive = isActive && !isLoading && !hasSuccess;
@@ -174,14 +181,14 @@ class NewJobModal extends Component {
             isActive={isFormActive}
             hasProblem={problems && problems.wage}
             problems={problems && problems.wage}
-            isExpanded={isWageSectionExpanded}
+            // isExpanded={isWageSectionExpanded}
             {...{
-              wageSectionContentHeight,
+              // wageSectionContentHeight,
               changeHandlerFactory,
               formId,
               topLevelFieldLabelRatio,
-              wageSectionContentRef,
-              isWageContentAnimationOn
+              // wageSectionContentRef,
+              // isWageContentAnimationOn
             }}
             radioUseWageTrueRef={this.radioUseWageTrue}
             radioUseWageFalseRef={this.radioUseWageFalse}
@@ -189,8 +196,9 @@ class NewJobModal extends Component {
             radioUseOvertimeFalseRef={this.radioUseOvertimeFalse}
             radioUseMultiplierTrueRef={this.radioUseMultiplierTrue}
             radioUseMultiplierFalseRef={this.radioUseMultiplierFalse}
-            toggleSectionContent={toggleWageContent}
+            contentToggle={wageContentToggle}
           />
+          <WkDayCutoffsInput />
         </form>
       </ModalSkeleton>
     );

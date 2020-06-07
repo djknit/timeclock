@@ -2,6 +2,7 @@ import React from 'react';
 import ccData from 'currency-codes/data';
 import getStyle from './style';
 import { changeHandlerFactoryForChildrenFactory } from '../../utilities';
+import SectionLabel from '../SectionLabel';
 import SelectInput from '../SelectInput';
 import CurrencyInput from '../CurrencyInput';
 import RadioInput from '../RadioInput';
@@ -37,14 +38,15 @@ function _WageInput_needsPseudo({
   radioUseOvertimeFalseRef,
   radioUseMultiplierTrueRef,
   radioUseMultiplierFalseRef,
-  wageSectionContentRef,
-  wageSectionContentHeight,
-  isExpanded,
+  // wageSectionContentRef,
+  // wageSectionContentHeight,
+  // isExpanded,
   topLevelFieldLabelRatio,
   pseudoState, // for section content toggle arrow
   pseudoHandlers,
-  isWageContentAnimationOn,
-  toggleSectionContent
+  // isWageContentAnimationOn,
+  // toggleSectionContent
+  contentToggle
 }) {
 
   const { rate, currency, overtime, useWage } = value;
@@ -59,17 +61,13 @@ function _WageInput_needsPseudo({
     }
   );
 
-  const style = getStyle(wageSectionContentHeight, isExpanded, pseudoState, isWageContentAnimationOn);
+  const style = getStyle(contentToggle.styles, pseudoState);
 
   const secondLevelFieldLabelRatio = 4.7;
 
   return (
     <>
-      <div className="label" style={style.sectionLabel}>
-        &nbsp;
-        <span style={style.sectionLabelText}>Wage</span>
-        <hr style={style.sectionLabelHr} />
-      </div>
+      <SectionLabel>Wage</SectionLabel>
       <RadioInput
         propName="useWage"
         sectionName={propName}
@@ -93,7 +91,7 @@ function _WageInput_needsPseudo({
         {...{ isActive }}
         fieldStyle={style.useWageInputField}
       />
-      <div style={style.sectionContent} ref={wageSectionContentRef}>
+      <div style={style.sectionContent} ref={contentToggle.containerRef}>
         <SelectInput
           propName="currency"
           sectionName={propName}
@@ -152,7 +150,7 @@ function _WageInput_needsPseudo({
           className="fas fa-chevron-up"
           style={style.sectionToggle}
           {...pseudoHandlers}
-          onClick={() => toggleSectionContent()}
+          onClick={contentToggle.toggle}
         />
       </div>
     </>

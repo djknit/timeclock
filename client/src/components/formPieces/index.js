@@ -5,6 +5,7 @@ import CurrencyInput from './CurrencyInput';
 import WageInput from './WageInput';
 import RadioInput from './RadioInput';
 import TimeInput from './TimeInput';
+import WkDayCutoffsInput from './WkDayCutoffsInput';
 
 export {
   TextInput,
@@ -13,5 +14,6 @@ export {
   CurrencyInput,
   WageInput,
   RadioInput,
-  TimeInput
+  TimeInput,
+  WkDayCutoffsInput
 };
