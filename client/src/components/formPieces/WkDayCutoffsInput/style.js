@@ -1,6 +1,6 @@
 export default function getStyle() {
   return {
-    useWageInputField: {
+    useDefaultsInputField: {
       marginBottom: 0
     },
     firstInputInSection: {

@@ -2,16 +2,18 @@
 // This HOC is responsible for managing state for a collapsing containter and toggle button.
 // One prop is passed to wrapped component whose name is given as a parameter to the HOC function.
   // The passed prop is an object with props:
-  // `containerRef`, `setHeight`, `clearHeight`, `toggle`, `styles`, and `setIsExpanded`
+  // `containerRef`, `setHeight`, `clearHeight`, `toggle`, `styles`,`setIsExpanded`, and `hasBeenExpanded`
 
 import React, { Component } from 'react';
 import getStyle from './style';
 
 function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleIconAnimated) {
+  const _isExpandedInitially = isExpandedInitially || false;
   const initialState = {
     containerHeight: undefined,
-    isExpanded: isExpandedInitially || false,
-    isAnimationOn: false
+    isExpanded: _isExpandedInitially,
+    isAnimationOn: false,
+    hasBeenExpanded: _isExpandedInitially
   };
 
   return class extends Component {
@@ -55,7 +57,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     toggle() {
       this.setState({
         isExpanded: !this.state.isExpanded,
-        isAnimationOn: true
+        isAnimationOn: true,
+        hasBeenExpanded: true
       });
     };
 
@@ -63,6 +66,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       let stateUpdates = { isExpanded: newIsExpandedValue };
       if (!!newIsExpandedValue !== !!this.state.isExpanded) {
         stateUpdates.isAnimationOn = true;
+        stateUpdates.hasBeenExpanded = true;
       }
       this.setState(stateUpdates);
     }
@@ -75,7 +79,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
 
       const { containerRef, state, props, setHeight, clearHeight, toggle, setIsExpanded } = this;
 
-      const { containerHeight, isExpanded, isAnimationOn } = state;
+      const { containerHeight, isExpanded, isAnimationOn, hasBeenExpanded } = state;
 
       const styles = getStyle(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated);
 
@@ -87,7 +91,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
           clearHeight,
           toggle,
           styles,
-          setIsExpanded
+          setIsExpanded,
+          hasBeenExpanded
         }
       };
 

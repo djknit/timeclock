@@ -8,11 +8,10 @@ import Dashboard from './Dashboard';
 import JobPage from './JobPage';
 import NotFoundPage from '../NotFound';
 import NewJobModal from './NewJobModal';
-import { addCollapsing } from '../higherOrder';
 
 const dashboardPathName = 'dashboard';
 
-class _MainApp_neeedsCollapsing extends Component {
+class MainApp extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
@@ -74,7 +73,7 @@ class _MainApp_neeedsCollapsing extends Component {
       props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized
     } = this;
     const {
-      history, match, newJobModalWageContentToggle
+      history, match
     } = props;
     const {
       navHeight, isNewJobModalActive
@@ -127,13 +126,10 @@ class _MainApp_neeedsCollapsing extends Component {
           {...{
             catchApiUnauthorized
           }}
-          wageContentToggle={newJobModalWageContentToggle}
         />
       </>
     );
   };
 }
-
-const MainApp = addCollapsing(_MainApp_neeedsCollapsing, 'newJobModalWageContentToggle', false, true);
 
 export default MainApp;
