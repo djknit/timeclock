@@ -1,5 +1,6 @@
 export * from './currency';
 export * from './time';
+export * from './wage';
 
 /*
 For use in the component where the form state is kept (top-level component for form).

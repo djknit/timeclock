@@ -97,11 +97,41 @@ class _NewJobModal_needsCollapsingAndData extends Component {
   };
 
   getInputProblems() {
-
+    const { name, startDate, timezone, wage, cutoffs } = this.state;
+    let problems = {};
+    let problemMessages = [];
+    if (!name) {
+      problems.name = true;
+      problemMessages.push('You must name the job.');
+    }
+    else if (jobsService.getValue().map(({ name }) => name).indexOf(name) !== -1) {
+      problems.name = true;
+      problemMessages.push('You already have a job with that name.');
+    }
+    if (!startDate) {
+      problems.startDate = true;
+      problemMessages.push('You must enter a start date');
+    }
+    if (!timezone) {
+      problems.timezone = true;
+      problemMessages.push('You must select a timezone.');
+    }
+    if (!cutoffs.useDefaults && !cutoffs.weekBegins && cutoffs.weekBegins !== 0) {
+      problems.cutoffs = { weekBegins: true };
+      problemMessages.push('Missing week begins day (under "Week and Day Cutoffs").');
+    }
+    const dayCutoffInMinutes = (cutoffs.dayCutoff.hour || 0) * 60 + (cutoffs.dayCutoff.minute || 0);
+    if (!cutoffs.useDefaults && (Math.abs(dayCutoffInMinutes) > 12 * 60) ) {
+      problems.cutoffs = {
+        dayCutoff: true,
+        ...(problems.cutoffs || {})
+      };
+      problemMessages.push('Invalid day cutoff: can\'t be adjust more than 12 hours on either side of the start of the calendar day (midnight).');
+    }
   };
 
-  submit() {
-
+  submit(event) {
+    event.preventDefault();
   };
 
   reset() {

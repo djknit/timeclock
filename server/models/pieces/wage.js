@@ -101,5 +101,5 @@ function validateDecimalDigits(rate, currency) {
 
 function validateCurrencyCode(candidateValue) {
   if (!candidateValue) return false;
-  return cc.code(candidateValue) ? true : false;
+  return (cc.code(candidateValue) || candidateValue === 'X') ? true : false;
 }
