@@ -2,6 +2,7 @@ import React from 'react';
 import { dates as dateUtilities } from '../../utilities';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
+import getStyle from './style';
 import BoxInputFrame from '../BoxInputFrame';
 
 const { convertDateToMyDate, getDate } = dateUtilities;
@@ -31,6 +32,8 @@ function DateInput({
   let inputClassName = 'input';
   if (hasProblem) inputClassName += ' is-danger';
 
+  const style = getStyle();
+
   return (
     <BoxInputFrame
       {...{
@@ -40,6 +43,7 @@ function DateInput({
         inputId,
         fieldToLabelRatio
       }}
+      styles={style}
     >
       <DatePicker
         disabled={!isActive}

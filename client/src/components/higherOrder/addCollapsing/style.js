@@ -47,7 +47,9 @@ function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggle
 function getSectionContentStyle(heightState, isExpanded, isAnimationOn) {
   let variableStyles;
   if (!isAnimationOn && !isExpanded) {
-    variableStyles = {
+    variableStyles = heightState ?
+    { display: 'none' } :
+    {
       position: 'absolute',
       opacity: 0,
       zIndex: 0

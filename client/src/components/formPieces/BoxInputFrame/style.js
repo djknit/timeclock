@@ -1,6 +1,13 @@
 import { isWindowWide } from '../style';
 
-export default function(styles, windowWidth, fieldToLabelRatio) {
+export default function(styles, windowWidth, fieldToLabelRatio, isInline) {
+
+  const additionalLabelStyles = (styles && styles.label) || {};
+  const labelStyles = (
+    (!isWindowWide(windowWidth) && isInline) ?
+    { textAlign: 'left' } :
+    {}
+  );
 
   return {
     normalWeight: {
@@ -11,6 +18,7 @@ export default function(styles, windowWidth, fieldToLabelRatio) {
       { flexGrow: fieldToLabelRatio || 5 } :
       {}
     ),
-    ...styles
+    ...styles,
+    label: { ...labelStyles, ...additionalLabelStyles }
   };
 }

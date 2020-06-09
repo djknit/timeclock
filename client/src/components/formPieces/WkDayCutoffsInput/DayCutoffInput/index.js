@@ -6,7 +6,6 @@ import {
   getHoursAndMinutesFromMinutes
 } from '../../../utilities';
 import BoxInputFrame from '../../BoxInputFrame';
-import RadioInput from '../../RadioInput';
 
 function getHourOptions(is24hr) {
   let options = [];
@@ -53,8 +52,6 @@ function DayCutoffInput({
 
   function inputProcessorFactory(childPropName) {
     return function (childPropValue) {
-      console.log(childPropName)
-      console.log(childPropValue)
       const _value = { ...value };
       if (childPropName === 'is24hr') {
         _value[childPropName] = childPropValue && childPropValue !== 'false';

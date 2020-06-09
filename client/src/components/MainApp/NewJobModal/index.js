@@ -67,8 +67,9 @@ const timezoneOptions = getValidTimezones().map(
 class _NewJobModal_needsCollapsingAndData extends Component {
   constructor(props) {
     super(props);
-    this.checkIfSectionTurnedOnForFirstTime = this.checkIfSectionTurnedOnForFirstTime.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory(this.checkIfSectionTurnedOnForFirstTime).bind(this);
+    this.afterChange = this.afterChange.bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
+    this.getInputProblems = this.getInputProblems.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     this.radioUseWageTrue = React.createRef();
@@ -82,8 +83,8 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     this.state = { ...startingState };
   };
 
-  checkIfSectionTurnedOnForFirstTime(changedPropName) {
-    // If `useWage` is set to true and wage section has never been expanded, expand it automatically.
+  afterChange(changedPropName) {
+    // If `useWage` is on and wage section has never been expanded, expand it automatically.
       // Same goes for cutoffs section.
     const { wage, cutoffs } = this.state;
     const { wageContentToggle, cutoffsContentToggle } = this.props;
@@ -93,6 +94,10 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     else if (changedPropName === 'cutoffs' && !cutoffs.useDefaults && !cutoffsContentToggle.hasBeenExpanded) {
       cutoffsContentToggle.setIsExpanded(true);
     }
+  };
+
+  getInputProblems() {
+
   };
 
   submit() {
