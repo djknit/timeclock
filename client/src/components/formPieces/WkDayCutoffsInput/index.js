@@ -7,6 +7,7 @@ import getStyle from './style';
 import CollapsableSection from '../CollapsableSection';
 import RadioInput from '../RadioInput';
 import SelectInput from '../SelectInput';
+import DayCutoffInput from './DayCutoffInput';
 
 const weekDayOptions = (
   getWeekdays()
@@ -42,6 +43,10 @@ function WkDayCutoffsInput ({
 
   const style = getStyle();
 
+  const { isExpanded } = contentToggle || {};
+
+  const areInsideInputsActive = isActive && !useDefaults && isExpanded;
+
   return (
     <CollapsableSection
       label="Week and Day Cutoffs"
@@ -76,7 +81,7 @@ function WkDayCutoffsInput ({
       <SelectInput
         propName="weekBegins"
         sectionName={propName}
-        value={weekBegins}
+        value={useDefaults ? 0 : weekBegins}
         options={weekDayOptions}
         changeHandlerFactory={changeHandlerFactoryForChildren}
         label="Week Begins On:"
@@ -85,7 +90,20 @@ function WkDayCutoffsInput ({
         hasProblem={problems && problems.weekBegins}
         {...{ formId }}
         isInline
-        isActive={isActive && !useDefaults}
+        isActive={areInsideInputsActive}
+        fieldToLabelRatio={secondLevelFieldLabelRatio}
+        fieldStyle={style.firstInputInSection}
+        fieldLabelStyle={style.weekBeginsLabel}
+      />
+      <DayCutoffInput
+        propName="dayCutoff"
+        sectionName={propName}
+        value={useDefaults ? { hour: 0, minute: 0, is24hr: dayCutoff.is24hr } : dayCutoff}
+        changeHandlerFactory={changeHandlerFactoryForChildren}
+        hasProblem={problems && problems.dayCutoff}
+        {...{ formId }}
+        isInline
+        isActive={areInsideInputsActive}
         fieldToLabelRatio={secondLevelFieldLabelRatio}
         fieldStyle={style.firstInputInSection}
         fieldLabelStyle={style.weekBeginsLabel}

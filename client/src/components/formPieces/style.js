@@ -13,4 +13,16 @@ const collapsableSectionStyles = {
   }
 };
 
-export { isWindowWide, collapsableSectionStyles };
+const timeInputStyles = {
+  colon: {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    padding: '1px .3em'
+  },
+  minutesInput: {
+    width: '3.5em',
+    textAlign: 'left'
+  }
+};
+
+export { isWindowWide, collapsableSectionStyles, timeInputStyles };

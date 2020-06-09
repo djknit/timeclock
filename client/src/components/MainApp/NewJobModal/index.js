@@ -13,8 +13,8 @@ import {
 } from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
 import { TextInput, SelectInput, DateInput, WageInput, RadioInput, WkDayCutoffsInput } from '../../formPieces';
-import { jobsService, currentJobService } from '../../../data';
-import { addCollapsing } from '../../higherOrder';
+import { jobsService, currentJobService, windowWidthService } from '../../../data';
+import { addCollapsing, addData } from '../../higherOrder';
 
 const formId = 'new-user-form';
 const startingState = {
@@ -38,7 +38,11 @@ const startingState = {
   },
   cutoffs: {
     useDefaults: true,
-    dayCutoff: 0,
+    dayCutoff: {
+      hour: 0,
+      minute: 0,
+      is24hr: false
+    },
     weekBegins: 0
   },
   problems: {},
@@ -60,11 +64,13 @@ const timezoneOptions = getValidTimezones().map(
   }
 );
 
-class _NewJobModal_needsCollapsing extends Component {
+class _NewJobModal_needsCollapsingAndData extends Component {
   constructor(props) {
     super(props);
     this.checkIfSectionTurnedOnForFirstTime = this.checkIfSectionTurnedOnForFirstTime.bind(this);
     this.changeHandlerFactory = changeHandlerFactoryFactory(this.checkIfSectionTurnedOnForFirstTime).bind(this);
+    this.submit = this.submit.bind(this);
+    this.reset = this.reset.bind(this);
     this.radioUseWageTrue = React.createRef();
     this.radioUseWageFalse = React.createRef();
     this.radioUseOvertimeTrue = React.createRef();
@@ -77,7 +83,8 @@ class _NewJobModal_needsCollapsing extends Component {
   };
 
   checkIfSectionTurnedOnForFirstTime(changedPropName) {
-    // If `useWage` is set to true and wage section has never been expanded, expand it automatically. Same goes for cutoffs section.
+    // If `useWage` is set to true and wage section has never been expanded, expand it automatically.
+      // Same goes for cutoffs section.
     const { wage, cutoffs } = this.state;
     const { wageContentToggle, cutoffsContentToggle } = this.props;
     if (changedPropName === 'wage' && wage.useWage && !wageContentToggle.hasBeenExpanded) {
@@ -86,6 +93,14 @@ class _NewJobModal_needsCollapsing extends Component {
     else if (changedPropName === 'cutoffs' && !cutoffs.useDefaults && !cutoffsContentToggle.hasBeenExpanded) {
       cutoffsContentToggle.setIsExpanded(true);
     }
+  };
+
+  submit() {
+
+  };
+
+  reset() {
+    this.setState(startingState);
   };
 
   componentDidUpdate(prevProps) {
@@ -125,7 +140,8 @@ class _NewJobModal_needsCollapsing extends Component {
       closeModal,
       inputRef,
       wageContentToggle,
-      cutoffsContentToggle
+      cutoffsContentToggle,
+      windowWidth
     } = props;
 
     const isFormActive = isActive && !isLoading && !hasSuccess;
@@ -140,6 +156,33 @@ class _NewJobModal_needsCollapsing extends Component {
         title="Create Job"
         isActive={isActive}
         closeModal={closeModal}
+        isCloseButtonDisabled={hasSuccess}
+        footerContent={
+          <>
+            <Button
+              color="light"
+              onClick={() => {
+                this.reset();
+                closeModal();
+              }}
+              disabled={isLoading || hasSuccess}
+            >
+              Cancel
+            </Button>
+            <Button
+              color={hasSuccess ? 'success' : 'primary'}
+              onClick={this.submit}
+              disabled={isLoading || hasSuccess}
+              {...{
+                formId,
+                isLoading
+              }}
+              isSubmit={true}
+            >
+              Submit
+            </Button>
+          </>
+        }
       >
         <form id={formId}>
           <TextInput
@@ -228,6 +271,8 @@ class _NewJobModal_needsCollapsing extends Component {
     );
   };
 }
+
+const _NewJobModal_needsCollapsing = addData(_NewJobModal_needsCollapsingAndData, 'windowWidth', windowWidthService);
 
 const _NewJobModal_needsMoreCollapsing = (
   addCollapsing(_NewJobModal_needsCollapsing, 'wageContentToggle', false, true)

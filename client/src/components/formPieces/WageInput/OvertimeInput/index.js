@@ -3,7 +3,7 @@ import { changeHandlerFactoryForChildrenFactory } from '../../../utilities';
 import RadioInput from '../../RadioInput';
 import CurrencyInput from '../../CurrencyInput';
 import TextInput from '../../TextInput';
-import TimeInput from '../../TimeInput';
+import DurationInput from '../../DurationInput';
 
 function OvertimeInput({
   propName,
@@ -123,7 +123,7 @@ function OvertimeInput({
         helpText="OT pay  rate can either be a multiple of the base rate, or you may enter the exact hourly OT rate instead."
       />
       <CurrencyInput {...rateInputProps} />
-      <TimeInput
+      <DurationInput
         propName="cutoff"
         sectionName={thisSectionName}
         value={cutoff}
