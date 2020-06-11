@@ -1,4 +1,4 @@
-import { processCurrencyInputValue, processCurrencyMultiplierInputValue } from './currency';
+import { processCurrencyInputValue } from './currency';
 
 function validateWageInput(inputValue) {
   const { useWage, rate, currency, overtime } = inputValue;
@@ -60,7 +60,7 @@ function validateOvertimeInput(wageInputValue) {
   }
   const cutoffMin = cutoff.minutes || 0;
   const cutoffHr = cutoff.hours || 0;
-  if (cutoffMin < 0 || cutoffMin > 59 || cutoffHr < 0 || cutoffHr > 167) {
+  if (cutoffMin < 0 || cutoffMin > 59 || cutoffHr < 0 || cutoffHr > 167 || (cutoffHr + cutoffMin === 0)) {
     problems.cutoff = true;
     problemMessages.push('Invalid overtime cutoff value.');
   }
@@ -71,9 +71,34 @@ function validateOvertimeInput(wageInputValue) {
   );
 }
 
-export { validateWageInput };
+function processWageInput(wageInputValue) {
+  const { useWage, rate, currency, overtime } = wageInputValue;
+  if (!useWage) return null;
+  return {
+    currency,
+    rate: processCurrencyInputValue(rate).rounded,
+    overtime: processOvertimeInput(overtime)
+  };
+}
+
+function processOvertimeInput(overtimeInputValue) {
+  const { useOvertime, useMultiplier, rate, multiplier, cutoff } = overtimeInputValue;
+  if (!useOvertime) return;
+  let result = { useMultiplier };
+  if (useMultiplier) {
+    result.multiplier = multiplier;
+  }
+  else {
+    result.rate = processCurrencyInputValue(rate).rounded;
+  }
+  const cutoffInMinutes = (cutoff.hours || 0) * 60 + (cutoff.minutes || 0);
+  result.cutoff = cutoffInMinutes * 60 * 1000;
+  return result;
+}
+
+export { validateWageInput, processWageInput };
 
 function isRawValueNonNegativeNum(rawInputValue) {
   const parsedValue = parseFloat(rawInputValue);
-  return (!parsedValue && parsedValue !== 0) || parsedValue < 0;
+  return (parsedValue || parsedValue === 0) && parsedValue >= 0;
 }

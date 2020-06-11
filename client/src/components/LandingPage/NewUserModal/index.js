@@ -279,8 +279,8 @@ class NewUserModal extends Component {
           {showMessage && problemMessages.length > 0 && (
             <Notification theme="danger" close={() => this.setState({ showMessage: false })}>
               {problemMessages.map(
-                message => (
-                  <NotificationText key={message}>
+                (message, index, arr) => (
+                  <NotificationText key={message} isLast={index === arr.length - 1}>
                     {message}
                   </NotificationText>
                 )
@@ -311,7 +311,7 @@ class NewUserModal extends Component {
               <TextInput
                 {...field}
                 formId={formId}
-                value={this.state[field.name]}
+                value={this.state[field.propName]}
                 changeHandlerFactory={this.changeHandlerFactory}
                 isActive={isActive && !isLoading && !hasSuccess}
                 hasProblem={problems[field.propName]}
