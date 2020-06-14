@@ -42,7 +42,7 @@ function DayCutoffInput({
   const inputNamePrefix = `${sectionName ? sectionName + '-' : ''}${propName}`;
   const hoursInputId = `${inputNamePrefix}-hour-input-${formId}`;
   const _label = label || 'Day Cutoff:';
-  const _helpText = helpText || 'Hint: You probably don\'t need to worry about the day cutoff unless you work nights. If you begin in the evening and work past midnight, you can adjust the day cutoff so that your shift is not split across two days.';
+  const _helpText = helpText || 'Hint: You probably don\'t need a custom day cutoff unless you work late nights. If you begin in the evening and work past midnight, you can adjust the day cutoff so that your shift is not split across two days.';
   const { hour, minute, is24hr } = value;
   let amPm;
   if (!is24hr) {

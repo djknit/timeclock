@@ -14,7 +14,9 @@ import {
   processWageInput
 } from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
-import { TextInput, SelectInput, DateInput, WageInput, RadioInput, WkDayCutoffsInput } from '../../formPieces';
+import {
+  TextInput, SelectInput, DateInput, WageInput, WkDayCutoffsInput, ProgressBar
+} from '../../formPieces';
 import { jobsService, currentJobService, windowWidthService } from '../../../data';
 import { addCollapsing, addData } from '../../higherOrder';
 
@@ -103,9 +105,12 @@ class _NewJobModal_needsCollapsingAndData extends Component {
   };
 
   afterChange(changedPropName) {
+    const { wage, cutoffs, hasBeenSubmitted } = this.state;
+    if (hasBeenSubmitted) {
+      this.setState(this.getInputProblems());
+    }
     // If `useWage` is on and wage section has never been expanded, expand it automatically.
       // Same goes for cutoffs section.
-    const { wage, cutoffs } = this.state;
     const { wageContentToggle, cutoffsContentToggle } = this.props;
     if (changedPropName === 'wage' && wage.useWage && !wageContentToggle.hasBeenExpanded) {
       wageContentToggle.setIsExpanded(true);
@@ -317,8 +322,11 @@ class _NewJobModal_needsCollapsingAndData extends Component {
               <NotificationText>
                 Fill out the form below to add a job and start tracking your hours.
               </NotificationText>
+              <NotificationText>
+                For basic time tracking, only the first three fields are required.
+              </NotificationText>
               <NotificationText isLast={true}>
-                The first 3 fields are required. The last 2 sections are optional.
+                If your settings change during the course of the job, you will be able to enter those changes once the job is created.
               </NotificationText>
             </Notification>
           )}
@@ -341,12 +349,11 @@ class _NewJobModal_needsCollapsingAndData extends Component {
               <NotificationText>
                 You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
               </NotificationText>
-              <progress
-                className="progress is-success"
-                style={style.progressBar}
+              <ProgressBar
+                color="success"
                 value={secondsToDelayRedirect - secondsUntilRedirect}
                 max={secondsToDelayRedirect}
-              ></progress>
+              />
             </Notification>
           )}
           <TextInput

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import { TextInput } from '../../formPieces';
+import { TextInput, ProgressBar } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
 import { api, constants, changeHandlerFactoryFactory } from '../utilities';
 import { userService } from '../../../data';
@@ -218,12 +218,11 @@ class LoginModal extends Component {
               <NotificationText>
                 You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
               </NotificationText>
-              <progress
-                className="progress is-success"
-                style={style.progressBar}
+              <ProgressBar
+                color="success"
                 value={secondsToDelayRedirect - secondsUntilRedirect}
                 max={secondsToDelayRedirect}
-              ></progress>
+              />
             </Notification>
           )}
           {fieldsInfo.map(

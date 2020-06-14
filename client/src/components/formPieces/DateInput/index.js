@@ -53,6 +53,7 @@ function DateInput({
         placeholderText={placeholder}
         id={inputId}
         ref={inputRef}
+        autoComplete="off"
       />
       {helpText &&
         <p className="help">{helpText}</p>
