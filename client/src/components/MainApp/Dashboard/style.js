@@ -40,3 +40,10 @@ export default function getStyle(windowWidth) {
     }
   };
 };
+
+export const dashContentBtnSpecs = {
+  remFontSize: 1.8,
+  xPadding: 5,
+  yPadding: 5,
+  lineHeight: 1
+};

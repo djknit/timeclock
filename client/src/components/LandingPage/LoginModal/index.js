@@ -236,7 +236,7 @@ class LoginModal extends Component {
                 hasProblem={problems[field.propName]}
                 key={index}
                 inputRef={index === 0 ? inputRef : undefined}
-                iconClass={getIconClass(field.name, hasSuccess)}
+                iconClass={getIconClass(field.propName, hasSuccess)}
               />
             )
           )}

@@ -37,7 +37,3 @@ export default function getStyle(windowWidth) {
     }
   };
 };
-
-export const progressBar = {
-  border: 'solid 1px #ffffff'
-};

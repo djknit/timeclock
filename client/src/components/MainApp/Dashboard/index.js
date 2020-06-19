@@ -14,7 +14,7 @@ class _Dashboard_needsData extends Component {
   render() {
 
     const style = getStyle(this.props.windowWidth);
-    const { redirectToJobPage, openNewJobModal, catchApiUnauthorized } = this.props;
+    const { redirectToJobPage, openNewJobModal, catchApiUnauthorized, openEditAccountModal } = this.props;
 
     return (
       <>
@@ -24,7 +24,7 @@ class _Dashboard_needsData extends Component {
           </ContentAreaTitle>
         </ContentArea>
         <div style={style.contentAreasRow}>
-          <Account style={style.account} />
+          <Account style={style.account} {...{ openEditAccountModal }} />
           <Jobs style={style.jobs} {...{ redirectToJobPage, openNewJobModal, catchApiUnauthorized }} />
         </div>
       </>
