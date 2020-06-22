@@ -12,7 +12,8 @@ import { addData } from '../../higherOrder';
 
 const startingState = {
   updatedAccountProp: '',
-  verifyPassword: '',
+  verifyUpdatedPassword: '',
+  currentPassword: '',
   problems: {},
   hasSuccess: false,
   isLoading: false,
@@ -50,13 +51,26 @@ const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 class _EditAccountModal_needsData extends Component {
   constructor(props) {
     super(props);
+    this.afterChange = this.afterChange.bind(this);
     this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
+    this.getInputProblems = this.getInputProblems.bind(this);
+    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
+    this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     this.state = { ...startingState };
   };
 
   afterChange(propName) { // `propName` is the name of property (of state of this component) that was changed
-
+    const { problems, hasBeenSubmitted, problemMessages } = this.state;
+    if (!hasBeenSubmitted) return;
+    let problemsToKeep, problemMessagesToKeep;
+    // if (propName === 'password' && problems.usernameOrEmail) {
+    //   problemsToKeep = { usernameOrEmail: true };
+    //   problemMessagesToKeep = problemMessages.filter(
+    //     message => message.toLowerCase().indexOf('password') === -1
+    //   );
+    // }
+    this.setState(this.getInputProblems(problemsToKeep, problemMessagesToKeep));
   };
 
   getInputProblems(problemsToKeep, problemMessagesToKeep) {
@@ -64,8 +78,36 @@ class _EditAccountModal_needsData extends Component {
     let problemMessages = problemMessagesToKeep || [];
   };
 
-  reset() {
+  setSubmissionProcessingState() {
+    return new Promise(resolve => {
+      this.setState(
+        {
+          hasBeenSubmitted: true,
+          isLoading: true,
+          hasProblem: false,
+          showMessage: false,
+          problems: {},
+          problemMessages: []
+        },
+        resolve
+      );
+    });
+  };
 
+  submit() {
+
+  };
+
+  reset() {
+    this.setState(startingState);
+  };
+
+  componentDidUpdate(prevProps) {
+    const { isActive } = this.props;
+    if (isActive === prevProps.isActive) return;
+    else if (!isActive) {
+      this.reset();
+    }
   };
 
   render() {
@@ -80,7 +122,8 @@ class _EditAccountModal_needsData extends Component {
 
     const {
       updatedAccountProp,
-      verifyPassword,
+      verifyUpdatedPassword,
+      currentPassword,
       problems,
       hasSuccess,
       isLoading,
@@ -88,6 +131,8 @@ class _EditAccountModal_needsData extends Component {
       problemMessages,
       showMessage
     } = state;
+
+    const isMissingVerifyPassword = propToEditName === 'password' && !verifyUpdatedPassword;
 
     const style = getStyle();
 
@@ -99,7 +144,7 @@ class _EditAccountModal_needsData extends Component {
           closeModal
         }}
         title={`${propToEditCurrentValue ? 'Edit' : 'Add'} ${capPropToEditName}`}
-        isCloseButtonDisabled={hasSuccess}
+        isCloseButtonDisabled={isLoading}
         footerContent={
           <>
             <Button
@@ -115,7 +160,9 @@ class _EditAccountModal_needsData extends Component {
             <Button
               color={hasSuccess ? 'success' : 'primary'}
               onClick={this.submit}
-              disabled={isLoading || hasSuccess || !updatedAccountProp || !verifyPassword}
+              disabled={
+                isLoading || hasSuccess || !updatedAccountProp || !currentPassword || isMissingVerifyPassword
+              }
               formId={formId}
               isSubmit
               isLoading={isLoading}

@@ -239,7 +239,7 @@ class NewUserModal extends Component {
         title="New User Sign Up"
         isActive={isActive}
         closeModal={closeModal}
-        isCloseButtonDisabled={hasSuccess}
+        isCloseButtonDisabled={isLoading || hasSuccess}
         footerContent={
           <>
             <Button

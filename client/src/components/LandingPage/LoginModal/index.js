@@ -103,7 +103,6 @@ class LoginModal extends Component {
   submit(event) {
     event.preventDefault();
     const { usernameOrEmail, password } = this.state;
-    let { unavailableEmails, unavailableUsernames } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
       const { problems, problemMessages } = this.getInputProblems();
@@ -144,8 +143,6 @@ class LoginModal extends Component {
       const errorData = (err && err.response && err.response.data) || err || {};
       const { problems, messages } = errorData;
       this.setState({
-        unavailableEmails,
-        unavailableUsernames,
         problems: problems || { unknown: true },
         problemMessages: messages || ['An unknown problem has occured.'],
         hasProblem: true,
@@ -172,7 +169,7 @@ class LoginModal extends Component {
         title="Sign In"
         isActive={isActive}
         closeModal={closeModal}
-        isCloseButtonDisabled={hasSuccess}
+        isCloseButtonDisabled={isLoading|| hasSuccess}
         footerContent={
           <>
             <Button
