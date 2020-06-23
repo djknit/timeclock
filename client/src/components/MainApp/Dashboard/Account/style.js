@@ -4,28 +4,48 @@ export default function getStyle(additionalStyle) {
   
   const dividerColor = '#b3b3b3';
 
+  const accountPropArea = {
+    paddingLeft: '.75em',
+    paddingRight: '.75em',
+    paddingTop: 0,
+    textAlign: 'right'
+  };
+
+  const adjustedBtnSpecs = adjustBtnSpecs(dashContentBtnSpecs, 1.3);
+  const buttonInnateStyle = {
+    padding: `${adjustedBtnSpecs.yPadding}px ${adjustedBtnSpecs.xPadding}px`,
+    fontSize: `${adjustedBtnSpecs.remFontSize}rem`,
+    lineHeight: adjustedBtnSpecs.lineHeight,
+    height: 'auto'
+  };
+
   return {
     contentArea: {
       ...additionalStyle
     },
-    infoText: {
-      marginBottom: '.5em',
-      padding: '.5em .75em 1em',
-      textAlign: 'left',
-      borderBottom: `solid 1px ${dividerColor}`
+    accountPropAreaNotLast: {
+      ...accountPropArea,
+      paddingBottom: '1.25em',
+      borderBottom: `solid 1px ${dividerColor}`,
+      marginBottom: '.5em'
     },
-    buttonArea: {
-      padding: '.5em 0 0',
-      // borderTop: `solid 1px ${dividerColor}`,
-      textAlign: 'right'
+    lastAccountPropArea: {
+      ...accountPropArea,
+      paddingBottom: 0
+    },
+    propAreaText: {
+      padding: '.5em 0 .75em',
+      textAlign: 'left'
     },
     button: {
       innate: {
-        padding: `${dashContentBtnSpecs.yPadding}px ${dashContentBtnSpecs.xPadding}px`,
-        fontSize: `${dashContentBtnSpecs.remFontSize}rem`,
-        lineHeight: dashContentBtnSpecs.lineHeight,
-        height: 'auto',
-        // marginTop: '.5em'
+        ...buttonInnateStyle
+      }
+    },
+    buttonNotFirst: {
+      innate: {
+        ...buttonInnateStyle,
+        marginLeft: '.5em'
       }
     },
     hr: {
@@ -35,3 +55,13 @@ export default function getStyle(additionalStyle) {
     }
   };
 };
+
+function adjustBtnSpecs(unadjustedSpecs, targetRemFontSize) {
+  const adjustmentFactor = targetRemFontSize / unadjustedSpecs.remFontSize;
+  return {
+    remFontSize: targetRemFontSize,
+    xPadding: unadjustedSpecs.xPadding * adjustmentFactor,
+    yPadding: unadjustedSpecs.yPadding * adjustmentFactor,
+    lineHeight: unadjustedSpecs.lineHeight
+  };
+}

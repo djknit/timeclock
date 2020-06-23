@@ -24,7 +24,8 @@ class MainApp extends Component {
     this.state = {
       navHeight: undefined,
       isNewJobModalActive: false,
-      isEditAccountModalActive: false
+      isEditAccountModalActive: false,
+      accountPropToEditName: undefined
     };
   };
 
@@ -41,8 +42,11 @@ class MainApp extends Component {
     }
   };
 
-  toggleEditAccountModal(isActiveAfterToggle) {
-    this.setState({ isEditAccountModalActive: !!isActiveAfterToggle });
+  toggleEditAccountModal(isActiveAfterToggle, propToEditName) {
+    this.setState({
+      isEditAccountModalActive: !!isActiveAfterToggle,
+      accountPropToEditName: propToEditName
+    });
   };
 
   focusNewJobModal() {
@@ -83,7 +87,7 @@ class MainApp extends Component {
       history, match
     } = props;
     const {
-      navHeight, isNewJobModalActive, isEditAccountModalActive
+      navHeight, isNewJobModalActive, isEditAccountModalActive, accountPropToEditName
     } = state;
 
     const style = getStyle(navHeight);
@@ -93,11 +97,15 @@ class MainApp extends Component {
     const redirectToJobPage = jobId => history.push(buildPath(`job/${jobId}`));
 
     const openNewJobModal = () => toggleNewJobModal(true);
-    const openEditAccountModal = () => toggleEditAccountModal(true);
+    const accountEditingModalOpenerFactory = propToEditName => {
+      return () => toggleEditAccountModal(true, propToEditName);
+    };
 
     const renderDashboard = props => (
       <Dashboard
-        {...{ ...props, redirectToJobPage, openNewJobModal, catchApiUnauthorized, openEditAccountModal }}
+        {...{
+          ...props, redirectToJobPage, openNewJobModal, catchApiUnauthorized, accountEditingModalOpenerFactory
+        }}
       />
     );
 
@@ -140,6 +148,7 @@ class MainApp extends Component {
         <EditAccountModal
           isActive={isEditAccountModalActive}
           closeModal={() => toggleEditAccountModal(false)}
+          propToEditName={accountPropToEditName}
           {...{
             catchApiUnauthorized
           }}

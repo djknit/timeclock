@@ -118,6 +118,7 @@ class _EditAccountModal_needsData extends Component {
       user, isActive, propToEditName, closeModal
     } = props;
     const propToEditCurrentValue = user && user[propToEditName];
+    const hasCurrentValue = (propToEditCurrentValue && true) || propToEditName === 'password';
     const capPropToEditName = capitalizeFirstLetter(propToEditName);
 
     const {
@@ -143,7 +144,7 @@ class _EditAccountModal_needsData extends Component {
           isActive,
           closeModal
         }}
-        title={`${propToEditCurrentValue ? 'Edit' : 'Add'} ${capPropToEditName}`}
+        title={`${hasCurrentValue ? 'Edit' : 'Add'} ${capPropToEditName}`}
         isCloseButtonDisabled={isLoading}
         footerContent={
           <>
