@@ -17,14 +17,16 @@ class MainApp extends Component {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
     this.toggleNewJobModal = this.toggleNewJobModal.bind(this);
-    this.focusNewJobModal = this.focusNewJobModal.bind(this);
     this.toggleEditAccountModal = this.toggleEditAccountModal.bind(this);
+    this.focusNewJobModal = this.focusNewJobModal.bind(this);
+    this.toggleDeleteAccountPropModal = this.toggleDeleteAccountPropModal.bind(this);
     this.catchApiUnauthorized = this.catchApiUnauthorized.bind(this);
     this.newJobInputRef = React.createRef();
     this.state = {
       navHeight: undefined,
       isNewJobModalActive: false,
       isEditAccountModalActive: false,
+      isDeleteAccountPropModalActive: false,
       accountPropToEditName: undefined
     };
   };
@@ -51,6 +53,13 @@ class MainApp extends Component {
 
   focusNewJobModal() {
     this.newJobInputRef.current.focus();
+  };
+
+  toggleDeleteAccountPropModal(isActiveAfterToggle, propToDeleteName) {
+    this.setState({
+      isEditAccountModalActive: !!isActiveAfterToggle,
+      accountPropToEditName: propToDeleteName
+    });
   };
 
   catchApiUnauthorized(err) {
@@ -81,11 +90,9 @@ class MainApp extends Component {
 
   render() {
     const {
-      props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized, toggleEditAccountModal
+      state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized, toggleEditAccountModal, toggleDeleteAccountPropModal
     } = this;
-    const {
-      history, match
-    } = props;
+    const { history, match } = this.props;
     const {
       navHeight, isNewJobModalActive, isEditAccountModalActive, accountPropToEditName
     } = state;
@@ -100,11 +107,19 @@ class MainApp extends Component {
     const accountEditingModalOpenerFactory = propToEditName => {
       return () => toggleEditAccountModal(true, propToEditName);
     };
+    const accountPropDeletingModalOpenerFactory = propToDeleteName => {
+      return () => toggleDeleteAccountPropModal(true, propToDeleteName);
+    };
 
     const renderDashboard = props => (
       <Dashboard
         {...{
-          ...props, redirectToJobPage, openNewJobModal, catchApiUnauthorized, accountEditingModalOpenerFactory
+          ...props,
+          redirectToJobPage,
+          openNewJobModal,
+          catchApiUnauthorized,
+          accountEditingModalOpenerFactory,
+          accountPropDeletingModalOpenerFactory
         }}
       />
     );

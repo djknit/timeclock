@@ -15,7 +15,11 @@ class _Dashboard_needsData extends Component {
 
     const style = getStyle(this.props.windowWidth);
     const {
-      redirectToJobPage, openNewJobModal, catchApiUnauthorized, accountEditingModalOpenerFactory
+      redirectToJobPage,
+      openNewJobModal,
+      catchApiUnauthorized,
+      accountEditingModalOpenerFactory,
+      accountPropDeletingModalOpenerFactory
     } = this.props;
 
     return (
@@ -26,7 +30,13 @@ class _Dashboard_needsData extends Component {
           </ContentAreaTitle>
         </ContentArea>
         <div style={style.contentAreasRow}>
-          <Account style={style.account} {...{ accountEditingModalOpenerFactory }} />
+          <Account
+            style={style.account}
+            {...{
+              accountEditingModalOpenerFactory,
+              accountPropDeletingModalOpenerFactory
+            }}
+          />
           <Jobs style={style.jobs} {...{ redirectToJobPage, openNewJobModal, catchApiUnauthorized }} />
         </div>
       </>

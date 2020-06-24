@@ -1,4 +1,4 @@
-import { dashContentBtnSpecs } from '../style';
+import { dashContentBtnSpecs, contentAreaPadding } from '../style';
 
 export default function getStyle(additionalStyle) {
   
@@ -10,6 +10,8 @@ export default function getStyle(additionalStyle) {
     paddingTop: 0,
     textAlign: 'right'
   };
+
+  const propAreaBottomPadding = '1.25em';
 
   const adjustedBtnSpecs = adjustBtnSpecs(dashContentBtnSpecs, 1.3);
   const buttonInnateStyle = {
@@ -25,13 +27,13 @@ export default function getStyle(additionalStyle) {
     },
     accountPropAreaNotLast: {
       ...accountPropArea,
-      paddingBottom: '1.25em',
+      paddingBottom: propAreaBottomPadding,
       borderBottom: `solid 1px ${dividerColor}`,
       marginBottom: '.5em'
     },
     lastAccountPropArea: {
       ...accountPropArea,
-      paddingBottom: 0
+      paddingBottom: `calc(${propAreaBottomPadding} - ${contentAreaPadding}px)`
     },
     propAreaText: {
       padding: '.5em 0 .75em',

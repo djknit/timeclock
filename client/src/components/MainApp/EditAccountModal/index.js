@@ -103,11 +103,7 @@ class _EditAccountModal_needsData extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { isActive } = this.props;
-    if (isActive === prevProps.isActive) return;
-    else if (!isActive) {
-      this.reset();
-    }
+    if (!this.props.isActive && prevProps.isActive) this.reset();
   };
 
   render() {

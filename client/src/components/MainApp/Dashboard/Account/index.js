@@ -13,6 +13,40 @@ function _Account_needsData({
 
   const completeStyle = getStyle(style);
 
+  function EditAccountButtons({ propToEditName }) {
+    return (
+      <>
+        <Button
+          color="primary"
+          styles={completeStyle.button}
+          onClick={accountEditingModalOpenerFactory(propToEditName)}
+        >
+          {user[propToEditName] || propToEditName === 'password' ?
+            <><i className="fas fa-edit"></i> Edit</> :
+            <><i className="fas fa-plus"></i> Add</>
+          }
+        </Button>
+        {user.username && user.email && propToEditName !== 'password' &&
+          <Button
+            color="danger"
+            styles={completeStyle.buttonNotFirst}
+            // onClick={}
+          >
+
+          </Button>
+        }
+      </>
+    );
+  }
+
+  function RemoveAccountPropButton({ propToRemoveName }) {
+    return (
+      user.username && user.email ?
+      <Button></Button> :
+      <></>
+    );
+  }
+
   return (
     <ContentArea title="Account" style={completeStyle.contentArea}>
       {user &&
@@ -25,16 +59,7 @@ function _Account_needsData({
                 ' You don\'t currently have a username.'
               }
             </p>
-            <Button
-              color="primary"
-              styles={completeStyle.button}
-              onClick={accountEditingModalOpenerFactory('username')}
-            >
-              {user.username ?
-                <><i className="fas fa-edit"></i> Edit</> :
-                <><i className="fas fa-plus"></i> Add</>
-              }
-            </Button>
+            <EditAccountButtons propToEditName="username" />
           </div>
           <div style={completeStyle.accountPropAreaNotLast}>
             <p style={completeStyle.propAreaText}>
@@ -44,28 +69,13 @@ function _Account_needsData({
                 ' You don\'t currently have an email address attached to your account.'
               }
             </p>
-            <Button
-              color="primary"
-              styles={completeStyle.button}
-              onClick={accountEditingModalOpenerFactory('email')}
-            >
-              {user.email ?
-                <><i className="fas fa-edit"></i> Edit</> :
-                <><i className="fas fa-plus"></i> Add</>
-              }
-            </Button>
+            <EditAccountButtons propToEditName="email" />
           </div>
           <div style={completeStyle.lastAccountPropArea}>
             <p style={completeStyle.propAreaText}>
               <strong>Password:</strong> "&bull;&bull;&bull;&bull;..."
             </p>
-            <Button
-              color="primary"
-              styles={completeStyle.button}
-              onClick={accountEditingModalOpenerFactory('password')}
-            >
-              <i className="fas fa-edit"></i> Edit
-            </Button>
+            <EditAccountButtons propToEditName="password" />
           </div>
         </>
       }
