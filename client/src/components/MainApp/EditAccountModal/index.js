@@ -108,7 +108,7 @@ class _EditAccountModal_needsData extends Component {
 
   render() {
 
-    const { props, state, changeHandlerFactory } = this;
+    const { props, state, changeHandlerFactory, reset, submit } = this;
 
     const {
       user, isActive, propToEditName, closeModal
@@ -147,7 +147,7 @@ class _EditAccountModal_needsData extends Component {
             <Button
               color="light"
               onClick={() => {
-                this.reset();
+                reset();
                 closeModal();
               }}
               disabled={isLoading || hasSuccess}
@@ -156,7 +156,7 @@ class _EditAccountModal_needsData extends Component {
             </Button>
             <Button
               color={hasSuccess ? 'success' : 'primary'}
-              onClick={this.submit}
+              onClick={submit}
               disabled={
                 isLoading || hasSuccess || !updatedAccountProp || !currentPassword || isMissingVerifyPassword
               }

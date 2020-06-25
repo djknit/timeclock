@@ -8,7 +8,8 @@ import { addData } from '../../../higherOrder';
 function _Account_needsData({
   user,
   style,
-  accountEditingModalOpenerFactory
+  accountEditingModalOpenerFactory,
+  accountPropDeletingModalOpenerFactory
 }) {
 
   const completeStyle = getStyle(style);
@@ -22,28 +23,20 @@ function _Account_needsData({
           onClick={accountEditingModalOpenerFactory(propToEditName)}
         >
           {user[propToEditName] || propToEditName === 'password' ?
-            <><i className="fas fa-edit"></i> Edit</> :
-            <><i className="fas fa-plus"></i> Add</>
+            <><i className="fas fa-edit" /> Edit</> :
+            <><i className="fas fa-plus" /> Add</>
           }
         </Button>
         {user.username && user.email && propToEditName !== 'password' &&
           <Button
             color="danger"
             styles={completeStyle.buttonNotFirst}
-            // onClick={}
+            onClick={accountPropDeletingModalOpenerFactory(propToEditName)}
           >
-
+            <i className="fas fa-times" /> Delete
           </Button>
         }
       </>
-    );
-  }
-
-  function RemoveAccountPropButton({ propToRemoveName }) {
-    return (
-      user.username && user.email ?
-      <Button></Button> :
-      <></>
     );
   }
 

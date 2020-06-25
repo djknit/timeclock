@@ -9,6 +9,7 @@ import JobPage from './JobPage';
 import NotFoundPage from '../NotFound';
 import NewJobModal from './NewJobModal';
 import EditAccountModal from './EditAccountModal';
+import DeleteAccountPropModal from './DeleteAccountPropModal';
 
 const dashboardPathName = 'dashboard';
 
@@ -57,7 +58,7 @@ class MainApp extends Component {
 
   toggleDeleteAccountPropModal(isActiveAfterToggle, propToDeleteName) {
     this.setState({
-      isEditAccountModalActive: !!isActiveAfterToggle,
+      isDeleteAccountPropModalActive: !!isActiveAfterToggle,
       accountPropToEditName: propToDeleteName
     });
   };
@@ -94,7 +95,7 @@ class MainApp extends Component {
     } = this;
     const { history, match } = this.props;
     const {
-      navHeight, isNewJobModalActive, isEditAccountModalActive, accountPropToEditName
+      navHeight, isNewJobModalActive, isEditAccountModalActive, accountPropToEditName, isDeleteAccountPropModalActive
     } = state;
 
     const style = getStyle(navHeight);
@@ -164,6 +165,14 @@ class MainApp extends Component {
           isActive={isEditAccountModalActive}
           closeModal={() => toggleEditAccountModal(false)}
           propToEditName={accountPropToEditName}
+          {...{
+            catchApiUnauthorized
+          }}
+        />
+        <DeleteAccountPropModal
+          isActive={isDeleteAccountPropModalActive}
+          closeModal={() => toggleDeleteAccountPropModal(false)}
+          propToDeleteName={accountPropToEditName}
           {...{
             catchApiUnauthorized
           }}
