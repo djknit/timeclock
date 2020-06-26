@@ -21,8 +21,11 @@ class MainApp extends Component {
     this.toggleEditAccountModal = this.toggleEditAccountModal.bind(this);
     this.focusNewJobModal = this.focusNewJobModal.bind(this);
     this.toggleDeleteAccountPropModal = this.toggleDeleteAccountPropModal.bind(this);
+    this.focusDeleteAccountPropModal = this.focusDeleteAccountPropModal.bind(this);
     this.catchApiUnauthorized = this.catchApiUnauthorized.bind(this);
     this.newJobInputRef = React.createRef();
+    this.deletingAccountPropInputRef = React.createRef();
+    this.editingAccountPropInputRef = React.createRef();
     this.state = {
       navHeight: undefined,
       isNewJobModalActive: false,
@@ -57,10 +60,17 @@ class MainApp extends Component {
   };
 
   toggleDeleteAccountPropModal(isActiveAfterToggle, propToDeleteName) {
-    this.setState({
-      isDeleteAccountPropModalActive: !!isActiveAfterToggle,
-      accountPropToEditName: propToDeleteName
-    });
+    this.setState(
+      {
+        isDeleteAccountPropModalActive: !!isActiveAfterToggle,
+        accountPropToEditName: propToDeleteName
+      },
+      this.focusDeleteAccountPropModal
+    );
+  };
+
+  focusDeleteAccountPropModal() {
+    this.deletingAccountPropInputRef.current.focus();
   };
 
   catchApiUnauthorized(err) {
@@ -91,7 +101,7 @@ class MainApp extends Component {
 
   render() {
     const {
-      state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized, toggleEditAccountModal, toggleDeleteAccountPropModal
+      state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized, toggleEditAccountModal, toggleDeleteAccountPropModal, deletingAccountPropInputRef
     } = this;
     const { history, match } = this.props;
     const {
@@ -165,6 +175,7 @@ class MainApp extends Component {
           isActive={isEditAccountModalActive}
           closeModal={() => toggleEditAccountModal(false)}
           propToEditName={accountPropToEditName}
+          inputRef={this.editingAccountPropInputRef}
           {...{
             catchApiUnauthorized
           }}
@@ -173,6 +184,7 @@ class MainApp extends Component {
           isActive={isDeleteAccountPropModalActive}
           closeModal={() => toggleDeleteAccountPropModal(false)}
           propToDeleteName={accountPropToEditName}
+          inputRef={deletingAccountPropInputRef}
           {...{
             catchApiUnauthorized
           }}

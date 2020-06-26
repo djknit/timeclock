@@ -29,7 +29,6 @@ class _DeleteAccountPropModal_needsData extends Component {
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
-    this.input = React.createRef();
     this.state = { ...startingState };
   };
 
@@ -117,8 +116,8 @@ class _DeleteAccountPropModal_needsData extends Component {
   };
 
   render() {
-    const { props, state, reset, submit, input, changeHandlerFactory } = this;
-    const { isActive, closeModal, propToDeleteName, user } = props;
+    const { props, state, reset, submit, changeHandlerFactory } = this;
+    const { isActive, closeModal, propToDeleteName, user, inputRef } = props;
     const {
       password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, hasBeenSubmitted
     } = state;
@@ -213,11 +212,11 @@ class _DeleteAccountPropModal_needsData extends Component {
             isActive={!isLoading && !hasSuccess}
             {...{
               changeHandlerFactory,
-              formId
+              formId,
+              inputRef
             }}
             type="password"
             isInline
-            inputRef={input}
           />
         </form>
       </ModalSkeleton>

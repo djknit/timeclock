@@ -7,6 +7,7 @@ import {
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import Notification, { NotificationText } from '../../Notification';
+import Tag, { TagGroup } from '../../Tag';
 import { TextInput, ProgressBar } from '../../formPieces';
 import { addData } from '../../higherOrder';
 
@@ -33,26 +34,40 @@ function getTakenEmailDisplayMessage(email) {
   return `There is already an account for the email address "${email}".`;
 }
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
-// function getVariableAttributes(propToEditName) {
-//   if (propToEditName === 'username') {
-//     return {
-      
-//     };
-//   }
-//   else if (propToEditName === 'email') {
-//     return {};
-//   }
-//   else if (propToEditName === 'password') {
-//     return {};
-//   }
-//   else throw new Error('invalid account prop name');
-// }
+function getVariableAttributes(propToEditName) {
+  if (!propToEditName) return {};
+  let type, iconClass;
+  switch (propToEditName) {
+    case 'username':
+      type = 'username';
+      iconClass = 'fas fa-user-tag';
+      break;
+    case 'email':
+      type = 'email';
+      iconClass = 'fas fa-envelope';
+      break;
+    case 'password':
+      type='newPassword';
+      iconClass = 'fas fa-lock';
+      break;
+    default:
+      throw new Error('invalid account prop name');
+  }
+  let propDisplayName = `${capitalizeFirstLetter(propToEditName)}`;
+  if (propToEditName === 'email') propDisplayName += ' Address';
+  return {
+    type,
+    label: `Enter Your New ${propDisplayName}`,
+    iconClass,
+    placeholder: `Your new ${propToEditName}...`
+  };
+}
 
 class _EditAccountModal_needsData extends Component {
   constructor(props) {
     super(props);
     this.afterChange = this.afterChange.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
     this.getInputProblems = this.getInputProblems.bind(this);
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
     this.submit = this.submit.bind(this);
@@ -60,7 +75,7 @@ class _EditAccountModal_needsData extends Component {
     this.state = { ...startingState };
   };
 
-  afterChange(propName) { // `propName` is the name of property (of state of this component) that was changed
+  afterChange(propName) { // `propName` is the name of the property of the state of this component) that was changed
     const { problems, hasBeenSubmitted, problemMessages } = this.state;
     if (!hasBeenSubmitted) return;
     let problemsToKeep, problemMessagesToKeep;
@@ -94,8 +109,8 @@ class _EditAccountModal_needsData extends Component {
     });
   };
 
-  submit() {
-
+  submit(event) {
+    event.preventDefault();
   };
 
   reset() {
@@ -111,7 +126,7 @@ class _EditAccountModal_needsData extends Component {
     const { props, state, changeHandlerFactory, reset, submit } = this;
 
     const {
-      user, isActive, propToEditName, closeModal
+      user, isActive, propToEditName, closeModal, inputRef
     } = props;
     const propToEditCurrentValue = user && user[propToEditName];
     const hasCurrentValue = (propToEditCurrentValue && true) || propToEditName === 'password';
@@ -129,10 +144,13 @@ class _EditAccountModal_needsData extends Component {
       showMessage
     } = state;
 
+    const variableUpdateInputAttrs = getVariableAttributes(propToEditName);
+
     const isMissingVerifyPassword = propToEditName === 'password' && !verifyUpdatedPassword;
 
-    const style = getStyle();
+    const closeMessage = () => this.setState({ showMessage: false });
 
+    const style = getStyle();
 
     return (
       <ModalSkeleton
@@ -169,8 +187,89 @@ class _EditAccountModal_needsData extends Component {
           </>
         }
       >
-        
-
+        <form id={formId}>
+          {showMessage && !hasProblem && !hasSuccess && (
+            <Notification theme="info" close={closeMessage}>
+              <NotificationText isLast>
+                Enter your new {propToEditName} and your current password below to update your account.
+              </NotificationText>
+            </Notification>
+          )}
+          {showMessage && problemMessages.length > 0 && (
+            <Notification theme="danger" close={closeMessage}>
+              {problemMessages.map(
+                (message, index, arr) => (
+                  <NotificationText key={message} isLast={index === arr.length - 1}>
+                    {message}
+                  </NotificationText>
+                )
+              )}
+            </Notification>
+          )}
+          {showMessage && hasSuccess && (
+            <Notification theme="success">
+              <NotificationText isLast>
+                <strong>Success!</strong> Your {propToEditName} was deleted.
+              </NotificationText>
+            </Notification>
+          )}
+          {propToEditName === 'password' && (
+            <TagGroup align="center">
+              <Tag theme="info" size={6}>
+                {`Current ${capPropToEditName}:`}
+              </Tag>
+              <Tag theme="info light" size={6}>
+                {propToEditCurrentValue ? `"${propToEditCurrentValue}"` : 'none'}
+              </Tag>
+            </TagGroup>
+          )}
+          <TextInput
+            propName="updatedAccountProp"
+            value={updatedAccountProp}
+            hasProblem={problems && problems.updatedAccountProp}
+            isActive={!isLoading && !hasSuccess}
+            {...variableUpdateInputAttrs}
+            {...{
+              changeHandlerFactory,
+              formId,
+              inputRef
+            }}
+          />
+          {propToEditName === 'password' && (
+            <TextInput
+              propName="verifyUpdatedPassword"
+              value={verifyUpdatedPassword}
+              label="Confirm Your New Password"
+              placeholder="Retype your new password..."
+              hasProblem={problems && problems.verifyUpdatedPassword}
+              iconClass="fas fa-unlock"
+              isActive={!isLoading && !hasSuccess}
+              {...{
+                changeHandlerFactory,
+                formId,
+                inputRef
+              }}
+              type="newPassword"
+            />
+          )}
+          <hr style={style.hr} />
+          <TextInput
+            propName="currentPassword"
+            value={currentPassword}
+            label="Enter Your Current Password"
+            placeholder="Your password..."
+            hasProblem={problems && problems.currentPassword}
+            iconClass={hasSuccess ? 'fas fa-unlock' : 'fas fa-lock'}
+            helpText="Enter your current password to verify you identity and complete the update to your account."
+            isActive={!isLoading && !hasSuccess}
+            {...{
+              changeHandlerFactory,
+              formId,
+              inputRef
+            }}
+            type="password"
+          />
+        </form>
       </ModalSkeleton>
     );
   };
