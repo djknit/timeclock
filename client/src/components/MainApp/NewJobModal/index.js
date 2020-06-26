@@ -292,7 +292,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
         footerContent={
           <>
             <Button
-              color="light"
+              theme="light"
               onClick={() => {
                 this.reset();
                 closeModal();
@@ -302,7 +302,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
               Cancel
             </Button>
             <Button
-              color={hasSuccess ? 'success' : 'primary'}
+              theme={hasSuccess ? 'success' : 'primary'}
               onClick={this.submit}
               disabled={isLoading || hasSuccess}
               {...{
@@ -350,7 +350,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
                 You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
               </NotificationText>
               <ProgressBar
-                color="success"
+                theme="success"
                 value={secondsToDelayRedirect - secondsUntilRedirect}
                 max={secondsToDelayRedirect}
               />

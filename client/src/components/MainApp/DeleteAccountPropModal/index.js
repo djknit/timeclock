@@ -4,6 +4,7 @@ import { api, changeHandlerFactoryFactory, capitalizeFirstLetter } from '../util
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import Notification, { NotificationText } from '../../Notification';
+import Tag, { TagGroup } from '../../Tag';
 import { TextInput } from '../../formPieces';
 import { addData } from '../../higherOrder';
 
@@ -74,7 +75,7 @@ class _DeleteAccountPropModal_needsData extends Component {
         footerContent={
           <>
             <Button
-              color="light"
+              theme="light"
               onClick={() => {
                 reset();
                 closeModal();
@@ -84,7 +85,7 @@ class _DeleteAccountPropModal_needsData extends Component {
               {hasSuccess ? 'Close' : 'Cancel'}
             </Button>
             <Button
-              color={hasSuccess ? 'success' : 'primary'}
+              theme={hasSuccess ? 'success' : 'primary'}
               onClick={submit}
               disabled={
                 isLoading || hasSuccess || !password
@@ -126,14 +127,14 @@ class _DeleteAccountPropModal_needsData extends Component {
             </NotificationText>
           </Notification>
         )}
-        <div className="tags has-addons has-text-centered" style={{ display: 'block' }}>
-          <span className="tag is-info is-size-6">
+        <TagGroup align="center">
+          <Tag theme="info" size={6}>
             {`Current ${capPropToDeleteName}:`}
-          </span>
-          <span className="tag is-info is-light is-size-6">
+          </Tag>
+          <Tag theme="info light" size={6}>
             {propToDeleteCurrentValue ? `"${propToDeleteCurrentValue}"` : 'none'}
-          </span>
-        </div>
+          </Tag>
+        </TagGroup>
       </ModalSkeleton>
     );
   };

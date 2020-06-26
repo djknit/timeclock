@@ -128,7 +128,7 @@ class _Navbar_needsData extends Component {
               {isLoggedIn &&
                 <Button
                   size="none"
-                  // color="white"
+                  // theme="white"
                   onClick={this.submitLogout}
                   isLoading={isLoading}
                   styles={style.logoutButton}

@@ -1,5 +1,6 @@
 import React from 'react';
 import getStyle from './style';
+import { getColorClass } from '../utilities';
 
 function Notification({
   children,
@@ -10,7 +11,7 @@ function Notification({
   const style = getStyle();
 
   let className = 'notification';
-  if (theme) className += ` is-${theme}`;
+  if (theme) className += ` ${getColorClass(theme)}`;
 
   const _close = (event) => {
     event.preventDefault();

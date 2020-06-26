@@ -243,7 +243,7 @@ class NewUserModal extends Component {
         footerContent={
           <>
             <Button
-              color="light"
+              theme="light"
               onClick={() => {
                 this.reset();
                 closeModal();
@@ -253,7 +253,7 @@ class NewUserModal extends Component {
               Cancel
             </Button>
             <Button
-              color={hasSuccess ? 'success' : 'primary'}
+              theme={hasSuccess ? 'success' : 'primary'}
               onClick={this.submit}
               disabled={isLoading || hasSuccess || (!username && !email) || !password || !verifyPassword}
               formId={formId}
@@ -299,7 +299,7 @@ class NewUserModal extends Component {
                 You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
               </NotificationText>
               <ProgressBar
-                color="success"
+                theme="success"
                 value={secondsToDelayRedirect - secondsUntilRedirect}
                 max={secondsToDelayRedirect}
               />

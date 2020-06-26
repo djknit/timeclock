@@ -5,6 +5,22 @@ function promiseToSetState(component, updatedState) {
   return new Promise(resolve => component.setState(updatedState, resolve));
 }
 
+function getColorClass(theme) {
+  const words = theme.split(' ');
+  let className = '';
+  words.forEach((word, index) => {
+    if (index !== 0) className += ' ';
+    className += `is-${word}`;
+  });
+  return className;
+}
+
+function getSizeClass(size) {
+  if ((!size && size !== 0) || size === 'none') return '';
+  const isNum = typeof(size) === 'number' || parseInt(size).toString() === size;
+  return isNum ? `is-size-${size}` : `is-${size}`;
+}
+
 const constants = {
   secondsToDelayRedirect: 2.7,
   stepSizeOfRedirectDelay: .3
@@ -12,5 +28,7 @@ const constants = {
 
 export {
   promiseToSetState,
+  getColorClass,
+  getSizeClass,
   constants
 };

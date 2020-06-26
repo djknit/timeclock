@@ -1,25 +1,22 @@
 import React from 'react';
+import { getColorClass, getSizeClass } from '../utilities';
+
+export { default as TagGroup } from './TagGroup';
 
 function Tag({
   children,
-  theme
+  theme,
+  size
 }) {
 
-  const colorClass = color && `is-${color}`;
+  const colorClass = getColorClass(theme);
+  const sizeClass = getSizeClass(size);
 
   return (
-    <span className={`tag ${colorClass || ''}`}>
+    <span className={`tag ${colorClass} ${sizeClass}`}>
       {children}
     </span>
   );
 }
 
-function TagGroup({ children }) {
-  return (
-    <div className="tags has-addons">{children}</div>
-  );
-}
-
 export default Tag;
-
-export { TagGroup };

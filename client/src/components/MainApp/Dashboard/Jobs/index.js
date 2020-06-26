@@ -47,7 +47,7 @@ class _Jobs_needsData extends Component {
     return (
       <ContentArea style={style.contentArea}>
         <ContentAreaTitle style={style.areaTitle}>Your Jobs</ContentAreaTitle>
-        <Button styles={style.addJobButton} color="primary" onClick={openNewJobModal}>
+        <Button styles={style.addJobButton} theme="primary" onClick={openNewJobModal}>
           <i className="fas fa-plus"></i> New
         </Button>
         <table className="table is-fullwidth" style={style.table}>

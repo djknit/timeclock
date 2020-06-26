@@ -18,7 +18,7 @@ function _Account_needsData({
     return (
       <>
         <Button
-          color="primary"
+          theme="primary"
           styles={completeStyle.button}
           onClick={accountEditingModalOpenerFactory(propToEditName)}
         >
@@ -29,7 +29,7 @@ function _Account_needsData({
         </Button>
         {user.username && user.email && propToEditName !== 'password' &&
           <Button
-            color="danger"
+            theme="danger"
             styles={completeStyle.buttonNotFirst}
             onClick={accountPropDeletingModalOpenerFactory(propToEditName)}
           >

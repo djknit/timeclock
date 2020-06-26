@@ -145,7 +145,7 @@ class _EditAccountModal_needsData extends Component {
         footerContent={
           <>
             <Button
-              color="light"
+              theme="light"
               onClick={() => {
                 reset();
                 closeModal();
@@ -155,7 +155,7 @@ class _EditAccountModal_needsData extends Component {
               Cancel
             </Button>
             <Button
-              color={hasSuccess ? 'success' : 'primary'}
+              theme={hasSuccess ? 'success' : 'primary'}
               onClick={submit}
               disabled={
                 isLoading || hasSuccess || !updatedAccountProp || !currentPassword || isMissingVerifyPassword

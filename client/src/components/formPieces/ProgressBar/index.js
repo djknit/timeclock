@@ -1,13 +1,14 @@
 import React from 'react';
 import getStyle from './style';
+import { getColorClass } from '../../utilities';
 
 function ProgressBar({
-  color,
+  theme,
   value,
   max
 }) {
 
-  const colorClass = color ? `is-${color}` : '';
+  const colorClass = getColorClass(theme);
 
   const style = getStyle();
 
