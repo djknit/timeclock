@@ -153,9 +153,9 @@ router.post(
       problems.password = true;
       problemMessages.push('You must provide your current password.');
     }
-    const hasUsername = username && typeof(username) === 'string';
-    const hasEmail = email && typeof(email) === 'string';
-    const hasPassword = password && typeof(password) === 'string';
+    const hasUsername = username === null || typeof(username) === 'string';
+    const hasEmail = email === null || typeof(email) === 'string';
+    const hasPassword = typeof(password) === 'string';
     if (!hasUsername && !hasEmail && !hasPassword) {
       problems.updatedProps.password = true;
       problems.updatedProps.username = true;
@@ -166,7 +166,12 @@ router.post(
       problems.updatedProps.password = true;
       problemMessages.push('Password cannot be set to null.');
     }
-    if (username === null && email === null) {
+    const { user } = req;
+    if (
+      (username === null && email === null) ||
+      (username === null && !user.email) ||
+      (!user.username && email === null)
+    ) {
       problems.updatedProps.username = true;
       problems.updatedProps.email = true;
       problemMessages.push('You must have a username or email address; they cannot both be null at the same time.');
@@ -177,7 +182,6 @@ router.post(
         problems
       });
     }
-    const { user } = req;
     user.comparePassword(oldPassword)
     .then(({ isMatch }) => {
       if (isMatch) {

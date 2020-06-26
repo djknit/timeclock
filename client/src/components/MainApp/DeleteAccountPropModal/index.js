@@ -29,23 +29,87 @@ class _DeleteAccountPropModal_needsData extends Component {
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
+    this.input = React.createRef();
     this.state = { ...startingState };
   };
 
   afterChange(propName) {
-    
+    if (this.state.hasBeenSubmitted) this.setState(this.getInputProblems());
   };
 
-  getInputProblems() {};
+  getInputProblems(problemsToKeep, problemMessagesToKeep) {
+    const { password } = this.state;
+    let problems = problemsToKeep || {};
+    let problemMessages = problemMessagesToKeep || [];
+    if (!password && !problems.password) {
+      problems.password = true;
+      problemMessages.push('You must enter your password.');
+    }
+    return { problems, problemMessages };
+  };
 
-  setSubmissionProcessingState() {};
+  setSubmissionProcessingState() {
+    return new Promise(resolve => {
+      this.setState(
+        {
+          hasBeenSubmitted: true,
+          isLoading: true,
+          hasProblem: false,
+          showMessage: false,
+          problems: {},
+          problemMessages: []
+        },
+        resolve
+      );
+    });
+  };
 
-  submit() {
-
+  submit(event) {
+    event.preventDefault();
+    const { password } = this.state;
+    this.setSubmissionProcessingState()
+    .then(() => {
+      const { problems, problemMessages } = this.getInputProblems();
+      if (problemMessages.length > 0) {
+        throw {
+          problems,
+          messages: problemMessages
+        };
+      }
+      return api.auth.editInfo({
+        password,
+        updatedProps: {
+          [this.props.propToDeleteName]: null
+        }
+      });
+    })
+    .then(res => {
+      this.setState({
+        hasSuccess: true,
+        isLoading: false,
+        hasProblem: false,
+        showMessage: true,
+        problems: {},
+        problemMessages: []
+      });
+      profileService.setUser(res.data.user);
+    })
+    .catch(err => {
+      console.log(err)
+      const errorData = (err && err.response && err.response.data) || err || {};
+      const { problems, messages } = errorData;
+      this.setState({
+        problems: problems || { unknown: true },
+        problemMessages: messages || ['An unknown problem has occured.'],
+        hasProblem: true,
+        isLoading: false,
+        showMessage: true
+      });
+    });
   };
 
   reset() {
-    this.setState()
+    this.setState(startingState);
   };
 
   componentDidUpdate(prevProps) {
@@ -53,7 +117,7 @@ class _DeleteAccountPropModal_needsData extends Component {
   };
 
   render() {
-    const { props, state, reset, submit } = this;
+    const { props, state, reset, submit, input, changeHandlerFactory } = this;
     const { isActive, closeModal, propToDeleteName, user } = props;
     const {
       password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, hasBeenSubmitted
@@ -90,51 +154,72 @@ class _DeleteAccountPropModal_needsData extends Component {
               disabled={
                 isLoading || hasSuccess || !password
               }
-              formId={formId}
               isSubmit
-              isLoading={isLoading}
+              {...{
+                formId,
+                isLoading
+              }}
             >
               Submit
             </Button>
           </>
         }
       >
-        {showMessage && !hasProblem && !hasSuccess && (
-          <Notification theme="info" close={closeMessage}>
-            <NotificationText>
-              You are about to delete your {propToDeleteName}.
-            </NotificationText>
-            <NotificationText isLast>
-              Enter your password to proceed.
-            </NotificationText>
-          </Notification>
-        )}
-        {showMessage && problemMessages.length > 0 && (
-          <Notification theme="danger" close={closeMessage}>
-            {problemMessages.map(
-              (message, index, arr) => (
-                <NotificationText key={message} isLast={index === arr.length - 1}>
-                  {message}
-                </NotificationText>
-              )
-            )}
-          </Notification>
-        )}
-        {showMessage && hasSuccess && (
-          <Notification theme="success">
-            <NotificationText isLast>
-              <strong>Success!</strong> Your username was deleted.
-            </NotificationText>
-          </Notification>
-        )}
-        <TagGroup align="center">
-          <Tag theme="info" size={6}>
-            {`Current ${capPropToDeleteName}:`}
-          </Tag>
-          <Tag theme="info light" size={6}>
-            {propToDeleteCurrentValue ? `"${propToDeleteCurrentValue}"` : 'none'}
-          </Tag>
-        </TagGroup>
+        <form id={formId}>
+          {showMessage && !hasProblem && !hasSuccess && (
+            <Notification theme="info" close={closeMessage}>
+              <NotificationText>
+                You are about to delete your {propToDeleteName}.
+              </NotificationText>
+              <NotificationText isLast>
+                Enter your password to proceed.
+              </NotificationText>
+            </Notification>
+          )}
+          {showMessage && problemMessages.length > 0 && (
+            <Notification theme="danger" close={closeMessage}>
+              {problemMessages.map(
+                (message, index, arr) => (
+                  <NotificationText key={message} isLast={index === arr.length - 1}>
+                    {message}
+                  </NotificationText>
+                )
+              )}
+            </Notification>
+          )}
+          {showMessage && hasSuccess && (
+            <Notification theme="success">
+              <NotificationText isLast>
+                <strong>Success!</strong> Your {propToDeleteName} was deleted.
+              </NotificationText>
+            </Notification>
+          )}
+          <TagGroup align="center">
+            <Tag theme="info" size={6}>
+              {`Current ${capPropToDeleteName}:`}
+            </Tag>
+            <Tag theme="info light" size={6}>
+              {propToDeleteCurrentValue ? `"${propToDeleteCurrentValue}"` : 'none'}
+            </Tag>
+          </TagGroup>
+          <TextInput
+            propName="password"
+            value={password}
+            label="Password:"
+            placeholder="Your password..."
+            hasProblem={problems && problems.password}
+            iconClass={hasSuccess ? 'fas fa-unlock' : 'fas fa-lock'}
+            helpText="Enter your current password to verify you identity and complete the update to your account."
+            isActive={!isLoading && !hasSuccess}
+            {...{
+              changeHandlerFactory,
+              formId
+            }}
+            type="password"
+            isInline
+            inputRef={input}
+          />
+        </form>
       </ModalSkeleton>
     );
   };

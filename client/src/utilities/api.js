@@ -23,8 +23,8 @@ export const auth = {
   deleteAccount({ password }) {
     return authAxios.post('/delete-account', { password });
   },
-  editInfo({ oldPassword, updatedProps }) {
-    return authAxios.post('/edit-info', { oldPassword, updatedProps });
+  editInfo({ password, updatedProps }) {
+    return authAxios.post('/edit-info', { password, updatedProps });
   },
   test() {
     return authAxios.get('/test');
