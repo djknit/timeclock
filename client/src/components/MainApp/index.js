@@ -17,15 +17,18 @@ class MainApp extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
-    this.toggleNewJobModal = this.toggleNewJobModal.bind(this);
-    this.toggleEditAccountModal = this.toggleEditAccountModal.bind(this);
-    this.focusNewJobModal = this.focusNewJobModal.bind(this);
-    this.toggleDeleteAccountPropModal = this.toggleDeleteAccountPropModal.bind(this);
-    this.focusDeleteAccountPropModal = this.focusDeleteAccountPropModal.bind(this);
+    this.modalToggleFactory = this.modalToggleFactory.bind(this);
     this.catchApiUnauthorized = this.catchApiUnauthorized.bind(this);
     this.newJobInputRef = React.createRef();
     this.deletingAccountPropInputRef = React.createRef();
     this.editingAccountPropInputRef = React.createRef();
+    this.toggleNewJobModal = this.modalToggleFactory('isNewJobModalActive', this.newJobInputRef).bind(this);
+    this.toggleEditAccountModal = this
+      .modalToggleFactory('isEditAccountModalActive', this.editingAccountPropInputRef, true)
+      .bind(this);
+    this.toggleDeleteAccountPropModal = this
+      .modalToggleFactory('isDeleteAccountPropModalActive', this.deletingAccountPropInputRef, true)
+      .bind(this);
     this.state = {
       navHeight: undefined,
       isNewJobModalActive: false,
@@ -39,38 +42,15 @@ class MainApp extends Component {
     this.setState({ navHeight });
   };
 
-  toggleNewJobModal(isActiveAfterToggle) {
-    if (isActiveAfterToggle) {
-      this.setState({ isNewJobModalActive: true }, this.focusNewJobModal);
-    }
-    else {
-      this.setState({ isNewJobModalActive: false });
-    }
-  };
-
-  toggleEditAccountModal(isActiveAfterToggle, propToEditName) {
-    this.setState({
-      isEditAccountModalActive: !!isActiveAfterToggle,
-      accountPropToEditName: propToEditName
-    });
-  };
-
-  focusNewJobModal() {
-    this.newJobInputRef.current.focus();
-  };
-
-  toggleDeleteAccountPropModal(isActiveAfterToggle, propToDeleteName) {
-    this.setState(
-      {
-        isDeleteAccountPropModalActive: !!isActiveAfterToggle,
-        accountPropToEditName: propToDeleteName
-      },
-      this.focusDeleteAccountPropModal
-    );
-  };
-
-  focusDeleteAccountPropModal() {
-    this.deletingAccountPropInputRef.current.focus();
+  modalToggleFactory(modalIsActivePropName, inputRef, usesAccountEdit) {
+    return function(isActiveAfterToggle, propToEditName) {
+      let stateUpdates = { [modalIsActivePropName]: !!isActiveAfterToggle };
+      if (usesAccountEdit) stateUpdates.accountPropToEditName = propToEditName;
+      this.setState(
+        stateUpdates,
+        () => isActiveAfterToggle ? inputRef.current.focus() : undefined
+      );
+    };
   };
 
   catchApiUnauthorized(err) {
@@ -90,7 +70,7 @@ class MainApp extends Component {
         userService.setUser(res.data.user);
       }
       if (match.isExact) {
-        history.push(`${match.path}/${dashboardPathName}`)
+        history.push(`${match.path}/${dashboardPathName}`);
       }
     })
     .catch(() => {

@@ -2,7 +2,14 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import { profileService } from '../../../data';
 import {
-  api, constants, changeHandlerFactoryFactory, capitalizeFirstLetter
+  api,
+  constants,
+  changeHandlerFactoryFactory,
+  capitalizeFirstLetter,
+  getUsernameProblems,
+  getEmailProblems,
+  getPasswordProblems,
+  checkApiResProbMsgsForTakenUsernameOrEmail
 } from '../utilities';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
@@ -11,30 +18,8 @@ import Tag, { TagGroup } from '../../Tag';
 import { TextInput, ProgressBar } from '../../formPieces';
 import { addData } from '../../higherOrder';
 
-const startingState = {
-  updatedAccountProp: '',
-  verifyUpdatedPassword: '',
-  currentPassword: '',
-  problems: {},
-  hasSuccess: false,
-  isLoading: false,
-  hasProblem: false,
-  problemMessages: [],
-  showMessage: true,
-  hasBeenSubmitted: false,
-  unavailableUsernames: [],
-  unavailableEmails: [],
-  secondsUntilRedirect: undefined
-};
-const formId = 'edit-account-form';
-function getTakenUsernameDisplayMessage(username) {
-  return `The username "${username}" is not available.`;
-}
-function getTakenEmailDisplayMessage(email) {
-  return `There is already an account for the email address "${email}".`;
-}
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
-function getVariableAttributes(propToEditName) {
+function getVariableInputAttrs(propToEditName) {
   if (!propToEditName) return {};
   let type, iconClass;
   switch (propToEditName) {
@@ -62,6 +47,22 @@ function getVariableAttributes(propToEditName) {
     placeholder: `Your new ${propToEditName}...`
   };
 }
+const formId = 'edit-account-form';
+const startingState = {
+  updatedAccountProp: '',
+  verifyUpdatedPassword: '',
+  currentPassword: '',
+  problems: {},
+  hasSuccess: false,
+  isLoading: false,
+  hasProblem: false,
+  problemMessages: [],
+  showMessage: true,
+  hasBeenSubmitted: false,
+  unavailableUsernames: [],
+  unavailableEmails: [],
+  secondsUntilRedirect: undefined
+};
 
 class _EditAccountModal_needsData extends Component {
   constructor(props) {
@@ -79,18 +80,44 @@ class _EditAccountModal_needsData extends Component {
     const { problems, hasBeenSubmitted, problemMessages } = this.state;
     if (!hasBeenSubmitted) return;
     let problemsToKeep, problemMessagesToKeep;
-    // if (propName === 'password' && problems.usernameOrEmail) {
-    //   problemsToKeep = { usernameOrEmail: true };
-    //   problemMessagesToKeep = problemMessages.filter(
-    //     message => message.toLowerCase().indexOf('password') === -1
-    //   );
-    // }
+    if (propName !== 'currentPassword' && problems.currentPassword) {
+      problemsToKeep = { currentPassword: true };
+      problemMessagesToKeep = problemMessages.filter(
+        message => message.toLowerCase().includes('password')
+      );
+    }
     this.setState(this.getInputProblems(problemsToKeep, problemMessagesToKeep));
   };
 
   getInputProblems(problemsToKeep, problemMessagesToKeep) {
+    const {
+      updatedAccountProp, verifyUpdatedPassword, unavailableEmails, unavailableUsernames
+    } = this.state;
+    const { propToEditName } = this.props;
     let problems = problemsToKeep || {};
     let problemMessages = problemMessagesToKeep || [];
+    if (!updatedAccountProp) {
+      problems.updatedAccountProp = true;
+      problemMessages.push(`You must enter your new ${propToEditName}.`);
+    }
+    switch (propToEditName) {
+      case 'username':
+        if (getUsernameProblems(updatedAccountProp, problemMessages, unavailableUsernames)) {
+          problems.updatedAccountProp = true;
+        }
+        break;
+      case 'email':
+        if (getEmailProblems(updatedAccountProp, problemMessages, unavailableEmails)) {
+          problems.updatedAccountProp = true;
+        }
+        break;
+      case 'password':
+        const _passwordProbs = getPasswordProblems(updatedAccountProp, problemMessages, verifyUpdatedPassword);
+        if (_passwordProbs && _passwordProbs.password) problems.updatedAccountProp = true;
+        if (_passwordProbs && _passwordProbs.verifyPassword) problems.verifyUpdatedPassword = true;
+        break;
+    }
+    return { problems, problemMessages };
   };
 
   setSubmissionProcessingState() {
@@ -111,6 +138,57 @@ class _EditAccountModal_needsData extends Component {
 
   submit(event) {
     event.preventDefault();
+    const { updatedAccountProp, currentPassword, unavailableUsernames, unavailableEmails } = this.state;
+    this.setSubmissionProcessingState()
+    .then(() => {
+      const { problems, problemMessages } = this.getInputProblems();
+      if (problemMessages.length > 0) {
+        throw {
+          problems,
+          messages: problemMessages
+        };
+      }
+      return api.auth.editInfo({
+        password: currentPassword,
+        updatedProps: {
+          [this.props.propToEditName]: updatedAccountProp
+        }
+      });
+    })
+    .then(res => {
+      this.setState({
+        hasSuccess: true,
+        isLoading: false,
+        hasProblem: false,
+        showMessage: true,
+        problems: {},
+        problemMessages: []
+      });
+      profileService.setUser(res.data.user);
+    })
+    .catch(err => {
+      console.log(err)
+      const errorData = (err && err.response && err.response.data) || err || {};
+      const { problems, messages } = errorData;
+      checkApiResProbMsgsForTakenUsernameOrEmail(
+        messages,
+        {
+          username: updatedAccountProp,
+          email: updatedAccountProp
+        },
+        {
+          usernames: unavailableUsernames,
+          email: unavailableEmails
+        }
+      );
+      this.setState({
+        problems: problems || { unknown: true },
+        problemMessages: messages || ['An unknown problem has occured.'],
+        hasProblem: true,
+        isLoading: false,
+        showMessage: true
+      });
+    });
   };
 
   reset() {
@@ -144,7 +222,7 @@ class _EditAccountModal_needsData extends Component {
       showMessage
     } = state;
 
-    const variableUpdateInputAttrs = getVariableAttributes(propToEditName);
+    const variableUpdateInputAttrs = getVariableInputAttrs(propToEditName);
 
     const isMissingVerifyPassword = propToEditName === 'password' && !verifyUpdatedPassword;
 
@@ -191,7 +269,7 @@ class _EditAccountModal_needsData extends Component {
           {showMessage && !hasProblem && !hasSuccess && (
             <Notification theme="info" close={closeMessage}>
               <NotificationText isLast>
-                Enter your new {propToEditName} and your current password below to update your account.
+                Complete the form below to update your {propToEditName}.
               </NotificationText>
             </Notification>
           )}
@@ -209,11 +287,11 @@ class _EditAccountModal_needsData extends Component {
           {showMessage && hasSuccess && (
             <Notification theme="success">
               <NotificationText isLast>
-                <strong>Success!</strong> Your {propToEditName} was deleted.
+                <strong>Success!</strong> Your {propToEditName} was updated.
               </NotificationText>
             </Notification>
           )}
-          {propToEditName === 'password' && (
+          {propToEditName !== 'password' && (
             <TagGroup align="center">
               <Tag theme="info" size={6}>
                 {`Current ${capPropToEditName}:`}
@@ -246,8 +324,7 @@ class _EditAccountModal_needsData extends Component {
               isActive={!isLoading && !hasSuccess}
               {...{
                 changeHandlerFactory,
-                formId,
-                inputRef
+                formId
               }}
               type="newPassword"
             />
@@ -264,8 +341,7 @@ class _EditAccountModal_needsData extends Component {
             isActive={!isLoading && !hasSuccess}
             {...{
               changeHandlerFactory,
-              formId,
-              inputRef
+              formId
             }}
             type="password"
           />

@@ -1,5 +1,6 @@
 export * from '../../utilities';
 export * from './formData';
+export * from './constants';
 
 function promiseToSetState(component, updatedState) {
   return new Promise(resolve => component.setState(updatedState, resolve));
@@ -21,14 +22,8 @@ function getSizeClass(size) {
   return isNum ? `is-size-${size}` : `is-${size}`;
 }
 
-const constants = {
-  secondsToDelayRedirect: 2.7,
-  stepSizeOfRedirectDelay: .3
-};
-
 export {
   promiseToSetState,
   getColorClass,
-  getSizeClass,
-  constants
+  getSizeClass
 };

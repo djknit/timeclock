@@ -4,7 +4,15 @@ import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import { TextInput, ProgressBar } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
-import { api, constants, changeHandlerFactoryFactory } from '../utilities';
+import {
+  api,
+  constants,
+  changeHandlerFactoryFactory,
+  getUsernameProblems,
+  getEmailProblems,
+  getPasswordProblems,
+  checkApiResProbMsgsForTakenUsernameOrEmail
+} from '../utilities';
 import { userService } from '../../../data';
 
 const fieldsInfo = [
@@ -58,13 +66,7 @@ const startingState = {
   unavailableEmails: [],
   secondsUntilRedirect: undefined
 };
-function getTakenUsernameDisplayMessage(username) {
-  return `The username "${username}" is not available.`;
-}
-function getTakenEmailDisplayMessage(email) {
-  return `There is already an account for the email address "${email}".`;
-}
-const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
+const { secondsToDelayRedirect, stepSizeOfRedirectDelay, emailRegEx } = constants;
 
 class NewUserModal extends Component {
   constructor(props) {
@@ -90,41 +92,20 @@ class NewUserModal extends Component {
     } = this.state;
     let problems = {};
     let problemMessages = [];
-    const emailRegEx = /.+@.+\..+/;
     if (!email && !username) {
       problems.username = true;
       problems.email = true;
       problemMessages.push('You must enter a username or email address to create an account.');
     }
-    if (emailRegEx.test(username)) {
+    if (username && getUsernameProblems(username, problemMessages, unavailableUsernames)) {
       problems.username = true;
-      problemMessages.push('You can\'t use an email address as a username.');
     }
-    if (username && username.length < 4) {
-      problems.username = true;
-      problemMessages.push('Invalid username: must be at least 4 characters long.');
-    }
-    if (email && !emailRegEx.test(email)) {
+    if (email && getEmailProblems(email, problemMessages, unavailableUsernames)) {
       problems.email = true;
-      problemMessages.push('The email you entered is not a valid email address.');
     }
-    if (password.length < 7) {
-      problems.password = true;
-      problems.verifyPassword = true;
-      problemMessages.push('Invalid password: must be at least 7 characters long.')
-    }
-    if (password !== verifyPassword) {
-      problems.verifyPassword = true;
-      problemMessages.push('The passwords you entered don\'t match.');
-    }
-    if (username && unavailableUsernames.indexOf(username) !== -1) {
-      problems.username = true;
-      problemMessages.push(getTakenUsernameDisplayMessage(username));
-    }
-    if (email && unavailableEmails.indexOf(email.toLowerCase()) !== -1) {
-      problems.username = true;
-      problemMessages.push(getTakenEmailDisplayMessage(email));
-    }
+    const _passwordProbs = getPasswordProblems(password, problemMessages, verifyPassword);
+    if (_passwordProbs && _passwordProbs.password) problems.password = true;
+    if (_passwordProbs && _passwordProbs.verifyPassword) problems.verifyPassword = true;
     return { problems, problemMessages };
   };
 
@@ -189,32 +170,19 @@ class NewUserModal extends Component {
       let { problems, messages } = errorData;
       if (!problems) problems = { unknown: true };
       if (!messages) messages = ['An unknown problem has occurred.'];
-      const takenUsernameMessage = 'That username is taken.';
-      const takenEmailMessage = 'There is already an account for that email address.';
-      if (messages.indexOf(takenUsernameMessage) !== -1) {
-        unavailableUsernames = [...unavailableUsernames];
-        unavailableUsernames.push(username);
-      }
-      if (messages.indexOf(takenEmailMessage) !== -1) {
-        unavailableEmails = [...unavailableEmails];
-        unavailableEmails.push(email);
-      }
-      const problemMessages = messages.map(
-        message => {
-          if (message === takenUsernameMessage) {
-            return getTakenUsernameDisplayMessage(username);
-          }
-          if (message === takenEmailMessage) {
-            return getTakenEmailDisplayMessage(email);
-          }
-          return message;
+      checkApiResProbMsgsForTakenUsernameOrEmail(
+        messages,
+        { username, email },
+        {
+          usernames: unavailableUsernames,
+          emails: unavailableEmails
         }
       );
       this.setState({
         unavailableEmails,
         unavailableUsernames,
         problems,
-        problemMessages,
+        problemMessages: messages,
         hasProblem: true,
         isLoading: false,
         showMessage: true
