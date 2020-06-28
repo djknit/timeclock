@@ -19,7 +19,8 @@ class _Dashboard_needsData extends Component {
       openNewJobModal,
       catchApiUnauthorized,
       accountEditingModalOpenerFactory,
-      accountPropDeletingModalOpenerFactory
+      accountPropDeletingModalOpenerFactory,
+      areAnyModalsOpen
     } = this.props;
 
     return (
@@ -34,10 +35,19 @@ class _Dashboard_needsData extends Component {
             style={style.account}
             {...{
               accountEditingModalOpenerFactory,
-              accountPropDeletingModalOpenerFactory
+              accountPropDeletingModalOpenerFactory,
+              areAnyModalsOpen
             }}
           />
-          <Jobs style={style.jobs} {...{ redirectToJobPage, openNewJobModal, catchApiUnauthorized }} />
+          <Jobs
+            style={style.jobs}
+            {...{
+              redirectToJobPage,
+              openNewJobModal,
+              catchApiUnauthorized,
+              areAnyModalsOpen
+            }}
+          />
         </div>
       </>
     );

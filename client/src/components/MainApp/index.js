@@ -48,7 +48,15 @@ class MainApp extends Component {
       if (usesAccountEdit) stateUpdates.accountPropToEditName = propToEditName;
       this.setState(
         stateUpdates,
-        () => isActiveAfterToggle ? inputRef.current.focus() : undefined
+        () => {
+          if (isActiveAfterToggle) inputRef.current.focus();
+          const hasModalOpen = (
+            this.state.isNewJobModalActive ||
+            this.state.isEditAccountModalActive ||
+            this.state.isDeleteAccountPropModalActive
+          );
+          if (hasModalOpen !== this.props.areAnyModalsOpen) this.props.setAreAnyModalsOpen(hasModalOpen);
+        }
       );
     };
   };
@@ -60,7 +68,7 @@ class MainApp extends Component {
       return true;
     }
     return false;
-  }
+  };
 
   componentDidMount() {
     api.auth.test()
@@ -77,16 +85,35 @@ class MainApp extends Component {
       userService.clearUser();
       this.props.history.push('/');
     });
-  }
+  };
+
+  componentWillUnmount() {
+    this.props.setAreAnyModalsOpen(false);
+  };
 
   render() {
     const {
-      state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized, toggleEditAccountModal, toggleDeleteAccountPropModal, deletingAccountPropInputRef
+      setNavHeight,
+      toggleNewJobModal,
+      newJobInputRef,
+      catchApiUnauthorized,
+      toggleEditAccountModal,
+      toggleDeleteAccountPropModal,
+      deletingAccountPropInputRef,
+      editingAccountPropInputRef
     } = this;
-    const { history, match } = this.props;
     const {
-      navHeight, isNewJobModalActive, isEditAccountModalActive, accountPropToEditName, isDeleteAccountPropModalActive
-    } = state;
+      history,
+      match,
+      areAnyModalsOpen
+    } = this.props;
+    const {
+      navHeight,
+      isNewJobModalActive,
+      isEditAccountModalActive,
+      accountPropToEditName,
+      isDeleteAccountPropModalActive
+    } = this.state;
 
     const style = getStyle(navHeight);
 
@@ -110,7 +137,8 @@ class MainApp extends Component {
           openNewJobModal,
           catchApiUnauthorized,
           accountEditingModalOpenerFactory,
-          accountPropDeletingModalOpenerFactory
+          accountPropDeletingModalOpenerFactory,
+          areAnyModalsOpen
         }}
       />
     );
@@ -120,8 +148,11 @@ class MainApp extends Component {
         <Navbar
           history={history}
           totalHeight={navHeight}
-          reportHeight={this.setNavHeight}
-          {...{ catchApiUnauthorized }}
+          reportHeight={setNavHeight}
+          {...{
+            catchApiUnauthorized,
+            areAnyModalsOpen
+          }}
         />
         <div style={style.mainContentArea}>
           <Switch>
@@ -137,7 +168,15 @@ class MainApp extends Component {
             />
             <Route
               path={buildPath('job/:jobId')}
-              render={props => <JobPage {...{ ...props, catchApiUnauthorized }} />}
+              render={props => (
+                <JobPage
+                  {...{
+                    ...props,
+                    catchApiUnauthorized,
+                    areAnyModalsOpen
+                  }}
+                />
+              )}
             />
             <Route component={NotFoundPage} />
           </Switch>
@@ -155,7 +194,7 @@ class MainApp extends Component {
           isActive={isEditAccountModalActive}
           closeModal={() => toggleEditAccountModal(false)}
           propToEditName={accountPropToEditName}
-          inputRef={this.editingAccountPropInputRef}
+          inputRef={editingAccountPropInputRef}
           {...{
             catchApiUnauthorized
           }}

@@ -44,7 +44,6 @@ class _LandingPage_needsData extends Component {
     });
   };
 
-
   componentDidMount() {
     api.auth.test()
     .then(res => {
@@ -53,6 +52,10 @@ class _LandingPage_needsData extends Component {
       this.props.history.push('/app');
     })
     .catch(err => {});
+  };
+
+  componentWillUnmount() {
+    this.props.setAreAnyModalsOpen(false);
   };
 
   render() {

@@ -9,7 +9,8 @@ function _Account_needsData({
   user,
   style,
   accountEditingModalOpenerFactory,
-  accountPropDeletingModalOpenerFactory
+  accountPropDeletingModalOpenerFactory,
+  areAnyModalsOpen
 }) {
 
   const completeStyle = getStyle(style);
@@ -21,6 +22,7 @@ function _Account_needsData({
           theme="primary"
           styles={completeStyle.button}
           onClick={accountEditingModalOpenerFactory(propToEditName)}
+          allowTabFocus={!areAnyModalsOpen}
         >
           {user[propToEditName] || propToEditName === 'password' ?
             <><i className="fas fa-edit" /> Edit</> :
@@ -32,6 +34,7 @@ function _Account_needsData({
             theme="danger"
             styles={completeStyle.buttonNotFirst}
             onClick={accountPropDeletingModalOpenerFactory(propToEditName)}
+            allowTabFocus={!areAnyModalsOpen}
           >
             <i className="fas fa-times" /> Delete
           </Button>

@@ -42,12 +42,17 @@ class _Jobs_needsData extends Component {
   render() {
     const style = getStyle(this.props.style);
 
-    const { jobs, openNewJobModal } = this.props;
+    const { jobs, openNewJobModal, areAnyModalsOpen } = this.props;
 
     return (
       <ContentArea style={style.contentArea}>
         <ContentAreaTitle style={style.areaTitle}>Your Jobs</ContentAreaTitle>
-        <Button styles={style.addJobButton} theme="primary" onClick={openNewJobModal}>
+        <Button
+          styles={style.addJobButton}
+          theme="primary"
+          onClick={openNewJobModal}
+          allowTabFocus={!areAnyModalsOpen}
+        >
           <i className="fas fa-plus"></i> New
         </Button>
         <table className="table is-fullwidth" style={style.table}>
@@ -64,6 +69,7 @@ class _Jobs_needsData extends Component {
                   key={job._id}
                   styles={style.trStyles}
                   onClick={this.jobClickHandlerFactory(job._id)}
+                  allowTabFocus={!areAnyModalsOpen}
                 >
                   <td>{job.name}</td>
                   <td>{formatMyDate(job.startDate)}</td>
