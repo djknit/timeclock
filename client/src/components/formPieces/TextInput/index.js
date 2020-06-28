@@ -37,7 +37,7 @@ function TextInput({
     autocompleteAttrVal = type === 'email' ? 'email' : 'off';
   }
 
-  const style = getStyle();
+  // const style = getStyle();
 
   return (
     <BoxInputFrame

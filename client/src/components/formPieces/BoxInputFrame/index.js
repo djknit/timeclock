@@ -25,7 +25,7 @@ function _BoxInputFrame_needsData({
   // no need for inline when there is no label
   if (label === undefined) isInline = false;
 
-  const style = getStyle(styles, windowWidth, fieldToLabelRatio);
+  const style = getStyle(styles, windowWidth, fieldToLabelRatio, isInline);
 
   const labelProps = { style: style.label, label, inputId, sublabel };
 

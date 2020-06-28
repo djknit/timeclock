@@ -1,4 +1,4 @@
-import { collapsableSectionStyles } from '../style';
+import { collapsableSectionStyles, timeInputStyles } from '../style';
 
 export default function getStyle() {
   return {
@@ -13,3 +13,5 @@ export default function getStyle() {
     }
   };
 };
+
+export { timeInputStyles };

@@ -6,13 +6,19 @@ function _TableRow_needsPseudo({
   pseudoHandlers,
   children,
   styles,
-  onClick
+  onClick,
+  allowTabFocus
 }) {
 
   const style = calculateStyleForPseudoClassState(styles, pseudoState);
 
   return (
-    <tr style={style} {...pseudoHandlers} onClick={onClick} tabIndex={0}>
+    <tr
+      style={style}
+      {...pseudoHandlers}
+      {...{ onClick }}
+      tabIndex={allowTabFocus ? 0 : -1}
+    >
       {children}
     </tr>
   );

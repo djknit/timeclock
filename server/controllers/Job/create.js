@@ -14,7 +14,6 @@ function create(newJob, userId) {
   return new Promise(
     (resolve, reject) => {
       const { name, timezone, wage, startDate, dayCutoff, weekBegins } = newJob;
-      // console.log('- - - CREATE JOB - - -')
       if (!name || !timezone || !startDate) {
         const error = new Error('Missing required data properties.');
         reject(error);

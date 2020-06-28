@@ -1,5 +1,6 @@
 import React from 'react';
 import getStyle, { getTitleStyle } from './style';
+import { getSizeClass } from '../utilities';
 
 function ContentArea({
   children,
@@ -26,7 +27,7 @@ function ContentAreaTitle({
 }) {
 
   let className = 'title';
-  if (size) className += ` is-size-${size}`
+  if (size) className += ` ${getSizeClass(size)}`;
 
   const completeStyle = getTitleStyle(style);
 

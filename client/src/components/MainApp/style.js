@@ -13,4 +13,14 @@ export default function getStyle(navHeight) {
   };
 };
 
-export { headingFontFam, sectionHeadingFontFam, shadow, mainBackgroundColor, secondaryBackgroundColor, mainAreaPadding };
+const contentAreaPadding = 15;
+
+export {
+  headingFontFam,
+  sectionHeadingFontFam,
+  shadow,
+  mainBackgroundColor,
+  secondaryBackgroundColor,
+  mainAreaPadding,
+  contentAreaPadding
+};

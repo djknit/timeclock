@@ -1,6 +1,6 @@
 const utilities = require('../../utilities');
 
-const { checkForFailure } = utilities
+const { checkForFailure } = utilities;
 
 module.exports = {
   ...utilities,
