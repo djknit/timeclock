@@ -7,7 +7,7 @@ import {
 } from '../../utilities';
 import BoxInputFrame from '../BoxInputFrame';
 
-function TimeInput({
+function DurationInput({
   propName,
   sectionName,
   value,
@@ -91,7 +91,7 @@ function TimeInput({
   );
 }
 
-export default TimeInput;
+export default DurationInput;
 
 function getCompleteProblems({ problems, max, min, value, hasProblem }) {
   const numMinutes = getMinutesFromHoursAndMinutes(value);

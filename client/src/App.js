@@ -14,19 +14,30 @@ class App extends Component {
   constructor() {
     super();
     this.reportWindowWidthChange = this.reportWindowWidthChange.bind(this);
+    this.setAreAnyModalsOpen = this.setAreAnyModalsOpen.bind(this);
+    this.state = {
+      areAnyModalsOpen: false
+    };
   };
 
   reportWindowWidthChange() {
     windowWidthService.reportChange(window.innerWidth);
-  }
+  };
+
+  setAreAnyModalsOpen(areAnyModalsOpenAfterChange) {
+    this.setState({ areAnyModalsOpen: !!areAnyModalsOpenAfterChange });
+  };
 
   componentDidMount() {
     this.reportWindowWidthChange();
     window.addEventListener('resize', this.reportWindowWidthChange);
-  }
+  };
 
   render() {
     const style = getStyle();
+    
+    const { areAnyModalsOpen } = this.state;
+    const { setAreAnyModalsOpen } = this;
 
     return (
       <Router>
@@ -38,6 +49,10 @@ class App extends Component {
                 render={
                   props => <MainApp
                     {...props}
+                    {...{
+                      areAnyModalsOpen,
+                      setAreAnyModalsOpen
+                    }}
                   />
                 }
               />
@@ -47,13 +62,17 @@ class App extends Component {
                 render={
                   props => <LandingPage
                     {...props}
+                    {...{
+                      areAnyModalsOpen,
+                      setAreAnyModalsOpen
+                    }}
                   />
                 }
               />
               <Route component={NotFound} />
             </Switch>
           </div>
-          <Footer />
+          <Footer {...{ areAnyModalsOpen }} />
         </div>
       </Router>
     );

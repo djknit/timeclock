@@ -1,36 +1,12 @@
-import { bulmaFormBlack, bulmaFormBlue } from '../style';
+import { collapsableSectionStyles } from '../style';
 
-export default function getStyle(contentToggleStyles, arrowTogglePseudoState) {
-  
-  const toggleBtnFontSize = '1.6rem';
-  const { isActive, isHovered, isFocused } = arrowTogglePseudoState;
-  const isToggleBlack = isActive || isHovered || isFocused;
-  
+export default function getStyle() {
   return {
     useWageInputField: {
-      marginBottom: 0
-    },
-    sectionContent: {
-      ...contentToggleStyles.container
+      ...collapsableSectionStyles.outsideField
     },
     firstInputInSection: {
-      marginTop: '.75rem' // matches Bulma field bottom margin
-    },
-    sectionFooter: {
-      position: 'relative'
-    },
-    footerHr: {
-      marginTop: 12,
-      marginBottom: 16,
-      width: `calc(100% - 10px - ${toggleBtnFontSize})`
-    },
-    sectionToggle: {
-      ...contentToggleStyles.toggle,
-      position: 'absolute',
-      right: 0,
-      fontSize: toggleBtnFontSize,
-      bottom: `calc(-.5em + 1px)`,
-      color: isToggleBlack ? bulmaFormBlack : bulmaFormBlue
+      ...collapsableSectionStyles.firstInsideField
     }
   };
 };

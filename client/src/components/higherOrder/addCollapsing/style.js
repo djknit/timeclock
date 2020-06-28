@@ -6,7 +6,7 @@ const universalToggleAnimationProps = {
   WebkitAnimationFillMode: 'forwards'
 };
 
-export default function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated) {
+function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated) {
   const _isIconAnimated = isToggleIconAnimated !== false; // (default to true when param is undefined)
   const sectionToggleAnimationProps = (
     isAnimationOn ?
@@ -47,9 +47,12 @@ export default function styleGetterFactory(containerHeight, isExpanded, isAnimat
 function getSectionContentStyle(heightState, isExpanded, isAnimationOn) {
   let variableStyles;
   if (!isAnimationOn && !isExpanded) {
-    variableStyles = {
+    variableStyles = heightState ?
+    { display: 'none' } :
+    {
       position: 'absolute',
-      opacity: 0
+      opacity: 0,
+      zIndex: 0
     };
   }
   else if (isAnimationOn) {
@@ -65,3 +68,5 @@ function getSectionContentStyle(heightState, isExpanded, isAnimationOn) {
     ...variableStyles
   };
 }
+
+export default styleGetterFactory;

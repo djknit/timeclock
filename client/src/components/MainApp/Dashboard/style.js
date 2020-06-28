@@ -1,4 +1,6 @@
-import { sectionHeadingFontFam, mainAreaPadding, headingFontFam } from '../style';
+import {
+  sectionHeadingFontFam, mainAreaPadding, headingFontFam, contentAreaPadding
+} from '../style';
 
 export default function getStyle(windowWidth) {
   const accountWidthPercent = 40;
@@ -40,3 +42,12 @@ export default function getStyle(windowWidth) {
     }
   };
 };
+
+const dashContentBtnSpecs = {
+  remFontSize: 1.8,
+  xPadding: 5,
+  yPadding: 5,
+  lineHeight: 1
+};
+
+export { dashContentBtnSpecs, contentAreaPadding };

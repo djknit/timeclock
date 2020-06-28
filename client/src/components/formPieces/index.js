@@ -4,8 +4,9 @@ import DateInput from './DateInput';
 import CurrencyInput from './CurrencyInput';
 import WageInput from './WageInput';
 import RadioInput from './RadioInput';
-import TimeInput from './TimeInput';
+import DurationInput from './DurationInput';
 import WkDayCutoffsInput from './WkDayCutoffsInput';
+import ProgressBar from './ProgressBar';
 
 export {
   TextInput,
@@ -14,6 +15,7 @@ export {
   CurrencyInput,
   WageInput,
   RadioInput,
-  TimeInput,
-  WkDayCutoffsInput
+  DurationInput,
+  WkDayCutoffsInput,
+  ProgressBar
 };

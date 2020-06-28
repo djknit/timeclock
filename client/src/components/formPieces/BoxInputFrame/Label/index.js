@@ -43,10 +43,7 @@ function TopLevelElement({ children, isRadio, selectedRadioInput, ...attributes 
       {...attributes}
       aria-hidden
       onClick={() => {
-        console.log('click')
-        console.log(selectedRadioInput)
         if (selectedRadioInput && selectedRadioInput.current) {
-          console.log('if')
           selectedRadioInput.current.focus();
           setTimeout(
             () => selectedRadioInput.current.focus(),

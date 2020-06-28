@@ -8,21 +8,33 @@ import Dashboard from './Dashboard';
 import JobPage from './JobPage';
 import NotFoundPage from '../NotFound';
 import NewJobModal from './NewJobModal';
-import { addCollapsing } from '../higherOrder';
+import EditAccountModal from './EditAccountModal';
+import DeleteAccountPropModal from './DeleteAccountPropModal';
 
 const dashboardPathName = 'dashboard';
 
-class _MainApp_neeedsCollapsing extends Component {
+class MainApp extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
-    this.toggleNewJobModal = this.toggleNewJobModal.bind(this);
-    this.focusNewJobModal = this.focusNewJobModal.bind(this);
+    this.modalToggleFactory = this.modalToggleFactory.bind(this);
     this.catchApiUnauthorized = this.catchApiUnauthorized.bind(this);
     this.newJobInputRef = React.createRef();
+    this.deletingAccountPropInputRef = React.createRef();
+    this.editingAccountPropInputRef = React.createRef();
+    this.toggleNewJobModal = this.modalToggleFactory('isNewJobModalActive', this.newJobInputRef).bind(this);
+    this.toggleEditAccountModal = this
+      .modalToggleFactory('isEditAccountModalActive', this.editingAccountPropInputRef, true)
+      .bind(this);
+    this.toggleDeleteAccountPropModal = this
+      .modalToggleFactory('isDeleteAccountPropModalActive', this.deletingAccountPropInputRef, true)
+      .bind(this);
     this.state = {
       navHeight: undefined,
-      isNewJobModalActive: false
+      isNewJobModalActive: false,
+      isEditAccountModalActive: false,
+      isDeleteAccountPropModalActive: false,
+      accountPropToEditName: undefined
     };
   };
 
@@ -30,17 +42,23 @@ class _MainApp_neeedsCollapsing extends Component {
     this.setState({ navHeight });
   };
 
-  toggleNewJobModal(isActiveAfterToggle) {
-    if (isActiveAfterToggle) {
-      this.setState({ isNewJobModalActive: true }, this.focusNewJobModal);
-    }
-    else {
-      this.setState({ isNewJobModalActive: false });
-    }
-  };
-
-  focusNewJobModal() {
-    this.newJobInputRef.current.focus();
+  modalToggleFactory(modalIsActivePropName, inputRef, usesAccountEdit) {
+    return function(isActiveAfterToggle, propToEditName) {
+      let stateUpdates = { [modalIsActivePropName]: !!isActiveAfterToggle };
+      if (usesAccountEdit) stateUpdates.accountPropToEditName = propToEditName;
+      this.setState(
+        stateUpdates,
+        () => {
+          if (isActiveAfterToggle) inputRef.current.focus();
+          const hasModalOpen = (
+            this.state.isNewJobModalActive ||
+            this.state.isEditAccountModalActive ||
+            this.state.isDeleteAccountPropModalActive
+          );
+          if (hasModalOpen !== this.props.areAnyModalsOpen) this.props.setAreAnyModalsOpen(hasModalOpen);
+        }
+      );
+    };
   };
 
   catchApiUnauthorized(err) {
@@ -50,7 +68,7 @@ class _MainApp_neeedsCollapsing extends Component {
       return true;
     }
     return false;
-  }
+  };
 
   componentDidMount() {
     api.auth.test()
@@ -60,25 +78,42 @@ class _MainApp_neeedsCollapsing extends Component {
         userService.setUser(res.data.user);
       }
       if (match.isExact) {
-        history.push(`${match.path}/${dashboardPathName}`)
+        history.push(`${match.path}/${dashboardPathName}`);
       }
     })
     .catch(() => {
       userService.clearUser();
       this.props.history.push('/');
     });
-  }
+  };
+
+  componentWillUnmount() {
+    this.props.setAreAnyModalsOpen(false);
+  };
 
   render() {
     const {
-      props, state, toggleNewJobModal, newJobInputRef, catchApiUnauthorized
+      setNavHeight,
+      toggleNewJobModal,
+      newJobInputRef,
+      catchApiUnauthorized,
+      toggleEditAccountModal,
+      toggleDeleteAccountPropModal,
+      deletingAccountPropInputRef,
+      editingAccountPropInputRef
     } = this;
     const {
-      history, match, newJobModalWageContentToggle
-    } = props;
+      history,
+      match,
+      areAnyModalsOpen
+    } = this.props;
     const {
-      navHeight, isNewJobModalActive
-    } = state;
+      navHeight,
+      isNewJobModalActive,
+      isEditAccountModalActive,
+      accountPropToEditName,
+      isDeleteAccountPropModalActive
+    } = this.state;
 
     const style = getStyle(navHeight);
 
@@ -87,9 +122,25 @@ class _MainApp_neeedsCollapsing extends Component {
     const redirectToJobPage = jobId => history.push(buildPath(`job/${jobId}`));
 
     const openNewJobModal = () => toggleNewJobModal(true);
+    const accountEditingModalOpenerFactory = propToEditName => {
+      return () => toggleEditAccountModal(true, propToEditName);
+    };
+    const accountPropDeletingModalOpenerFactory = propToDeleteName => {
+      return () => toggleDeleteAccountPropModal(true, propToDeleteName);
+    };
 
     const renderDashboard = props => (
-      <Dashboard {...{ ...props, redirectToJobPage, openNewJobModal, catchApiUnauthorized }} />
+      <Dashboard
+        {...{
+          ...props,
+          redirectToJobPage,
+          openNewJobModal,
+          catchApiUnauthorized,
+          accountEditingModalOpenerFactory,
+          accountPropDeletingModalOpenerFactory,
+          areAnyModalsOpen
+        }}
+      />
     );
 
     return (
@@ -97,8 +148,11 @@ class _MainApp_neeedsCollapsing extends Component {
         <Navbar
           history={history}
           totalHeight={navHeight}
-          reportHeight={this.setNavHeight}
-          {...{ catchApiUnauthorized }}
+          reportHeight={setNavHeight}
+          {...{
+            catchApiUnauthorized,
+            areAnyModalsOpen
+          }}
         />
         <div style={style.mainContentArea}>
           <Switch>
@@ -114,7 +168,15 @@ class _MainApp_neeedsCollapsing extends Component {
             />
             <Route
               path={buildPath('job/:jobId')}
-              render={props => <JobPage {...{ ...props, catchApiUnauthorized }} />}
+              render={props => (
+                <JobPage
+                  {...{
+                    ...props,
+                    catchApiUnauthorized,
+                    areAnyModalsOpen
+                  }}
+                />
+              )}
             />
             <Route component={NotFoundPage} />
           </Switch>
@@ -127,13 +189,28 @@ class _MainApp_neeedsCollapsing extends Component {
           {...{
             catchApiUnauthorized
           }}
-          wageContentToggle={newJobModalWageContentToggle}
+        />
+        <EditAccountModal
+          isActive={isEditAccountModalActive}
+          closeModal={() => toggleEditAccountModal(false)}
+          propToEditName={accountPropToEditName}
+          inputRef={editingAccountPropInputRef}
+          {...{
+            catchApiUnauthorized
+          }}
+        />
+        <DeleteAccountPropModal
+          isActive={isDeleteAccountPropModalActive}
+          closeModal={() => toggleDeleteAccountPropModal(false)}
+          propToDeleteName={accountPropToEditName}
+          inputRef={deletingAccountPropInputRef}
+          {...{
+            catchApiUnauthorized
+          }}
         />
       </>
     );
   };
 }
-
-const MainApp = addCollapsing(_MainApp_neeedsCollapsing, 'newJobModalWageContentToggle', false, true);
 
 export default MainApp;

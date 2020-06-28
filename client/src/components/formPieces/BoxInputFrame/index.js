@@ -25,7 +25,7 @@ function _BoxInputFrame_needsData({
   // no need for inline when there is no label
   if (label === undefined) isInline = false;
 
-  const style = getStyle(styles, windowWidth, fieldToLabelRatio);
+  const style = getStyle(styles, windowWidth, fieldToLabelRatio, isInline);
 
   const labelProps = { style: style.label, label, inputId, sublabel };
 
@@ -46,7 +46,7 @@ function _BoxInputFrame_needsData({
         className="field is-horizontal"
         {...fieldAttributes}
       >
-        <div className="field-label is-normal">
+        <div className="field-label is-normal" style={style.fieldLabel}>
           <Label {...labelAttributes} />
         </div>
         <div className="field-body" style={style.subSectionFieldBody}>

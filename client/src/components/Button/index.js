@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import getStyle from './style';
+import { getColorClass, getSizeClass } from '../utilities';
 import { addPseudoPseudoClasses } from '../higherOrder';
 
 function _Button_needsPseudo({
   children,
   size,
-  color,
+  theme,
   styles,
   onClick,
   disabled,
@@ -26,14 +27,10 @@ function _Button_needsPseudo({
     { type: 'button' }
   );
   
-  const completeStyle = getStyle(styles, pseudoState, color);
+  const completeStyle = getStyle(styles, pseudoState, theme);
 
-  const sizeClass = (
-    size === 'none' ?
-    '' :
-    (size ? `is-${size}` : 'is-medium')
-  );
-  const colorClass = color ? `is-${color}` : 'is-light';
+  const sizeClass = getSizeClass(size || 'medium');
+  const colorClass = getColorClass(theme || 'light');
   const loadingClass = isLoading ? 'is-loading' : '';
 
   return (

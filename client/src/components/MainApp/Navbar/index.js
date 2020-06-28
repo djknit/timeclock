@@ -51,7 +51,7 @@ class _Navbar_needsData extends Component {
   };
 
   render() {
-    const { isLoggedIn, profileData, totalHeight } = this.props;
+    const { isLoggedIn, profileData, totalHeight, areAnyModalsOpen } = this.props;
     const { brandItemInnerHeight, isLoading, hasProblem } = this.state;
 
     const style = getStyle(brandItemInnerHeight, totalHeight);
@@ -128,10 +128,11 @@ class _Navbar_needsData extends Component {
               {isLoggedIn &&
                 <Button
                   size="none"
-                  // color="white"
+                  // theme="white"
                   onClick={this.submitLogout}
                   isLoading={isLoading}
                   styles={style.logoutButton}
+                  allowTabFocus={!areAnyModalsOpen}
                 >
                   Sign Out
                 </Button>

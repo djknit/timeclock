@@ -153,9 +153,9 @@ router.post(
       problems.password = true;
       problemMessages.push('You must provide your current password.');
     }
-    const hasUsername = username && typeof(username) === 'string';
-    const hasEmail = email && typeof(email) === 'string';
-    const hasPassword = password && typeof(password) === 'string';
+    const hasUsername = username === null || typeof(username) === 'string';
+    const hasEmail = email === null || typeof(email) === 'string';
+    const hasPassword = typeof(password) === 'string';
     if (!hasUsername && !hasEmail && !hasPassword) {
       problems.updatedProps.password = true;
       problems.updatedProps.username = true;
@@ -166,7 +166,12 @@ router.post(
       problems.updatedProps.password = true;
       problemMessages.push('Password cannot be set to null.');
     }
-    if (username === null && email === null) {
+    const { user } = req;
+    if (
+      (username === null && email === null) ||
+      (username === null && !user.email) ||
+      (!user.username && email === null)
+    ) {
       problems.updatedProps.username = true;
       problems.updatedProps.email = true;
       problemMessages.push('You must have a username or email address; they cannot both be null at the same time.');
@@ -177,14 +182,14 @@ router.post(
         problems
       });
     }
-    const { user } = req;
+    const wrongPasswordMsg = 'Incorrect password.';
     user.comparePassword(oldPassword)
     .then(({ isMatch }) => {
       if (isMatch) {
         return UserController.editAccountInfo(user, { username, email, password });
       }
       else throw {
-        message: 'Invalid password.',
+        message: wrongPasswordMsg,
         problems: { password: true },
         status: 401
       };
@@ -193,6 +198,14 @@ router.post(
       res.json({
         user: cleanUser(updatedUser)
       });
+    })
+    .catch(err => {
+      const _probs = (err && err.problems) || {};
+      const isWrongPassword = err && err.message && err.message === wrongPasswordMsg;
+      if (_probs.username || _probs.email || (_probs.password && !isWrongPassword)) {
+        err.problems = { updatedProps: _probs };
+      }
+      throw err;
     })
     .catch(routeErrorHandlerFactory(res));
   }

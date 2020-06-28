@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import { TextInput } from '../../formPieces';
+import { TextInput, ProgressBar } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
 import { api, constants, changeHandlerFactoryFactory } from '../utilities';
 import { userService } from '../../../data';
@@ -103,7 +103,6 @@ class LoginModal extends Component {
   submit(event) {
     event.preventDefault();
     const { usernameOrEmail, password } = this.state;
-    let { unavailableEmails, unavailableUsernames } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
       const { problems, problemMessages } = this.getInputProblems();
@@ -144,8 +143,6 @@ class LoginModal extends Component {
       const errorData = (err && err.response && err.response.data) || err || {};
       const { problems, messages } = errorData;
       this.setState({
-        unavailableEmails,
-        unavailableUsernames,
         problems: problems || { unknown: true },
         problemMessages: messages || ['An unknown problem has occured.'],
         hasProblem: true,
@@ -172,11 +169,11 @@ class LoginModal extends Component {
         title="Sign In"
         isActive={isActive}
         closeModal={closeModal}
-        isCloseButtonDisabled={hasSuccess}
+        isCloseButtonDisabled={isLoading|| hasSuccess}
         footerContent={
           <>
             <Button
-              color="light"
+              theme="light"
               onClick={() => {
                 this.reset();
                 closeModal();
@@ -186,7 +183,7 @@ class LoginModal extends Component {
               Cancel
             </Button>
             <Button
-              color={hasSuccess ? 'success' : 'primary'}
+              theme={hasSuccess ? 'success' : 'primary'}
               onClick={this.submit}
               disabled={isLoading || hasSuccess || !usernameOrEmail || !password}
               formId={formId}
@@ -202,8 +199,8 @@ class LoginModal extends Component {
           {showMessage && problemMessages.length > 0 && (
             <Notification theme="danger" close={() => this.setState({ showMessage: false })}>
               {problemMessages.map(
-                message => (
-                  <NotificationText key={message}>
+                (message, index, arr) => (
+                  <NotificationText key={message} isLast={index === arr.length - 1}>
                     {message}
                   </NotificationText>
                 )
@@ -218,12 +215,11 @@ class LoginModal extends Component {
               <NotificationText>
                 You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
               </NotificationText>
-              <progress
-                className="progress is-success"
-                style={style.progressBar}
+              <ProgressBar
+                theme="success"
                 value={secondsToDelayRedirect - secondsUntilRedirect}
                 max={secondsToDelayRedirect}
-              ></progress>
+              />
             </Notification>
           )}
           {fieldsInfo.map(
@@ -231,13 +227,13 @@ class LoginModal extends Component {
               <TextInput
                 {...field}
                 formId={formId}
-                value={this.state[field.name]}
+                value={this.state[field.propName]}
                 changeHandlerFactory={this.changeHandlerFactory}
                 isActive={isActive && !isLoading && !hasSuccess}
                 hasProblem={problems[field.propName]}
                 key={index}
                 inputRef={index === 0 ? inputRef : undefined}
-                iconClass={getIconClass(field.name, hasSuccess)}
+                iconClass={getIconClass(field.propName, hasSuccess)}
               />
             )
           )}
