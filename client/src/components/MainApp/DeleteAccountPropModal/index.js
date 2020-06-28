@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { profileService } from '../../../data';
-import { api, changeHandlerFactoryFactory, capitalizeFirstLetter } from '../utilities';
+import { api, changeHandlerFactoryFactory, capitalizeFirstLetter, constants } from '../utilities';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import Notification, { NotificationText } from '../../Notification';
 import Tag, { TagGroup } from '../../Tag';
-import { TextInput } from '../../formPieces';
+import { TextInput, ProgressBar } from '../../formPieces';
 import { addData } from '../../higherOrder';
+
+const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 const startingState = {
   password: '',
@@ -65,6 +67,7 @@ class _DeleteAccountPropModal_needsData extends Component {
 
   submit(event) {
     event.preventDefault();
+    const { propToDeleteName, closeModal } = this.props;
     const { password } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
@@ -78,20 +81,34 @@ class _DeleteAccountPropModal_needsData extends Component {
       return api.auth.editInfo({
         password,
         updatedProps: {
-          [this.props.propToDeleteName]: null
+          [propToDeleteName]: null
         }
       });
     })
     .then(res => {
+      let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
         isLoading: false,
         hasProblem: false,
         showMessage: true,
         problems: {},
-        problemMessages: []
+        problemMessages: [],
+        secondsUntilRedirect
       });
       profileService.setUser(res.data.user);
+      const intervalId = setInterval(
+        () => {
+          secondsUntilRedirect -= stepSizeOfRedirectDelay;
+          this.setState({ secondsUntilRedirect });
+          if (secondsUntilRedirect <= 0) {
+            clearInterval(intervalId);
+            this.reset();
+            closeModal();
+          }
+        },
+        1000 * stepSizeOfRedirectDelay
+      );
     })
     .catch(err => {
       console.log(err)
@@ -119,7 +136,7 @@ class _DeleteAccountPropModal_needsData extends Component {
     const { props, state, reset, submit, changeHandlerFactory } = this;
     const { isActive, closeModal, propToDeleteName, user, inputRef } = props;
     const {
-      password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, hasBeenSubmitted
+      password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, secondsUntilRedirect
     } = state;
 
     const propToDeleteCurrentValue = user && user[propToDeleteName];
@@ -188,9 +205,17 @@ class _DeleteAccountPropModal_needsData extends Component {
           )}
           {showMessage && hasSuccess && (
             <Notification theme="success">
-              <NotificationText isLast>
+              <NotificationText>
                 <strong>Success!</strong> Your {propToDeleteName} was deleted.
               </NotificationText>
+              <NotificationText>
+                This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
+              </NotificationText>
+              <ProgressBar
+                theme="success"
+                value={secondsToDelayRedirect - secondsUntilRedirect}
+                max={secondsToDelayRedirect}
+              />
             </Notification>
           )}
           <TagGroup align="center">

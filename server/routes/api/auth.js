@@ -182,13 +182,14 @@ router.post(
         problems
       });
     }
+    const wrongPasswordMsg = 'Incorrect password.';
     user.comparePassword(oldPassword)
     .then(({ isMatch }) => {
       if (isMatch) {
         return UserController.editAccountInfo(user, { username, email, password });
       }
       else throw {
-        message: 'Invalid password.',
+        message: wrongPasswordMsg,
         problems: { password: true },
         status: 401
       };
@@ -197,6 +198,14 @@ router.post(
       res.json({
         user: cleanUser(updatedUser)
       });
+    })
+    .catch(err => {
+      const _probs = (err && err.problems) || {};
+      const isWrongPassword = err && err.message && err.message === wrongPasswordMsg;
+      if (_probs.username || _probs.email || (_probs.password && !isWrongPassword)) {
+        err.problems = { updatedProps: _probs };
+      }
+      throw err;
     })
     .catch(routeErrorHandlerFactory(res));
   }

@@ -66,7 +66,7 @@ const startingState = {
   unavailableEmails: [],
   secondsUntilRedirect: undefined
 };
-const { secondsToDelayRedirect, stepSizeOfRedirectDelay, emailRegEx } = constants;
+const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 class NewUserModal extends Component {
   constructor(props) {
@@ -100,7 +100,7 @@ class NewUserModal extends Component {
     if (username && getUsernameProblems(username, problemMessages, unavailableUsernames)) {
       problems.username = true;
     }
-    if (email && getEmailProblems(email, problemMessages, unavailableUsernames)) {
+    if (email && getEmailProblems(email, problemMessages, unavailableEmails)) {
       problems.email = true;
     }
     const _passwordProbs = getPasswordProblems(password, problemMessages, verifyPassword);

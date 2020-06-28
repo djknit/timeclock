@@ -138,7 +138,9 @@ class _EditAccountModal_needsData extends Component {
 
   submit(event) {
     event.preventDefault();
-    const { updatedAccountProp, currentPassword, unavailableUsernames, unavailableEmails } = this.state;
+    const { propToEditName, closeModal } = this.props;
+    const { updatedAccountProp, currentPassword } = this.state;
+    let { unavailableUsernames, unavailableEmails } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
       const { problems, problemMessages } = this.getInputProblems();
@@ -150,40 +152,59 @@ class _EditAccountModal_needsData extends Component {
       }
       return api.auth.editInfo({
         password: currentPassword,
-        updatedProps: {
-          [this.props.propToEditName]: updatedAccountProp
-        }
+        updatedProps: { [propToEditName]: updatedAccountProp }
       });
     })
     .then(res => {
+      let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
         isLoading: false,
         hasProblem: false,
         showMessage: true,
         problems: {},
-        problemMessages: []
+        problemMessages: [],
+        secondsUntilRedirect
       });
       profileService.setUser(res.data.user);
+      const intervalId = setInterval(
+        () => {
+          secondsUntilRedirect -= stepSizeOfRedirectDelay;
+          this.setState({ secondsUntilRedirect });
+          if (secondsUntilRedirect <= 0) {
+            clearInterval(intervalId);
+            this.reset();
+            closeModal();
+          }
+        },
+        1000 * stepSizeOfRedirectDelay
+      );
     })
     .catch(err => {
       console.log(err)
-      const errorData = (err && err.response && err.response.data) || err || {};
-      const { problems, messages } = errorData;
-      checkApiResProbMsgsForTakenUsernameOrEmail(
-        messages,
-        {
-          username: updatedAccountProp,
-          email: updatedAccountProp
-        },
-        {
-          usernames: unavailableUsernames,
-          email: unavailableEmails
-        }
-      );
+      const isApiRes = !!(err && err.response);
+      const errorData = (isApiRes && err.response.data) || err || {};
+      let problemMessages = errorData.messages || ['An unknown problem has occured.'];
+      if (isApiRes) {
+        checkApiResProbMsgsForTakenUsernameOrEmail(
+          problemMessages,
+          {
+            username: updatedAccountProp,
+            email: updatedAccountProp
+          },
+          {
+            usernames: unavailableUsernames,
+            emails: unavailableEmails
+          }
+        );
+        const _probs = errorData.problems || {};
+        errorData.problems = {};
+        if (_probs.updatedProps) errorData.problems.updatedAccountProp = true;
+        if (_probs.password) errorData.problems.currentPassword = true;
+      }
       this.setState({
-        problems: problems || { unknown: true },
-        problemMessages: messages || ['An unknown problem has occured.'],
+        problems: errorData.problems,
+        problemMessages,
         hasProblem: true,
         isLoading: false,
         showMessage: true
@@ -219,7 +240,8 @@ class _EditAccountModal_needsData extends Component {
       isLoading,
       hasProblem,
       problemMessages,
-      showMessage
+      showMessage,
+      secondsUntilRedirect
     } = state;
 
     const variableUpdateInputAttrs = getVariableInputAttrs(propToEditName);
@@ -246,9 +268,9 @@ class _EditAccountModal_needsData extends Component {
                 reset();
                 closeModal();
               }}
-              disabled={isLoading || hasSuccess}
+              disabled={isLoading}
             >
-              Cancel
+              {hasSuccess ? 'Close' : 'Cancel'}
             </Button>
             <Button
               theme={hasSuccess ? 'success' : 'primary'}
@@ -256,9 +278,11 @@ class _EditAccountModal_needsData extends Component {
               disabled={
                 isLoading || hasSuccess || !updatedAccountProp || !currentPassword || isMissingVerifyPassword
               }
-              formId={formId}
               isSubmit
-              isLoading={isLoading}
+              {...{
+                formId,
+                isLoading
+              }}
             >
               Submit
             </Button>
@@ -286,9 +310,17 @@ class _EditAccountModal_needsData extends Component {
           )}
           {showMessage && hasSuccess && (
             <Notification theme="success">
-              <NotificationText isLast>
+              <NotificationText>
                 <strong>Success!</strong> Your {propToEditName} was updated.
               </NotificationText>
+              <NotificationText>
+                This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
+              </NotificationText>
+              <ProgressBar
+                theme="success"
+                value={secondsToDelayRedirect - secondsUntilRedirect}
+                max={secondsToDelayRedirect}
+              />
             </Notification>
           )}
           {propToEditName !== 'password' && (
