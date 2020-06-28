@@ -6,7 +6,8 @@ function _OutsideLink_neeedsPseudo({
   href,
   children,
   pseudoState,
-  pseudoHandlers
+  pseudoHandlers,
+  allowTabFocus
 }) {
 
   const style = calculateStyleForPseudoClassState(styles, pseudoState);
@@ -18,6 +19,7 @@ function _OutsideLink_neeedsPseudo({
       rel="noopener noreferrer"
       {...pseudoHandlers}
       style={style}
+      tabIndex={allowTabFocus === false ? -1 : 0}
     >
       {children}
     </a>

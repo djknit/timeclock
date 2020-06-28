@@ -13,8 +13,7 @@ class _LandingPage_needsData extends Component {
     super(props);
     this.toggleLoginModal = this.toggleLoginModal.bind(this);
     this.toggleNewUserModal = this.toggleNewUserModal.bind(this);
-    this.focusLoginModal = this.focusLoginModal.bind(this);
-    this.focusNewUserModal = this.focusNewUserModal.bind(this);
+    this.afterToggleCbFactory = this.afterToggleCbFactory.bind(this);
     this.newUserInputRef = React.createRef();
     this.loginInputRef = React.createRef();
     this.state = {
@@ -26,24 +25,25 @@ class _LandingPage_needsData extends Component {
   toggleLoginModal(isActiveAfterToggle) {
     this.setState(
       { isLoginModalActive: isActiveAfterToggle },
-      this.focusLoginModal
+      this.afterToggleCbFactory(isActiveAfterToggle, this.loginInputRef)
     );
   };
 
   toggleNewUserModal(isActiveAfterToggle) {
     this.setState(
       { isNewUserModalActive: isActiveAfterToggle },
-      this.focusNewUserModal
+      this.afterToggleCbFactory(isActiveAfterToggle, this.newUserInputRef)
     );
   };
 
-  focusLoginModal() {
-    this.loginInputRef.current.focus();
+  afterToggleCbFactory(isActiveAfterToggle, inputRef) {
+    return (() => {
+      if (isActiveAfterToggle) inputRef.current.focus();
+      const hasModalOpen = this.state.isLoginModalActive || this.state.isNewUserModalActive;
+      if (hasModalOpen !== this.props.areAnyModalsOpen) this.props.setAreAnyModalsOpen(hasModalOpen);
+    });
   };
 
-  focusNewUserModal() {
-    this.newUserInputRef.current.focus();
-  };
 
   componentDidMount() {
     api.auth.test()
@@ -59,8 +59,7 @@ class _LandingPage_needsData extends Component {
 
     const { state, props, toggleLoginModal, toggleNewUserModal, loginInputRef, newUserInputRef } = this;
     const { isNewUserModalActive, isLoginModalActive } = state;
-    const { windowWidth } = props;
-    const isAnyModalActive = isLoginModalActive || isNewUserModalActive;
+    const { windowWidth, areAnyModalsOpen } = props;
 
     const style = getStyle(windowWidth);
 
@@ -73,7 +72,7 @@ class _LandingPage_needsData extends Component {
             size="large"
             styles={style.leftButton}
             onClick={() => toggleNewUserModal(true)}
-            allowTabFocus={!isAnyModalActive}
+            allowTabFocus={!areAnyModalsOpen}
           >
             Sign Up
           </Button>
@@ -81,7 +80,7 @@ class _LandingPage_needsData extends Component {
             size="large"
             styles={style.rightButton}
             onClick={() => toggleLoginModal(true)}
-            allowTabFocus={!isAnyModalActive}
+            allowTabFocus={!areAnyModalsOpen}
           >
             Log In
           </Button>
