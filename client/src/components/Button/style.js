@@ -20,25 +20,32 @@ export default function getStyle(additionalStyles, pseudoClassState, colorTheme)
 export * from '../../AppStyle';
 
 function getBackgroundColorStyles(colorTheme) {
-  if (!colorTheme || colorTheme === 'light') {
-    return {
-      focus: {
-        backgroundColor: '#e7e7e7'
-      },
-      active: {
-        backgroundColor: '#f8f8f8'
-      }
-    };
+  const getResult = (
+    (focusBgColor, activeBgColor) => ({
+      focus: { backgroundColor: focusBgColor },
+      active: { backgroundColor: activeBgColor }
+    })
+  );
+  switch (colorTheme) {
+    case 'primary':
+      return getResult('#00b19a', '#00debd');
+    case 'danger':
+      return getResult('#df415b', '#ff4a6e');
+    default: // = 'light'
+      return getResult('#e7e7e7', '#f8f8f8');
   }
-  if (colorTheme === 'primary') {
-    return {
-      focus: {
-        backgroundColor: '#00b19a'
-      },
-      active: {
-        backgroundColor: '#00debd'
-      }
-    };
-  }
-  return {};
+/*
+  COLORS:
+    danger
+      innert: #f14668  =  241, 70, 104
+      hover: #f03a5f  =  240, 58, 95
+      focus: #df415b  =  223, 65, 91
+      active: #ff4a6e  =  255, 74, 110
+
+    primary
+      innert: #00d1b2  =  0, 209, 178
+      hover: #00c4a7  =  0, 196, 167
+      focus: #00b19a  =  0, 193, 155
+      active: #00debd  =  0, 222, 189
+*/
 }
