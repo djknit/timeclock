@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import { windowWidthService } from '../../../data'
 import ContentArea, { ContentAreaTitle } from  '../ContentArea';
+import PageTitleArea from '../PageTitleArea';
 import Jobs from './Jobs';
 import Account from './Account';
 import { addData } from '../../higherOrder';
@@ -25,11 +26,7 @@ class _Dashboard_needsData extends Component {
 
     return (
       <>
-        <ContentArea style={style.pageTitleArea}>
-          <ContentAreaTitle style={style.pageTitle} size={2}>
-            DASHBOARD
-          </ContentAreaTitle>
-        </ContentArea>
+        <PageTitleArea title="DASHBOARD" />
         <div style={style.contentAreasRow}>
           <Account
             style={style.account}

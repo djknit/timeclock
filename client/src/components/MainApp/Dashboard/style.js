@@ -1,5 +1,5 @@
 import {
-  sectionHeadingFontFam, mainAreaPadding, headingFontFam, contentAreaPadding
+  mainAreaPadding, contentAreaPadding
 } from '../style';
 
 export default function getStyle(windowWidth) {
@@ -20,12 +20,6 @@ export default function getStyle(windowWidth) {
   );
 
   return {
-    pageTitleArea: {
-      marginBottom: mainAreaPadding
-    },
-    pageTitle: {
-      fontFamily: headingFontFam
-    },
     contentAreasRow: {
       position: 'relative',
       padding: 0,

@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
+import { Switch, Route } from 'react-router-dom';
 import { currentJobService } from '../../../data';
 import { api } from '../utilities'
 import getStyle from './style';
+import ContentArea from '../ContentArea';
+import PageTitleArea from '../PageTitleArea';
+import Notification, { NotificationText } from '../../Notification';
+import { ProgressBar } from '../../formPieces';
+import JobDash from './JobDash';
+import SettingsPage from './SettingsPage';
+import TimePage from './TimePage';
 import { addData } from '../../higherOrder';
 
 class _JobPage_needsData extends Component {
@@ -24,31 +32,81 @@ class _JobPage_needsData extends Component {
         currentJobService.setCurrentJob(res.data);
       })
       .catch(err => {
-        let problemMessages;
-        if (err && err.response && err.response.data && err.response.data.problemMessages) {
-          problemMessages = err.response.data.problemMessages;
-        }
-        else if (err && err.message) {
-          problemMessages = [err.message];
-        }
-        else {
-          problemMessages = ['An unknown problem was encountered.'];
-        }
+        this.props.catchApiUnauthorized(err);
         this.setState({
           hasProblem: true,
-          problemMessages
+          problemMessages: getMessagesFromErr(err)
         });
       });
     }
   };
 
   render() {
-    const { job } = this.props;
+    const { job, match } = this.props;
+    const { isLoading, hasProblem, problemMessages } = this.state;
 
     const style = getStyle();
 
+    const buildPath = subpath => `${match.path}/${subpath}`;
+
     return (
-      <div style={style.jobsArea}>{job && job.name}</div>
+      job ? (
+        <Switch>
+          <Route
+            path={buildPath('settings')}
+            render={props => (
+              <SettingsPage {...props} />
+            )}
+          />
+          <Route
+            path={buildPath('time')}
+            render={props => (
+              <TimePage {...props} />
+            )}
+          />,
+          <Route
+            exact
+            path={buildPath('')}
+            render={props => (
+              <JobDash {...props} />
+            )}
+          />
+        </Switch>
+      ) : (
+        <>
+          <PageTitleArea title="JOB" />
+          <ContentArea style={style.noDataContentArea}>
+            {
+              isLoading ? (
+                <Notification theme="info">
+                  <NotificationText>Retrieving data...</NotificationText>
+                  <ProgressBar
+                    theme="primary"
+                    max={100}
+                  />
+                </Notification>
+              ) : (
+                <Notification theme="danger">
+                  <NotificationText>Oops! Your job data failed to load.</NotificationText>
+                  <NotificationText>
+                    Try going back to a previous page and then loading this page again.
+                    You may also try logging out and logging back in.
+                  </NotificationText>
+                  <hr />
+                  <NotificationText>Error(s):</NotificationText>
+                  {problemMessages.map(
+                    (msg, index) => (
+                      <NotificationText isLast={index === problemMessages.length - 1}>
+                        {msg}
+                      </NotificationText>
+                    )
+                  )}
+                </Notification>
+              )
+            }
+          </ContentArea>
+        </>
+      )
     );
   };
 }
@@ -56,3 +114,12 @@ class _JobPage_needsData extends Component {
 const JobPage = addData(_JobPage_needsData, 'job', currentJobService);
 
 export default JobPage;
+
+function getMessagesFromErr(err) {
+  return (
+    (err && err.response && err.response.data && err.response.data.problemMessages) ||
+    (err && err.messages) ||
+    (err && err.message && [err.message]) ||
+    ['An unknown problem was encountered.']
+  );
+}
