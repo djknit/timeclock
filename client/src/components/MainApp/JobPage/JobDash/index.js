@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PageTitle from '../../PageTitle';
 
 class JobDash extends Component {
   constructor(props) {
@@ -7,9 +8,13 @@ class JobDash extends Component {
   };
 
   render() {
+    const { job } = this.props;
 
     return (
-      <div></div>
+      <>
+        <PageTitle>JOB: {job.name}</PageTitle>
+        
+      </>
     );
   };
 }

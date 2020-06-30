@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PageTitle from '../../PageTitle';
 
 class SettingsPage extends Component {
   constructor(props) {
@@ -7,9 +8,15 @@ class SettingsPage extends Component {
   };
 
   render() {
+    const { job } = this.props;
 
     return (
-      <div></div>
+      <>
+        <PageTitle>
+          JOB:&nbsp;{job.name}&nbsp;&nbsp;<i className="fas fa-chevron-right"></i>&nbsp;&nbsp;Settings
+        </PageTitle>
+        
+      </>
     );
   };
 }

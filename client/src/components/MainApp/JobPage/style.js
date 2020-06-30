@@ -3,8 +3,7 @@ export default function getStyle() {
     noDataContentArea: {
       marginLeft: 'auto',
       marginRight: 'auto',
-      maxWidth: 780,
-      minHeight: 400
+      maxWidth: 780
     },
     noDataNotification: {
       marginLeft: 'auto',

@@ -4,17 +4,19 @@ import { currentJobService } from '../../../data';
 import { api } from '../utilities'
 import getStyle from './style';
 import ContentArea from '../ContentArea';
-import PageTitleArea from '../PageTitleArea';
+import PageTitle from '../PageTitle';
 import Notification, { NotificationText } from '../../Notification';
 import { ProgressBar } from '../../formPieces';
 import JobDash from './JobDash';
 import SettingsPage from './SettingsPage';
 import TimePage from './TimePage';
+import NotFound from '../../NotFound';
 import { addData } from '../../higherOrder';
 
 class _JobPage_needsData extends Component {
   constructor(props) {
     super(props);
+    this.setWaitingForDataState = this.setWaitingForDataState.bind(this);
     this.state = {
       isLoading: false,
       hasProblem: false,
@@ -22,18 +24,26 @@ class _JobPage_needsData extends Component {
     };
   };
 
+  setWaitingForDataState() {
+    return new Promise(resolve => {
+      this.setState({ isLoading: true }, resolve);
+    });
+  };
+
   componentDidMount() {
     const { job, match } = this.props;
     const { jobId } = match.params;
     if (!job || job.id !== jobId) {
-      api.jobs.get(jobId)
+      this.setWaitingForDataState()
+      .then(() => api.jobs.get(jobId))
       .then(res => {
-        if (!res || !res.data) throw new Error('Failed to retrieve for data for job.');
+        if (!res || !res.data) throw new Error('Failed to retrieve data for job.');
         currentJobService.setCurrentJob(res.data);
       })
       .catch(err => {
-        this.props.catchApiUnauthorized(err);
+        if (this.props.catchApiUnauthorized(err)) return;
         this.setState({
+          isLoading: false,
           hasProblem: true,
           problemMessages: getMessagesFromErr(err)
         });
@@ -43,7 +53,7 @@ class _JobPage_needsData extends Component {
 
   render() {
     const { job, match } = this.props;
-    const { isLoading, hasProblem, problemMessages } = this.state;
+    const { isLoading, problemMessages } = this.state;
 
     const style = getStyle();
 
@@ -55,26 +65,42 @@ class _JobPage_needsData extends Component {
           <Route
             path={buildPath('settings')}
             render={props => (
-              <SettingsPage {...props} />
+              <SettingsPage
+                {...{
+                  ...props,
+                  job
+                }}
+              />
             )}
           />
           <Route
             path={buildPath('time')}
             render={props => (
-              <TimePage {...props} />
+              <TimePage
+                {...{
+                  ...props,
+                  job
+                }}
+              />
             )}
           />,
           <Route
             exact
             path={buildPath('')}
             render={props => (
-              <JobDash {...props} />
+              <JobDash
+                {...{
+                  ...props,
+                  job
+                }}
+              />
             )}
           />
+          <Route component={NotFound} />
         </Switch>
       ) : (
         <>
-          <PageTitleArea title="JOB" />
+          <PageTitle>JOB</PageTitle>
           <ContentArea style={style.noDataContentArea}>
             {
               isLoading ? (
@@ -117,7 +143,7 @@ export default JobPage;
 
 function getMessagesFromErr(err) {
   return (
-    (err && err.response && err.response.data && err.response.data.problemMessages) ||
+    (err && err.response && err.response.data && err.response.data.messages) ||
     (err && err.messages) ||
     (err && err.message && [err.message]) ||
     ['An unknown problem was encountered.']

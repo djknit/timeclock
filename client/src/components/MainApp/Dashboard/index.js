@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import getStyle from './style';
 import { windowWidthService } from '../../../data'
-import ContentArea, { ContentAreaTitle } from  '../ContentArea';
-import PageTitleArea from '../PageTitleArea';
+import PageTitle from '../PageTitle';
 import Jobs from './Jobs';
 import Account from './Account';
 import { addData } from '../../higherOrder';
@@ -26,7 +25,7 @@ class _Dashboard_needsData extends Component {
 
     return (
       <>
-        <PageTitleArea title="DASHBOARD" />
+        <PageTitle>DASHBOARD</PageTitle>
         <div style={style.contentAreasRow}>
           <Account
             style={style.account}
