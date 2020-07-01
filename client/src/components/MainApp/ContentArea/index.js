@@ -1,6 +1,10 @@
 import React from 'react';
 import getStyle, { getTitleStyle } from './style';
-import { getSizeClass } from '../utilities';
+import { windowWidthService } from '../../../data';
+import { getSizeClass, isWindowWide } from '../utilities';
+import { addData } from '../../higherOrder';
+
+const ContentAreaTitle = addData(_ContentAreaTitle_needsData, 'windowWidth', windowWidthService);
 
 function ContentArea({
   children,
@@ -20,19 +24,22 @@ function ContentArea({
   );
 };
 
-function ContentAreaTitle({
+function _ContentAreaTitle_needsData({
   children,
   style,
-  size
+  size,
+  windowWidth
 }) {
 
-  let className = 'title';
-  if (size) className += ` ${getSizeClass(size)}`;
+  let _size = size ? parseInt(size) : 3;
+  if (windowWidth && !isWindowWide(windowWidth) && _size < 7) {
+    _size += 1;
+  }
 
   const completeStyle = getTitleStyle(style);
 
   return (
-    <h1 className={className} style={completeStyle}>
+    <h1 className={`title ${getSizeClass(_size)}`} style={completeStyle}>
       {children}
     </h1>
   );

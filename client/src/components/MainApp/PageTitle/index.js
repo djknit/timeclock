@@ -1,43 +1,39 @@
 import React from 'react';
 import getStyle from './style';
 import ContentArea, { ContentAreaTitle } from  '../ContentArea';
+import CrumbLink from './CrumbLink';
 
 function PageTitle({
   children,
-  style
-}) {
-
-  return (
-    <PageTitleArea {...{ style }}>
-      <PageTitleText>{children}</PageTitleText>
-    </PageTitleArea>
-  );
-}
-
-function PageTitleArea({
-  children,
-  style
+  style,
+  crumbChain
 }) {
 
   const completeStyle = getStyle(style);
 
   return (
     <ContentArea style={completeStyle.pageTitleArea}>
-      {children}
+      <ContentAreaTitle style={completeStyle.pageTitle} size={2}>
+        {
+          crumbChain ?
+          crumbChain.map(
+            (crumb, index) => (
+              index !== crumbChain.length - 1 ? (
+                <>
+                  <CrumbLink to={crumb.url}>
+                    {crumb.text}
+                  </CrumbLink>
+                  <i style={completeStyle.breadcrumbSeparator} className="fas fa-chevron-right" />
+                </>
+              ) : (
+                <span>{crumb.text}</span>
+              )
+            )
+          ) :
+          children
+        }
+      </ContentAreaTitle>
     </ContentArea>
-  );
-}
-
-function PageTitleText({
-  children
-}) {
-
-  const style = getStyle();
-
-  return (
-    <ContentAreaTitle style={style.pageTitle} size={2}>
-      {children}
-    </ContentAreaTitle>
   );
 }
 

@@ -12,7 +12,7 @@ class JobDash extends Component {
 
     return (
       <>
-        <PageTitle>JOB: {job.name}</PageTitle>
+        <PageTitle>JOB:&nbsp;{job.name}</PageTitle>
         
       </>
     );

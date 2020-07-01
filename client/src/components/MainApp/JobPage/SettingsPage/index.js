@@ -13,7 +13,7 @@ class SettingsPage extends Component {
     return (
       <>
         <PageTitle>
-          JOB:&nbsp;{job.name}&nbsp;&nbsp;<i className="fas fa-chevron-right"></i>&nbsp;&nbsp;Settings
+          JOB:&nbsp;{job.name} <i className="fas fa-chevron-right"></i> Settings
         </PageTitle>
         
       </>

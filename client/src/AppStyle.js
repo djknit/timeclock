@@ -1,4 +1,6 @@
- // NEXT 2 COLORS ALSO DEFINED IN `App.css`. IF CHANGED, THEY MUST BE CHANGED BOTH PLACES!
+import { isWindowWide } from './utilities';
+
+// NEXT 2 COLORS ALSO DEFINED IN `App.css`. IF CHANGED, THEY MUST BE CHANGED BOTH PLACES!
 const mainBackgroundColor = '#f6e653';
 const secondaryBackgroundColor = '#6141D1';
 
@@ -47,5 +49,6 @@ export {
   footerHeight,
   bulmaFormBlue,
   bulmaFormBlack,
-  shadow
+  shadow,
+  isWindowWide
 };

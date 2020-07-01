@@ -11,6 +11,11 @@ export default function getStyle(additionalStyle) {
     },
     pageTitle: {
       fontFamily: headingFontFam
-    }
+    },
+    breadcrumbSeparator: {
+      display: 'inline-block',
+      padding: '0 .6em',
+      color: '#595959'
+    },
   };
 };

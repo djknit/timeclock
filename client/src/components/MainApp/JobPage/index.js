@@ -54,10 +54,16 @@ class _JobPage_needsData extends Component {
   render() {
     const { job, match } = this.props;
     const { isLoading, problemMessages } = this.state;
-
+console.log(match)
+console.log(this.props.history)
     const style = getStyle();
 
     const buildPath = subpath => `${match.path}/${subpath}`;
+
+    const commonRouteAttributes = {
+      job,
+      parentPath: match.url
+    };
 
     return (
       job ? (
@@ -68,7 +74,7 @@ class _JobPage_needsData extends Component {
               <SettingsPage
                 {...{
                   ...props,
-                  job
+                  ...commonRouteAttributes
                 }}
               />
             )}
@@ -79,7 +85,7 @@ class _JobPage_needsData extends Component {
               <TimePage
                 {...{
                   ...props,
-                  job
+                  ...commonRouteAttributes
                 }}
               />
             )}
@@ -91,7 +97,7 @@ class _JobPage_needsData extends Component {
               <JobDash
                 {...{
                   ...props,
-                  job
+                  ...commonRouteAttributes
                 }}
               />
             )}
