@@ -120,6 +120,7 @@ class MainApp extends Component {
     const buildPath = subpath => `${match.path}/${subpath}`;
 
     const redirectToJobPage = jobId => history.push(buildPath(`job/${jobId}`));
+    const returnToDashboard = () => history.push(match.path);
 
     const openNewJobModal = () => toggleNewJobModal(true);
     const accountEditingModalOpenerFactory = propToEditName => {
@@ -173,7 +174,8 @@ class MainApp extends Component {
                   {...{
                     ...props,
                     catchApiUnauthorized,
-                    areAnyModalsOpen
+                    areAnyModalsOpen,
+                    returnToDashboard
                   }}
                 />
               )}

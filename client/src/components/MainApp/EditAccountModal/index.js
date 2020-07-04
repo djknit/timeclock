@@ -182,6 +182,7 @@ class _EditAccountModal_needsData extends Component {
     })
     .catch(err => {
       console.log(err)
+      this.props.catchApiUnauthorized(err);
       const isApiRes = !!(err && err.response);
       const errorData = (isApiRes && err.response.data) || err || {};
       let problemMessages = errorData.messages || ['An unknown problem has occured.'];

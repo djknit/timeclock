@@ -217,6 +217,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
       )
     })
     .catch(err => {
+      this.props.catchApiUnauthorized(err);
       const errorData = (err && err.response && err.response.data) || err || {};
       let { problems, messages } = errorData;
       if (!problems) problems = { unknown: true };
