@@ -112,6 +112,7 @@ class _DeleteAccountPropModal_needsData extends Component {
     })
     .catch(err => {
       console.log(err)
+      this.props.catchApiUnauthorized(err);
       const errorData = (err && err.response && err.response.data) || err || {};
       const { problems, messages } = errorData;
       this.setState({

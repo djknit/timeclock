@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import { TextInput, ProgressBar } from '../../formPieces';
@@ -159,10 +158,15 @@ class LoginModal extends Component {
   render() {
     const { isActive, closeModal, inputRef } = this.props;
     const {
-      hasSuccess, isLoading, problems, showMessage, problemMessages, usernameOrEmail, password, secondsUntilRedirect
+      hasSuccess,
+      isLoading,
+      problems,
+      showMessage,
+      problemMessages,
+      usernameOrEmail,
+      password,
+      secondsUntilRedirect
     } = this.state;
-
-    const style = getStyle();
 
     return (
       <ModalSkeleton

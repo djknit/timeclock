@@ -1,43 +1,23 @@
+import { isWindowWide } from '../utilities';
 import {
-  sectionHeadingFontFam, mainAreaPadding, headingFontFam, contentAreaPadding
+  contentAreaPadding, contentAreasGridStyles
 } from '../style';
+
+const { contentAreasRow, columnContentArea } = contentAreasGridStyles;
 
 export default function getStyle(windowWidth) {
   const accountWidthPercent = 40;
 
-  const columnContentArea = widthPercent => (
-    windowWidth > 780 ?
-    {
-      width: `calc(${widthPercent}% - ${mainAreaPadding / 2}px)`,
-      position: 'absolute',
-      top: 0,
-      display: 'inline-block'
-    } :
-    {
-      width: '100%',
-      marginBottom: mainAreaPadding
-    }
-  );
+  const useColumns = isWindowWide(windowWidth);
 
   return {
-    pageTitleArea: {
-      marginBottom: mainAreaPadding
-    },
-    pageTitle: {
-      fontFamily: headingFontFam
-    },
-    contentAreasRow: {
-      position: 'relative',
-      padding: 0,
-      margin: 0,
-      width: '100%'
-    },
+    contentAreasRow,
     account: {
-      ...columnContentArea(accountWidthPercent),
+      ...columnContentArea(accountWidthPercent, useColumns),
       left: 0
     },
     jobs: {
-      ...columnContentArea(100 - accountWidthPercent),
+      ...columnContentArea(100 - accountWidthPercent, useColumns),
       right: 0
     }
   };

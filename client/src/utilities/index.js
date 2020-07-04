@@ -8,17 +8,24 @@ function capitalizeFirstLetter(string) {
   return string && (string.charAt(0).toUpperCase() + string.slice(1));
 }
 
+function isWindowWide(windowWidth) {
+  return windowWidth >= 769;
+};
+
 export {
   dataServiceFactory,
   api,
   dates,
   jobData,
-  capitalizeFirstLetter
+  capitalizeFirstLetter,
+  isWindowWide
 };
 
 export default {
   dataServiceFactory,
   api,
   dates,
-  jobData
+  jobData,
+  capitalizeFirstLetter,
+  isWindowWide
 };

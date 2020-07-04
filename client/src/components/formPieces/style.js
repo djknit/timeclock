@@ -1,8 +1,4 @@
-export { bulmaFormBlack, bulmaFormBlue } from '../../AppStyle';
-
-function isWindowWide(windowWidth) {
-  return windowWidth >= 769;
-};
+export { bulmaFormBlack, bulmaFormBlue, isWindowWide } from '../../AppStyle';
 
 const collapsableSectionStyles = {
   outsideField: {
@@ -25,4 +21,4 @@ const timeInputStyles = {
   }
 };
 
-export { isWindowWide, collapsableSectionStyles, timeInputStyles };
+export { collapsableSectionStyles, timeInputStyles };
