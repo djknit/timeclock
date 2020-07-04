@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import getStyle from './style';
 import PageTitle from '../../PageTitle';
-import CrumbLink from '../../PageTitle/CrumbLink'
+import ContentArea, { ContentAreaTitle } from '../../ContentArea';
 
 class TimePage extends Component {
   constructor(props) {
@@ -14,15 +14,22 @@ class TimePage extends Component {
 
     const { job, parentPath } = this.props;
 
+    const crumbChain = [
+      {
+        text: <>JOB:&nbsp;{job.name}</>,
+        url: parentPath
+      },
+      { url: parentPath }
+    ];
+
     const style = getStyle();
 
     return (
       <>
-        <PageTitle crumbChain={[{ text: <>JOB:&nbsp;{job.name}</>, url: parentPath }, { text: 'Time' }]}>
-          <CrumbLink to={parentPath}>JOB:&nbsp;{job.name}</CrumbLink>
-          <i style={style.breadcrumbSeparator} className="fas fa-chevron-right" />
-          <span style={style.currentCrumb}>Time</span>
-        </PageTitle>
+        <PageTitle {...{ crumbChain }} />
+        <ContentArea>
+          <ContentAreaTitle>Time Stuff</ContentAreaTitle>
+        </ContentArea>
       </>
     );
   };

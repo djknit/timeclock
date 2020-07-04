@@ -52,7 +52,7 @@ class _JobPage_needsData extends Component {
   };
 
   render() {
-    const { job, match } = this.props;
+    const { job, match, returnToDashboard } = this.props;
     const { isLoading, problemMessages } = this.state;
 console.log(match)
 console.log(this.props.history)
@@ -97,7 +97,8 @@ console.log(this.props.history)
               <JobDash
                 {...{
                   ...props,
-                  ...commonRouteAttributes
+                  ...commonRouteAttributes,
+                  returnToDashboard
                 }}
               />
             )}

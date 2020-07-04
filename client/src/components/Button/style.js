@@ -47,5 +47,11 @@ function getBackgroundColorStyles(colorTheme) {
       hover: #00c4a7  =  0, 196, 167
       focus: #00b19a  =  0, 193, 155
       active: #00debd  =  0, 222, 189
+
+    info
+      innert:
+      hover:
+      focus:
+      active:
 */
 }

@@ -15,6 +15,30 @@ export default function getStyle(navHeight) {
 
 const contentAreaPadding = 15;
 
+const contentAreasGridStyles = {
+  contentAreasRow: {
+    position: 'relative',
+    padding: 0,
+    margin: 0,
+    width: '100%'
+  },
+  columnContentArea(widthPercent, useColumns) {
+    return (
+      useColumns ?
+      {
+        width: `calc(${widthPercent}% - ${mainAreaPadding / 2}px)`,
+        position: 'absolute',
+        top: 0,
+        display: 'inline-block'
+      } :
+      {
+        width: '100%',
+        marginBottom: mainAreaPadding
+      }
+    );
+  }
+};
+
 export {
   headingFontFam,
   sectionHeadingFontFam,
@@ -22,5 +46,6 @@ export {
   mainBackgroundColor,
   secondaryBackgroundColor,
   mainAreaPadding,
-  contentAreaPadding
+  contentAreaPadding,
+  contentAreasGridStyles
 };

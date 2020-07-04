@@ -15,7 +15,8 @@ function _Button_needsPseudo({
   allowTabFocus,
   isLoading,
   pseudoState,
-  pseudoHandlers
+  pseudoHandlers,
+  buttonRef
 }) {
 
   let formRelatedAttributes = (
@@ -42,6 +43,7 @@ function _Button_needsPseudo({
       disabled={disabled}
       {...formRelatedAttributes}
       tabIndex={allowTabFocus !== false ? 0 : -1}
+      ref={buttonRef}
     >
       {children}
     </button>
