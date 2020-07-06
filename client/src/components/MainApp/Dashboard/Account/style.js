@@ -1,9 +1,9 @@
-import { dashContentBtnSpecs, contentAreaPadding } from '../style';
+import {
+  contentAreaDividerColor as dividerColor, dashContentBtnSpecs, contentAreaPadding
+} from '../style';
 
 export default function getStyle(additionalStyle) {
   
-  const dividerColor = '#b3b3b3';
-
   const accountPropArea = {
     paddingLeft: '.75em',
     paddingRight: '.75em',
