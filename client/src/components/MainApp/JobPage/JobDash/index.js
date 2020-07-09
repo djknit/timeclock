@@ -4,23 +4,21 @@ import { windowWidthService } from '../../../../data';
 import PageTitle from '../../PageTitle';
 import Button from '../../../Button';
 import ContentArea, { ContentAreaTitle } from '../../ContentArea';
+import QuickNav from './QuickNav';
+import Basics from './Basics';
+import Settings from './Settings';
 
 class JobDash extends Component {
   constructor(props) {
     super(props);
-    this.quickNavButton = React.createRef();
-    this.state = {
-      quickNavButtonHeight: undefined
-    };
-  };
-
-  componentDidMount() {
-    this.setState({ quickNavButtonHeight: this.quickNavButton.current.clientHeight });
+    this.state = {};
   };
 
   render() {
-    const { quickNavButton, state, props } = this;
-    const { job, match, history, returnToDashboard } = props;
+    const { state, props } = this;
+    const {
+      job, match, history, returnToDashboard, areAnyModalsOpen, goToJobSettings, goToTimePage
+    } = props;
     const { quickNavButtonHeight } = state;
     console.log(match) 
     console.log(history)
@@ -32,32 +30,24 @@ class JobDash extends Component {
     return (
       <>
         <PageTitle>JOB:&nbsp;{job.name}</PageTitle>
-        <ContentArea style={style.quickNavArea}>
-          <ContentAreaTitle style={style.quickNavTitle}>Quick Links:</ContentAreaTitle>
-          <Button
-            theme="info"
-            onClick={returnToDashboard}
-            styles={style.quickNavButton}
-            buttonRef={quickNavButton}
-          >
-            <i className="far fa-arrow-alt-circle-left" /> Back to Dashboard
-          </Button>
-          {/* <br /> */}
-          <Button theme="primary" onClick={returnToDashboard} styles={style.quickNavButton}>
-            <i className="far fa-clock" /> Time Page
-          </Button>
-          {/* <br /> */}
-          <Button theme="primary" onClick={returnToDashboard} styles={style.quickNavButton}>
-            <i className="fas fa-cog" /> Job Settings
-          </Button>
-        </ContentArea>
+        <QuickNav
+          {...{
+            returnToDashboard,
+            goToJobSettings,
+            goToTimePage
+          }}
+          disabled={areAnyModalsOpen}
+          style={style.quickNav}
+        />
         <div style={style.contentAreasRow}>
-          <ContentArea style={style.basics}>
-            <ContentAreaTitle>Basics</ContentAreaTitle>
-          </ContentArea>
-          <ContentArea style={style.menu}>
-            <ContentAreaTitle>Settings:</ContentAreaTitle>
-          </ContentArea>
+          <Basics
+            disabled={areAnyModalsOpen}
+            style={style.basics}
+          />
+          <Settings
+            disabled={areAnyModalsOpen}
+            style={style.menu}
+          />
         </div>
       </>
     );

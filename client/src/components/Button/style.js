@@ -31,6 +31,8 @@ function getBackgroundColorStyles(colorTheme) {
       return getResult('#00b19a', '#00debd');
     case 'danger':
       return getResult('#df415b', '#ff4a6e');
+    case 'info':
+      return getResult('#2e8cca', '#35a1e9');
     default: // = 'light'
       return getResult('#e7e7e7', '#f8f8f8');
   }
@@ -49,9 +51,9 @@ function getBackgroundColorStyles(colorTheme) {
       active: #00debd  =  0, 222, 189
 
     info
-      innert:
-      hover:
-      focus:
-      active:
+      innert: #3298dc  =  50, 152, 220
+      hover: #2793da  =  39, 147, 218
+      focus: #2e8cca  =  46, 140, 202
+      active: #35a1e9  = 53, 161, 233
 */
 }

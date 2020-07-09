@@ -1,7 +1,6 @@
 import { isWindowWide } from '../utilities';
-import {
-  contentAreaPadding, contentAreasGridStyles
-} from '../style';
+import { contentAreasGridStyles } from '../style';
+export * from '../style';
 
 const { contentAreasRow, columnContentArea } = contentAreasGridStyles;
 
@@ -30,4 +29,4 @@ const dashContentBtnSpecs = {
   lineHeight: 1
 };
 
-export { dashContentBtnSpecs, contentAreaPadding };
+export { dashContentBtnSpecs };

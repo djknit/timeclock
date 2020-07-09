@@ -19,7 +19,7 @@ class TimePage extends Component {
         text: <>JOB:&nbsp;{job.name}</>,
         url: parentPath
       },
-      { url: parentPath }
+      { text: 'Time' }
     ];
 
     const style = getStyle();
