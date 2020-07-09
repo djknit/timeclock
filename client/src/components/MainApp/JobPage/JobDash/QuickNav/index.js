@@ -18,7 +18,7 @@ class QuickNav extends Component {
 
   render() {
     const { props, state, buttonRef } = this;
-    const { returnToDashboard, disabled, style } = props;
+    const { returnToDashboard, disabled, style, goToJobSettings, goToTimePage } = props;
     const { buttonHeight } = state;
 
     const completeStyle = getStyle(buttonHeight, style);
@@ -39,7 +39,7 @@ class QuickNav extends Component {
         </Button>
         <Button
           theme="primary"
-          onClick={returnToDashboard}
+          onClick={goToTimePage}
           styles={completeStyle.button}
           {...{ disabled }}
         >
@@ -47,7 +47,7 @@ class QuickNav extends Component {
         </Button>
         <Button
           theme="primary"
-          onClick={returnToDashboard}
+          onClick={goToJobSettings}
           styles={completeStyle.button}
           {...{ disabled }}
         >

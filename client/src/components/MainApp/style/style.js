@@ -1,3 +1,6 @@
+// THIS FILE IS NOT NEEDED AND SHOULD EVENTUALLY BE DELETED.
+// This was the original style file before it was split into multiple files
+
 import {
   headingFontFam, sectionHeadingFontFam, shadow, mainBackgroundColor, secondaryBackgroundColor, footerHeight
 } from '../../AppStyle';
