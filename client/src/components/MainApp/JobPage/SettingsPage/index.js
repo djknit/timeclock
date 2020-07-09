@@ -8,13 +8,18 @@ class SettingsPage extends Component {
   };
 
   render() {
-    const { job } = this.props;
+    const { job, parentPath } = this.props;
+    const crumbChain = [
+      {
+        text: <>JOB:&nbsp;{job.name}</>,
+        url: parentPath
+      },
+      { text: 'Settings' }
+    ];
 
     return (
       <>
-        <PageTitle>
-          JOB:&nbsp;{job.name} <i className="fas fa-chevron-right"></i> Settings
-        </PageTitle>
+        <PageTitle {...{ crumbChain }} />
         
       </>
     );

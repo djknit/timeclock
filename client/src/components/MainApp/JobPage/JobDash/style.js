@@ -1,21 +1,17 @@
-import { contentAreasGridStyles, contentAreaPadding, mainAreaPadding } from '../style';
+import { contentAreasGridStyles, mainAreaPadding } from '../style';
+export * from '../style';
 
 const { contentAreasRow, columnContentArea } = contentAreasGridStyles;
 
-export default function getStyle(quickNavButtonHeight) {
+export default function getStyle() {
 
-  const basicsWidthPercent = 60;
-
-  const heightDependentQuickNavTitleStyles = (
-    quickNavButtonHeight ?
-    {
-      height: quickNavButtonHeight,
-      lineHeight: `${quickNavButtonHeight}px`
-    } :
-    {}
-  );
+  const basicsWidthPercent = 40;
 
   return {
+    quickNav: {
+      marginBottom: mainAreaPadding,
+      display: 'inline-block'
+    },
     contentAreasRow,
     basics: {
       ...columnContentArea(basicsWidthPercent, true),
@@ -24,25 +20,6 @@ export default function getStyle(quickNavButtonHeight) {
     menu: {
       ...columnContentArea(100 - basicsWidthPercent, true),
       right: 0
-    },
-    quickNavArea: {
-      marginBottom: mainAreaPadding,
-      display: 'inline-block',
-      paddingBottom: 0,
-      paddingRight: 0
-    },
-    quickNavTitle: {
-      display: 'inline-block',
-      paddingRight: contentAreaPadding,
-      margin: 0,
-      verticalAlign: 'middle',
-      ...heightDependentQuickNavTitleStyles
-    },
-    quickNavButton: {
-      innate: {
-        marginRight: contentAreaPadding,
-        marginBottom: contentAreaPadding
-      }
     }
   };
 };

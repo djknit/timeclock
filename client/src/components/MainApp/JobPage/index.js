@@ -52,13 +52,22 @@ class _JobPage_needsData extends Component {
   };
 
   render() {
-    const { job, match, returnToDashboard } = this.props;
+    const { job, match, returnToDashboard, history } = this.props;
     const { isLoading, problemMessages } = this.state;
 console.log(match)
 console.log(this.props.history)
     const style = getStyle();
 
-    const buildPath = subpath => `${match.path}/${subpath}`;
+    const buildPath = subpath => `${match.url}/${subpath}`;
+    const jobDashPath = buildPath('');
+    const jobSettingsPath = buildPath('settings');
+    const timePagePath = buildPath('time');
+    const redirectorFactory = path => {
+      return () => history.push(path);
+    };
+    const goToJobDash = redirectorFactory(jobDashPath);
+    const goToJobSettings = redirectorFactory(jobSettingsPath);
+    const goToTimePage = redirectorFactory(timePagePath);
 
     const commonRouteAttributes = {
       job,
@@ -69,7 +78,7 @@ console.log(this.props.history)
       job ? (
         <Switch>
           <Route
-            path={buildPath('settings')}
+            path={jobSettingsPath}
             render={props => (
               <SettingsPage
                 {...{
@@ -80,7 +89,7 @@ console.log(this.props.history)
             )}
           />
           <Route
-            path={buildPath('time')}
+            path={timePagePath}
             render={props => (
               <TimePage
                 {...{
@@ -92,13 +101,15 @@ console.log(this.props.history)
           />,
           <Route
             exact
-            path={buildPath('')}
+            path={jobDashPath}
             render={props => (
               <JobDash
                 {...{
                   ...props,
                   ...commonRouteAttributes,
-                  returnToDashboard
+                  returnToDashboard,
+                  goToJobSettings,
+                  goToTimePage
                 }}
               />
             )}
@@ -109,7 +120,7 @@ console.log(this.props.history)
         <>
           <PageTitle>JOB</PageTitle>
           <ContentArea style={style.noDataContentArea}>
-            {
+            { 
               isLoading ? (
                 <Notification theme="info">
                   <NotificationText>Retrieving data...</NotificationText>
