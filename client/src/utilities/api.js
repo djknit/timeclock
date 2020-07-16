@@ -42,6 +42,7 @@ export const jobs = {
     return jobsAxios.post(`/update-setting/${propName}`, { jobId, updates });
   },
   rename({ jobId, name }) {
+    console.log(jobId)
     return jobsAxios.post(`/rename/${jobId}`, { name });
   },
   get(jobId) {

@@ -6,7 +6,8 @@ import Button from '../../../../Button';
 function BasicsArea({
   job,
   style,
-  disabled
+  disabled,
+  toggleEditJobNameModal
 }) {
 
   const completeStyle = getStyle(style);
@@ -16,16 +17,18 @@ function BasicsArea({
       {job &&
         <>
           <div style={completeStyle.areaNotLastHasBtns}>
-            <p style={completeStyle.areaHasBtnsText}>
+            <p style={completeStyle.jobNameText}>
               <strong>Job Name:</strong> {job.name}
             </p>
+            <Button
+              theme="primary"
+              styles={completeStyle.firstBtn}
+              onClick={() => toggleEditJobNameModal(true)}
+              allowTabFocus={!disabled}
+            >
+              <i className="fas fa-edit" /> Edit
+            </Button>
           </div>
-          <Button
-            theme="primary"
-            styles={completeStyle.firstBtn}
-            // onClick={}
-            allowTabFocus={!disabled}
-          ></Button>
         </>
       }
     </ContentArea>

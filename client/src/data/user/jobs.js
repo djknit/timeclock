@@ -6,10 +6,10 @@ import { dataServiceFactory } from '../../utilities';
 let jobs;
 
 const service = dataServiceFactory({
-  readFunction: () => jobs && [...jobs],
+  readFunction: () => jobs && jobs.map(job => ({ ...job })),
   methods: {
     setJobs(_jobs) {
-      jobs = _jobs;
+      jobs = _jobs.map(({ name, _id, startDate }) => ({ name, _id, startDate }));
     },
     clearJobs() {
       jobs = undefined;

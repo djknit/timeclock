@@ -11,17 +11,37 @@ import JobDash from './JobDash';
 import SettingsPage from './SettingsPage';
 import TimePage from './TimePage';
 import NotFound from '../../NotFound';
+import EditJobNameModal from './EditJobNameModal';
 import { addData } from '../../higherOrder';
 
 class _JobPage_needsData extends Component {
   constructor(props) {
     super(props);
+    this.toggleEditJobNameModal = this.toggleEditJobNameModal.bind(this);
+    this.afterToggleCbFactory = this.afterToggleCbFactory.bind(this);
     this.setWaitingForDataState = this.setWaitingForDataState.bind(this);
+    this.editJobNameInputRef = React.createRef();
     this.state = {
       isLoading: false,
       hasProblem: false,
-      problemMessages: []
+      problemMessages: [],
+      isEditJobNameModalActive: false
     };
+  };
+
+  toggleEditJobNameModal(isActiveAfterToggle) {
+    this.setState(
+      { isEditJobNameModalActive: !!isActiveAfterToggle },
+      this.afterToggleCbFactory(isActiveAfterToggle, this.editJobNameInputRef)
+    );
+  };
+
+  afterToggleCbFactory(isActiveAfterToggle, inputRef) {
+    return (() => {
+      if (isActiveAfterToggle) inputRef.current.focus();
+      const hasModalOpen = this.state.isEditJobNameModalActive;
+      if (hasModalOpen !== this.props.areAnyModalsOpen) this.props.setAreAnyModalsOpen(hasModalOpen);
+    });
   };
 
   setWaitingForDataState() {
@@ -52,8 +72,9 @@ class _JobPage_needsData extends Component {
   };
 
   render() {
-    const { job, match, returnToDashboard, history } = this.props;
-    const { isLoading, problemMessages } = this.state;
+    const { toggleEditJobNameModal, editJobNameInputRef } = this;
+    const { job, match, returnToDashboard, history, catchApiUnauthorized } = this.props;
+    const { isLoading, problemMessages, isEditJobNameModalActive } = this.state;
 console.log(match)
 console.log(this.props.history)
     const style = getStyle();
@@ -76,46 +97,59 @@ console.log(this.props.history)
 
     return (
       job ? (
-        <Switch>
-          <Route
-            path={jobSettingsPath}
-            render={props => (
-              <SettingsPage
-                {...{
-                  ...props,
-                  ...commonRouteAttributes
-                }}
-              />
-            )}
+        <>
+          <Switch>
+            <Route
+              path={jobSettingsPath}
+              render={props => (
+                <SettingsPage
+                  {...{
+                    ...props,
+                    ...commonRouteAttributes
+                  }}
+                />
+              )}
+            />
+            <Route
+              path={timePagePath}
+              render={props => (
+                <TimePage
+                  {...{
+                    ...props,
+                    ...commonRouteAttributes
+                  }}
+                />
+              )}
+            />,
+            <Route
+              exact
+              path={jobDashPath}
+              render={props => (
+                <JobDash
+                  {...{
+                    ...props,
+                    ...commonRouteAttributes,
+                    returnToDashboard,
+                    goToJobSettings,
+                    goToTimePage,
+                    toggleEditJobNameModal,
+                    editJobNameInputRef
+                  }}
+                />
+              )}
+            />
+            <Route component={NotFound} />
+          </Switch>
+          <EditJobNameModal
+            isActive={isEditJobNameModalActive}
+            {...{
+              job,
+              catchApiUnauthorized
+            }}
+            inputRef={editJobNameInputRef}
+            closeModal={() => toggleEditJobNameModal(false)}
           />
-          <Route
-            path={timePagePath}
-            render={props => (
-              <TimePage
-                {...{
-                  ...props,
-                  ...commonRouteAttributes
-                }}
-              />
-            )}
-          />,
-          <Route
-            exact
-            path={jobDashPath}
-            render={props => (
-              <JobDash
-                {...{
-                  ...props,
-                  ...commonRouteAttributes,
-                  returnToDashboard,
-                  goToJobSettings,
-                  goToTimePage
-                }}
-              />
-            )}
-          />
-          <Route component={NotFound} />
-        </Switch>
+        </>
       ) : (
         <>
           <PageTitle>JOB</PageTitle>

@@ -105,7 +105,8 @@ class MainApp extends Component {
     const {
       history,
       match,
-      areAnyModalsOpen
+      areAnyModalsOpen,
+      setAreAnyModalsOpen
     } = this.props;
     const {
       navHeight,
@@ -139,7 +140,8 @@ class MainApp extends Component {
           catchApiUnauthorized,
           accountEditingModalOpenerFactory,
           accountPropDeletingModalOpenerFactory,
-          areAnyModalsOpen
+          areAnyModalsOpen,
+          setAreAnyModalsOpen
         }}
       />
     );
@@ -175,7 +177,8 @@ class MainApp extends Component {
                     ...props,
                     catchApiUnauthorized,
                     areAnyModalsOpen,
-                    returnToDashboard
+                    returnToDashboard,
+                    setAreAnyModalsOpen
                   }}
                 />
               )}

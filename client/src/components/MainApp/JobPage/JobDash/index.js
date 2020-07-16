@@ -17,7 +17,7 @@ class JobDash extends Component {
   render() {
     const { state, props } = this;
     const {
-      job, match, history, returnToDashboard, areAnyModalsOpen, goToJobSettings, goToTimePage
+      job, match, history, returnToDashboard, areAnyModalsOpen, goToJobSettings, goToTimePage, toggleEditJobNameModal
     } = props;
     const { quickNavButtonHeight } = state;
     console.log(match) 
@@ -43,6 +43,10 @@ class JobDash extends Component {
           <Basics
             disabled={areAnyModalsOpen}
             style={style.basics}
+            {...{
+              toggleEditJobNameModal,
+              job
+            }}
           />
           <Settings
             disabled={areAnyModalsOpen}
