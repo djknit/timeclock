@@ -6,7 +6,7 @@ import { jobs } from '../../../utilities/api';
 let weeks = timeService.getValue();
 timeService.subscribe(() => weeks = timeService.getValue());
 
-let id, name, timezone, wage, dayCutoff, weekBegins;
+let id, name, timezone, wage, dayCutoff, weekBegins, startDate;
 
 function setCurrentJob(currentJob) {
   id = currentJob._id.toString();
@@ -15,18 +15,19 @@ function setCurrentJob(currentJob) {
   wage = currentJob.wage;
   dayCutoff = currentJob.dayCutoff;
   weekBegins = currentJob.weekBegins;
+  startDate = currentJob.startDate;
 }
 
 const service = dataServiceFactory({
   readFunction: () => (
     id ?
-    { id, name, timezone, wage, dayCutoff, weekBegins } :
+    { id, name, timezone, wage, dayCutoff, weekBegins, startDate } :
     null
   ),
   methods: {
     setCurrentJob,
     clearCurrentJob() {
-      id = name = timezone = wage = dayCutoff = weekBegins = undefined;
+      id = name = timezone = wage = dayCutoff = weekBegins = startDate = undefined;
     },
     updateCurrentJob(updatedJob) {
       setCurrentJob(updatedJob);

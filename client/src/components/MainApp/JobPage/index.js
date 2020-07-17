@@ -75,8 +75,7 @@ class _JobPage_needsData extends Component {
     const { toggleEditJobNameModal, editJobNameInputRef } = this;
     const { job, match, returnToDashboard, history, catchApiUnauthorized } = this.props;
     const { isLoading, problemMessages, isEditJobNameModalActive } = this.state;
-console.log(match)
-console.log(this.props.history)
+    
     const style = getStyle();
 
     const buildPath = subpath => `${match.url}/${subpath}`;

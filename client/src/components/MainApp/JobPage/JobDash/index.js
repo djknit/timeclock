@@ -20,12 +20,8 @@ class JobDash extends Component {
       job, match, history, returnToDashboard, areAnyModalsOpen, goToJobSettings, goToTimePage, toggleEditJobNameModal
     } = props;
     const { quickNavButtonHeight } = state;
-    console.log(match) 
-    console.log(history)
 
     const style = getStyle(quickNavButtonHeight);
-
-    
 
     return (
       <>

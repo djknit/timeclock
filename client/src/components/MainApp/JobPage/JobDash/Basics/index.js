@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatMyDate } from '../../../utilities';
 import getStyle from './style';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
@@ -10,6 +11,7 @@ function BasicsArea({
   toggleEditJobNameModal
 }) {
 
+  console.log(job)
   const completeStyle = getStyle(style);
 
   return (
@@ -27,6 +29,21 @@ function BasicsArea({
               allowTabFocus={!disabled}
             >
               <i className="fas fa-edit" /> Edit
+            </Button>
+          </div>
+          <div style={completeStyle.areaNotLastNoBtns}>
+            <p style={completeStyle.noBtnsAreaText}>
+              <strong>Start Date:</strong> {formatMyDate(job.startDate || {})}
+            </p>
+          </div>
+          <div style={completeStyle.lastAreaHasBtnsNoText}>
+            <Button
+              theme="danger"
+              styles={completeStyle.firstBtn}
+              onClick={() => null}
+              allowTabFocus={!disabled}
+            >
+              <i className="fas fa-trash-alt" /> Delete Job
             </Button>
           </div>
         </>
