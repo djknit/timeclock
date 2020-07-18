@@ -1,7 +1,6 @@
 import { dataServiceFactory } from '../../../utilities';
 import timeService from './time';
 import jobsService from '../jobs';
-import { jobs } from '../../../utilities/api';
 
 let weeks = timeService.getValue();
 timeService.subscribe(() => weeks = timeService.getValue());

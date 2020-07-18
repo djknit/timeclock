@@ -12,20 +12,24 @@ import SettingsPage from './SettingsPage';
 import TimePage from './TimePage';
 import NotFound from '../../NotFound';
 import EditJobNameModal from './EditJobNameModal';
+import DeleteJobModal from './DeleteJobModal';
 import { addData } from '../../higherOrder';
 
 class _JobPage_needsData extends Component {
   constructor(props) {
     super(props);
     this.toggleEditJobNameModal = this.toggleEditJobNameModal.bind(this);
+    this.toggleDeleteJobModal = this.toggleDeleteJobModal.bind(this);
     this.afterToggleCbFactory = this.afterToggleCbFactory.bind(this);
     this.setWaitingForDataState = this.setWaitingForDataState.bind(this);
     this.editJobNameInputRef = React.createRef();
+    this.deleteJobModalInputRef = React.createRef();
     this.state = {
       isLoading: false,
       hasProblem: false,
       problemMessages: [],
-      isEditJobNameModalActive: false
+      isEditJobNameModalActive: false,
+      isDeleteJobModalActive: false
     };
   };
 
@@ -33,6 +37,13 @@ class _JobPage_needsData extends Component {
     this.setState(
       { isEditJobNameModalActive: !!isActiveAfterToggle },
       this.afterToggleCbFactory(isActiveAfterToggle, this.editJobNameInputRef)
+    );
+  };
+
+  toggleDeleteJobModal(isActiveAfterToggle) {
+    this.setState(
+      { isDeleteJobModalActive: !!isActiveAfterToggle },
+      this.afterToggleCbFactory(isActiveAfterToggle, this.deleteJobModalInputRef)
     );
   };
 
@@ -72,9 +83,13 @@ class _JobPage_needsData extends Component {
   };
 
   render() {
-    const { toggleEditJobNameModal, editJobNameInputRef } = this;
+    const {
+      toggleEditJobNameModal, toggleDeleteJobModal, editJobNameInputRef, deleteJobModalInputRef
+    } = this;
     const { job, match, returnToDashboard, history, catchApiUnauthorized } = this.props;
-    const { isLoading, problemMessages, isEditJobNameModalActive } = this.state;
+    const {
+      isLoading, problemMessages, isEditJobNameModalActive, isDeleteJobModalActive
+    } = this.state;
     
     const style = getStyle();
 
@@ -132,7 +147,7 @@ class _JobPage_needsData extends Component {
                     goToJobSettings,
                     goToTimePage,
                     toggleEditJobNameModal,
-                    editJobNameInputRef
+                    toggleDeleteJobModal
                   }}
                 />
               )}
@@ -147,6 +162,16 @@ class _JobPage_needsData extends Component {
             }}
             inputRef={editJobNameInputRef}
             closeModal={() => toggleEditJobNameModal(false)}
+          />
+          <DeleteJobModal
+            isActive={isDeleteJobModalActive}
+            {...{
+              job,
+              catchApiUnauthorized,
+              returnToDashboard
+            }}
+            inputRef={deleteJobModalInputRef}
+            closeModal={() => toggleDeleteJobModal(false)}
           />
         </>
       ) : (

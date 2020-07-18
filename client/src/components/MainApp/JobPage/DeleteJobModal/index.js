@@ -3,7 +3,7 @@ import { api, changeHandlerFactoryFactory, constants } from '../../utilities';
 import ModalSkeleton from '../../../ModalSkeleton';
 import Button from '../../../Button';
 import Notification, { NotificationText } from '../../../Notification';
-import Tag, { TagGroup } from '../../../Tag';
+import { jobsService, currentJobService } from '../../../../data';
 import { TextInput, ProgressBar } from '../../../formPieces';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
@@ -18,6 +18,7 @@ const startingState = {
   showMessage: true,
   hasBeenSubmitted: false
 };
+const formId = 'delete-job-modal';
 
 class DeleteJobModal extends Component {
   constructor(props) {
@@ -64,7 +65,7 @@ class DeleteJobModal extends Component {
 
   submit(event) {
     event.preventDefault();
-    const { job, closeModal } = this.props;
+    const { job, closeModal, returnToDashboard } = this.props;
     const { password } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
@@ -88,7 +89,7 @@ class DeleteJobModal extends Component {
         problemMessages: [],
         secondsUntilRedirect
       });
-      
+      jobsService.removeJob(job._id);
       const intervalId = setInterval(
         () => {
           secondsUntilRedirect -= stepSizeOfRedirectDelay;
@@ -96,14 +97,24 @@ class DeleteJobModal extends Component {
           if (secondsUntilRedirect <= 0) {
             clearInterval(intervalId);
             this.reset();
-            closeModal();
+            returnToDashboard();
+            currentJobService.clearCurrentJob();
           }
         },
         1000 * stepSizeOfRedirectDelay
       );
     })
     .catch(err => {
-
+      this.props.catchApiUnauthorized(err);
+      const errorData = (err && err.response && err.response.data) || err || {};
+      const { problems, messages } = errorData;
+      this.setState({
+        problems: problems || { unknown: true },
+        problemMessages: messages || ['An unknown problem has occured.'],
+        hasProblem: true,
+        isLoading: false,
+        showMessage: true
+      });
     });
   };
 
@@ -112,12 +123,104 @@ class DeleteJobModal extends Component {
   };
 
   render() {
+    const { props, state, reset, submit, changeHandlerFactory } = this;
+    const { isActive, closeModal, job, inputRef } = props;
+    const {
+      password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, secondsUntilRedirect
+    } = state;
+
+    const closeMessage = () => this.setState({ showMessage: false });
 
     return (
       <ModalSkeleton
-
+        {...{
+          isActive,
+          closeModal
+        }}
+        title="Delete Job"
+        isCloseButtonDisabled={isLoading}
+        footerContent={
+          <>
+            <Button
+              theme="light"
+              onClick={() => {
+                reset();
+                closeModal();
+              }}
+              disabled={isLoading || hasSuccess}
+            >
+              Cancel
+            </Button>
+            <Button
+              theme={hasSuccess ? 'success' : 'primary'}
+              onClick={submit}
+              disabled={
+                isLoading || hasSuccess || !password
+              }
+              isSubmit
+              {...{
+                formId,
+                isLoading
+              }}
+            >
+              Submit
+            </Button>
+          </>
+        }
       >
-
+        <form id={formId}>
+          {showMessage && !hasProblem && !hasSuccess && (
+            <Notification theme="warning" close={closeMessage}>
+              <NotificationText>
+                You are about to permanently this job ("{job.name}").
+              </NotificationText>
+              <NotificationText isLast>
+                You will <b>not</b> be able to restore the job once it is deleted.
+              </NotificationText>
+            </Notification>
+          )}
+          {showMessage && problemMessages.length > 0 && (
+            <Notification theme="danger" close={closeMessage}>
+              {problemMessages.map(
+                (message, index, arr) => (
+                  <NotificationText key={message} isLast={index === arr.length - 1}>
+                    {message}
+                  </NotificationText>
+                )
+              )}
+            </Notification>
+          )}
+          {showMessage && hasSuccess && (
+            <Notification theme="success">
+              <NotificationText>
+                <strong>Success!</strong> The job "{job.name}" was deleted.
+              </NotificationText>
+              <NotificationText>
+                You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
+              </NotificationText>
+              <ProgressBar
+                theme="success"
+                value={secondsToDelayRedirect - secondsUntilRedirect}
+                max={secondsToDelayRedirect}
+              />
+            </Notification>
+          )}
+          <TextInput
+            propName="password"
+            value={password}
+            label="Enter Your Password to Continue"
+            placeholder="Your password..."
+            hasProblem={problems && problems.password}
+            iconClass={hasSuccess ? 'fas fa-unlock' : 'fas fa-lock'}
+            isActive={!isLoading && !hasSuccess}
+            {...{
+              changeHandlerFactory,
+              formId,
+              inputRef
+            }}
+            type="password"
+          />
+        </form>
       </ModalSkeleton>
     );
   };

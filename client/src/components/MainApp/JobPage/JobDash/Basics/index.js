@@ -8,7 +8,8 @@ function BasicsArea({
   job,
   style,
   disabled,
-  toggleEditJobNameModal
+  toggleEditJobNameModal,
+  toggleDeleteJobModal
 }) {
 
   console.log(job)
@@ -40,7 +41,7 @@ function BasicsArea({
             <Button
               theme="danger"
               styles={completeStyle.firstBtn}
-              onClick={() => null}
+              onClick={() => toggleDeleteJobModal(true)}
               allowTabFocus={!disabled}
             >
               <i className="fas fa-trash-alt" /> Delete Job
