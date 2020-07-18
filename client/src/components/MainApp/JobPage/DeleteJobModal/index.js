@@ -65,7 +65,7 @@ class DeleteJobModal extends Component {
 
   submit(event) {
     event.preventDefault();
-    const { job, closeModal, returnToDashboard } = this.props;
+    const { job, returnToDashboard } = this.props;
     const { password } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
@@ -76,9 +76,13 @@ class DeleteJobModal extends Component {
           messages: problemMessages
         };
       }
-      return api.jobs.delete(job._id);
+      return api.jobs.delete({
+        jobId: job._id,
+        password
+      });
     })
     .then(res => {
+      console.log(res)
       let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
