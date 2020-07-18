@@ -53,7 +53,7 @@ class _JobPage_needsData extends Component {
   componentDidMount() {
     const { job, match } = this.props;
     const { jobId } = match.params;
-    if (!job || job.id !== jobId) {
+    if (!job || job._id !== jobId) {
       this.setWaitingForDataState()
       .then(() => api.jobs.get(jobId))
       .then(res => {

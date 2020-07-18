@@ -88,7 +88,7 @@ class EditJobNameModal extends Component {
         };
       }
       return api.jobs.rename({
-        jobId: job.id,
+        jobId: job._id,
         name: updatedJobName
       });
     })
@@ -137,8 +137,8 @@ class EditJobNameModal extends Component {
   };
 
   componentDidUpdate(prevProps) { // Not needed unless job ever changes without leaving job page.
-    const currentJobId = this.props.job && this.props.job.id.toString();
-    const previousJobId = prevProps.job && prevProps.job.id.toString();
+    const currentJobId = this.props.job && this.props.job._id.toString();
+    const previousJobId = prevProps.job && prevProps.job._id.toString();
     if (currentJobId !== previousJobId) this.reset();
   };
 

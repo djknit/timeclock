@@ -13,6 +13,14 @@ const service = dataServiceFactory({
     },
     clearJobs() {
       jobs = undefined;
+    },
+    removeJob(jobId) {
+      for (let i = 0; i < jobs.length; i++) {
+        if (jobs[i]._id.toString() === jobId.toString()) {
+          jobs.splice(i, 1);
+          return;
+        }
+      }
     }
   }
 });
