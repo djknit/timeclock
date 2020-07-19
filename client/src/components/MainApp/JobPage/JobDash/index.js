@@ -48,6 +48,9 @@ class JobDash extends Component {
           <Settings
             disabled={areAnyModalsOpen}
             style={style.menu}
+            {...{
+              job
+            }}
           />
         </div>
       </>
