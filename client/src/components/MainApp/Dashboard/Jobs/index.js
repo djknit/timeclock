@@ -42,10 +42,10 @@ class _Jobs_needsData extends Component {
   render() {
     const style = getStyle(this.props.style);
 
-    const { jobs, openNewJobModal, areAnyModalsOpen } = this.props;
+    const { jobs, openNewJobModal, areAnyModalsOpen, areaRef } = this.props;
 
     return (
-      <ContentArea style={style.contentArea}>
+      <ContentArea style={style.contentArea} {...{ areaRef }}>
         <ContentAreaTitle style={style.areaTitle}>Your Jobs</ContentAreaTitle>
         <Button
           styles={style.addJobButton}

@@ -26,7 +26,8 @@ const settingsLabelsAndPropNames = [
 function SettingsArea({
   style,
   disabled,
-  job
+  job,
+  areaRef
 }) {
 
   console.log(job)
@@ -34,10 +35,11 @@ function SettingsArea({
   const completeStyle = getStyle(style);
 
   return (
-    <ContentArea style={completeStyle.contentArea}>
+    <ContentArea style={completeStyle.contentArea} {...{ areaRef }}>
       <ContentAreaTitle>Settings Summary</ContentAreaTitle>
-      {settingsLabelsAndPropNames.map(
-        ({ label, propName }, index) => (
+      {
+        settingsLabelsAndPropNames
+        .map(({ label, propName }, index) => (
           <div
             style={
               index === settingsLabelsAndPropNames.length - 1 ?
@@ -52,7 +54,10 @@ function SettingsArea({
             <p style={completeStyle.areaHasBtnsText}>
               <strong>Current Value:</strong>
               &ensp;
-              <CurrentItemValueDisplay valueSchedule={job[propName]} />
+              <CurrentItemValueDisplay
+                {...{ propName }}
+                valueSchedule={job[propName]}
+              />
             </p>
           </div>
         )

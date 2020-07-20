@@ -7,8 +7,9 @@ import ContentArea, { ContentAreaTitle } from '../../ContentArea';
 import QuickNav from './QuickNav';
 import Basics from './Basics';
 import Settings from './Settings';
+import { addHeightTracking } from '../../../higherOrder';
 
-class JobDash extends Component {
+class _JobDash_needsHeightTracking extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -17,11 +18,10 @@ class JobDash extends Component {
   render() {
     const { state, props } = this;
     const {
-      job, returnToDashboard, areAnyModalsOpen, goToJobSettings, goToTimePage, toggleEditJobNameModal, toggleDeleteJobModal
+      job, returnToDashboard, areAnyModalsOpen, goToJobSettings, goToTimePage, toggleEditJobNameModal, toggleDeleteJobModal, heightTracking
     } = props;
-    const { quickNavButtonHeight } = state;
 
-    const style = getStyle(quickNavButtonHeight);
+    const style = getStyle(heightTracking.maxHeight);
 
     return (
       <>
@@ -37,6 +37,7 @@ class JobDash extends Component {
         />
         <div style={style.contentAreasRow}>
           <Basics
+            areaRef={heightTracking.ref1}
             disabled={areAnyModalsOpen}
             style={style.basics}
             {...{
@@ -46,6 +47,7 @@ class JobDash extends Component {
             }}
           />
           <Settings
+            areaRef={heightTracking.ref2}
             disabled={areAnyModalsOpen}
             style={style.menu}
             {...{
@@ -57,5 +59,7 @@ class JobDash extends Component {
     );
   };
 }
+
+const JobDash = addHeightTracking(_JobDash_needsHeightTracking);
 
 export default JobDash;
