@@ -129,7 +129,7 @@ router.post(
       else throw {
         message: 'Invalid password.',
         problems: { password: true },
-        status: 401
+        status: 422
       };
     })
     .then(result => {
@@ -191,7 +191,7 @@ router.post(
       else throw {
         message: wrongPasswordMsg,
         problems: { password: true },
-        status: 401
+        status: 422
       };
     })
     .then(updatedUser => {

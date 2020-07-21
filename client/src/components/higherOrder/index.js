@@ -4,3 +4,4 @@ export {
   calculateStyleForPseudoClassState
 } from './addPseudoPseudoClasses';
 export { default as addCollapsing } from './addCollapsing';
+export { default as addHeightTracking } from './addHeightTracking';

@@ -1,35 +1,30 @@
 import React, { Component } from 'react';
-import { jobsService, currentJobService } from '../../../../data';
-import {
-  api,
-  constants,
-  changeHandlerFactoryFactory
-} from '../../utilities';
+import { api, changeHandlerFactoryFactory, constants } from '../../utilities';
 import ModalSkeleton from '../../../ModalSkeleton';
 import Button from '../../../Button';
 import Notification, { NotificationText } from '../../../Notification';
-import Tag, { TagGroup } from '../../../Tag';
+import { jobsService, currentJobService } from '../../../../data';
 import { TextInput, ProgressBar } from '../../../formPieces';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
-const formId = 'edit-job-name-form';
+
 const startingState = {
-  updatedJobName: '',
+  password: '',
   problems: {},
   hasSuccess: false,
   isLoading: false,
   hasProblem: false,
   problemMessages: [],
   showMessage: true,
-  hasBeenSubmitted: false,
-  secondsUntilRedirect: undefined
+  hasBeenSubmitted: false
 };
+const formId = 'delete-job-modal';
 
-class EditJobNameModal extends Component {
+class DeleteJobModal extends Component {
   constructor(props) {
     super(props);
     this.afterChange = this.afterChange.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
     this.getInputProblems = this.getInputProblems.bind(this);
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
     this.submit = this.submit.bind(this);
@@ -38,22 +33,16 @@ class EditJobNameModal extends Component {
   };
 
   afterChange() {
-    if (this.state.hasBeenSubmitted) {
-      this.setState(this.getInputProblems());
-    };
+    if (this.state.hasBeenSubmitted) this.setState(this.getInputProblems());
   };
 
   getInputProblems() {
-    const { updatedJobName } = this.state;
+    const { password } = this.state;
     let problems = {};
     let problemMessages = [];
-    if (!updatedJobName) {
-      problems.updatedJobName = true;
-      problemMessages.push('You must enter a new job name.');
-    }
-    else if (jobsService.getValue().map(job => job.name).includes(updatedJobName)) {
-      problems.updatedJobName = true;
-      problemMessages.push(`You already have a job with the name "${updatedJobName}". Each job must have a unique name.`);
+    if (!password) {
+      problems.password = true;
+      problemMessages.push('You must enter your password.');
     }
     return { problems, problemMessages };
   };
@@ -76,8 +65,8 @@ class EditJobNameModal extends Component {
 
   submit(event) {
     event.preventDefault();
-    const { closeModal, job } = this.props;
-    const { updatedJobName } = this.state;
+    const { job, returnToDashboard } = this.props;
+    const { password } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
       const { problems, problemMessages } = this.getInputProblems();
@@ -87,12 +76,13 @@ class EditJobNameModal extends Component {
           messages: problemMessages
         };
       }
-      return api.jobs.rename({
+      return api.jobs.delete({
         jobId: job._id,
-        name: updatedJobName
+        password
       });
     })
     .then(res => {
+      console.log(res)
       let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
@@ -103,7 +93,7 @@ class EditJobNameModal extends Component {
         problemMessages: [],
         secondsUntilRedirect
       });
-      currentJobService.updateCurrentJob(res.data);
+      jobsService.removeJob(job._id);
       const intervalId = setInterval(
         () => {
           secondsUntilRedirect -= stepSizeOfRedirectDelay;
@@ -111,7 +101,8 @@ class EditJobNameModal extends Component {
           if (secondsUntilRedirect <= 0) {
             clearInterval(intervalId);
             this.reset();
-            closeModal();
+            returnToDashboard();
+            currentJobService.clearCurrentJob();
           }
         },
         1000 * stepSizeOfRedirectDelay
@@ -120,11 +111,10 @@ class EditJobNameModal extends Component {
     .catch(err => {
       this.props.catchApiUnauthorized(err);
       const errorData = (err && err.response && err.response.data) || err || {};
+      const { problems, messages } = errorData;
       this.setState({
-        problems: {
-          updatedJobName: (errorData.problems && errorData.problems.name) ? true : undefined
-        },
-        problemMessages: errorData.messages || ['An unknown problem has occured.'],
+        problems: problems || { unknown: true },
+        problemMessages: messages || ['An unknown problem has occured.'],
         hasProblem: true,
         isLoading: false,
         showMessage: true
@@ -136,29 +126,11 @@ class EditJobNameModal extends Component {
     this.setState(startingState);
   };
 
-  componentDidUpdate(prevProps) { // Not needed unless job ever changes without leaving job page.
-    const currentJobId = this.props.job && this.props.job._id.toString();
-    const previousJobId = prevProps.job && prevProps.job._id.toString();
-    if (currentJobId !== previousJobId) this.reset();
-  };
-
   render() {
-
-    const { props, state, changeHandlerFactory, reset, submit } = this;
-
+    const { props, state, reset, submit, changeHandlerFactory } = this;
+    const { isActive, closeModal, job, inputRef } = props;
     const {
-      job, isActive, closeModal, inputRef
-    } = props;
-
-    const {
-      updatedJobName,
-      problems,
-      hasSuccess,
-      isLoading,
-      hasProblem,
-      problemMessages,
-      showMessage,
-      secondsUntilRedirect
+      password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, secondsUntilRedirect
     } = state;
 
     const closeMessage = () => this.setState({ showMessage: false });
@@ -169,7 +141,7 @@ class EditJobNameModal extends Component {
           isActive,
           closeModal
         }}
-        title="Edit Job Name"
+        title="Delete Job"
         isCloseButtonDisabled={isLoading}
         footerContent={
           <>
@@ -179,15 +151,15 @@ class EditJobNameModal extends Component {
                 reset();
                 closeModal();
               }}
-              disabled={isLoading}
+              disabled={isLoading || hasSuccess}
             >
-              {hasSuccess ? 'Close' : 'Cancel'}
+              Cancel
             </Button>
             <Button
               theme={hasSuccess ? 'success' : 'primary'}
               onClick={submit}
               disabled={
-                isLoading || hasSuccess || !updatedJobName
+                isLoading || hasSuccess || !password
               }
               isSubmit
               {...{
@@ -202,9 +174,12 @@ class EditJobNameModal extends Component {
       >
         <form id={formId}>
           {showMessage && !hasProblem && !hasSuccess && (
-            <Notification theme="info" close={closeMessage}>
+            <Notification theme="warning" close={closeMessage}>
+              <NotificationText>
+                You are about to permanently this job ("{job.name}").
+              </NotificationText>
               <NotificationText isLast>
-                Complete the form below to rename this job.
+                You will <b>not</b> be able to restore the job once it is deleted.
               </NotificationText>
             </Notification>
           )}
@@ -222,10 +197,10 @@ class EditJobNameModal extends Component {
           {showMessage && hasSuccess && (
             <Notification theme="success">
               <NotificationText>
-                <strong>Success!</strong> The name for this job was updated.
+                <strong>Success!</strong> The job "{job.name}" was deleted.
               </NotificationText>
               <NotificationText>
-                This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
+                You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
               </NotificationText>
               <ProgressBar
                 theme="success"
@@ -234,28 +209,20 @@ class EditJobNameModal extends Component {
               />
             </Notification>
           )}
-          <TagGroup align="center">
-            <Tag theme="info" size={6}>
-              Current Name:
-            </Tag>
-            <Tag theme="info light" size={6}>
-              {job.name}
-            </Tag>
-          </TagGroup>
           <TextInput
-            propName="updatedJobName"
-            value={updatedJobName}
-            hasProblem={problems && problems.updatedJobName}
+            propName="password"
+            value={password}
+            label="Enter Your Password to Continue"
+            placeholder="Your password..."
+            hasProblem={problems && problems.password}
+            iconClass={hasSuccess ? 'fas fa-unlock' : 'fas fa-lock'}
             isActive={!isLoading && !hasSuccess}
-            type="text"
-            label="New Name:"
-            placeholder="New job name..."
-            isInline
             {...{
               changeHandlerFactory,
               formId,
               inputRef
             }}
+            type="password"
           />
         </form>
       </ModalSkeleton>
@@ -263,4 +230,4 @@ class EditJobNameModal extends Component {
   };
 }
 
-export default EditJobNameModal;
+export default DeleteJobModal;

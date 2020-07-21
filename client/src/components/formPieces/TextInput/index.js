@@ -33,7 +33,7 @@ function TextInput({
     autocompleteAttrVal = 'username';
   }
   else {
-    typeAttrVal = type;
+    typeAttrVal = type || 'text';
     autocompleteAttrVal = type === 'email' ? 'email' : 'off';
   }
 

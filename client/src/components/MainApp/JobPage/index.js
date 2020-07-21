@@ -11,17 +11,48 @@ import JobDash from './JobDash';
 import SettingsPage from './SettingsPage';
 import TimePage from './TimePage';
 import NotFound from '../../NotFound';
+import EditJobNameModal from './EditJobNameModal';
+import DeleteJobModal from './DeleteJobModal';
 import { addData } from '../../higherOrder';
 
 class _JobPage_needsData extends Component {
   constructor(props) {
     super(props);
+    this.toggleEditJobNameModal = this.toggleEditJobNameModal.bind(this);
+    this.toggleDeleteJobModal = this.toggleDeleteJobModal.bind(this);
+    this.afterToggleCbFactory = this.afterToggleCbFactory.bind(this);
     this.setWaitingForDataState = this.setWaitingForDataState.bind(this);
+    this.editJobNameInputRef = React.createRef();
+    this.deleteJobModalInputRef = React.createRef();
     this.state = {
       isLoading: false,
       hasProblem: false,
-      problemMessages: []
+      problemMessages: [],
+      isEditJobNameModalActive: false,
+      isDeleteJobModalActive: false
     };
+  };
+
+  toggleEditJobNameModal(isActiveAfterToggle) {
+    this.setState(
+      { isEditJobNameModalActive: !!isActiveAfterToggle },
+      this.afterToggleCbFactory(isActiveAfterToggle, this.editJobNameInputRef)
+    );
+  };
+
+  toggleDeleteJobModal(isActiveAfterToggle) {
+    this.setState(
+      { isDeleteJobModalActive: !!isActiveAfterToggle },
+      this.afterToggleCbFactory(isActiveAfterToggle, this.deleteJobModalInputRef)
+    );
+  };
+
+  afterToggleCbFactory(isActiveAfterToggle, inputRef) {
+    return (() => {
+      if (isActiveAfterToggle) inputRef.current.focus();
+      const hasModalOpen = this.state.isEditJobNameModalActive;
+      if (hasModalOpen !== this.props.areAnyModalsOpen) this.props.setAreAnyModalsOpen(hasModalOpen);
+    });
   };
 
   setWaitingForDataState() {
@@ -33,7 +64,7 @@ class _JobPage_needsData extends Component {
   componentDidMount() {
     const { job, match } = this.props;
     const { jobId } = match.params;
-    if (!job || job.id !== jobId) {
+    if (!job || job._id !== jobId) {
       this.setWaitingForDataState()
       .then(() => api.jobs.get(jobId))
       .then(res => {
@@ -52,10 +83,14 @@ class _JobPage_needsData extends Component {
   };
 
   render() {
-    const { job, match, returnToDashboard, history } = this.props;
-    const { isLoading, problemMessages } = this.state;
-console.log(match)
-console.log(this.props.history)
+    const {
+      toggleEditJobNameModal, toggleDeleteJobModal, editJobNameInputRef, deleteJobModalInputRef
+    } = this;
+    const { job, match, returnToDashboard, history, catchApiUnauthorized } = this.props;
+    const {
+      isLoading, problemMessages, isEditJobNameModalActive, isDeleteJobModalActive
+    } = this.state;
+    
     const style = getStyle();
 
     const buildPath = subpath => `${match.url}/${subpath}`;
@@ -76,46 +111,69 @@ console.log(this.props.history)
 
     return (
       job ? (
-        <Switch>
-          <Route
-            path={jobSettingsPath}
-            render={props => (
-              <SettingsPage
-                {...{
-                  ...props,
-                  ...commonRouteAttributes
-                }}
-              />
-            )}
+        <>
+          <Switch>
+            <Route
+              path={jobSettingsPath}
+              render={props => (
+                <SettingsPage
+                  {...{
+                    ...props,
+                    ...commonRouteAttributes
+                  }}
+                />
+              )}
+            />
+            <Route
+              path={timePagePath}
+              render={props => (
+                <TimePage
+                  {...{
+                    ...props,
+                    ...commonRouteAttributes
+                  }}
+                />
+              )}
+            />,
+            <Route
+              exact
+              path={jobDashPath}
+              render={props => (
+                <JobDash
+                  {...{
+                    ...props,
+                    ...commonRouteAttributes,
+                    returnToDashboard,
+                    goToJobSettings,
+                    goToTimePage,
+                    toggleEditJobNameModal,
+                    toggleDeleteJobModal
+                  }}
+                />
+              )}
+            />
+            <Route component={NotFound} />
+          </Switch>
+          <EditJobNameModal
+            isActive={isEditJobNameModalActive}
+            {...{
+              job,
+              catchApiUnauthorized
+            }}
+            inputRef={editJobNameInputRef}
+            closeModal={() => toggleEditJobNameModal(false)}
           />
-          <Route
-            path={timePagePath}
-            render={props => (
-              <TimePage
-                {...{
-                  ...props,
-                  ...commonRouteAttributes
-                }}
-              />
-            )}
-          />,
-          <Route
-            exact
-            path={jobDashPath}
-            render={props => (
-              <JobDash
-                {...{
-                  ...props,
-                  ...commonRouteAttributes,
-                  returnToDashboard,
-                  goToJobSettings,
-                  goToTimePage
-                }}
-              />
-            )}
+          <DeleteJobModal
+            isActive={isDeleteJobModalActive}
+            {...{
+              job,
+              catchApiUnauthorized,
+              returnToDashboard
+            }}
+            inputRef={deleteJobModalInputRef}
+            closeModal={() => toggleDeleteJobModal(false)}
           />
-          <Route component={NotFound} />
-        </Switch>
+        </>
       ) : (
         <>
           <PageTitle>JOB</PageTitle>
