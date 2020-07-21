@@ -35,13 +35,14 @@ export const jobs = {
   create({ name, timezone, startDate }) {
     return jobsAxios.post('/create', { name, timezone, startDate });
   },
-  delete(jobId) {
-    return jobsAxios.post(`/delete/${jobId}`);
+  delete({ jobId, password }) {
+    return jobsAxios.post(`/delete/${jobId}`, { password });
   },
   updateSetting(propName, { jobId, updates }) {
     return jobsAxios.post(`/update-setting/${propName}`, { jobId, updates });
   },
   rename({ jobId, name }) {
+    console.log(jobId)
     return jobsAxios.post(`/rename/${jobId}`, { name });
   },
   get(jobId) {

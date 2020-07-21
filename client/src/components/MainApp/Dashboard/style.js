@@ -4,19 +4,22 @@ export * from '../style';
 
 const { contentAreasRow, columnContentArea } = contentAreasGridStyles;
 
-export default function getStyle(windowWidth) {
+export default function getStyle(windowWidth, rowHeight) {
   const accountWidthPercent = 40;
 
   const useColumns = isWindowWide(windowWidth);
 
   return {
-    contentAreasRow,
+    contentAreasRow: {
+      ...contentAreasRow,
+      height: rowHeight
+    },
     account: {
-      ...columnContentArea(accountWidthPercent, useColumns),
+      ...columnContentArea(accountWidthPercent, useColumns, true),
       left: 0
     },
     jobs: {
-      ...columnContentArea(100 - accountWidthPercent, useColumns),
+      ...columnContentArea(100 - accountWidthPercent, useColumns, false),
       right: 0
     }
   };

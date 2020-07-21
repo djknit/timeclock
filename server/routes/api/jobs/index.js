@@ -34,7 +34,20 @@ router.post(
   '/delete/:_id',
   verifyLogin,
   (req, res) => {
-    JobController.deleteJob(req.params._id, req.user._id)
+    const { user, body, params } = req;
+    checkRequiredProps(body, ['password'], res);
+    const wrongPasswordMsg = 'Incorrect password.';
+    user.comparePassword(body.password)
+    .then(({ isMatch }) => {
+      if (isMatch) {
+        return JobController.deleteJob(params._id, user._id);
+      }
+      else throw {
+        message: wrongPasswordMsg,
+        problems: { password: true },
+        status: 422
+      };
+    })
     .then(user => res.json({ jobs: cleanJobsExtra(user.jobs) }))
     .catch(routeErrorHandlerFactory(res));
   }

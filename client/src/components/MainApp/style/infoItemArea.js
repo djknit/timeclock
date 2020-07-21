@@ -18,6 +18,7 @@ function getInfoItemAreaStyles(
   const unneededFirstAreaTopPadding = '.5em';
 
   const areaWithBorderStyles = {
+    ...itemAreaStyles,
     borderBottom: `solid 1px ${contentAreaDividerColor}`,
     marginBottom: unneededFirstAreaTopPadding
   };
@@ -32,24 +33,34 @@ function getInfoItemAreaStyles(
     paddingRight: 0
   };
 
+  const itemAreaNoTextPaddingTop = `calc(${yPadding} - ${unneededFirstAreaTopPadding})`;
+
   return {
     areaNotLastHasBtns: {
-      ...itemAreaStyles,
       ...areaWithBorderStyles,
+      paddingBottom: yPadding
+    },
+    areaNotLastNoBtns: {
+      ...areaWithBorderStyles,
+      paddingBottom: `calc(${yPadding} - ${textGhostYPadding})`
+    },
+    areaNotLastHasBtnsNoText: {
+      ...areaWithBorderStyles,
+      paddingTop: itemAreaNoTextPaddingTop,
       paddingBottom: yPadding
     },
     lastAreaHasBtns: {
       ...itemAreaStyles,
-      paddingBottom: `calc(${yPadding} - ${contentAreaPadding})`
-    },
-    areaNotLastNoBtns: {
-      ...itemAreaStyles,
-      ...areaWithBorderStyles,
-      paddingBottom: `calc(${yPadding} - ${textGhostYPadding})`
+      paddingBottom: `calc(${yPadding} - ${contentAreaPadding}px)`
     },
     lastAreaNoBtns: {
       ...itemAreaStyles,
-      paddingBottom: `calc(${yPadding} - ${textGhostYPadding} - ${contentAreaPadding})`
+      paddingBottom: `calc(${yPadding} - ${textGhostYPadding} - ${contentAreaPadding}px)`
+    },
+    lastAreaHasBtnsNoText: {
+      ...itemAreaStyles,
+      paddingTop: itemAreaNoTextPaddingTop,
+      paddingBottom: `calc(${yPadding} - ${contentAreaPadding}px)`
     },
     firstBtn: {
       innate: { ...buttonInnateStyle }

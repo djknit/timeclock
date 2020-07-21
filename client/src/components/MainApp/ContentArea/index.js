@@ -9,13 +9,14 @@ const ContentAreaTitle = addData(_ContentAreaTitle_needsData, 'windowWidth', win
 function ContentArea({
   children,
   style,
-  title
+  title,
+  areaRef 
 }) {
 
   const completeStyle = getStyle(style);
 
   return (
-    <section style={completeStyle.section}>
+    <section style={completeStyle.section} ref={areaRef}>
       {title &&
         <ContentAreaTitle>{title}</ContentAreaTitle>
       }

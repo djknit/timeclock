@@ -1,28 +1,43 @@
 import { dataServiceFactory } from '../../../utilities';
 import timeService from './time';
+import jobsService from '../jobs';
 
 let weeks = timeService.getValue();
 timeService.subscribe(() => weeks = timeService.getValue());
 
-let id, name, timezone, wage, dayCutoff, weekBegins;
+let _id, name, timezone, wage, dayCutoff, weekBegins, startDate;
+
+function setCurrentJob(currentJob) {
+  _id = currentJob._id.toString();
+  name = currentJob.name;
+  timezone = currentJob.timezone;
+  wage = currentJob.wage;
+  dayCutoff = currentJob.dayCutoff;
+  weekBegins = currentJob.weekBegins;
+  startDate = currentJob.startDate;
+}
 
 const service = dataServiceFactory({
   readFunction: () => (
-    id ?
-    { id, name, timezone, wage, dayCutoff, weekBegins } :
+    _id ?
+    { _id, name, timezone, wage, dayCutoff, weekBegins, startDate } :
     null
   ),
   methods: {
-    setCurrentJob(currentJob) {
-      id = currentJob._id.toString();
-      name = currentJob.name;
-      timezone = currentJob.timezone;
-      wage = currentJob.wage;
-      dayCutoff = currentJob.dayCutoff;
-      weekBegins = currentJob.weekBegins;
-    },
+    setCurrentJob,
     clearCurrentJob() {
-      id = name = timezone = wage = dayCutoff = weekBegins = undefined;
+      _id = name = timezone = wage = dayCutoff = weekBegins = startDate = undefined;
+    },
+    updateCurrentJob(updatedJob) {
+      setCurrentJob(updatedJob);
+      let _jobs = jobsService.getValue();
+      for (let i = 0; i < _jobs.length; i++) {
+        if (_jobs[i]._id.toString() === updatedJob._id.toString()) {
+          _jobs[i] = updatedJob;
+          jobsService.setJobs(_jobs);
+          return;
+        }
+      }
     }
   }
 });

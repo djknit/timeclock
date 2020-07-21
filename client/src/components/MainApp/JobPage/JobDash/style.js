@@ -3,7 +3,7 @@ export * from '../style';
 
 const { contentAreasRow, columnContentArea } = contentAreasGridStyles;
 
-export default function getStyle() {
+export default function getStyle(rowHeight) {
 
   const basicsWidthPercent = 40;
 
@@ -12,9 +12,12 @@ export default function getStyle() {
       marginBottom: mainAreaPadding,
       display: 'inline-block'
     },
-    contentAreasRow,
+    contentAreasRow: {
+      ...contentAreasRow,
+      height: rowHeight
+    },
     basics: {
-      ...columnContentArea(basicsWidthPercent, true),
+      ...columnContentArea(basicsWidthPercent, true, true),
       left: 0
     },
     menu: {
