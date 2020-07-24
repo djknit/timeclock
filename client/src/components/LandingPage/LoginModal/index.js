@@ -27,18 +27,20 @@ function getIconClass(fieldName, hasSuccess) {
   return hasSuccess ? 'fas fa-unlock' : 'fas fa-lock';
 }
 const formId = 'login-form';
-const startingState = {
-  usernameOrEmail: '',
-  password: '',
-  problems: {},
-  hasSuccess: false,
-  isLoading: false,
-  hasProblem: false,
-  problemMessages: [],
-  showMessage: true,
-  hasBeenSubmitted: false,
-  secondsUntilRedirect: undefined
-};
+function getStartingState() {
+  return {
+    usernameOrEmail: '',
+    password: '',
+    problems: {},
+    hasSuccess: false,
+    isLoading: false,
+    hasProblem: false,
+    problemMessages: [],
+    showMessage: true,
+    hasBeenSubmitted: false,
+    secondsUntilRedirect: undefined
+  };
+}
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 class LoginModal extends Component {
@@ -50,7 +52,7 @@ class LoginModal extends Component {
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
-    this.state = { ...startingState };
+    this.state = getStartingState();
   };
 
   afterChange(propName) {
@@ -131,7 +133,7 @@ class LoginModal extends Component {
           this.setState({ secondsUntilRedirect });
           if (secondsUntilRedirect <= 0) {
             clearInterval(intervalId);
-            this.setState(startingState);
+            this.setState(getStartingState());
             this.props.history.push('/app/dashboard');
           }
         },
@@ -152,7 +154,7 @@ class LoginModal extends Component {
   };
 
   reset() {
-    this.setState(startingState);
+    this.setState(getStartingState());
   };
 
   render() {

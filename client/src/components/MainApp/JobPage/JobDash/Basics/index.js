@@ -22,7 +22,7 @@ function BasicsArea({
         <>
           <div style={completeStyle.areaNotLastHasBtns}>
             <p style={completeStyle.jobNameText}>
-              <strong>Job Name:</strong> {job.name}
+              <strong>Job Name:</strong> "{job.name}"
             </p>
             <Button
               theme="primary"

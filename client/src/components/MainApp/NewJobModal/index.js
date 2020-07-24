@@ -23,43 +23,45 @@ import { addCollapsing, addData } from '../../higherOrder';
 const { stepSizeOfRedirectDelay, secondsToDelayRedirect } = constants;
 
 const formId = 'new-user-form';
-const startingState = {
-  name: '',
-  startDate: null,
-  timezone: guessUserTimezone() || '',
-  wage: {
-    useWage: false,
-    rate: '',
-    currency: 'USD',
-    overtime: {
-      useOvertime: true,
-      useMultiplier: true,
-      multiplier: 1.5,
+function getStartingState() {
+  return {
+    name: '',
+    startDate: null,
+    timezone: guessUserTimezone() || '',
+    wage: {
+      useWage: false,
       rate: '',
-      cutoff: {
-        hours: 40,
-        minutes: 0
+      currency: 'USD',
+      overtime: {
+        useOvertime: true,
+        useMultiplier: true,
+        multiplier: 1.5,
+        rate: '',
+        cutoff: {
+          hours: 40,
+          minutes: 0
+        }
       }
-    }
-  },
-  cutoffs: {
-    useDefaults: true,
-    dayCutoff: {
-      hour: 0,
-      minute: 0,
-      is24hr: false
     },
-    weekBegins: 0
-  },
-  problems: {},
-  hasSuccess: false,
-  isLoading: false,
-  hasProblem: false,
-  problemMessages: [],
-  showMessage: true,
-  hasBeenSubmitted: false,
-  secondsUntilRedirect: undefined
-};
+    cutoffs: {
+      useDefaults: true,
+      dayCutoff: {
+        hour: 0,
+        minute: 0,
+        is24hr: false
+      },
+      weekBegins: 0
+    },
+    problems: {},
+    hasSuccess: false,
+    isLoading: false,
+    hasProblem: false,
+    problemMessages: [],
+    showMessage: true,
+    hasBeenSubmitted: false,
+    secondsUntilRedirect: undefined
+  };
+}
 const timezoneOptions = getValidTimezones().map(
   tzName => {
     const abbreviation = getTimezoneAbbreviation(tzName);
@@ -88,7 +90,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     this.radioUseMultiplierFalse = React.createRef();
     this.radioUseDefaultCutoffsTrue = React.createRef();
     this.radioUseDefaultCutoffsFalse = React.createRef();
-    this.state = { ...startingState };
+    this.state = getStartingState();
   };
 
   getInputDataProcessedToSubmit() {
@@ -233,7 +235,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
   };
 
   reset() {
-    this.setState(startingState);
+    this.setState(getStartingState());
   };
 
   componentDidUpdate(prevProps) {

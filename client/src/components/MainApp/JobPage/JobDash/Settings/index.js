@@ -52,7 +52,9 @@ function SettingsArea({
               {label}
             </p>
             <p style={completeStyle.areaHasBtnsText}>
-              <strong>Current Value:</strong>
+              <strong style={completeStyle.valueLabel}>
+                Current Value:
+              </strong>
               &ensp;
               <CurrentItemValueDisplay
                 {...{ propName }}

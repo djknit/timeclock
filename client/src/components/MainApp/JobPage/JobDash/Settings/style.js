@@ -7,6 +7,9 @@ export default function getStyle(additionalStyle) {
     contentArea: {
       ...additionalStyle
     },
+    valueLabel: {
+      fontWeight: 500
+    },
     ...itemAreaStyles,
     areaLabel: {
       ...itemAreaStyles.areaHasBtnsText,
