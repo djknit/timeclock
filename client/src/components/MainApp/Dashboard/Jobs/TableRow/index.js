@@ -18,6 +18,7 @@ function _TableRow_needsPseudo({
       {...pseudoHandlers}
       {...{ onClick }}
       tabIndex={allowTabFocus ? 0 : -1}
+      onKeyDown={keyTriggerCheckerFactory(onClick)}
     >
       {children}
     </tr>
@@ -27,3 +28,12 @@ function _TableRow_needsPseudo({
 const TableRow = addPseudoPseudoClasses(_TableRow_needsPseudo);
 
 export default TableRow;
+
+function keyTriggerCheckerFactory(handleClick) {
+  return function checkForKeyTrigger(event) {
+    const keyCode = event.which;
+    if (keyCode === 13 || keyCode === 32) {
+      handleClick();
+    }
+  };
+}

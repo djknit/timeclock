@@ -6,15 +6,13 @@ export default function getStyle(pseudoState) {
   if (isActive) {
     stateDependentStyle = {
       fontWeight: 700,
-      color: '#8a8a8a',
-      textDecoration: 'underline'
+      color: '#8a8a8a'
     };
   }
   else if (isFocused) {
     stateDependentStyle = {
       fontWeight: 700,
-      color: '#2a2a2a',
-      textDecoration: 'underline'
+      color: '#2a2a2a'
     };                  
   }
   else if (isHovered) {
@@ -32,6 +30,7 @@ export default function getStyle(pseudoState) {
 
   return {
     outline: 'none',
+    textDecoration: 'none',
     ...stateDependentStyle
   };
 };
