@@ -1,4 +1,5 @@
 import React from 'react';
+import { keyTriggerCheckerFactory } from '../../../utilities';
 import { addPseudoPseudoClasses, calculateStyleForPseudoClassState } from '../../../../higherOrder';
 
 function _TableRow_needsPseudo({
@@ -28,12 +29,3 @@ function _TableRow_needsPseudo({
 const TableRow = addPseudoPseudoClasses(_TableRow_needsPseudo);
 
 export default TableRow;
-
-function keyTriggerCheckerFactory(handleClick) {
-  return function checkForKeyTrigger(event) {
-    const keyCode = event.which;
-    if (keyCode === 13 || keyCode === 32) {
-      handleClick();
-    }
-  };
-}

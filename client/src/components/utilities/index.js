@@ -22,8 +22,18 @@ function getSizeClass(size) {
   return isNum ? `is-size-${size}` : `is-${size}`;
 }
 
+function keyTriggerCheckerFactory(handleClick) {
+  return function checkForKeyTrigger(event) {
+    const keyCode = event.which;
+    if (keyCode === 13 || keyCode === 32) {
+      handleClick();
+    }
+  };
+}
+
 export {
   promiseToSetState,
   getColorClass,
-  getSizeClass
+  getSizeClass,
+  keyTriggerCheckerFactory
 };
