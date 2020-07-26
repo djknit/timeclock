@@ -1,45 +1,33 @@
 import React from 'react';
-import { jobData as jobDataUtils } from '../../../../utilities';
+import { jobData as jobDataUtils, getSimpleJobSettingValueText } from '../../../utilities';
 import getStyle from './style';
+import Wage from './Wage';
 
-const { getMostRecentScheduleValueForDate } = jobDataUtils;
-
-function getValueText(propName, value) {
-  switch (propName) {
-    case 'timezone':
-
-      break;
-    case 'weekBegins':
-
-      break;
-    case 'dayCutoff':
-
-      break;
-    case 'wage':
-
-      break;
-  }
-}
+const { getMostRecentScheduleValueForDate, getDateForTime } = jobDataUtils;
 
 function CurrentItemValueDisplay({
-  label,
   propName,
-  valueSchedule
+  job
 }) {
 
-  
-  const currentValue = getMostRecentScheduleValueForDate(valueSchedule)
+  const currentDate = getDateForTime(Date.now(), job, true);
+  const currentValue = getMostRecentScheduleValueForDate(currentDate, job[propName]);
 
   const style = getStyle();
 
-  if (valueSchedule.length === 1) {
-    return (
-      // <p style={style.p}>
-      <>{getValueText(propName, currentValue)}</>
-      // </p>
-    );
-  }
-
+  return (
+    propName === 'wage' ? (
+      <Wage value={currentValue} />
+    ) : (
+      <p style={style.p}>
+        <strong style={style.valueLabel}>
+          Current Value:
+        </strong>
+        &ensp;
+        {getSimpleJobSettingValueText(propName, currentValue)}
+      </p>
+    )
+  );
 }
 
 export default CurrentItemValueDisplay;

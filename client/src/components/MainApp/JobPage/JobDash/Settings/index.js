@@ -51,16 +51,12 @@ function SettingsArea({
             <p style={completeStyle.areaLabel}>
               {label}
             </p>
-            <p style={completeStyle.areaHasBtnsText}>
-              <strong style={completeStyle.valueLabel}>
-                Current Value:
-              </strong>
-              &ensp;
-              <CurrentItemValueDisplay
-                {...{ propName }}
-                valueSchedule={job[propName]}
-              />
-            </p>
+            <CurrentItemValueDisplay
+              {...{
+                propName,
+                job
+              }}
+            />
           </div>
         )
       )}
