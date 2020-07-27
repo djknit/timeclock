@@ -12,11 +12,14 @@ function CurrentItemValueDisplay({
 
   const currentDate = getDateForTime(Date.now(), job, true);
   const currentValue = getMostRecentScheduleValueForDate(currentDate, job[propName]);
+  // console.log({ propName, currentValue })
+
+  const isWage = propName === 'wage'
 
   const style = getStyle();
 
   return (
-    propName === 'wage' ? (
+    (isWage && currentValue) ? (
       <Wage value={currentValue} />
     ) : (
       <p style={style.p}>
@@ -24,7 +27,7 @@ function CurrentItemValueDisplay({
           Current Value:
         </strong>
         &ensp;
-        {getSimpleJobSettingValueText(propName, currentValue)}
+        {isWage ? 'none' : getSimpleJobSettingValueText(propName, currentValue)}
       </p>
     )
   );

@@ -71,11 +71,11 @@ function getInfoItemAreaStyles(
         marginLeft: '.5em'
       }
     },
-    areaHasBtnsText: {
+    areaHasBtnsText: { // also for area w/ no btns and multiple paragraphs
       ...textStyles,
       paddingBottom: `calc(${innerGap} - ${textGhostYPadding})`
     },
-    noBtnsAreaText: {
+    noBtnsAreaText: { // not for multiple paragraphs
       ...textStyles,
       paddingBottom: 0
     }

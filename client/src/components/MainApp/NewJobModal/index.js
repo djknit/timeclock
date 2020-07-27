@@ -240,8 +240,8 @@ class _NewJobModal_needsCollapsingAndData extends Component {
 
   componentDidUpdate(prevProps) {
     // set collapsing container height each time modal is opened and clear each time modal is closed
-    const { isActive, wageContentToggle, cutoffsContentToggle } = this.props;
-    if (isActive === prevProps.isActive) return;
+    const { isActive, wageContentToggle, cutoffsContentToggle, windowWidth } = this.props;
+    if (isActive === prevProps.isActive && windowWidth === prevProps.windowWidth) return;
     else if (isActive) {
       wageContentToggle.setHeight();
       cutoffsContentToggle.setHeight();

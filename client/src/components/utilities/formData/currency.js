@@ -1,6 +1,8 @@
 import React from 'react';
-import cc from 'currency-codes';
-import getSymbolFromCurrency from 'currency-symbol-map';
+// import cc from 'currency-codes';
+// import getSymbolFromCurrency from 'currency-symbol-map';
+
+import { getCurrencyAmountDisplayAndRounded } from '../elemental';
 
 function processCurrencyInputValue(raw, currencyCode) {
   const parsedValue = parseFloat(raw);
@@ -21,30 +23,22 @@ function processCurrencyInputValue(raw, currencyCode) {
     };
   }
   else {
-    const numDecimalDigits = getDecimalDigits(currencyCode || '');
-    let display = (
-      numDecimalDigits || numDecimalDigits === 0 ?
-      parsedValue.toFixed(numDecimalDigits) :
-      parsedValue.toString()
-    );
-    const rounded = parseFloat(display);
-    const currencySymbol = getCurrencySymbol(currencyCode);
+    // const numDecimalDigits = getDecimalDigits(currencyCode || '');
+    // let display = (
+    //   numDecimalDigits || numDecimalDigits === 0 ?
+    //   parsedValue.toFixed(numDecimalDigits) :
+    //   parsedValue.toString()
+    // );
+    // const rounded = parseFloat(display);
+    // const currencySymbol = getCurrencySymbol(currencyCode);
+    const { rounded, display } = getCurrencyAmountDisplayAndRounded(parsedValue, currencyCode);
     return {
       raw,
-      display: (
-        currencySymbol ?
-        <>{currencySymbol}&nbsp;{display}</> :
-        display
-      ),
+      display,
       rounded,
       problem: null
     };
   }
-}
-
-function getDecimalDigits(currencyCode) {
-  const currencyData = cc.code(currencyCode);
-  return currencyData ? currencyData.digits : null;
 }
 
 function processCurrencyMultiplierInputValue(rawMultiplierValue, wageToMultiply) {
@@ -84,13 +78,7 @@ function processCurrencyMultiplierInputValue(rawMultiplierValue, wageToMultiply)
   };
 }
 
-function getCurrencySymbol(currencyCode) {
-  return getSymbolFromCurrency(currencyCode);
-}
-
 export {
   processCurrencyInputValue,
-  getDecimalDigits,
   processCurrencyMultiplierInputValue,
-  getCurrencySymbol
 };

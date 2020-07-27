@@ -1,17 +1,15 @@
 import { itemAreaStyles } from '../style';
 
+const valueLabel = {
+  fontWeight: 500
+};
+
 export default function getStyle() {
 
   return {
     p: itemAreaStyles.areaHasBtnsText,
-    valueLabel: {
-      fontWeight: 500
-    },
-    wageCurrentValArea: {
-
-    },
-    wageCurrentValDetailsArea: {
-
-    }
+    valueLabel: { ...valueLabel }
   };
 };
+
+export { valueLabel, itemAreaStyles };

@@ -12,7 +12,7 @@ export default function getStyle(windowWidth, rowHeight) {
   return {
     contentAreasRow: {
       ...contentAreasRow,
-      height: rowHeight
+      height: useColumns ? rowHeight : 'auto'
     },
     account: {
       ...columnContentArea(accountWidthPercent, useColumns, true),

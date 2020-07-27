@@ -13,7 +13,6 @@ function BasicsArea({
   areaRef
 }) {
 
-  console.log(job)
   const completeStyle = getStyle(style);
 
   return (
