@@ -9,14 +9,13 @@ function BasicsArea({
   style,
   disabled,
   toggleEditJobNameModal,
-  toggleDeleteJobModal,
-  areaRef
+  toggleDeleteJobModal
 }) {
 
   const completeStyle = getStyle(style);
 
   return (
-    <ContentArea title="Basics" style={completeStyle.contentArea} {...{ areaRef }}>
+    <ContentArea title="Basics" style={completeStyle.contentArea}>
       {job &&
         <>
           <div style={completeStyle.areaNotLastHasBtns}>

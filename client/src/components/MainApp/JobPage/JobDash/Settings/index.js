@@ -26,14 +26,13 @@ const settingsLabelsAndPropNames = [
 function SettingsArea({
   style,
   disabled,
-  job,
-  areaRef
+  job
 }) {
 
   const completeStyle = getStyle(style);
 
   return (
-    <ContentArea style={completeStyle.contentArea} {...{ areaRef }}>
+    <ContentArea style={completeStyle.contentArea}>
       <ContentAreaTitle>Settings Summary</ContentAreaTitle>
       {
         settingsLabelsAndPropNames

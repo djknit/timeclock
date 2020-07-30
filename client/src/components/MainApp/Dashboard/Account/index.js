@@ -10,8 +10,7 @@ function _Account_needsData({
   style,
   accountEditingModalOpenerFactory,
   accountPropDeletingModalOpenerFactory,
-  areAnyModalsOpen,
-  areaRef
+  areAnyModalsOpen
 }) {
 
   const completeStyle = getStyle(style);
@@ -45,7 +44,7 @@ function _Account_needsData({
   }
 
   return (
-    <ContentArea title="Account" style={completeStyle.contentArea} {...{ areaRef }}>
+    <ContentArea title="Account" style={completeStyle.contentArea}>
       {user &&
         <>
           <div style={completeStyle.accountPropAreaNotLast}>

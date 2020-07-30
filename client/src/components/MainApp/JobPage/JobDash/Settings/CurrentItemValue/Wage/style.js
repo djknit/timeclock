@@ -11,7 +11,7 @@ export default function getStyle(toggleStyles, togglerPseudoState) {
 
   const detailsP = {
     ...itemAreaStyles.areaHasBtnsText,
-    paddingBottom: 0
+    paddingTop: 0
   };
 
   return {
@@ -45,15 +45,13 @@ export default function getStyle(toggleStyles, togglerPseudoState) {
       ...toggleStyles.container,
       textAlign: 'left',
       paddingLeft: '1em',
-      marginBottom: itemAreaStyles.areaHasBtnsText.paddingBottom
     },
-    firstDetailsP: {
+    detailsPNotLast: {
       ...detailsP,
-      paddingTop: 0,
+      paddingBottom: '.2em'
     },
-    detailsPNotFirst: {
-      ...detailsP,
-      paddingTop: '.2em'
+    lastDetailsP: {
+      ...detailsP
     }
   };
 };

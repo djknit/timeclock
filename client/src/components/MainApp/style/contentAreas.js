@@ -4,19 +4,28 @@ const contentAreaPadding = 15;
 
 const contentAreasGridStyles = {
   contentAreasRow: {
-    position: 'relative',
     padding: 0,
     margin: 0,
-    width: '100%'
+    width: '100%',
+    verticalAlign: 'top',
+    textAlign: 'left'
   },
-  columnContentArea(widthPercent, useColumns) {
+  columnContentArea(widthPercent, useColumns, isLeftCol) {
     return (
       useColumns ?
       {
         width: `calc(${widthPercent}% - ${mainAreaPadding / 2}px)`,
-        position: 'absolute',
-        top: 0,
-        display: 'inline-block'
+        display: 'inline-block',
+        verticalAlign: 'top',
+        textAlign: 'center',
+        ...(
+          isLeftCol === false ?
+          {
+            position: 'relative',
+            left: mainAreaPadding
+          } : 
+          {}
+        )
       } :
       {
         width: '100%',

@@ -52,17 +52,17 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
           </span>
         </p>
         <div ref={sectionToggle.containerRef} style={style.detailsArea}>
-          <p style={style.firstDetailsP}>
+          <p style={style.detailsPNotLast}>
             <strong style={style.valueLabel}>Rate:</strong>
             &ensp;
             {processedValue.rate} / hr
           </p>
-          <p style={style.detailsPNotFirst}>
+          <p style={style.detailsPNotLast}>
             <strong style={style.valueLabel}>Currency:</strong>
             &ensp;
             {processedValue.currency || 'not specified'}
           </p>
-          <p style={style.detailsPNotFirst}>
+          <p style={style.lastDetailsP}>
             <strong style={style.valueLabel}>Overtime (OT):</strong>
             &ensp;
             more $$!

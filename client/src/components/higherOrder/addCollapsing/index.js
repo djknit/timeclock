@@ -35,7 +35,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
         });
       }
       else { // if height already set, clear and then set
-        this.state(
+        this.setState(
           {
             containerHeight: undefined,
             isAnimationOn: false
@@ -55,7 +55,6 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     }
 
     toggle() {
-      console.log('T o g g l e')
       this.setState({
         isExpanded: !this.state.isExpanded,
         isAnimationOn: true,
