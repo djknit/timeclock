@@ -10,16 +10,18 @@ import { addData } from '../../higherOrder';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
-const startingState = {
-  password: '',
-  problems: {},
-  hasSuccess: false,
-  isLoading: false,
-  hasProblem: false,
-  problemMessages: [],
-  showMessage: true,
-  hasBeenSubmitted: false
-};
+function getStartingState() {
+  return {
+    password: '',
+    problems: {},
+    hasSuccess: false,
+    isLoading: false,
+    hasProblem: false,
+    problemMessages: [],
+    showMessage: true,
+    hasBeenSubmitted: false
+  };
+}
 const formId = 'delete-account-prop-form';
 
 class _DeleteAccountPropModal_needsData extends Component {
@@ -31,7 +33,7 @@ class _DeleteAccountPropModal_needsData extends Component {
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
-    this.state = { ...startingState };
+    this.state = getStartingState();
   };
 
   afterChange(propName) {
@@ -126,7 +128,7 @@ class _DeleteAccountPropModal_needsData extends Component {
   };
 
   reset() {
-    this.setState(startingState);
+    this.setState(getStartingState());
   };
 
   componentDidUpdate(prevProps) {

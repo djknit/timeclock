@@ -4,23 +4,34 @@ const contentAreaPadding = 15;
 
 const contentAreasGridStyles = {
   contentAreasRow: {
-    position: 'relative',
     padding: 0,
     margin: 0,
-    width: '100%'
+    width: '100%',
+    verticalAlign: 'top',
+    textAlign: 'left'
   },
-  columnContentArea(widthPercent, useColumns) {
-    return (
-      useColumns ?
-      {
-        width: `calc(${widthPercent}% - ${mainAreaPadding / 2}px)`,
-        position: 'absolute',
-        top: 0,
-        display: 'inline-block'
-      } :
-      {
+  columnContentArea(widthPercent, useColumns, isLeftCol) {
+    if (!useColumns) {
+      return {
         width: '100%',
         marginBottom: mainAreaPadding
+      };
+    }
+    const columnStyles = {
+      width: `calc(${widthPercent}% - ${mainAreaPadding / 2}px)`,
+      display: 'inline-block',
+      verticalAlign: 'top',
+      textAlign: 'center'
+    };
+    return (
+      isLeftCol === false ?
+      {
+        position: 'relative',
+        left: mainAreaPadding,
+        ...columnStyles
+      } : 
+      {
+        ...columnStyles
       }
     );
   }

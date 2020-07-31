@@ -50,22 +50,24 @@ const fieldsInfo = [
   },
 ];
 const formId = 'new-user-form';
-const startingState = {
-  username: '',
-  email: '',
-  password: '',
-  verifyPassword: '',
-  problems: {},
-  hasSuccess: false,
-  isLoading: false,
-  hasProblem: false,
-  problemMessages: [],
-  showMessage: true,
-  hasBeenSubmitted: false,
-  unavailableUsernames: [],
-  unavailableEmails: [],
-  secondsUntilRedirect: undefined
-};
+function getStartingState() {
+  return {
+    username: '',
+    email: '',
+    password: '',
+    verifyPassword: '',
+    problems: {},
+    hasSuccess: false,
+    isLoading: false,
+    hasProblem: false,
+    problemMessages: [],
+    showMessage: true,
+    hasBeenSubmitted: false,
+    unavailableUsernames: [],
+    unavailableEmails: [],
+    secondsUntilRedirect: undefined
+  };
+}
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 class NewUserModal extends Component {
@@ -77,7 +79,7 @@ class NewUserModal extends Component {
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
-    this.state = { ...startingState };
+    this.state = getStartingState();
   };
 
   afterChange() {
@@ -158,7 +160,7 @@ class NewUserModal extends Component {
           this.setState({ secondsUntilRedirect });
           if (secondsUntilRedirect <= 0) {
             clearInterval(intervalId);
-            this.setState(startingState);
+            this.setState(getStartingState());
             this.props.history.push('/app');
           }
         },
@@ -191,7 +193,7 @@ class NewUserModal extends Component {
   };
 
   reset() {
-    this.setState(startingState);
+    this.setState(getStartingState());
   };
 
   render() {

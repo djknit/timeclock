@@ -48,21 +48,23 @@ function getVariableInputAttrs(propToEditName) {
   };
 }
 const formId = 'edit-account-form';
-const startingState = {
-  updatedAccountProp: '',
-  verifyUpdatedPassword: '',
-  currentPassword: '',
-  problems: {},
-  hasSuccess: false,
-  isLoading: false,
-  hasProblem: false,
-  problemMessages: [],
-  showMessage: true,
-  hasBeenSubmitted: false,
-  unavailableUsernames: [],
-  unavailableEmails: [],
-  secondsUntilRedirect: undefined
-};
+function getStartingState() {
+  return {
+    updatedAccountProp: '',
+    verifyUpdatedPassword: '',
+    currentPassword: '',
+    problems: {},
+    hasSuccess: false,
+    isLoading: false,
+    hasProblem: false,
+    problemMessages: [],
+    showMessage: true,
+    hasBeenSubmitted: false,
+    unavailableUsernames: [],
+    unavailableEmails: [],
+    secondsUntilRedirect: undefined
+  };
+}
 
 class _EditAccountModal_needsData extends Component {
   constructor(props) {
@@ -73,7 +75,7 @@ class _EditAccountModal_needsData extends Component {
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
-    this.state = { ...startingState };
+    this.state = getStartingState();
   };
 
   afterChange(propName) { // `propName` is the name of the property of the state of this component) that was changed
@@ -214,7 +216,7 @@ class _EditAccountModal_needsData extends Component {
   };
 
   reset() {
-    this.setState(startingState);
+    this.setState(getStartingState());
   };
 
   componentDidUpdate(prevProps) {

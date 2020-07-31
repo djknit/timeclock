@@ -26,16 +26,13 @@ const settingsLabelsAndPropNames = [
 function SettingsArea({
   style,
   disabled,
-  job,
-  areaRef
+  job
 }) {
-
-  console.log(job)
 
   const completeStyle = getStyle(style);
 
   return (
-    <ContentArea style={completeStyle.contentArea} {...{ areaRef }}>
+    <ContentArea style={completeStyle.contentArea}>
       <ContentAreaTitle>Settings Summary</ContentAreaTitle>
       {
         settingsLabelsAndPropNames
@@ -51,14 +48,12 @@ function SettingsArea({
             <p style={completeStyle.areaLabel}>
               {label}
             </p>
-            <p style={completeStyle.areaHasBtnsText}>
-              <strong>Current Value:</strong>
-              &ensp;
-              <CurrentItemValueDisplay
-                {...{ propName }}
-                valueSchedule={job[propName]}
-              />
-            </p>
+            <CurrentItemValueDisplay
+              {...{
+                propName,
+                job
+              }}
+            />
           </div>
         )
       )}

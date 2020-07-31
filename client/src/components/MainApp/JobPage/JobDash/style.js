@@ -13,16 +13,13 @@ export default function getStyle(rowHeight) {
       display: 'inline-block'
     },
     contentAreasRow: {
-      ...contentAreasRow,
-      height: rowHeight
+      ...contentAreasRow
     },
     basics: {
       ...columnContentArea(basicsWidthPercent, true, true),
-      left: 0
     },
     menu: {
-      ...columnContentArea(100 - basicsWidthPercent, true),
-      right: 0
+      ...columnContentArea(100 - basicsWidthPercent, true, false),
     }
   };
 };
