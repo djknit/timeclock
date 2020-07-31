@@ -38,7 +38,7 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
             Current Value:
           </strong>
           &ensp;
-          {processedValue.rate} / hr 
+          {processedValue.rate}
           <span
             style={style.detailsToggler}
             {...pseudoHandlers}
@@ -63,11 +63,38 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
             {processedValue.currency || 'not specified'}
           </p>
           <p style={style.lastDetailsP}>
-            <strong style={style.valueLabel}>Overtime (OT):</strong>
+            <strong style={style.valueLabel}>Overtime:</strong>
             &ensp;
-            more $$!
+            {processedValue.overtime ? processedValue.overtime.rate : 'off'}
           </p>
-          
+          {processedValue.overtime && (
+            <>
+              <p style={style.subDetailsP}>
+                <strong style={style.valueLabel}>OT Type:</strong>
+                &ensp;
+                {processedValue.overtime.type}
+              </p>
+              {processedValue.overtime.useMultiplier && (
+                <>
+                  <p style={style.subDetailsP}>
+                    <strong style={style.valueLabel}>OT Multiplier:</strong>
+                    &ensp;
+                    {processedValue.overtime.rateMultiplier} x [base rate]
+                  </p>
+                </>
+              )}
+              <p style={style.subDetailsP}>
+                <strong style={style.valueLabel}>OT Rate:</strong>
+                &ensp;
+                {processedValue.overtime.detailedRate}
+              </p>
+              <p style={style.subDetailsP}>
+                <strong style={style.valueLabel}>OT Begins After:</strong>
+                &ensp;
+                {processedValue.overtime.cutoff}
+              </p>
+            </>
+          )}
         </div>
       </>
     );

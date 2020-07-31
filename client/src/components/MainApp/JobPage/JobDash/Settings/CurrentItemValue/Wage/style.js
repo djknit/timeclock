@@ -11,7 +11,8 @@ export default function getStyle(toggleStyles, togglerPseudoState) {
 
   const detailsP = {
     ...itemAreaStyles.areaHasBtnsText,
-    paddingTop: 0
+    paddingTop: 0,
+    paddingBottom: 0
   };
 
   return {
@@ -52,6 +53,11 @@ export default function getStyle(toggleStyles, togglerPseudoState) {
     },
     lastDetailsP: {
       ...detailsP
+    },
+    subDetailsP: {
+      ...detailsP,
+      paddingTop: '.15em',
+      paddingLeft: '.5em'
     }
   };
 };

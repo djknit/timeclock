@@ -11,25 +11,27 @@ const contentAreasGridStyles = {
     textAlign: 'left'
   },
   columnContentArea(widthPercent, useColumns, isLeftCol) {
-    return (
-      useColumns ?
-      {
-        width: `calc(${widthPercent}% - ${mainAreaPadding / 2}px)`,
-        display: 'inline-block',
-        verticalAlign: 'top',
-        textAlign: 'center',
-        ...(
-          isLeftCol === false ?
-          {
-            position: 'relative',
-            left: mainAreaPadding
-          } : 
-          {}
-        )
-      } :
-      {
+    if (!useColumns) {
+      return {
         width: '100%',
         marginBottom: mainAreaPadding
+      };
+    }
+    const columnStyles = {
+      width: `calc(${widthPercent}% - ${mainAreaPadding / 2}px)`,
+      display: 'inline-block',
+      verticalAlign: 'top',
+      textAlign: 'center'
+    };
+    return (
+      isLeftCol === false ?
+      {
+        position: 'relative',
+        left: mainAreaPadding,
+        ...columnStyles
+      } : 
+      {
+        ...columnStyles
       }
     );
   }
