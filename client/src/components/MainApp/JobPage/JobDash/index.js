@@ -24,7 +24,8 @@ class _JobDash_needsData extends Component {
       goToTimePage,
       toggleEditJobNameModal,
       toggleDeleteJobModal,
-      windowWidth
+      windowWidth,
+      settingsSubPathRedirectorFactory
     } = props;
 
     const style = getStyle(windowWidth);
@@ -55,7 +56,8 @@ class _JobDash_needsData extends Component {
             disabled={areAnyModalsOpen}
             style={style.menu}
             {...{
-              job
+              job,
+              settingsSubPathRedirectorFactory
             }}
           />
         </div>

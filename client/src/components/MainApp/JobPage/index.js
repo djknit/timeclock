@@ -103,6 +103,9 @@ class _JobPage_needsData extends Component {
     const goToJobDash = redirectorFactory(jobDashPath);
     const goToJobSettings = redirectorFactory(jobSettingsPath);
     const goToTimePage = redirectorFactory(timePagePath);
+    const settingsSubPathRedirectorFactory = subPath => {
+      return redirectorFactory(`${jobSettingsPath}/${subPath}`);
+    };
 
     const commonRouteAttributes = {
       job,
@@ -119,7 +122,8 @@ class _JobPage_needsData extends Component {
                 <SettingsPage
                   {...{
                     ...props,
-                    ...commonRouteAttributes
+                    ...commonRouteAttributes,
+                    redirectorFactory
                   }}
                 />
               )}
@@ -147,7 +151,8 @@ class _JobPage_needsData extends Component {
                     goToJobSettings,
                     goToTimePage,
                     toggleEditJobNameModal,
-                    toggleDeleteJobModal
+                    toggleDeleteJobModal,
+                    settingsSubPathRedirectorFactory
                   }}
                 />
               )}

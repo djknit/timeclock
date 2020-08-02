@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import PageTitle from '../../PageTitle';
+import Landing from './Landing';
 import WeekBegins from './WeekBegins';
 import DayCutoff from './DayCutoff';
 import Timezone from './Timezone';
@@ -14,7 +15,8 @@ class SettingsPage extends Component {
   };
 
   render() {
-    const { job, parentPath, match } = this.props;
+    const { job, parentPath, match, redirectorFactory } = this.props;
+    const thisPath = match.url;
 
     const crumbChain = [
       {
@@ -23,12 +25,12 @@ class SettingsPage extends Component {
       },
       {
         text: 'Settings',
-        url: match.url
+        url: thisPath
       }
     ];
 
     function getRouteInfoObj(pathName, pageName, PageComp) {
-      const routePath = `${match.url}/${pathName}`
+      const routePath = `${thisPath}/${pathName}`;
       return {
         path: routePath,
         crumbChain: [
@@ -38,13 +40,17 @@ class SettingsPage extends Component {
             url: routePath
           }
         ],
-        PageComp
+        PageComp,
+        pageName,
+        redirector: redirectorFactory(routePath)
       };
     }
     const childRoutes = [
       getRouteInfoObj('day-cutoff', 'Day Cutoff', DayCutoff),
       getRouteInfoObj('week-begins', 'Week Cutoff', WeekBegins),
-      getRouteInfoObj('timezone', 'Timezone', Timezone)
+      getRouteInfoObj('timezone', 'Timezone', Timezone),
+      getRouteInfoObj('wage', 'Wage', Wage),
+      getRouteInfoObj('all', 'All Settings', All)
     ];
 
     return (
@@ -52,7 +58,7 @@ class SettingsPage extends Component {
         <Switch>
           {childRoutes.map(
             RouteInfo => (
-              <Route 
+              <Route
                 path={RouteInfo.path}
                 render={props => (
                   <>
@@ -63,6 +69,15 @@ class SettingsPage extends Component {
               />
             )
           )}
+          <Route
+            path={thisPath}
+            render={props => (
+              <>
+                <PageTitle {...{ crumbChain }} />
+                <Landing {...{ childRoutes, ...props }} />
+              </>
+            )}
+          />
         </Switch>
       </>
     );

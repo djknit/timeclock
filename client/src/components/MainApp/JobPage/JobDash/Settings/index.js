@@ -4,29 +4,34 @@ import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
 import CurrentItemValueDisplay from './CurrentItemValue';
 
-const settingsLabelsAndPropNames = [
+const settingsLabelsAndPropNamesAndPagePaths = [
   {
     label: 'Timezone',
-    propName: 'timezone'
+    propName: 'timezone',
+    pagePath: 'timezone'
   },
   {
     label: 'Wage',
-    propName: 'wage'
+    propName: 'wage',
+    pagePath: 'wage'
   },
   {
     label: 'New Weeks Begin On:',
-    propName: 'weekBegins'
+    propName: 'weekBegins',
+    pagePath: 'week-begins'
   },
   {
     label: 'Day Cutoff',
-    propName: 'dayCutoff'
+    propName: 'dayCutoff',
+    pagePath: 'day-cutoff'
   }
 ];
 
 function SettingsArea({
   style,
   disabled,
-  job
+  job,
+  settingsSubPathRedirectorFactory
 }) {
 
   const completeStyle = getStyle(style);
@@ -35,37 +40,38 @@ function SettingsArea({
     <ContentArea style={completeStyle.contentArea}>
       <ContentAreaTitle>Settings Summary</ContentAreaTitle>
       {
-        settingsLabelsAndPropNames
-        .map(({ label, propName }, index) => (
-          <div
-            style={
-              index === settingsLabelsAndPropNames.length - 1 ?
-              completeStyle.lastAreaHasBtns :
-              completeStyle.areaNotLastHasBtns
-            }
-            key={label}
-          >
-            <p style={completeStyle.areaLabel}>
-              {label}
-            </p>
-            <CurrentItemValueDisplay
-              {...{
-                propName,
-                job,
-                disabled
-              }}
-            />
-            <Button
-              theme="primary"
-              styles={completeStyle.firstBtn}
-              onClick={() => {}}
-              allowTabFocus={!disabled}
+        settingsLabelsAndPropNamesAndPagePaths.map(
+          ({ label, propName, pagePath }, index) => (
+            <div
+              style={
+                index === settingsLabelsAndPropNamesAndPagePaths.length - 1 ?
+                completeStyle.lastAreaHasBtns :
+                completeStyle.areaNotLastHasBtns
+              }
+              key={label}
             >
-              <i className="fas fa-eye" /> <i className="fas fa-edit" />  View/Edit
-            </Button>
-          </div>
+              <p style={completeStyle.areaLabel}>
+                {label}
+              </p>
+              <CurrentItemValueDisplay
+                {...{
+                  propName,
+                  job,
+                  disabled
+                }}
+              />
+              <Button
+                theme="primary"
+                styles={completeStyle.firstBtn}
+                onClick={settingsSubPathRedirectorFactory(pagePath)}
+                allowTabFocus={!disabled}
+              >
+                <i className="fas fa-eye" /> <i className="fas fa-edit" />  View/Edit
+              </Button>
+            </div>
+          )
         )
-      )}
+      }
     </ContentArea>
   );
 }
