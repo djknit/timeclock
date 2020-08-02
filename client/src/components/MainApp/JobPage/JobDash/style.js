@@ -1,11 +1,14 @@
-import { contentAreasGridStyles, mainAreaPadding } from '../style';
+import { isWindowWide } from '../utilities';
+import { contentAreasGridStyles, mainAreaPadding, getContentButtonStyle } from '../style';
 export * from '../style';
 
 const { contentAreasRow, columnContentArea } = contentAreasGridStyles;
 
-export default function getStyle(rowHeight) {
+export default function getStyle(windowWidth) {
 
   const basicsWidthPercent = 40;
+
+  const useColumns = isWindowWide(windowWidth);
 
   return {
     quickNav: {
@@ -16,10 +19,10 @@ export default function getStyle(rowHeight) {
       ...contentAreasRow
     },
     basics: {
-      ...columnContentArea(basicsWidthPercent, true, true),
+      ...columnContentArea(basicsWidthPercent, useColumns, true),
     },
     menu: {
-      ...columnContentArea(100 - basicsWidthPercent, true, false),
+      ...columnContentArea(100 - basicsWidthPercent, useColumns, false),
     }
   };
 };

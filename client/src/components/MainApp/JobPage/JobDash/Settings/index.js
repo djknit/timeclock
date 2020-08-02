@@ -51,9 +51,18 @@ function SettingsArea({
             <CurrentItemValueDisplay
               {...{
                 propName,
-                job
+                job,
+                disabled
               }}
             />
+            <Button
+              theme="primary"
+              styles={completeStyle.firstBtn}
+              onClick={() => {}}
+              allowTabFocus={!disabled}
+            >
+              <i className="fas fa-eye" /> <i className="fas fa-edit" />  View/Edit
+            </Button>
           </div>
         )
       )}

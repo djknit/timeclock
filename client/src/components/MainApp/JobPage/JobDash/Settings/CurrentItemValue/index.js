@@ -7,7 +7,8 @@ const { getMostRecentScheduleValueForDate, getDateForTime } = jobDataUtils;
 
 function CurrentItemValueDisplay({
   propName,
-  job
+  job,
+  disabled
 }) {
 
   const currentDate = getDateForTime(Date.now(), job, true);
@@ -20,7 +21,7 @@ function CurrentItemValueDisplay({
 
   return (
     (isWage && currentValue) ? (
-      <Wage value={currentValue} />
+      <Wage value={currentValue} {...{ disabled }} />
     ) : (
       <p style={style.p}>
         <strong style={style.valueLabel}>

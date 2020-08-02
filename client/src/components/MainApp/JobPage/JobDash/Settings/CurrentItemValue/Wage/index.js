@@ -22,7 +22,7 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
 
   render() {
 
-    const { sectionToggle, value, pseudoState, pseudoHandlers } = this.props;
+    const { sectionToggle, value, pseudoState, pseudoHandlers, disabled } = this.props;
     console.log(value)
 
     // const currenySymbol = getCurrencySymbol(value.currency);
@@ -42,7 +42,7 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
           <span
             style={style.detailsToggler}
             {...pseudoHandlers}
-            tabIndex={0}
+            tabIndex={disabled ? -1 : 0}
             onClick={sectionToggle.toggle}
           >
             <span style={style.toggleOpenText}>Show Details</span>

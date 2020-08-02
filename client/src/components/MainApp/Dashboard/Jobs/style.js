@@ -1,11 +1,11 @@
-import { dashContentBtnSpecs } from '../style';
+import { dashContentBtnSpecs, getContentAreaCornerButtonStyles } from '../style';
 
 export default function getStyle(additionalStyle) {
-  const addJobBtnYPadding = dashContentBtnSpecs.yPadding;
-  const addJobBtnXPadding = dashContentBtnSpecs.xPadding;
   const addJobBtnWidthPerHeight = 3.1426; // Measured. Depends on text and needs changed manually if text changes.
-  const addJobBtnInnerRemWidth = addJobBtnWidthPerHeight * dashContentBtnSpecs.remFontSize;
-  const addJobBtnTotalWidth = `calc${addJobBtnInnerRemWidth}rem + ${2 * addJobBtnXPadding}px`;
+
+  const { btnInnateStyle, titleWidth } = getContentAreaCornerButtonStyles(
+    dashContentBtnSpecs, addJobBtnWidthPerHeight, 12, 12
+  );
 
   return {
     contentArea: {
@@ -13,7 +13,7 @@ export default function getStyle(additionalStyle) {
       ...additionalStyle
     },
     areaTitle: {
-      width: `calc(100% - ${addJobBtnInnerRemWidth}rem - ${2 * addJobBtnXPadding + 6}px)`
+      width: titleWidth
     },
     table: {
       backgroundColor: 'transparent'
@@ -34,18 +34,7 @@ export default function getStyle(additionalStyle) {
       }
     },
     addJobButton: {
-      innate: {
-        lineHeight: dashContentBtnSpecs.lineHeight,
-        height: 'auto',
-        fontSize: `${dashContentBtnSpecs.remFontSize}rem`,
-        paddingTop: addJobBtnYPadding,
-        paddingBottom: addJobBtnYPadding,
-        paddingLeft: addJobBtnXPadding,
-        paddingRight: addJobBtnXPadding,
-        position: 'absolute',
-        top: 12,
-        right: 12
-      }
+      innate: btnInnateStyle,
     }
   };
 }
