@@ -55,7 +55,7 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
           <p style={style.detailsPNotLast}>
             <strong style={style.valueLabel}>Rate:</strong>
             &ensp;
-            {processedValue.rate} / hr
+            {processedValue.rate}
           </p>
           <p style={style.detailsPNotLast}>
             <strong style={style.valueLabel}>Currency:</strong>
