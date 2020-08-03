@@ -31,7 +31,7 @@ function SettingsArea({
   style,
   disabled,
   job,
-  settingsSubPathRedirectorFactory
+  buildSettingsSubPath
 }) {
 
   const completeStyle = getStyle(style);
@@ -60,10 +60,16 @@ function SettingsArea({
                   disabled
                 }}
               />
+              {job[propName].length > 1 && (
+                <p style={completeStyle.areaHasBtnsText}>
+                  This value is not the same for all time periods.
+                </p>
+              )}
               <Button
                 theme="primary"
+                isLink
                 styles={completeStyle.firstBtn}
-                onClick={settingsSubPathRedirectorFactory(pagePath)}
+                to={buildSettingsSubPath(pagePath)}
                 allowTabFocus={!disabled}
               >
                 <i className="fas fa-eye" /> <i className="fas fa-edit" />  View/Edit

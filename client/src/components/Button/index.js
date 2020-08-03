@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import getStyle from './style';
 import { getColorClass, getSizeClass } from '../utilities';
 import { addPseudoPseudoClasses } from '../higherOrder';
@@ -16,7 +17,9 @@ function _Button_needsPseudo({
   isLoading,
   pseudoState,
   pseudoHandlers,
-  buttonRef
+  buttonRef,
+  isLink,
+  to
 }) {
 
   let formRelatedAttributes = (
@@ -34,19 +37,36 @@ function _Button_needsPseudo({
   const colorClass = getColorClass(theme || 'light');
   const loadingClass = isLoading ? 'is-loading' : '';
 
+  const commonAttrs = {
+    className: `button ${sizeClass} ${colorClass} ${loadingClass}`,
+    style: completeStyle.button,
+    ...pseudoHandlers,
+    disabled,
+    tabIndex: allowTabFocus !== false ? 0 : -1,
+    ref: buttonRef
+  };
+
   return (
-    <button
-      className={`button ${sizeClass} ${colorClass} ${loadingClass}`}
-      style={completeStyle.button}
-      {...pseudoHandlers}
-      onClick={onClick}
-      disabled={disabled}
-      {...formRelatedAttributes}
-      tabIndex={allowTabFocus !== false ? 0 : -1}
-      ref={buttonRef}
-    >
-      {children}
-    </button>
+    isLink ? (
+      <Link
+        {...{
+          ...commonAttrs,
+          to
+        }}
+      >
+        {children}
+      </Link>
+    ) : (
+      <button
+        {...{
+          ...commonAttrs,
+          onClick,
+          ...formRelatedAttributes
+        }}
+      >
+        {children}
+      </button>
+    )
   );
 }
 

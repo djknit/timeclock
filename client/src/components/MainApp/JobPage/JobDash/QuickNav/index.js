@@ -18,7 +18,7 @@ class QuickNav extends Component {
 
   render() {
     const { props, state, buttonRef } = this;
-    const { returnToDashboard, disabled, style, goToJobSettings, goToTimePage } = props;
+    const { disabled, style, jobSettingsPath, timePagePath, dashboardPath } = props;
     const { buttonHeight } = state;
 
     const completeStyle = getStyle(buttonHeight, style);
@@ -28,7 +28,8 @@ class QuickNav extends Component {
         <ContentAreaTitle style={completeStyle.title}>Quick Links:</ContentAreaTitle>
         <Button
           theme="info"
-          onClick={returnToDashboard}
+          isLink
+          to={dashboardPath}
           styles={completeStyle.button}
           {...{
             buttonRef,
@@ -39,7 +40,9 @@ class QuickNav extends Component {
         </Button>
         <Button
           theme="primary"
-          onClick={goToTimePage}
+          // onClick={goToTimePage}
+          isLink
+          to={timePagePath}
           styles={completeStyle.button}
           {...{ disabled }}
         >
@@ -47,7 +50,9 @@ class QuickNav extends Component {
         </Button>
         <Button
           theme="primary"
-          onClick={goToJobSettings}
+          // onClick={goToJobSettings}
+          isLink
+          to={jobSettingsPath}
           styles={completeStyle.button}
           {...{ disabled }}
         >

@@ -15,11 +15,13 @@ function Landing({
         Select a Setting (or "All Settings") to View and/or Edit
       </ContentAreaTitle>
       {childRoutes.map(
-        ({ pageName, redirector }) => (
+        ({ pageName, path }) => (
           <Button
             theme="primary"
-            onClick={redirector}
+            isLink
+            to={path}
             styles={style.button}
+            key={pageName}
           >
             {pageName}
           </Button>

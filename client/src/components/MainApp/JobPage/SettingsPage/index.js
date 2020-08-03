@@ -15,7 +15,7 @@ class SettingsPage extends Component {
   };
 
   render() {
-    const { job, parentPath, match, redirectorFactory } = this.props;
+    const { job, parentPath, match } = this.props;
     const thisPath = match.url;
 
     const crumbChain = [
@@ -41,10 +41,10 @@ class SettingsPage extends Component {
           }
         ],
         PageComp,
-        pageName,
-        redirector: redirectorFactory(routePath)
+        pageName
       };
     }
+
     const childRoutes = [
       getRouteInfoObj('day-cutoff', 'Day Cutoff', DayCutoff),
       getRouteInfoObj('week-begins', 'Week Cutoff', WeekBegins),
@@ -63,9 +63,15 @@ class SettingsPage extends Component {
                 render={props => (
                   <>
                     <PageTitle crumbChain={RouteInfo.crumbChain} />
-                    <RouteInfo.PageComp {...props} />
+                    <RouteInfo.PageComp
+                      {...{
+                        ...props,
+                        job
+                      }}
+                    />
                   </>
                 )}
+                key={RouteInfo.path}
               />
             )
           )}
@@ -74,7 +80,12 @@ class SettingsPage extends Component {
             render={props => (
               <>
                 <PageTitle {...{ crumbChain }} />
-                <Landing {...{ childRoutes, ...props }} />
+                <Landing
+                  {...{
+                    childRoutes,
+                    ...props
+                  }}
+                />
               </>
             )}
           />

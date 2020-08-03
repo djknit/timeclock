@@ -120,7 +120,8 @@ class MainApp extends Component {
 
     const buildPath = subpath => `${match.path}/${subpath}`;
 
-    const redirectToJobPage = jobId => history.push(buildPath(`job/${jobId}`));
+    const getJobPagePath = jobId => buildPath(`job/${jobId}`);
+    const redirectToJobPage = jobId => history.push(getJobPagePath(jobId));
     const returnToDashboard = () => history.push(match.path);
 
     const openNewJobModal = () => toggleNewJobModal(true);
@@ -141,10 +142,13 @@ class MainApp extends Component {
           accountEditingModalOpenerFactory,
           accountPropDeletingModalOpenerFactory,
           areAnyModalsOpen,
-          setAreAnyModalsOpen
+          setAreAnyModalsOpen,
+          getJobPagePath
         }}
       />
     );
+
+    const dashboardPath = buildPath(dashboardPathName);
 
     return (
       <>
@@ -160,7 +164,7 @@ class MainApp extends Component {
         <div style={style.mainContentArea}>
           <Switch>
             <Route
-              path={buildPath(dashboardPathName)}
+              path={dashboardPath}
               render={renderDashboard}
             />
             {/* '/app' is redirected to '/app/dashboard' in componentDidMount. Next route prevents glitchy looking effect of rendering the 404 page momentarily before redirecting to '/app/dashboard'. */}
@@ -178,7 +182,8 @@ class MainApp extends Component {
                     catchApiUnauthorized,
                     areAnyModalsOpen,
                     returnToDashboard,
-                    setAreAnyModalsOpen
+                    setAreAnyModalsOpen,
+                    dashboardPath
                   }}
                 />
               )}

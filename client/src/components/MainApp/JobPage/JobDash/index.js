@@ -18,14 +18,14 @@ class _JobDash_needsData extends Component {
     const { state, props } = this;
     const {
       job,
-      returnToDashboard,
       areAnyModalsOpen,
-      goToJobSettings,
-      goToTimePage,
       toggleEditJobNameModal,
       toggleDeleteJobModal,
       windowWidth,
-      settingsSubPathRedirectorFactory
+      buildSettingsSubPath,
+      jobSettingsPath,
+      timePagePath,
+      dashboardPath
     } = props;
 
     const style = getStyle(windowWidth);
@@ -35,9 +35,9 @@ class _JobDash_needsData extends Component {
         <PageTitle>JOB:&nbsp;{job.name}</PageTitle>
         <QuickNav
           {...{
-            returnToDashboard,
-            goToJobSettings,
-            goToTimePage
+            jobSettingsPath,
+            timePagePath,
+            dashboardPath
           }}
           disabled={areAnyModalsOpen}
           style={style.quickNav}
@@ -57,7 +57,7 @@ class _JobDash_needsData extends Component {
             style={style.menu}
             {...{
               job,
-              settingsSubPathRedirectorFactory
+              buildSettingsSubPath
             }}
           />
         </div>
