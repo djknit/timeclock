@@ -69,26 +69,26 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
           </p>
           {processedValue.overtime && (
             <>
-              <p style={style.subDetailsP}>
+              <p style={style.subDetailsPNotLast}>
                 <strong style={style.valueLabel}>OT Type:</strong>
                 &ensp;
                 {processedValue.overtime.type}
               </p>
               {processedValue.overtime.useMultiplier && (
                 <>
-                  <p style={style.subDetailsP}>
+                  <p style={style.subDetailsPNotLast}>
                     <strong style={style.valueLabel}>OT Multiplier:</strong>
                     &ensp;
                     {processedValue.overtime.rateMultiplier} x [base rate]
                   </p>
                 </>
               )}
-              <p style={style.subDetailsP}>
+              <p style={style.subDetailsPNotLast}>
                 <strong style={style.valueLabel}>OT Rate:</strong>
                 &ensp;
                 {processedValue.overtime.detailedRate}
               </p>
-              <p style={style.subDetailsP}>
+              <p style={style.lastSubDetailsP}>
                 <strong style={style.valueLabel}>OT Begins After:</strong>
                 &ensp;
                 {processedValue.overtime.cutoff}

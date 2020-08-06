@@ -7,7 +7,7 @@ function WeekBegins({
 }) {
 
   return (
-    <ContentArea title="Day Cutoff Schedule"></ContentArea>
+    <ContentArea title="Week Cutoff Schedule"></ContentArea>
   );
 }
 

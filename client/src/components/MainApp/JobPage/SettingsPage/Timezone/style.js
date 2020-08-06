@@ -1,3 +1,8 @@
 export default function getStyle() {
-  return {};
+  return {
+    table: {
+      width: '100%',
+      textAlign: 'center'
+    }
+  };
 };
