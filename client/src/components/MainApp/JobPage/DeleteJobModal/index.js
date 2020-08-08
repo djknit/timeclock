@@ -84,7 +84,7 @@ class DeleteJobModal extends Component {
       });
     })
     .then(res => {
-      console.log(res)
+      // console.log(res)
       let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,

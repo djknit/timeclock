@@ -19,6 +19,7 @@ import { TextInput, ProgressBar } from '../../formPieces';
 import { addData } from '../../higherOrder';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
+
 function getVariableInputAttrs(propToEditName) {
   if (!propToEditName) return {};
   let type, iconClass;

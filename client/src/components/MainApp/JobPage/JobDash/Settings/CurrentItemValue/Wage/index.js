@@ -23,11 +23,11 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
   render() {
 
     const { sectionToggle, value, pseudoState, pseudoHandlers, disabled } = this.props;
-    console.log(value)
+    // console.log(value)
 
     // const currenySymbol = getCurrencySymbol(value.currency);
     const processedValue = processWageValueForDisplay(value);
-    console.log(processedValue)
+    // console.log(processedValue)
 
     const style = getStyle(sectionToggle.styles, pseudoState);
 

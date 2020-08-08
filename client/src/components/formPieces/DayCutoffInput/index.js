@@ -4,8 +4,8 @@ import {
   getMinutesFromHoursAndMinutes,
   getTextOfHoursAndMinutes,
   getHoursAndMinutesFromMinutes
-} from '../../../utilities';
-import BoxInputFrame from '../../BoxInputFrame';
+} from '../../utilities';
+import BoxInputFrame from '../BoxInputFrame';
 
 function getHourOptions(is24hr) {
   let options = [];
