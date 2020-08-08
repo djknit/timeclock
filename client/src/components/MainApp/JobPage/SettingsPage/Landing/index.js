@@ -3,7 +3,7 @@ import getStyle from './style';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
 
-function Landing({
+function LandingPage({
   childRoutes
 }) {
 
@@ -31,4 +31,4 @@ function Landing({
   );
 }
 
-export default Landing;
+export default LandingPage;

@@ -6,6 +6,7 @@ import WeekBegins from './WeekBegins';
 import DayCutoff from './DayCutoff';
 import Timezone from './Timezone';
 import Wage from './Wage';
+import Setting from './Setting';
 import All from './All';
 
 class SettingsPage extends Component {
@@ -29,7 +30,7 @@ class SettingsPage extends Component {
       }
     ];
 
-    function getRouteInfoObj(pathName, pageName, PageComp) {
+    function getRouteInfoObj(pathName, pageName, settingPropName, PageComp) {
       const routePath = `${thisPath}/${pathName}`;
       return {
         path: routePath,
@@ -40,17 +41,18 @@ class SettingsPage extends Component {
             url: routePath
           }
         ],
-        PageComp,
-        pageName
+        settingPropName,
+        pageName,
+        PageComp
       };
     }
 
     const childRoutes = [
-      getRouteInfoObj('day-cutoff', 'Day Cutoff', DayCutoff),
-      getRouteInfoObj('week-begins', 'Week Cutoff', WeekBegins),
-      getRouteInfoObj('timezone', 'Timezone', Timezone),
-      getRouteInfoObj('wage', 'Wage', Wage),
-      getRouteInfoObj('all', 'All Settings', All)
+      getRouteInfoObj('day-cutoff', 'Day Cutoff', 'dayCutoff'),
+      getRouteInfoObj('week-begins', 'Week Cutoff', 'weekBegins'),
+      getRouteInfoObj('timezone', 'Timezone', 'timezone'),
+      getRouteInfoObj('wage', 'Wage', 'wage'),
+      getRouteInfoObj('all', 'All Settings', undefined, All)
     ];
 
     return (
@@ -63,12 +65,18 @@ class SettingsPage extends Component {
                 render={props => (
                   <>
                     <PageTitle crumbChain={RouteInfo.crumbChain} />
-                    <RouteInfo.PageComp
-                      {...{
-                        ...props,
-                        job
-                      }}
-                    />
+                    {RouteInfo.settingPropName ? (
+                      <Setting
+                        {...{
+                          ...props,
+                          job
+                        }}
+                        settingName={RouteInfo.settingPropName}
+                        settingDisplayName={RouteInfo.pageName}
+                      />
+                    ) : (
+                      <RouteInfo.PageComp {...props} />
+                    )}
                   </>
                 )}
                 key={RouteInfo.path}
