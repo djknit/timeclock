@@ -7,7 +7,7 @@ import {
   constants,
   getValidTimezones,
   guessUserTimezone,
-  getTimezoneAbbreviation,
+  getTimezoneOptions,
   processCurrencyInputValue,
   changeHandlerFactoryFactory,
   validateWageInput,
@@ -62,15 +62,7 @@ function getStartingState() {
     secondsUntilRedirect: undefined
   };
 }
-const timezoneOptions = getValidTimezones().map(
-  tzName => {
-    const abbreviation = getTimezoneAbbreviation(tzName);
-    return {
-      name: `${tzName} (${abbreviation})`,
-      value: tzName
-    };
-  }
-);
+const timezoneOptions = getTimezoneOptions();
 
 class _NewJobModal_needsCollapsingAndData extends Component {
   constructor(props) {
@@ -279,6 +271,8 @@ class _NewJobModal_needsCollapsingAndData extends Component {
       windowWidth
     } = props;
 
+    if (!isActive) return <></>;
+    
     const isFormActive = isActive && !isLoading && !hasSuccess;
 
     const topLevelFieldLabelRatio = 5.8;

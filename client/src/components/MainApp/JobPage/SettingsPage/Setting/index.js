@@ -1,69 +1,79 @@
-import React from 'react';
+import React, { Component } from 'react';
 import getStyle from './style';
 import { formatMyDate } from '../../utilities';
 import ContentArea from '../../../ContentArea';
 import Button from '../../../../Button';
+import EditValueModal from '../EditValueModal';
+import DeleteValueModal from '../DeleteValueModal';
+import ChangeDateModal from '../ChangeDateModal';
+import ValueSchedule from './ValueSchedule';
 
-function Setting({
-  job,
-  settingName,
-  settingDisplayName
-}) {
+class Setting extends Component {
+  constructor(props) {
+    super(props);
+    this.modalTogglerFactory = this.modalTogglerFactory.bind(this);
+    this.state = {
+      indexOfSchedEntryToEdit: undefined,
+      isEditValueModalOpen: false,
+      isDeleteValueModalOpen: false,
+      isChangeDateModalOpen: false
+    };
+  };
 
-  const valueSchedule = job[settingName];
+  modalTogglerFactory(modalIsOpenStatePropName) {
+    return (isOpenAfterToggle, indexOfSchedEntryToEdit) => {
+      const isOpenState = { [modalIsOpenStatePropName]: !!isOpenAfterToggle };
+      this.setState(
+        indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0 ?
+        { ...isOpenState, indexOfSchedEntryToEdit } :
+        isOpenState
+      );
+    };
+  };
 
-  const style = getStyle();
+  render() {
+    const { modalTogglerFactory } = this;
+    const { job, settingName, settingDisplayName } = this.props;
+    const {
+      indexOfSchedEntryToEdit, isEditValueModalOpen, isDeleteValueModalOpen, isChangeDateModalOpen
+    } = this.state;
+    
+    const valueSchedule = job[settingName];
 
-  return (
-    <ContentArea title={`${settingDisplayName} Value Schedule`}>
-      <table style={style.table} className="table">
-        <thead>
-          <tr>
-            <th style={style.td}>
-              Start Date
-            </th>
-            <th style={style.td}>
-              Value
-            </th>
-            <th style={style.td} />
-          </tr>
-        </thead>
-        <tbody>
-          {valueSchedule.map(
-            ({ value, startDate, _id }, index) => (
-              <tr key={_id}>
-                <td style={style.td}>
-                  {index === 0 ? (
-                    <>&mdash;</>
-                  ) : (
-                    formatMyDate(startDate)
-                  )}
-                </td>
-                <td style={style.td}>
-                  {value}
-                </td>
-                <td style={style.td}>
-                  <Button styles={style.button} theme="primary">
-                    <i className="fas fa-edit" /> Edit Value
-                  </Button>
-                  {index !== 0 && (
-                    <>
-                      <Button styles={style.button} theme="primary">
-                        <i className="fas fa-exchange-alt" /> Change Date
-                      </Button>
-                      <Button styles={style.button} theme="danger">
-                        <i className="fas fa-trash-alt" /> Remove Value
-                      </Button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            )
-          )}
-        </tbody>
-      </table>
-    </ContentArea>
-  );
+    const style = getStyle();
+
+    const toggleEditValueModal = modalTogglerFactory('isEditValueModalOpen');
+    const toggleDeleteValueModal = modalTogglerFactory('isDeleteValueModalOpen');
+    const toggleChangeDateModal = modalTogglerFactory('isChangeDateModalOpen');
+  
+    const commonModalAttrs = { settingName, settingDisplayName, indexOfSchedEntryToEdit, valueSchedule };
+  
+    return (
+      <>
+        <ContentArea title={`${settingDisplayName} Value Schedule`}>
+          <ValueSchedule
+            {...{
+              valueSchedule,
+              toggleEditValueModal,
+              toggleDeleteValueModal,
+              toggleChangeDateModal
+            }}
+          />
+        </ContentArea>
+        <EditValueModal
+          {...commonModalAttrs}
+          isActive={isEditValueModalOpen}
+          closeModal={() => toggleEditValueModal(false)}
+        />
+        {/* <ChangeDateModal
+          {...commonModalAttrs}
+        />
+        <DeleteValueModal
+          {...commonModalAttrs}
+        /> */}
+      </>
+    );
+  };
 }
 
 export default Setting;

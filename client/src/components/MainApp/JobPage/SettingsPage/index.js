@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import PageTitle from '../../PageTitle';
 import Landing from './Landing';
-import WeekBegins from './WeekBegins';
-import DayCutoff from './DayCutoff';
-import Timezone from './Timezone';
-import Wage from './Wage';
 import Setting from './Setting';
 import All from './All';
 
@@ -75,7 +71,12 @@ class SettingsPage extends Component {
                         settingDisplayName={RouteInfo.pageName}
                       />
                     ) : (
-                      <RouteInfo.PageComp {...props} />
+                      <RouteInfo.PageComp
+                        {...{
+                          ...props,
+                          job
+                        }}
+                      />
                     )}
                   </>
                 )}
