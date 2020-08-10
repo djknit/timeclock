@@ -142,6 +142,10 @@ class _DeleteAccountPropModal_needsData extends Component {
       password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, secondsUntilRedirect
     } = state;
 
+    if (!isActive) {
+      return <></>;
+    }
+
     const propToDeleteCurrentValue = user && user[propToDeleteName];
     const capPropToDeleteName = capitalizeFirstLetter(propToDeleteName);
 

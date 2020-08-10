@@ -14,8 +14,7 @@ function PageTitle({
   return (
     <ContentArea style={completeStyle.pageTitleArea}>
       <ContentAreaTitle style={completeStyle.pageTitle} size={2}>
-        {
-          crumbChain ?
+        {crumbChain ? (
           crumbChain.map(
             (crumb, index) => (
               index !== crumbChain.length - 1 ? (
@@ -31,9 +30,10 @@ function PageTitle({
                 </span>
               )
             )
-          ) :
+          )
+        ) : (
           children
-        }
+        )}
       </ContentAreaTitle>
     </ContentArea>
   );

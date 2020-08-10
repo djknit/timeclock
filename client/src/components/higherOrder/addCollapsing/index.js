@@ -55,11 +55,13 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     }
 
     toggle() {
+      console.log('~~~~~~~~~~~~~~~~~~~~\nTOGGLE')
+      console.log(this.state)
       this.setState({
         isExpanded: !this.state.isExpanded,
         isAnimationOn: true,
         hasBeenExpanded: true
-      });
+      }, () => console.log(this.state));
     };
 
     setIsExpanded(newIsExpandedValue) {
@@ -82,7 +84,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       const { containerHeight, isExpanded, isAnimationOn, hasBeenExpanded } = state;
 
       const styles = getStyle(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated);
-      console.log({containerHeight, isExpanded, propName})
+      // console.log({containerHeight, isExpanded, propName})
 
       const propsToPass = {
         ...props,

@@ -22,9 +22,20 @@ const getWeekdays = () => (
   ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 );
 
+const getWeekdayOptions = () => (
+  getWeekdays()
+  .map(
+    (dayName, index) => ({
+      name: dayName,
+      value: index
+    })
+  )
+);
+
 export {
   getMinutesFromHoursAndMinutes,
   getHoursAndMinutesFromMinutes,
   getTextOfHoursAndMinutes,
-  getWeekdays
+  getWeekdays,
+  getWeekdayOptions
 };

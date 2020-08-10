@@ -84,7 +84,7 @@ class DeleteJobModal extends Component {
       });
     })
     .then(res => {
-      console.log(res)
+      // console.log(res)
       let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
@@ -134,6 +134,10 @@ class DeleteJobModal extends Component {
     const {
       password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, secondsUntilRedirect
     } = state;
+
+    if (!isActive) {
+      return <></>;
+    }
 
     const closeMessage = () => this.setState({ showMessage: false });
 

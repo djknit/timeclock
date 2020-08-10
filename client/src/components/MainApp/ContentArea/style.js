@@ -15,7 +15,7 @@ export default function getStyle(additionalStyle) {
 
 function getTitleStyle(additionalStyle) {
   return {
-    // fontFamily: sectionHeadingFontFam,
+    textAlign: 'center',
     ...additionalStyle
   };
 }

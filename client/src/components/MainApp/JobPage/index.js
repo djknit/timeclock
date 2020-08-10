@@ -86,7 +86,7 @@ class _JobPage_needsData extends Component {
     const {
       toggleEditJobNameModal, toggleDeleteJobModal, editJobNameInputRef, deleteJobModalInputRef
     } = this;
-    const { job, match, returnToDashboard, history, catchApiUnauthorized } = this.props;
+    const { job, match, returnToDashboard, history, catchApiUnauthorized, dashboardPath } = this.props;
     const {
       isLoading, problemMessages, isEditJobNameModalActive, isDeleteJobModalActive
     } = this.state;
@@ -97,12 +97,9 @@ class _JobPage_needsData extends Component {
     const jobDashPath = buildPath('');
     const jobSettingsPath = buildPath('settings');
     const timePagePath = buildPath('time');
-    const redirectorFactory = path => {
-      return () => history.push(path);
+    const buildSettingsSubPath = subPath => {
+      return `${jobSettingsPath}/${subPath}`;
     };
-    const goToJobDash = redirectorFactory(jobDashPath);
-    const goToJobSettings = redirectorFactory(jobSettingsPath);
-    const goToTimePage = redirectorFactory(timePagePath);
 
     const commonRouteAttributes = {
       job,
@@ -143,11 +140,12 @@ class _JobPage_needsData extends Component {
                   {...{
                     ...props,
                     ...commonRouteAttributes,
-                    returnToDashboard,
-                    goToJobSettings,
-                    goToTimePage,
                     toggleEditJobNameModal,
-                    toggleDeleteJobModal
+                    toggleDeleteJobModal,
+                    buildSettingsSubPath,
+                    jobSettingsPath,
+                    timePagePath,
+                    dashboardPath
                   }}
                 />
               )}

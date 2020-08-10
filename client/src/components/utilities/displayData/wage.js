@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  getCurrencyAmountDisplay, getCurrencyName, getCurrencyAmountDisplayAndRounded, getCurrencyMutiplierDisplay
+  getCurrencyAmountDisplay, getCurrencyName, getCurrencyMutiplierDisplay
 } from '../elemental';
 
 function processWageValueForDisplay(wageValue) {

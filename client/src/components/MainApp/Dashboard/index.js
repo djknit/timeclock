@@ -19,7 +19,8 @@ class _Dashboard_needsData extends Component {
       catchApiUnauthorized,
       accountEditingModalOpenerFactory,
       accountPropDeletingModalOpenerFactory,
-      areAnyModalsOpen
+      areAnyModalsOpen,
+      getJobPagePath
     } = this.props;
 
     const style = getStyle(this.props.windowWidth);
@@ -42,7 +43,8 @@ class _Dashboard_needsData extends Component {
               redirectToJobPage,
               openNewJobModal,
               catchApiUnauthorized,
-              areAnyModalsOpen
+              areAnyModalsOpen,
+              getJobPagePath
             }}
           />
         </div>

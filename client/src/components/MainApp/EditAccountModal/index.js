@@ -19,6 +19,7 @@ import { TextInput, ProgressBar } from '../../formPieces';
 import { addData } from '../../higherOrder';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
+
 function getVariableInputAttrs(propToEditName) {
   if (!propToEditName) return {};
   let type, iconClass;
@@ -246,6 +247,10 @@ class _EditAccountModal_needsData extends Component {
       showMessage,
       secondsUntilRedirect
     } = state;
+
+    if (!isActive) {
+      return <></>;
+    }
 
     const variableUpdateInputAttrs = getVariableInputAttrs(propToEditName);
 

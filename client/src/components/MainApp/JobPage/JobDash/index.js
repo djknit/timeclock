@@ -6,8 +6,9 @@ import Button from '../../../Button';
 import QuickNav from './QuickNav';
 import Basics from './Basics';
 import Settings from './Settings';
+import { addData } from '../../../higherOrder';
 
-class JobDash extends Component {
+class _JobDash_needsData extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -16,19 +17,27 @@ class JobDash extends Component {
   render() {
     const { state, props } = this;
     const {
-      job, returnToDashboard, areAnyModalsOpen, goToJobSettings, goToTimePage, toggleEditJobNameModal, toggleDeleteJobModal
+      job,
+      areAnyModalsOpen,
+      toggleEditJobNameModal,
+      toggleDeleteJobModal,
+      windowWidth,
+      buildSettingsSubPath,
+      jobSettingsPath,
+      timePagePath,
+      dashboardPath
     } = props;
 
-    const style = getStyle();
+    const style = getStyle(windowWidth);
 
     return (
       <>
         <PageTitle>JOB:&nbsp;{job.name}</PageTitle>
         <QuickNav
           {...{
-            returnToDashboard,
-            goToJobSettings,
-            goToTimePage
+            jobSettingsPath,
+            timePagePath,
+            dashboardPath
           }}
           disabled={areAnyModalsOpen}
           style={style.quickNav}
@@ -47,7 +56,8 @@ class JobDash extends Component {
             disabled={areAnyModalsOpen}
             style={style.menu}
             {...{
-              job
+              job,
+              buildSettingsSubPath
             }}
           />
         </div>
@@ -55,5 +65,7 @@ class JobDash extends Component {
     );
   };
 }
+
+const JobDash = addData(_JobDash_needsData, 'windowWidth', windowWidthService);
 
 export default JobDash;

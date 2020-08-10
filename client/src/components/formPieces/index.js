@@ -7,6 +7,7 @@ import RadioInput from './RadioInput';
 import DurationInput from './DurationInput';
 import WkDayCutoffsInput from './WkDayCutoffsInput';
 import ProgressBar from './ProgressBar';
+import DayCutoffInput from './DayCutoffInput';
 
 export {
   TextInput,
@@ -17,5 +18,6 @@ export {
   RadioInput,
   DurationInput,
   WkDayCutoffsInput,
-  ProgressBar
+  ProgressBar,
+  DayCutoffInput
 };

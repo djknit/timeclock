@@ -19,10 +19,17 @@ function selectInput({
   isInline,
   fieldToLabelRatio,
   fieldStyle,
-  fieldLabelStyle
+  fieldLabelStyle,
+  labelStyle
 }) {
 
   const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
+
+  const inputFrameStyles = {
+    field: fieldStyle,
+    fieldLabel: fieldLabelStyle,
+    label: labelStyle
+  };
 
   return (
     <BoxInputFrame
@@ -34,7 +41,7 @@ function selectInput({
         fieldToLabelRatio
       }}
       hasIcon={iconClass ? 'left' : false}
-      styles={{ field: fieldStyle, fieldLabel: fieldLabelStyle }}
+      styles={inputFrameStyles}
     >
       <div className={`select is-fullwidth${hasProblem ? ' is-danger' : ''}`}>
         <select

@@ -8,21 +8,35 @@ function getWeekBeginsText(weekBeginsValue) {
 
 function getDayCutoffText(dayCutoffValue) {
   const _cutoffValue = dayCutoffValue || 0;
-  const cutoffInMinutes = Math.floor((_cutoffValue / (1000 * 60)) + .5);
+  const cutoffInMinutes = Math.round(_cutoffValue / (1000 * 60));
   const isCutoffNegative = cutoffInMinutes < 0;
   const cutoffDisplayHours = Math.floor(Math.abs(cutoffInMinutes) / 60);  
   const cutoffDisplayMinutes = Math.abs(cutoffInMinutes) % 60;
-  const minutesPerDay = 24 * 60;
-  const cutoffTimeInMinutes = (cutoffInMinutes + minutesPerDay) % minutesPerDay;
-  const cutoffTime = {
-    hours: (Math.floor(cutoffTimeInMinutes / 60) % 12) || 12, // should translate from 24hr style to AM/PM style
-    minutes: cutoffTimeInMinutes % 60,
-    isPm: cutoffTimeInMinutes >= 12 * 60
-  };
-  let result = `${isCutoffNegative ? '-' : '+'} ${cutoffDisplayHours} hr.`;
-  if (cutoffDisplayMinutes) result += `, ${cutoffDisplayMinutes} min.`;
-  result += ` (${cutoffTime.hours}:${cutoffTime.minutes < 10 ? '0' : ''}${cutoffTime.minutes} ${cutoffTime.isPm ? 'PM' : 'AM'})`;
+  const cutoffTime = getDayCutoffTime(cutoffInMinutes, false);
+  let result = `${isCutoffNegative ? '-' : '+'} ${cutoffDisplayHours} hr`;
+  if (cutoffDisplayMinutes) result += ` ${cutoffDisplayMinutes} min`;
+  result += ` (${cutoffTime.hour}:${cutoffTime.minute < 10 ? '0' : ''}${cutoffTime.minute} ${cutoffTime.isPm ? 'PM' : 'AM'})`;
   return result;
+}
+
+function getDayCutoffTime(cutoffValueInMinutes, is24hr) {
+  const minutesPerDay = 24 * 60;
+  const cutoffTimeInMinutes = (cutoffValueInMinutes + minutesPerDay) % minutesPerDay;
+  let time = {
+    hour: Math.floor(cutoffTimeInMinutes / 60),
+    minute: cutoffTimeInMinutes % 60,
+    is24hr: !!is24hr
+  };
+  if (!is24hr) {
+    time.isPm = time.hour >= 12;
+    time.hour = (time.hour % 12) || 12;
+  }
+  console.log(time)
+  return time;
+}
+
+function getTimeText({ hours, minutes, isPm }) {
+  return `${hours}:${minutes < 10 ? '0' : ''}${minutes} ${isPm ? 'PM' : 'AM'}`;
 }
 
 function getSimpleJobSettingValueText(settingName, value) {
@@ -30,10 +44,10 @@ function getSimpleJobSettingValueText(settingName, value) {
     case 'dayCutoff':
       return getDayCutoffText(value);
     case 'weekBegins':
-      return getWeekBeginsText(settingName, value);
+      return getWeekBeginsText(value);
     case 'timezone':
       return value;
   }
 }
 
-export { getDayCutoffText, getWeekBeginsText, getSimpleJobSettingValueText };
+export { getDayCutoffText, getDayCutoffTime, getWeekBeginsText, getSimpleJobSettingValueText };
