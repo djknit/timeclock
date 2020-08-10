@@ -135,6 +135,10 @@ class DeleteJobModal extends Component {
       password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, secondsUntilRedirect
     } = state;
 
+    if (!isActive) {
+      return <></>;
+    }
+
     const closeMessage = () => this.setState({ showMessage: false });
 
     return (

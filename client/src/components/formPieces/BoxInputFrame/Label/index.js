@@ -38,24 +38,26 @@ export default Label;
 
 function TopLevelElement({ children, isRadio, selectedRadioInput, ...attributes }) {
   return (
-    isRadio ?
-    <span
-      {...attributes}
-      aria-hidden
-      onClick={() => {
-        if (selectedRadioInput && selectedRadioInput.current) {
-          selectedRadioInput.current.focus();
-          setTimeout(
-            () => selectedRadioInput.current.focus(),
-            250
-          );
-        }
-      }}
-    >
-      {children}
-    </span> :
-    <label {...attributes}>
-      {children}
-    </label>
+    isRadio ? (
+      <span
+        {...attributes}
+        aria-hidden
+        onClick={() => {
+          if (selectedRadioInput && selectedRadioInput.current) {
+            selectedRadioInput.current.focus();
+            setTimeout(
+              () => selectedRadioInput.current.focus(),
+              250
+            );
+          }
+        }}
+      >
+        {children}
+      </span>
+    ) : (
+      <label {...attributes}>
+        {children}
+      </label>
+    )
   );
 }

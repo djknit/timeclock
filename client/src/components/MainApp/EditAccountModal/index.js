@@ -248,6 +248,10 @@ class _EditAccountModal_needsData extends Component {
       secondsUntilRedirect
     } = state;
 
+    if (!isActive) {
+      return <></>;
+    }
+
     const variableUpdateInputAttrs = getVariableInputAttrs(propToEditName);
 
     const isMissingVerifyPassword = propToEditName === 'password' && !verifyUpdatedPassword;

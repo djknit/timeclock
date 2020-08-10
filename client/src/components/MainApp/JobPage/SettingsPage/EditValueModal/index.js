@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { api, constants, changeHandlerFactoryFactory, getDayCutoffTime } from '../../utilities';
+import { api, constants, changeHandlerFactoryFactory, getDayCutoffTime, formatMyDate } from '../../utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
@@ -38,6 +38,7 @@ class EditValueModal extends Component {
     super(props);
     this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
     this.submit = this.submit.bind(this);
+    this.reset = this.reset.bind(this);
     this.state = getStartingState();
   };
 
@@ -66,14 +67,21 @@ class EditValueModal extends Component {
   };
 
   reset() {
-    const { indexOfSchedEntryToEdit, valueSchedule } = this.props;
-    this.setState(getStartingState(indexOfSchedEntryToEdit && valueSchedule[indexOfSchedEntryToEdit].value));
+    const { indexOfSchedEntryToEdit, valueSchedule, settingName } = this.props;
+    const currentValue = (
+      (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) &&
+      valueSchedule[indexOfSchedEntryToEdit].value
+    );
+    this.setState(getStartingState(settingName, currentValue), () => console.log(this.state));
   };
 
   componentDidUpdate(prevProps) {
     const { indexOfSchedEntryToEdit, valueSchedule } = this.props;
     const previousIndex = prevProps.indexOfSchedEntryToEdit;
-    const currentEntryId = (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) && valueSchedule[indexOfSchedEntryToEdit]._id;
+    const currentEntryId = (
+      (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) &&
+      valueSchedule[indexOfSchedEntryToEdit]._id
+    );
     const previousEntryId = (previousIndex || previousIndex === 0) && prevProps.valueSchedule[previousIndex]._id;
     if (currentEntryId !== previousEntryId) this.reset();
   };
@@ -87,7 +95,9 @@ class EditValueModal extends Component {
       hasSuccess, hasProblem, problems, problemMessages, showMessage, secondsUntilRedirect, updatedValue, isLoading
     } = this.state;
 
-    if (!isActive) return <></>;
+    if (!isActive) {
+      return <></>;
+    }
 
     const entryToEdit = valueSchedule[indexOfSchedEntryToEdit];
     const currentValue = entryToEdit.value;
@@ -109,7 +119,7 @@ class EditValueModal extends Component {
           isActive,
           closeModal
         }}
-        title={``}
+        title={`Edit ${settingDisplayName} Schedule Entry Value`}
         isCloseButtonDisabled={isLoading}
         footerContent={
           <>
@@ -193,7 +203,7 @@ class EditValueModal extends Component {
             problems={inputProblems}
             hasProblem={inputProblems}
             isActive={!isLoading && !hasSuccess}
-            label={`New ${settingDisplayName}:`}
+            label={`New ${settingDisplayName} Value:`}
           />
         </form>
       </ModalSkeleton>
@@ -208,10 +218,10 @@ function getDateRangeText(startDate, endDate) {
     return 'all time';
   }
   if (!startDate) {
-    return `all dates prior to and including `;
+    return `all dates prior to and including ${formatMyDate(endDate)}`;
   }
   if (!endDate) {
-    return `all dates on or after `;
+    return `all dates on or after ${formatMyDate(startDate)}`;
   }
-  return ``;
+  return `${formatMyDate(startDate)} until ${formatMyDate(endDate)}`;
 }

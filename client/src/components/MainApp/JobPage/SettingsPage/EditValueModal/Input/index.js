@@ -13,7 +13,8 @@ function Input({
       return (
         <SelectInput
           {...otherProps}
-          isInline
+          // fieldLabelStyle={{alignText: 'left'}}
+          labelStyle={{ textAlign: 'left'}}
           options={getTimezoneOptions()}
           placeholder="The timezone your hours are counted in..."
         />

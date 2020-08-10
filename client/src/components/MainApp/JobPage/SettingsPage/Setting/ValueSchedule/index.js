@@ -1,6 +1,7 @@
 import React from 'react';
 import {
-  formatMyDate
+  formatMyDate,
+  getSimpleJobSettingValueText
 } from '../../../utilities';
 import getStyle from './style';
 import Button from '../../../../../Button';
@@ -13,6 +14,18 @@ function ValueSchedule({
 }) {
 
   const style = getStyle();
+
+  function SchedEntryButton({ text, toggle, iconClass, isRemove, index }) {
+    return (
+      <Button
+        styles={style.button}
+        theme={isRemove ? 'danger' : 'primary'}
+        onClick={() => toggle(true, index)}
+      >
+        <i className={iconClass} />&ensp;{text}
+      </Button>
+    );
+  }
 
   return (
     <table style={style.table} className="table">
@@ -42,27 +55,27 @@ function ValueSchedule({
                 {value}
               </td>
               <td style={style.td}>
-                <Button
-                  styles={style.button}
-                  theme="primary"
-                  onClick={() => toggleEditValueModal(true, index)}
-                >
-                  <i className="fas fa-edit" /> Edit Value
-                </Button>
+                <SchedEntryButton
+                  text="Edit Value"
+                  toggle={toggleEditValueModal}
+                  iconClass="fas fa-edit"
+                  {...{ index }}
+                />
                 {index !== 0 && (
                   <>
-                    <Button
-                      styles={style.button}
-                      theme="primary"
-                    >
-                      <i className="fas fa-exchange-alt" /> Change Date
-                    </Button>
-                    <Button
-                      styles={style.button}
-                      theme="danger"
-                    >
-                      <i className="fas fa-trash-alt" /> Remove Value
-                    </Button>
+                    <SchedEntryButton
+                      text="Change Date"
+                      toggle={toggleChangeDateModal}
+                      iconClass="fas fa-exchange-alt"
+                      {...{ index }}
+                    />
+                    <SchedEntryButton
+                      text="Remove Value"
+                      toggle={toggleDeleteValueModal}
+                      iconClass="fas fa-trash-alt"
+                      isRemove
+                      {...{ index }}
+                    />
                   </>
                 )}
               </td>

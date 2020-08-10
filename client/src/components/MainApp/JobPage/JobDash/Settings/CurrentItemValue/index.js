@@ -1,7 +1,7 @@
 import React from 'react';
-import { jobData as jobDataUtils, getSimpleJobSettingValueText } from '../../../utilities';
+import { jobData as jobDataUtils } from '../../../utilities';
 import getStyle from './style';
-import Wage from './Wage';
+import SettingValueDisplay from '../../../SettingValueDisplay';
 
 const { getMostRecentScheduleValueForDate, getDateForTime } = jobDataUtils;
 
@@ -15,22 +15,17 @@ function CurrentItemValueDisplay({
   const currentValue = getMostRecentScheduleValueForDate(currentDate, job[propName]);
   // console.log({ propName, currentValue })
 
-  const isWage = propName === 'wage'
-
   const style = getStyle();
 
   return (
-    (isWage && currentValue) ? (
-      <Wage value={currentValue} {...{ disabled }} />
-    ) : (
-      <p style={style.p}>
-        <strong style={style.valueLabel}>
-          Current Value:
-        </strong>
-        &ensp;
-        {isWage ? 'none' : getSimpleJobSettingValueText(propName, currentValue)}
-      </p>
-    )
+    <SettingValueDisplay
+      settingName={propName}
+      value={currentValue}
+      {...{ disabled }}
+      hasP
+      pStyle={style.p}
+      label="Current Value"
+    />
   );
 }
 

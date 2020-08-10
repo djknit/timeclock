@@ -163,6 +163,10 @@ class EditJobNameModal extends Component {
       secondsUntilRedirect
     } = state;
 
+    if (!isActive) {
+      return <></>;
+    }
+
     const closeMessage = () => this.setState({ showMessage: false });
 
     return (

@@ -55,11 +55,13 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     }
 
     toggle() {
+      console.log('~~~~~~~~~~~~~~~~~~~~\nTOGGLE')
+      console.log(this.state)
       this.setState({
         isExpanded: !this.state.isExpanded,
         isAnimationOn: true,
         hasBeenExpanded: true
-      });
+      }, () => console.log(this.state));
     };
 
     setIsExpanded(newIsExpandedValue) {
