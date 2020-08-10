@@ -56,7 +56,8 @@ class Setting extends Component {
               valueSchedule,
               toggleEditValueModal,
               toggleDeleteValueModal,
-              toggleChangeDateModal
+              toggleChangeDateModal,
+              settingName
             }}
           />
         </ContentArea>

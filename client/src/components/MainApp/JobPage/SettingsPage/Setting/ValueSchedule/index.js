@@ -5,15 +5,17 @@ import {
 } from '../../../utilities';
 import getStyle from './style';
 import Button from '../../../../../Button';
+import SettingValueDisplay from '../../../SettingValueDisplay';
 
 function ValueSchedule({
   valueSchedule,
   toggleEditValueModal,
   toggleDeleteValueModal,
-  toggleChangeDateModal
+  toggleChangeDateModal,
+  settingName
 }) {
 
-  const style = getStyle();
+  const style = getStyle(settingName === 'wage');
 
   function SchedEntryButton({ text, toggle, iconClass, isRemove, index }) {
     return (
@@ -32,9 +34,9 @@ function ValueSchedule({
       <thead>
         <tr>
           <th style={style.td}>
-            Start Date
+            Start&nbsp;Date
           </th>
-          <th style={style.td}>
+          <th style={style.valueTd}>
             Value
           </th>
           <th style={style.td} />
@@ -51,8 +53,14 @@ function ValueSchedule({
                   formatMyDate(startDate)
                 )}
               </td>
-              <td style={style.td}>
-                {value}
+              <td style={style.valueTd}>
+                <SettingValueDisplay
+                  {...{
+                    settingName,
+                    value
+                  }}
+                  detailsMarginTop=".4em"
+                />
               </td>
               <td style={style.td}>
                 <SchedEntryButton

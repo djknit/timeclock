@@ -36,7 +36,8 @@ function DayCutoffInput({
   isActive,
   fieldToLabelRatio,
   fieldStyle,
-  fieldLabelStyle
+  fieldLabelStyle,
+  labelStyle
 }) {
 
   const inputNamePrefix = `${sectionName ? sectionName + '-' : ''}${propName}`;
@@ -82,6 +83,12 @@ function DayCutoffInput({
 
   const style = getStyle(fieldStyle, fieldLabelStyle);
 
+  const inputFrameStyles = {
+    field: fieldStyle,
+    fieldLabel: fieldLabelStyle,
+    label: labelStyle
+  };
+
   let cutoffDisplay = getCutoffDisplayValue(value);
 
   return (
@@ -92,7 +99,7 @@ function DayCutoffInput({
         isInline,
         fieldToLabelRatio
       }}
-      styles={{ field: style.field, fieldLabel: style.fieldLabel }}
+      styles={inputFrameStyles}
     >
       <div className="select">
         <select

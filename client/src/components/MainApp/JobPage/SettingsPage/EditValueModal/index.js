@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { api, constants, changeHandlerFactoryFactory, getDayCutoffTime, formatMyDate } from '../../utilities';
+import {
+  api,
+  constants,
+  changeHandlerFactoryFactory,
+  getDayCutoffTime,
+  formatMyDate,
+  getSimpleJobSettingValueText
+} from '../../utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
@@ -28,6 +35,8 @@ function convertScheduleValueToStateProp(scheduleValue, settingName) {
     case 'dayCutoff':
       const valueInMinutes = Math.round(scheduleValue / (1000 * 60));
       return getDayCutoffTime(valueInMinutes, true);
+    case 'wage':
+      return {}
     default:
       return scheduleValue;
   }
@@ -154,7 +163,7 @@ class EditValueModal extends Component {
                 You are editing the {lowCaseSettingName} for {dateRangeText}.
               </NotificationText>
               <NotificationText isLast>
-                Enter the new {lowCaseSettingName} below.
+                Enter the new value below.
               </NotificationText>
             </Notification>
           )}
@@ -189,7 +198,11 @@ class EditValueModal extends Component {
               Current Value:
             </Tag>
             <Tag theme="info light" size={6}>
-              {currentValue || 'none'}
+              {(currentValue || currentValue === 0) ? (
+                getSimpleJobSettingValueText(settingName, currentValue)
+              ) : (
+                'none'
+              )}
             </Tag>
           </TagGroup>
           <Input

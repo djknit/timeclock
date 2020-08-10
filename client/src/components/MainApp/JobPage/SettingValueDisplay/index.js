@@ -10,7 +10,8 @@ function SettingValueDisplay({
   labelStyle,
   hasP,
   pStyle,
-  label
+  label,
+  detailsMarginTop
 }) {
 
   const isWage = settingName === 'wage'
@@ -33,7 +34,8 @@ function SettingValueDisplay({
           disabled,
           hasP,
           pStyle,
-          label
+          label,
+          detailsMarginTop
         }}
       />
     ) : (

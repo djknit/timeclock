@@ -15,7 +15,7 @@ function getDayCutoffText(dayCutoffValue) {
   const cutoffTime = getDayCutoffTime(cutoffInMinutes, false);
   let result = `${isCutoffNegative ? '-' : '+'} ${cutoffDisplayHours} hr`;
   if (cutoffDisplayMinutes) result += ` ${cutoffDisplayMinutes} min`;
-  result += ` (${cutoffTime.hours}:${cutoffTime.minutes < 10 ? '0' : ''}${cutoffTime.minutes} ${cutoffTime.isPm ? 'PM' : 'AM'})`;
+  result += ` (${cutoffTime.hour}:${cutoffTime.minute < 10 ? '0' : ''}${cutoffTime.minute} ${cutoffTime.isPm ? 'PM' : 'AM'})`;
   return result;
 }
 
@@ -23,13 +23,15 @@ function getDayCutoffTime(cutoffValueInMinutes, is24hr) {
   const minutesPerDay = 24 * 60;
   const cutoffTimeInMinutes = (cutoffValueInMinutes + minutesPerDay) % minutesPerDay;
   let time = {
-    hours: Math.floor(cutoffTimeInMinutes / 60),
-    minutes: cutoffTimeInMinutes % 60
+    hour: Math.floor(cutoffTimeInMinutes / 60),
+    minute: cutoffTimeInMinutes % 60,
+    is24hr: !!is24hr
   };
   if (!is24hr) {
-    time.isPm = time.hours >= 12;
-    time.hours = (time.hours % 12) || 12;
+    time.isPm = time.hour >= 12;
+    time.hour = (time.hour % 12) || 12;
   }
+  console.log(time)
   return time;
 }
 
