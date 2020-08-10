@@ -1,4 +1,5 @@
 import React from 'react';
+import { keyTriggerCheckerFactory } from '../../../utilities';
 import { addPseudoPseudoClasses, calculateStyleForPseudoClassState } from '../../../../higherOrder';
 
 function _TableRow_needsPseudo({
@@ -18,6 +19,7 @@ function _TableRow_needsPseudo({
       {...pseudoHandlers}
       {...{ onClick }}
       tabIndex={allowTabFocus ? 0 : -1}
+      onKeyDown={keyTriggerCheckerFactory(onClick)}
     >
       {children}
     </tr>

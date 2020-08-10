@@ -7,7 +7,7 @@ import getStyle from './style';
 import CollapsableSection from '../CollapsableSection';
 import RadioInput from '../RadioInput';
 import SelectInput from '../SelectInput';
-import DayCutoffInput from './DayCutoffInput';
+import DayCutoffInput from '../DayCutoffInput';
 
 const weekDayOptions = (
   getWeekdays()

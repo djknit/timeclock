@@ -35,12 +35,34 @@ function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggle
     {}
   );
 
+
+
   return {
     container: getSectionContentStyle(containerHeight, isExpanded, isAnimationOn),
     toggle: {
       cursor: 'pointer',
       ...arrowFlipAndAnimateProps
-    }
+    },
+    openerText: (
+      isAnimationOn ?
+      {
+        animationName: isExpanded ? 'fade-out' : 'fade-in',
+        ...universalToggleAnimationProps
+      } :
+      {
+        opacity: isExpanded ? 0 : 1
+      }
+    ),
+    closerText: (
+      isAnimationOn ?
+      {
+        animationName: isExpanded ? 'fade-in' : 'fade-out',
+        ...universalToggleAnimationProps
+      } :
+      {
+        opacity: isExpanded ? 1 : 0
+      }
+    )
   };
 };
 

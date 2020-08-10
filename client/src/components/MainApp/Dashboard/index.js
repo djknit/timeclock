@@ -4,9 +4,9 @@ import { windowWidthService } from '../../../data'
 import PageTitle from '../PageTitle';
 import Jobs from './Jobs';
 import Account from './Account';
-import { addData, addHeightTracking } from '../../higherOrder';
+import { addData } from '../../higherOrder';
 
-class _Dashboard_needsDataAndHeightTracking extends Component {
+class _Dashboard_needsData extends Component {
   constructor(props) {
     super(props);
   };
@@ -20,17 +20,16 @@ class _Dashboard_needsDataAndHeightTracking extends Component {
       accountEditingModalOpenerFactory,
       accountPropDeletingModalOpenerFactory,
       areAnyModalsOpen,
-      heightTracking
+      getJobPagePath
     } = this.props;
 
-    const style = getStyle(this.props.windowWidth, heightTracking.maxHeight);
+    const style = getStyle(this.props.windowWidth);
 
     return (
       <>
         <PageTitle>DASHBOARD</PageTitle>
         <div style={style.contentAreasRow}>
           <Account
-            areaRef={heightTracking.ref1}
             style={style.account}
             {...{
               accountEditingModalOpenerFactory,
@@ -39,13 +38,13 @@ class _Dashboard_needsDataAndHeightTracking extends Component {
             }}
           />
           <Jobs
-            areaRef={heightTracking.ref2}
             style={style.jobs}
             {...{
               redirectToJobPage,
               openNewJobModal,
               catchApiUnauthorized,
-              areAnyModalsOpen
+              areAnyModalsOpen,
+              getJobPagePath
             }}
           />
         </div>
@@ -54,10 +53,6 @@ class _Dashboard_needsDataAndHeightTracking extends Component {
   };
 }
 
-const _Dashboard_needsHeightTracking = (
-  addData(_Dashboard_needsDataAndHeightTracking, 'windowWidth', windowWidthService)
-);
-
-const Dashboard = addHeightTracking(_Dashboard_needsHeightTracking);
+const Dashboard = (addData(_Dashboard_needsData, 'windowWidth', windowWidthService));
 
 export default Dashboard;

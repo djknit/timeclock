@@ -1,25 +1,32 @@
 import React from 'react';
+import { jobData as jobDataUtils } from '../../../utilities';
 import getStyle from './style';
+import SettingValueDisplay from '../../../SettingValueDisplay';
+
+const { getMostRecentScheduleValueForDate, getDateForTime } = jobDataUtils;
 
 function CurrentItemValueDisplay({
-  label,
   propName,
-  valueSchedule,
-  isLast
+  job,
+  disabled
 }) {
+
+  const currentDate = getDateForTime(Date.now(), job, true);
+  const currentValue = getMostRecentScheduleValueForDate(currentDate, job[propName]);
+  // console.log({ propName, currentValue })
 
   const style = getStyle();
 
-  if (valueSchedule.length === 1) {
-    return (
-      // <p style={style.p}>
-        <>Lorem ipsum doot doodle doot doo</>
-      // </p>
-    );
-  }
-
+  return (
+    <SettingValueDisplay
+      settingName={propName}
+      value={currentValue}
+      {...{ disabled }}
+      hasP
+      pStyle={style.p}
+      label="Current Value"
+    />
+  );
 }
 
 export default CurrentItemValueDisplay;
-
-function getValueText() {}

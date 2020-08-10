@@ -1,6 +1,8 @@
 import React from 'react';
-import cc from 'currency-codes';
-import getSymbolFromCurrency from 'currency-symbol-map';
+// import cc from 'currency-codes';
+// import getSymbolFromCurrency from 'currency-symbol-map';
+
+import { getCurrencyAmountDisplayAndRounded, getCurrencyMutiplierDisplay } from '../elemental';
 
 function processCurrencyInputValue(raw, currencyCode) {
   const parsedValue = parseFloat(raw);
@@ -21,30 +23,14 @@ function processCurrencyInputValue(raw, currencyCode) {
     };
   }
   else {
-    const numDecimalDigits = getDecimalDigits(currencyCode || '');
-    let display = (
-      numDecimalDigits || numDecimalDigits === 0 ?
-      parsedValue.toFixed(numDecimalDigits) :
-      parsedValue.toString()
-    );
-    const rounded = parseFloat(display);
-    const currencySymbol = getCurrencySymbol(currencyCode);
+    const { rounded, display } = getCurrencyAmountDisplayAndRounded(parsedValue, currencyCode);
     return {
       raw,
-      display: (
-        currencySymbol ?
-        <>{currencySymbol}&nbsp;{display}</> :
-        display
-      ),
+      display,
       rounded,
       problem: null
     };
   }
-}
-
-function getDecimalDigits(currencyCode) {
-  const currencyData = cc.code(currencyCode);
-  return currencyData ? currencyData.digits : null;
 }
 
 function processCurrencyMultiplierInputValue(rawMultiplierValue, wageToMultiply) {
@@ -69,28 +55,15 @@ function processCurrencyMultiplierInputValue(rawMultiplierValue, wageToMultiply)
     parsedMultiplier :
     `(${parsedMultiplier.toFixed(3)}...)`
   );
-  // Currency characters from Arabic countries were causing big headache with display reordering seemingly at random due to quirks of text direction. The following mess seems to solve the problem while still preventing line-breaks at undesirable places. Not sure if it's all necessary.
-  const noWrapStyle = { whiteSpace: 'nowrap', direction: 'ltr', unicodeBidi: 'isolate' };
   return {
     raw: rawMultiplierValue,
-    display: <>
-      {multiplierDisplayValue}
-      <span style={noWrapStyle}> x {processedRate.display}</span>
-      <span> </span>
-      <span style={noWrapStyle}><span style={noWrapStyle}>= </span> <span>{processedMultipliedRate.display}</span></span>
-    </>,
+    display: getCurrencyMutiplierDisplay(multiplierDisplayValue, processedRate.display, processedMultipliedRate.display),
     rounded: processedMultipliedRate.rounded,
     problem: null
   };
 }
 
-function getCurrencySymbol(currencyCode) {
-  return getSymbolFromCurrency(currencyCode);
-}
-
 export {
   processCurrencyInputValue,
-  getDecimalDigits,
   processCurrencyMultiplierInputValue,
-  getCurrencySymbol
 };

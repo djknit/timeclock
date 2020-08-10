@@ -13,17 +13,19 @@ import { TextInput, ProgressBar } from '../../../formPieces';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 const formId = 'edit-job-name-form';
-const startingState = {
-  updatedJobName: '',
-  problems: {},
-  hasSuccess: false,
-  isLoading: false,
-  hasProblem: false,
-  problemMessages: [],
-  showMessage: true,
-  hasBeenSubmitted: false,
-  secondsUntilRedirect: undefined
-};
+function getStartingState() {
+  return {
+    updatedJobName: '',
+    problems: {},
+    hasSuccess: false,
+    isLoading: false,
+    hasProblem: false,
+    problemMessages: [],
+    showMessage: true,
+    hasBeenSubmitted: false,
+    secondsUntilRedirect: undefined
+  };
+}
 
 class EditJobNameModal extends Component {
   constructor(props) {
@@ -34,7 +36,7 @@ class EditJobNameModal extends Component {
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
-    this.state = { ...startingState };
+    this.state = getStartingState();
   };
 
   afterChange() {
@@ -133,7 +135,7 @@ class EditJobNameModal extends Component {
   };
 
   reset() {
-    this.setState(startingState);
+    this.setState(getStartingState());
   };
 
   componentDidUpdate(prevProps) { // Not needed unless job ever changes without leaving job page.
@@ -160,6 +162,10 @@ class EditJobNameModal extends Component {
       showMessage,
       secondsUntilRedirect
     } = state;
+
+    if (!isActive) {
+      return <></>;
+    }
 
     const closeMessage = () => this.setState({ showMessage: false });
 

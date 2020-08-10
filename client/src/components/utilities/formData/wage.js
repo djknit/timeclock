@@ -60,7 +60,7 @@ function validateOvertimeInput(wageInputValue) {
   }
   const cutoffMin = cutoff.minutes || 0;
   const cutoffHr = cutoff.hours || 0;
-  if (cutoffMin < 0 || cutoffMin > 59 || cutoffHr < 0 || cutoffHr > 167 || (cutoffHr + cutoffMin === 0)) {
+  if (cutoffMin < 0 || cutoffMin > 59 || cutoffHr < 0 || cutoffHr > 167 || cutoffHr + cutoffMin === 0) {
     problems.cutoff = true;
     problemMessages.push('Invalid overtime cutoff value.');
   }
@@ -96,9 +96,9 @@ function processOvertimeInput(overtimeInputValue) {
   return result;
 }
 
-export { validateWageInput, processWageInput };
-
 function isRawValueNonNegativeNum(rawInputValue) {
   const parsedValue = parseFloat(rawInputValue);
   return (parsedValue || parsedValue === 0) && parsedValue >= 0;
 }
+
+export { validateWageInput, processWageInput };

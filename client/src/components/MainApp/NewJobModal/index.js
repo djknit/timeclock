@@ -7,7 +7,7 @@ import {
   constants,
   getValidTimezones,
   guessUserTimezone,
-  getTimezoneAbbreviation,
+  getTimezoneOptions,
   processCurrencyInputValue,
   changeHandlerFactoryFactory,
   validateWageInput,
@@ -23,52 +23,46 @@ import { addCollapsing, addData } from '../../higherOrder';
 const { stepSizeOfRedirectDelay, secondsToDelayRedirect } = constants;
 
 const formId = 'new-user-form';
-const startingState = {
-  name: '',
-  startDate: null,
-  timezone: guessUserTimezone() || '',
-  wage: {
-    useWage: false,
-    rate: '',
-    currency: 'USD',
-    overtime: {
-      useOvertime: true,
-      useMultiplier: true,
-      multiplier: 1.5,
+function getStartingState() {
+  return {
+    name: '',
+    startDate: null,
+    timezone: guessUserTimezone() || '',
+    wage: {
+      useWage: false,
       rate: '',
-      cutoff: {
-        hours: 40,
-        minutes: 0
+      currency: 'USD',
+      overtime: {
+        useOvertime: true,
+        useMultiplier: true,
+        multiplier: 1.5,
+        rate: '',
+        cutoff: {
+          hours: 40,
+          minutes: 0
+        }
       }
-    }
-  },
-  cutoffs: {
-    useDefaults: true,
-    dayCutoff: {
-      hour: 0,
-      minute: 0,
-      is24hr: false
     },
-    weekBegins: 0
-  },
-  problems: {},
-  hasSuccess: false,
-  isLoading: false,
-  hasProblem: false,
-  problemMessages: [],
-  showMessage: true,
-  hasBeenSubmitted: false,
-  secondsUntilRedirect: undefined
-};
-const timezoneOptions = getValidTimezones().map(
-  tzName => {
-    const abbreviation = getTimezoneAbbreviation(tzName);
-    return {
-      name: `${tzName} (${abbreviation})`,
-      value: tzName
-    };
-  }
-);
+    cutoffs: {
+      useDefaults: true,
+      dayCutoff: {
+        hour: 0,
+        minute: 0,
+        is24hr: false
+      },
+      weekBegins: 0
+    },
+    problems: {},
+    hasSuccess: false,
+    isLoading: false,
+    hasProblem: false,
+    problemMessages: [],
+    showMessage: true,
+    hasBeenSubmitted: false,
+    secondsUntilRedirect: undefined
+  };
+}
+const timezoneOptions = getTimezoneOptions();
 
 class _NewJobModal_needsCollapsingAndData extends Component {
   constructor(props) {
@@ -88,7 +82,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     this.radioUseMultiplierFalse = React.createRef();
     this.radioUseDefaultCutoffsTrue = React.createRef();
     this.radioUseDefaultCutoffsFalse = React.createRef();
-    this.state = { ...startingState };
+    this.state = getStartingState();
   };
 
   getInputDataProcessedToSubmit() {
@@ -233,13 +227,13 @@ class _NewJobModal_needsCollapsingAndData extends Component {
   };
 
   reset() {
-    this.setState(startingState);
+    this.setState(getStartingState());
   };
 
   componentDidUpdate(prevProps) {
     // set collapsing container height each time modal is opened and clear each time modal is closed
-    const { isActive, wageContentToggle, cutoffsContentToggle } = this.props;
-    if (isActive === prevProps.isActive) return;
+    const { isActive, wageContentToggle, cutoffsContentToggle, windowWidth } = this.props;
+    if (isActive === prevProps.isActive && windowWidth === prevProps.windowWidth) return;
     else if (isActive) {
       wageContentToggle.setHeight();
       cutoffsContentToggle.setHeight();
@@ -277,6 +271,8 @@ class _NewJobModal_needsCollapsingAndData extends Component {
       windowWidth
     } = props;
 
+    if (!isActive) return <></>;
+    
     const isFormActive = isActive && !isLoading && !hasSuccess;
 
     const topLevelFieldLabelRatio = 5.8;

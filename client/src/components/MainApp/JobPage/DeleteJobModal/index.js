@@ -8,16 +8,18 @@ import { TextInput, ProgressBar } from '../../../formPieces';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
-const startingState = {
-  password: '',
-  problems: {},
-  hasSuccess: false,
-  isLoading: false,
-  hasProblem: false,
-  problemMessages: [],
-  showMessage: true,
-  hasBeenSubmitted: false
-};
+function getStartingState() {
+  return {
+    password: '',
+    problems: {},
+    hasSuccess: false,
+    isLoading: false,
+    hasProblem: false,
+    problemMessages: [],
+    showMessage: true,
+    hasBeenSubmitted: false
+  };
+}
 const formId = 'delete-job-modal';
 
 class DeleteJobModal extends Component {
@@ -29,7 +31,7 @@ class DeleteJobModal extends Component {
     this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
-    this.state = { ...startingState };
+    this.state = getStartingState();
   };
 
   afterChange() {
@@ -82,7 +84,7 @@ class DeleteJobModal extends Component {
       });
     })
     .then(res => {
-      console.log(res)
+      // console.log(res)
       let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
@@ -123,7 +125,7 @@ class DeleteJobModal extends Component {
   };
 
   reset() {
-    this.setState(startingState);
+    this.setState(getStartingState());
   };
 
   render() {
@@ -132,6 +134,10 @@ class DeleteJobModal extends Component {
     const {
       password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, secondsUntilRedirect
     } = state;
+
+    if (!isActive) {
+      return <></>;
+    }
 
     const closeMessage = () => this.setState({ showMessage: false });
 

@@ -1,4 +1,4 @@
-import { timeInputStyles } from '../style';
+import { timeInputStyles } from '../WkDayCutoffsInput/style';
 
 export default function getStyle(fieldStyle, fieldLabelStyle) {
 

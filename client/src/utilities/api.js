@@ -32,8 +32,8 @@ export const auth = {
 };
 
 export const jobs = {
-  create({ name, timezone, startDate }) {
-    return jobsAxios.post('/create', { name, timezone, startDate });
+  create(newJob) {
+    return jobsAxios.post('/create', newJob);
   },
   delete({ jobId, password }) {
     return jobsAxios.post(`/delete/${jobId}`, { password });

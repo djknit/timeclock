@@ -1,6 +1,8 @@
 export * from '../../utilities';
+export * from './elemental';
 export * from './formData';
 export * from './constants';
+export * from './displayData';
 
 function promiseToSetState(component, updatedState) {
   return new Promise(resolve => component.setState(updatedState, resolve));
@@ -22,8 +24,18 @@ function getSizeClass(size) {
   return isNum ? `is-size-${size}` : `is-${size}`;
 }
 
+function keyTriggerCheckerFactory(handleClick) {
+  return function checkForKeyTrigger(event) {
+    const keyCode = event.which;
+    if (keyCode === 13 || keyCode === 32) {
+      handleClick();
+    }
+  };
+}
+
 export {
   promiseToSetState,
   getColorClass,
-  getSizeClass
+  getSizeClass,
+  keyTriggerCheckerFactory
 };

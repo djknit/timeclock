@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
+import { Switch, Route } from 'react-router-dom';
 import PageTitle from '../../PageTitle';
+import Landing from './Landing';
+import Setting from './Setting';
+import All from './All';
 
 class SettingsPage extends Component {
   constructor(props) {
@@ -8,19 +12,93 @@ class SettingsPage extends Component {
   };
 
   render() {
-    const { job, parentPath } = this.props;
+    const { job, parentPath, match } = this.props;
+    const thisPath = match.url;
+
     const crumbChain = [
       {
         text: <>JOB:&nbsp;{job.name}</>,
         url: parentPath
       },
-      { text: 'Settings' }
+      {
+        text: 'Settings',
+        url: thisPath
+      }
+    ];
+
+    function getRouteInfoObj(pathName, pageName, settingPropName, PageComp) {
+      const routePath = `${thisPath}/${pathName}`;
+      return {
+        path: routePath,
+        crumbChain: [
+          ...crumbChain,
+          {
+            text: pageName,
+            url: routePath
+          }
+        ],
+        settingPropName,
+        pageName,
+        PageComp
+      };
+    }
+
+    const childRoutes = [
+      getRouteInfoObj('day-cutoff', 'Day Cutoff', 'dayCutoff'),
+      getRouteInfoObj('week-begins', 'Week Cutoff', 'weekBegins'),
+      getRouteInfoObj('timezone', 'Timezone', 'timezone'),
+      getRouteInfoObj('wage', 'Wage', 'wage'),
+      getRouteInfoObj('all', 'All Settings', undefined, All)
     ];
 
     return (
       <>
-        <PageTitle {...{ crumbChain }} />
-        
+        <Switch>
+          {childRoutes.map(
+            RouteInfo => (
+              <Route
+                path={RouteInfo.path}
+                render={props => (
+                  <>
+                    <PageTitle crumbChain={RouteInfo.crumbChain} />
+                    {RouteInfo.settingPropName ? (
+                      <Setting
+                        {...{
+                          ...props,
+                          job
+                        }}
+                        settingName={RouteInfo.settingPropName}
+                        settingDisplayName={RouteInfo.pageName}
+                      />
+                    ) : (
+                      <RouteInfo.PageComp
+                        {...{
+                          ...props,
+                          job
+                        }}
+                      />
+                    )}
+                  </>
+                )}
+                key={RouteInfo.path}
+              />
+            )
+          )}
+          <Route
+            path={thisPath}
+            render={props => (
+              <>
+                <PageTitle {...{ crumbChain }} />
+                <Landing
+                  {...{
+                    childRoutes,
+                    ...props
+                  }}
+                />
+              </>
+            )}
+          />
+        </Switch>
       </>
     );
   };
