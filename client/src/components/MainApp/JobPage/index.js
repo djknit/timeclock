@@ -103,7 +103,8 @@ class _JobPage_needsData extends Component {
 
     const commonRouteAttributes = {
       job,
-      parentPath: match.url
+      parentPath: match.url,
+      catchApiUnauthorized
     };
 
     return (

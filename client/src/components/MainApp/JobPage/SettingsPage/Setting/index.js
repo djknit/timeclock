@@ -33,7 +33,7 @@ class Setting extends Component {
 
   render() {
     const { modalTogglerFactory } = this;
-    const { job, settingName, settingDisplayName } = this.props;
+    const { job, settingName, settingDisplayName, catchApiUnauthorized } = this.props;
     const {
       indexOfSchedEntryToEdit, isEditValueModalOpen, isDeleteValueModalOpen, isChangeDateModalOpen
     } = this.state;
@@ -46,7 +46,10 @@ class Setting extends Component {
     const toggleDeleteValueModal = modalTogglerFactory('isDeleteValueModalOpen');
     const toggleChangeDateModal = modalTogglerFactory('isChangeDateModalOpen');
   
-    const commonModalAttrs = { settingName, settingDisplayName, indexOfSchedEntryToEdit, valueSchedule };
+    const jobId = job._id.toString();
+    const commonModalAttrs = {
+      settingName, settingDisplayName, indexOfSchedEntryToEdit, valueSchedule, jobId, catchApiUnauthorized
+    };
   
     return (
       <>

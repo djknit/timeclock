@@ -7,9 +7,10 @@ import {
   getSimpleJobSettingValueText,
   convertSettingValueToFormData,
   addWageInputRefs,
-  extractWageInputRefs
+  extractWageInputRefs,
+  processWageInput
 } from '../../utilities';
-import { windowWidthService } from '../../../../../data';
+import { windowWidthService, currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
@@ -38,11 +39,21 @@ function getStartingState(settingName, currentValue) {
 class _EditValueModal_needsCollapsingAndData extends Component {
   constructor(props) {
     super(props);
-    this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
+    this.afterChange = this.afterChange.bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
+    this.getInputProblems = this.getInputProblems.bind(this);
+    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
+    this.getDataProcessedToSubmit = this.getDataProcessedToSubmit.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     addWageInputRefs(this);
     this.state = getStartingState();
+  };
+
+  afterChange() {
+    if (this.state.hasBeenSubmitted) {
+      this.setState(this.getInputProblems());
+    }
   };
 
   getInputProblems() {
@@ -59,14 +70,104 @@ class _EditValueModal_needsCollapsingAndData extends Component {
       case 'wage':
         break;
     }
+    return { problems, problemMessages };
   };
 
   setSubmissionProcessingState() {
-
+    return new Promise(
+      resolve => {
+        this.setState(
+          {
+            hasProblem: false,
+            isLoading: true,
+            problems: {},
+            problemMessages: [],
+            showMessage: false,
+            hasBeenSubmitted: true
+          },
+          resolve
+        );
+      }
+    );
   };
 
-  submit() {
+  getDataProcessedToSubmit() {
+    const { indexOfSchedEntryToEdit, valueSchedule, settingName, jobId } = this.props;
+    const { updatedValue } = this.state;
+    let value;
+    switch (settingName) {
+      case 'wage':
+        value = processWageInput(updatedValue);
+        break;
+      case 'dayCutoff':
+        const { hour, minute } = updatedValue;
+        const cutoffInMin = (hour || 0) * 60 + (minute || 0);
+        value = cutoffInMin * 60 * 1000;
+        break;
+      default:
+        value = updatedValue;
+    }
+    const updates = {
+      edit: [{
+        id: valueSchedule[indexOfSchedEntryToEdit]._id.toString(),
+        value
+      }]
+    };
+    return { jobId, updates };
+  };
 
+  submit(event) {
+    event.preventDefault();
+    const { settingName } = this.props;
+    this.setSubmissionProcessingState()
+    .then(() => {
+      const { problems, problemMessages } = this.getInputProblems();
+      if (problemMessages && problemMessages.length > 0) {
+        throw { problems, messages: problemMessages };
+      }
+      const submissionData = this.getDataProcessedToSubmit();
+      return api.jobs.updateSetting(settingName, submissionData);
+    })
+    .then(res => {
+      let secondsUntilRedirect = secondsToDelayRedirect;
+      this.setState({
+        hasSuccess: true,
+        isLoading: false,
+        hasProblem: false,
+        showMessage: true,
+        problems: {},
+        problemMessages: [],
+        secondsUntilRedirect
+      });
+      currentJobService.setCurrentJob(res.data);
+      const intervalId = setInterval(
+        () => {
+          secondsUntilRedirect -= stepSizeOfRedirectDelay;
+          this.setState({ secondsUntilRedirect });
+          if (secondsUntilRedirect <= 0) {
+            clearInterval(intervalId);
+            this.props.closeModal();
+            this.reset();
+          }
+        },
+        1000 * stepSizeOfRedirectDelay
+      )
+    })
+    .catch(err => {
+      console.log(err)
+      this.props.catchApiUnauthorized(err);
+      const errorData = (err && err.response && err.response.data) || err || {};
+      let { problems, messages } = errorData;
+      if (!problems) problems = { unknown: true };
+      if (!messages) messages = ['An unknown problem has occurred.'];
+      this.setState({
+        problems,
+        problemMessages: messages,
+        hasProblem: true,
+        isLoading: false,
+        showMessage: true
+      });
+    });
   };
 
   reset() {
