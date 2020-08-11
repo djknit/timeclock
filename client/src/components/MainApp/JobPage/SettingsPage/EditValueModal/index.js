@@ -3,16 +3,20 @@ import {
   api,
   constants,
   changeHandlerFactoryFactory,
-  getDayCutoffTime,
   formatMyDate,
-  getSimpleJobSettingValueText
+  getSimpleJobSettingValueText,
+  convertSettingValueToFormData,
+  addWageInputRefs,
+  extractWageInputRefs
 } from '../../utilities';
+import { windowWidthService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
 import { SelectInput, WageInput, ProgressBar } from '../../../../formPieces';
 import Input from './Input';
+import { addCollapsing, addData } from '../../../../higherOrder';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
@@ -27,27 +31,17 @@ function getStartingState(settingName, currentValue) {
     showMessage: true,
     hasBeenSubmitted: false, 
     secondsUntilRedirect: undefined,
-    updatedValue: convertScheduleValueToStateProp(currentValue, settingName)
+    updatedValue: convertSettingValueToFormData(currentValue, settingName)
   };
 }
-function convertScheduleValueToStateProp(scheduleValue, settingName) {
-  switch (settingName) {
-    case 'dayCutoff':
-      const valueInMinutes = Math.round(scheduleValue / (1000 * 60));
-      return getDayCutoffTime(valueInMinutes, true);
-    case 'wage':
-      return {}
-    default:
-      return scheduleValue;
-  }
-}
 
-class EditValueModal extends Component {
+class _EditValueModal_needsCollapsingAndData extends Component {
   constructor(props) {
     super(props);
     this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
+    addWageInputRefs(this);
     this.state = getStartingState();
   };
 
@@ -85,24 +79,55 @@ class EditValueModal extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { indexOfSchedEntryToEdit, valueSchedule } = this.props;
+    const { indexOfSchedEntryToEdit, valueSchedule, isActive, windowWidth, wageContentToggle, settingName } = this.props;
+    // checking if sched index has changed to see if form needs reset
     const previousIndex = prevProps.indexOfSchedEntryToEdit;
     const currentEntryId = (
       (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) &&
       valueSchedule[indexOfSchedEntryToEdit]._id
     );
-    const previousEntryId = (previousIndex || previousIndex === 0) && prevProps.valueSchedule[previousIndex]._id;
+    const previousEntryId = (
+      (previousIndex || previousIndex === 0) &&
+      prevProps.valueSchedule[previousIndex]._id
+    );
     if (currentEntryId !== previousEntryId) this.reset();
+    // checking if toggle is active and needs set or cleared
+    const shouldToggleBeSet = isActive && settingName === 'wage' && !!this.state.updatedValue;
+    if (
+      shouldToggleBeSet &&
+      (!wageContentToggle.isHeightSet || windowWidth !== prevProps.windowWidth || !prevProps.isActive)
+    ) {
+      wageContentToggle.setHeight();
+    }
+    else if (
+      wageContentToggle.isHeightSet && !shouldToggleBeSet
+    ) {
+      wageContentToggle.clearHeight();
+    }
   };
 
   render() {
     const { reset, submit, changeHandlerFactory } = this;
     const {
-      isActive, closeModal, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit, settingName
+      isActive,
+      closeModal,
+      settingDisplayName,
+      valueSchedule,
+      indexOfSchedEntryToEdit,
+      settingName,
+      wageContentToggle
     } = this.props;
     const {
-      hasSuccess, hasProblem, problems, problemMessages, showMessage, secondsUntilRedirect, updatedValue, isLoading
+      hasSuccess,
+      hasProblem,
+      problems,
+      problemMessages,
+      showMessage,
+      secondsUntilRedirect,
+      updatedValue,
+      isLoading
     } = this.state;
+    console.log(updatedValue)
 
     if (!isActive) {
       return <></>;
@@ -121,6 +146,8 @@ class EditValueModal extends Component {
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
     const closeMessage = () => this.setState({ showMessage: false });
+
+    const wageInputRefs = extractWageInputRefs(this);
 
     return (
       <ModalSkeleton
@@ -211,7 +238,9 @@ class EditValueModal extends Component {
             {...{
               settingName,
               changeHandlerFactory,
-              formId
+              formId,
+              wageInputRefs,
+              wageContentToggle
             }}
             problems={inputProblems}
             hasProblem={inputProblems}
@@ -223,6 +252,14 @@ class EditValueModal extends Component {
     );
   };
 }
+
+const _EditValueModal_needsCollapsing = addData(
+  _EditValueModal_needsCollapsingAndData, 'windowWidth', windowWidthService
+);
+
+const EditValueModal = addCollapsing(
+  _EditValueModal_needsCollapsing, 'wageContentToggle', true, true
+);
 
 export default EditValueModal;
 

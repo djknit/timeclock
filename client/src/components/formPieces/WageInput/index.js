@@ -31,12 +31,13 @@ function WageInput({
   changeHandlerFactory,
   isActive,
   formId,
-  radioUseWageTrueRef,
-  radioUseWageFalseRef,
-  radioUseOvertimeTrueRef,
-  radioUseOvertimeFalseRef,
-  radioUseMultiplierTrueRef,
-  radioUseMultiplierFalseRef,
+  refs,
+  // radioUseWageTrueRef,
+  // radioUseWageFalseRef,
+  // radioUseOvertimeTrueRef,
+  // radioUseOvertimeFalseRef,
+  // radioUseMultiplierTrueRef,
+  // radioUseMultiplierFalseRef,
   topLevelFieldLabelRatio,
   secondLevelFieldLabelRatio,
   contentToggle
@@ -73,11 +74,11 @@ function WageInput({
             {
               value: true,
               label: 'Yes',
-              ref: radioUseWageTrueRef
+              ref: refs.radioUseWageTrue
             }, {
               value: false,
               label: 'No',
-              ref: radioUseWageFalseRef
+              ref: refs.radioUseWageFalse
             }
           ]}
           changeHandlerFactory={changeHandlerFactoryForChildren}
@@ -131,12 +132,13 @@ function WageInput({
         changeHandlerFactory={changeHandlerFactoryForChildren}
         {...{
           formId,
-          radioUseOvertimeTrueRef,
-          radioUseOvertimeFalseRef,
-          radioUseMultiplierTrueRef,
-          radioUseMultiplierFalseRef,
+          // radioUseOvertimeTrueRef,
+          // radioUseOvertimeFalseRef,
+          // radioUseMultiplierTrueRef,
+          // radioUseMultiplierFalseRef,
           currency,
-          secondLevelFieldLabelRatio
+          secondLevelFieldLabelRatio,
+          refs
         }}
         isActive={areInsideInputsActive}
         rawBaseRate={rate}

@@ -18,12 +18,11 @@ function WkDayCutoffsInput ({
   propName,
   value,
   isActive,
-  hasProblem,
+  // hasProblem,
   problems,
   changeHandlerFactory,
   formId,
-  radioUseDefaultCutoffsTrueRef,
-  radioUseDefaultCutoffsFalseRef,
+  refs,
   topLevelFieldLabelRatio,
   secondLevelFieldLabelRatio,
   contentToggle
@@ -47,6 +46,12 @@ function WkDayCutoffsInput ({
 
   const areInsideInputsActive = isActive && !useDefaults && isExpanded;
 
+  const defaultDayCutoff = {
+    hour: 0,
+    minute: 0,
+    is24hr: dayCutoff.is24hr
+  };
+
   return (
     <CollapsableSection
       label="Week and Day Cutoffs"
@@ -60,11 +65,11 @@ function WkDayCutoffsInput ({
             {
               value: false,
               label: 'Yes, adjust cutoffs',
-              ref: radioUseDefaultCutoffsFalseRef
+              ref: refs.radioUseDefaultCutoffsFalse
             }, {
               value: true,
               label: 'No, use standard values',
-              ref: radioUseDefaultCutoffsTrueRef
+              ref: refs.radioUseDefaultCutoffsTrue
             }
           ]}
           changeHandlerFactory={changeHandlerFactoryForChildren}
@@ -98,7 +103,7 @@ function WkDayCutoffsInput ({
       <DayCutoffInput
         propName="dayCutoff"
         sectionName={propName}
-        value={useDefaults ? { hour: 0, minute: 0, is24hr: dayCutoff.is24hr } : dayCutoff}
+        value={useDefaults ? defaultDayCutoff : dayCutoff}
         changeHandlerFactory={changeHandlerFactoryForChildren}
         hasProblem={problems && problems.dayCutoff}
         {...{ formId }}

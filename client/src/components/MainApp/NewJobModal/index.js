@@ -5,13 +5,15 @@ import Button from '../../Button';
 import {
   api,
   constants,
-  getValidTimezones,
   guessUserTimezone,
   getTimezoneOptions,
-  processCurrencyInputValue,
   changeHandlerFactoryFactory,
   validateWageInput,
-  processWageInput
+  processWageInput,
+  addWageInputRefs,
+  addWkDayCutoffsInputRefs,
+  extractWageInputRefs,
+  extractWkDayCutoffsInputRefs
 } from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
 import {
@@ -74,14 +76,8 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     this.getInputDataProcessedToSubmit = this.getInputDataProcessedToSubmit.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
-    this.radioUseWageTrue = React.createRef();
-    this.radioUseWageFalse = React.createRef();
-    this.radioUseOvertimeTrue = React.createRef();
-    this.radioUseOvertimeFalse = React.createRef();
-    this.radioUseMultiplierTrue = React.createRef();
-    this.radioUseMultiplierFalse = React.createRef();
-    this.radioUseDefaultCutoffsTrue = React.createRef();
-    this.radioUseDefaultCutoffsFalse = React.createRef();
+    addWageInputRefs(this);
+    addWkDayCutoffsInputRefs(this);
     this.state = getStartingState();
   };
 
@@ -275,6 +271,9 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     
     const isFormActive = isActive && !isLoading && !hasSuccess;
 
+    const wageInputRefs = extractWageInputRefs(this);
+    const cutoffsInputRefs = extractWkDayCutoffsInputRefs(this);
+
     const topLevelFieldLabelRatio = 5.8;
     const secondLevelFieldLabelRatio = 4.7;
 
@@ -410,12 +409,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
               topLevelFieldLabelRatio,
               secondLevelFieldLabelRatio
             }}
-            radioUseWageTrueRef={this.radioUseWageTrue}
-            radioUseWageFalseRef={this.radioUseWageFalse}
-            radioUseOvertimeTrueRef={this.radioUseOvertimeTrue}
-            radioUseOvertimeFalseRef={this.radioUseOvertimeFalse}
-            radioUseMultiplierTrueRef={this.radioUseMultiplierTrue}
-            radioUseMultiplierFalseRef={this.radioUseMultiplierFalse}
+            refs={wageInputRefs}
             contentToggle={wageContentToggle}
           />
           <WkDayCutoffsInput
@@ -430,8 +424,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
               topLevelFieldLabelRatio,
               secondLevelFieldLabelRatio
             }}
-            radioUseDefaultCutoffsTrueRef={this.radioUseDefaultCutoffsTrue}
-            radioUseDefaultCutoffsFalseRef={this.radioUseDefaultCutoffsFalse}
+            refs={cutoffsInputRefs}
             contentToggle={cutoffsContentToggle}
           />
         </form>

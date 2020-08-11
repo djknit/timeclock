@@ -6,6 +6,8 @@ import { SelectInput, DayCutoffInput, WageInput } from '../../../../../formPiece
 function Input({
   settingName,
   value,
+  wageInputRefs,
+  wageContentToggle,
   ...otherProps
 }) {
 
@@ -30,7 +32,15 @@ function Input({
     
     case 'wage':
       return (
-        <WageInput {...otherProps} />
+        value ? (
+          <WageInput
+            {...commonAttrs}
+            refs={wageInputRefs}
+            contentToggle={wageContentToggle}
+          />
+        ) : (
+          <></>
+        )
       );
     
     case 'weekBegins':
