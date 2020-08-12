@@ -9,7 +9,8 @@ import {
   addWageInputRefs,
   extractWageInputRefs,
   processWageInput,
-  getJobSettingInputProblems
+  getJobSettingInputProblems,
+  processDayCutoffInput
 } from '../../utilities';
 import { windowWidthService, currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
@@ -88,18 +89,9 @@ class _EditValueModal_needsCollapsingAndData extends Component {
     const { indexOfSchedEntryToEdit, valueSchedule, settingName, jobId } = this.props;
     const { updatedValue } = this.state;
     let value;
-    switch (settingName) {
-      case 'wage':
-        value = processWageInput(updatedValue);
-        break;
-      case 'dayCutoff':
-        const { hour, minute } = updatedValue;
-        const cutoffInMin = (hour || 0) * 60 + (minute || 0);
-        value = cutoffInMin * 60 * 1000;
-        break;
-      default:
-        value = updatedValue;
-    }
+    if (settingName === 'wage') value = processWageInput(updatedValue);
+    else if (settingName === 'dayCutoff') value = processDayCutoffInput(updatedValue);
+    else value = updatedValue;
     const updates = {
       edit: [{
         id: valueSchedule[indexOfSchedEntryToEdit]._id.toString(),
@@ -169,7 +161,7 @@ class _EditValueModal_needsCollapsingAndData extends Component {
       (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) &&
       valueSchedule[indexOfSchedEntryToEdit].value
     );
-    this.setState(getStartingState(settingName, currentValue), () => console.log(this.state));
+    this.setState(getStartingState(settingName, currentValue));
   };
 
   componentDidUpdate(prevProps) {

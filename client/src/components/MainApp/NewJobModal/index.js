@@ -16,7 +16,8 @@ import {
   extractWkDayCutoffsInputRefs,
   getDayCutoffInputProblems,
   getWeekBeginsInputProblems,
-  getTimezoneInputProblems
+  getTimezoneInputProblems,
+  processDayCutoffInput
 } from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
 import {
@@ -67,7 +68,6 @@ function getStartingState() {
     secondsUntilRedirect: undefined
   };
 }
-const timezoneOptions = getTimezoneOptions();
 const inputs = [
   getInputInfoObj('name', TextInput, 'Name:', 'Name this job...'),
   getInputInfoObj(
@@ -84,7 +84,7 @@ const inputs = [
     'The timezone your hours are counted in...',
     undefined,
     undefined,
-    { options: timezoneOptions }
+    { options: getTimezoneOptions() }
   ),
   getInputInfoObj('wage', WageInput, undefined, undefined, undefined, true),
   getInputInfoObj('cutoffs', WkDayCutoffsInput, undefined, undefined, undefined, true)
@@ -110,14 +110,13 @@ class _NewJobModal_needsCollapsingAndData extends Component {
 
   getInputDataProcessedToSubmit() {
     const { name, startDate, timezone, wage, cutoffs } = this.state;
-    const dayCutoffInMinutes = (cutoffs.dayCutoff.hour || 0) * 60 + (cutoffs.dayCutoff.minute || 0);
     return {
       name,
       startDate,
       timezone,
       wage: processWageInput(wage),
       weekBegins: cutoffs.weekBegins,
-      dayCutoff: dayCutoffInMinutes * 60 * 1000
+      dayCutoff: processDayCutoffInput(cutoffs.dayCutoff)
     };
   };
 
@@ -285,8 +284,6 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     
     const isFormActive = isActive && !isLoading && !hasSuccess;
 
-    const wageInputRefs = extractWageInputRefs(this);
-    const cutoffsInputRefs = extractWkDayCutoffsInputRefs(this);
     const inputRefs = {
       wage: extractWageInputRefs(this),
       cutoffs: extractWkDayCutoffsInputRefs(this)

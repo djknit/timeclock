@@ -23,4 +23,13 @@ function getDayCutoffInputProblems(inputValue, problemMessages) {
   }
 }
 
-export { getDayCutoffInputProblems };
+function processDayCutoffInput(inputValue) {
+  const { hour, minute } = inputValue;
+  const valueInMinutes = hour * 60 + (minute || 0);
+  return valueInMinutes * 60 * 1000;
+}
+
+export {
+  getDayCutoffInputProblems,
+  processDayCutoffInput
+};
