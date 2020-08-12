@@ -8,12 +8,15 @@ import {
   guessUserTimezone,
   getTimezoneOptions,
   changeHandlerFactoryFactory,
-  validateWageInput,
+  getWageInputProblems,
   processWageInput,
   addWageInputRefs,
   addWkDayCutoffsInputRefs,
   extractWageInputRefs,
-  extractWkDayCutoffsInputRefs
+  extractWkDayCutoffsInputRefs,
+  getDayCutoffInputProblems,
+  getWeekBeginsInputProblems,
+  getTimezoneInputProblems
 } from '../utilities';
 import Notification, { NotificationText } from '../../Notification';
 import {
@@ -65,6 +68,30 @@ function getStartingState() {
   };
 }
 const timezoneOptions = getTimezoneOptions();
+const inputs = [
+  getInputInfoObj('name', TextInput, 'Name:', 'Name this job...'),
+  getInputInfoObj(
+    'startDate',
+    DateInput,
+    'Start Date:',
+    'Type or select date...',
+    'Time can still be entered from before start date, so don\'t worry if you need to guess.'
+  ),
+  getInputInfoObj(
+    'timezone',
+    SelectInput,
+    'Timezone:',
+    'The timezone your hours are counted in...',
+    undefined,
+    undefined,
+    { options: timezoneOptions }
+  ),
+  getInputInfoObj('wage', WageInput, undefined, undefined, undefined, true),
+  getInputInfoObj('cutoffs', WkDayCutoffsInput, undefined, undefined, undefined, true)
+];
+function getInputInfoObj(propName, Comp, label, placeholder, helpText, isComplex, otherAttrs) {
+  return { propName, Comp, label, placeholder, helpText, isComplex, otherAttrs };
+}
 
 class _NewJobModal_needsCollapsingAndData extends Component {
   constructor(props) {
@@ -126,27 +153,14 @@ class _NewJobModal_needsCollapsingAndData extends Component {
       problems.startDate = true;
       problemMessages.push('You must enter a start date');
     }
-    if (!timezone) {
-      problems.timezone = true;
-      problemMessages.push('You must select a timezone.');
+    problems.timezone = getTimezoneInputProblems(timezone, problemMessages);
+    if (!cutoffs.useDefaults) {
+      let _cutoffProbs = {};
+      _cutoffProbs.dayCutoff = getDayCutoffInputProblems(cutoffs.dayCutoff, problemMessages);
+      _cutoffProbs.weekBegins = getWeekBeginsInputProblems(cutoffs.weekBegins, problemMessages, true);
+      problems.cutoffs = (_cutoffProbs.dayCutoff || _cutoffProbs.weekBegins) ? _cutoffProbs : undefined;
     }
-    if (!cutoffs.useDefaults && !cutoffs.weekBegins && cutoffs.weekBegins !== 0) {
-      problems.cutoffs = { weekBegins: true };
-      problemMessages.push('Missing week begins day (under "Week and Day Cutoffs").');
-    }
-    const dayCutoffInMinutes = (cutoffs.dayCutoff.hour || 0) * 60 + (cutoffs.dayCutoff.minute || 0);
-    if (!cutoffs.useDefaults && Math.abs(dayCutoffInMinutes) > 12 * 60) {
-      problems.cutoffs = {
-        dayCutoff: true,
-        ...(problems.cutoffs || {})
-      };
-      problemMessages.push('Invalid day cutoff: can\'t be moved more than 12 hrs in either direction from the actual start of the day (midnight).');
-    }
-    const wageProblemsInfo = validateWageInput(wage);
-    if (wageProblemsInfo) {
-      problems.wage = wageProblemsInfo.problems;
-      problemMessages.push(...wageProblemsInfo.problemMessages);
-    }
+    problems.wage = getWageInputProblems(wage, problemMessages);
     return { problems, problemMessages };
   };
 
@@ -273,6 +287,14 @@ class _NewJobModal_needsCollapsingAndData extends Component {
 
     const wageInputRefs = extractWageInputRefs(this);
     const cutoffsInputRefs = extractWkDayCutoffsInputRefs(this);
+    const inputRefs = {
+      wage: extractWageInputRefs(this),
+      cutoffs: extractWkDayCutoffsInputRefs(this)
+    };
+    const contentToggles = {
+      wage: wageContentToggle,
+      cutoffs: cutoffsContentToggle
+    };
 
     const topLevelFieldLabelRatio = 5.8;
     const secondLevelFieldLabelRatio = 4.7;
@@ -352,7 +374,43 @@ class _NewJobModal_needsCollapsingAndData extends Component {
               />
             </Notification>
           )}
-          <TextInput
+          {inputs.map(
+            ({ propName, Comp, label, placeholder, helpText, isComplex, otherAttrs }, index) => (
+              <Comp
+                value={state[propName]}
+                {...{
+                  propName,
+                  label,
+                  placeholder,
+                  helpText,
+                  changeHandlerFactory,
+                  formId
+                }}
+                inputRef={index === 0 ? inputRef : undefined}
+                isActive={isFormActive}
+                hasProblem={problems && problems[propName]}
+                {...(
+                  isComplex ? (
+                    {
+                      problems: problems && problems[propName],
+                      refs: inputRefs[propName],
+                      contentToggle: contentToggles[propName],
+                      topLevelFieldLabelRatio,
+                      secondLevelFieldLabelRatio
+                    }
+                  ) : (
+                    {
+                      fieldToLabelRatio: topLevelFieldLabelRatio,
+                      isInline: true
+                    }
+                  )
+                )}
+                {...otherAttrs}
+                key={index}
+              />
+            )
+          )}
+          {/* <TextInput
             propName="name"
             value={name}
             label="Name:"
@@ -426,7 +484,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
             }}
             refs={cutoffsInputRefs}
             contentToggle={cutoffsContentToggle}
-          />
+          /> */}
         </form>
       </ModalSkeleton>
     );

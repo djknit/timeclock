@@ -2,7 +2,7 @@ import React from 'react';
 
 import {
   getCurrencyAmountDisplay, getCurrencyName, getCurrencyMutiplierDisplay
-} from '../elemental';
+} from '../../../utilities';
 
 function processWageValueForDisplay(wageValue) {
   console.log('processWageValueForDisplay')

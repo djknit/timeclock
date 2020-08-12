@@ -2,5 +2,4 @@
   This folder ('elemental') is for functions that are used in BOTH the form data processing ('../formData') and saved data processing ('../displayData')
 */
 
-export * from './currency';
 export * from './dayCutoff';

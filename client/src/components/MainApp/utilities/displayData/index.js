@@ -12,7 +12,7 @@ function getDayCutoffText(dayCutoffValue) {
   const _cutoffValue = dayCutoffValue || 0;
   const cutoffInMinutes = Math.round(_cutoffValue / (1000 * 60));
   const isCutoffNegative = cutoffInMinutes < 0;
-  const cutoffDisplayHours = Math.floor(Math.abs(cutoffInMinutes) / 60);  
+  const cutoffDisplayHours = Math.floor(Math.abs(cutoffInMinutes) / 60);
   const cutoffDisplayMinutes = Math.abs(cutoffInMinutes) % 60;
   const cutoffTime = getDayCutoffTime(cutoffInMinutes, false);
   let result = `${isCutoffNegative ? '-' : '+'} ${cutoffDisplayHours} hr`;

@@ -8,14 +8,15 @@ import {
   convertSettingValueToFormData,
   addWageInputRefs,
   extractWageInputRefs,
-  processWageInput
+  processWageInput,
+  getJobSettingInputProblems
 } from '../../utilities';
 import { windowWidthService, currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
-import { SelectInput, WageInput, ProgressBar } from '../../../../formPieces';
+import { ProgressBar } from '../../../../formPieces';
 import Input from './Input';
 import { addCollapsing, addData } from '../../../../higherOrder';
 
@@ -58,18 +59,10 @@ class _EditValueModal_needsCollapsingAndData extends Component {
 
   getInputProblems() {
     const { settingName } = this.props;
+    const { updatedValue } = this.state;
     let problems = {};
     let problemMessages = [];
-    switch (settingName) {
-      case 'timezone':
-        break;
-      case 'dayCutof':
-        break;
-      case 'weekBegins':
-        break;
-      case 'wage':
-        break;
-    }
+    problems.updatedValue = getJobSettingInputProblems(settingName, updatedValue, problemMessages);
     return { problems, problemMessages };
   };
 
