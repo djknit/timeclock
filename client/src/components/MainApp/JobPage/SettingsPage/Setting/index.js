@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import getStyle from './style';
 import { formatMyDate } from '../../utilities';
-import ContentArea from '../../../ContentArea';
+import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
 import EditValueModal from '../EditValueModal';
-import DeleteValueModal from '../DeleteValueModal';
+import AddEntryModal from '../AddEntryModal';
+import DeleteEntryModal from '../DeleteEntryModal';
 import ChangeDateModal from '../ChangeDateModal';
 import ValueSchedule from './ValueSchedule';
 
@@ -33,14 +34,18 @@ class Setting extends Component {
 
   render() {
     const { modalTogglerFactory } = this;
-    const { job, settingName, settingDisplayName, catchApiUnauthorized } = this.props;
+    const { job, settingName, settingDisplayName, catchApiUnauthorized, style, areAnyModalsOpen } = this.props;
     const {
       indexOfSchedEntryToEdit, isEditValueModalOpen, isDeleteValueModalOpen, isChangeDateModalOpen
     } = this.state;
     
+    const completeAreModalsOpen = (
+      areAnyModalsOpen || isEditValueModalOpen || isDeleteValueModalOpen || isChangeDateModalOpen
+    );
+    
     const valueSchedule = job[settingName];
 
-    const style = getStyle();
+    const completeStyle = getStyle(style);
 
     const toggleEditValueModal = modalTogglerFactory('isEditValueModalOpen');
     const toggleDeleteValueModal = modalTogglerFactory('isDeleteValueModalOpen');
@@ -53,7 +58,18 @@ class Setting extends Component {
   
     return (
       <>
-        <ContentArea title={`${settingDisplayName} Value Schedule`}>
+        <ContentArea style={completeStyle.contentArea}>
+          <ContentAreaTitle style={completeStyle.areaTitle}>
+            {settingDisplayName} Value Schedule
+          </ContentAreaTitle>
+          <Button
+            styles={completeStyle.addValBtn}
+            theme="primary"
+            onClick={() => null}
+            allowTabFocus={completeAreModalsOpen}
+          >
+            <i className="fas fa-plus"/> Add Value
+          </Button>
           <ValueSchedule
             {...{
               valueSchedule,

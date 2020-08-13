@@ -4,6 +4,7 @@ import PageTitle from '../../PageTitle';
 import Landing from './Landing';
 import Setting from './Setting';
 import All from './All';
+import AddEntryModal from './AddEntryModal';
 
 class SettingsPage extends Component {
   constructor(props) {

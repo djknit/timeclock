@@ -10,7 +10,7 @@ export default function getStyle(additionalStyle) {
   return {
     contentArea: {
       position: 'relative',
-      ...additionalStyle
+      ...(additionalStyle || {})
     },
     areaTitle: {
       width: titleWidth

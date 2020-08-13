@@ -1,3 +1,5 @@
+// This file is no longer in use. There was a much simpler way to accomplish the same thing with CSS only.
+
 import React, { Component } from 'react';
 
 function addHeightTracking(ComponentToWrap) {
