@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
-import getStyle from './style';
-import ModalSkeleton from '../../ModalSkeleton';
-import Button from '../../Button';
 import {
   api,
   constants,
   guessUserTimezone,
-  getTimezoneOptions,
   changeHandlerFactoryFactory,
   getWageInputProblems,
   processWageInput,
@@ -19,11 +15,12 @@ import {
   getTimezoneInputProblems,
   processDayCutoffInput
 } from '../utilities';
-import Notification, { NotificationText } from '../../Notification';
-import {
-  TextInput, SelectInput, DateInput, WageInput, WkDayCutoffsInput, ProgressBar
-} from '../../formPieces';
 import { jobsService, currentJobService, windowWidthService } from '../../../data';
+import ModalSkeleton from '../../ModalSkeleton';
+import Button from '../../Button';
+import Notification, { NotificationText } from '../../Notification';
+import { ProgressBar } from '../../formPieces';
+import Input from './Input';
 import { addCollapsing, addData } from '../../higherOrder';
 
 const { stepSizeOfRedirectDelay, secondsToDelayRedirect } = constants;
@@ -68,30 +65,7 @@ function getStartingState() {
     secondsUntilRedirect: undefined
   };
 }
-const inputs = [
-  getInputInfoObj('name', TextInput, 'Name:', 'Name this job...'),
-  getInputInfoObj(
-    'startDate',
-    DateInput,
-    'Start Date:',
-    'Type or select date...',
-    'Time can still be entered from before start date, so don\'t worry if you need to guess.'
-  ),
-  getInputInfoObj(
-    'timezone',
-    SelectInput,
-    'Timezone:',
-    'The timezone your hours are counted in...',
-    undefined,
-    undefined,
-    { options: getTimezoneOptions() }
-  ),
-  getInputInfoObj('wage', WageInput, undefined, undefined, undefined, true),
-  getInputInfoObj('cutoffs', WkDayCutoffsInput, undefined, undefined, undefined, true)
-];
-function getInputInfoObj(propName, Comp, label, placeholder, helpText, isComplex, otherAttrs) {
-  return { propName, Comp, label, placeholder, helpText, isComplex, otherAttrs };
-}
+const inputPropNames = ['name', 'startDate', 'timezone', 'wage', 'cutoffs'];
 
 class _NewJobModal_needsCollapsingAndData extends Component {
   constructor(props) {
@@ -144,7 +118,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
       problems.name = true;
       problemMessages.push('You must name the job.');
     }
-    else if (jobsService.getValue().map(({ name }) => name).indexOf(name) !== -1) {
+    else if (jobsService.getValue().map(({ name }) => name).includes(name)) {
       problems.name = true;
       problemMessages.push('You already have a job with that name.');
     }
@@ -257,11 +231,6 @@ class _NewJobModal_needsCollapsingAndData extends Component {
 
     const { state, props, changeHandlerFactory } = this;
     const {
-      name,
-      startDate,
-      timezone,
-      wage,
-      cutoffs,
       problems,
       hasProblem,
       isLoading,
@@ -276,27 +245,10 @@ class _NewJobModal_needsCollapsingAndData extends Component {
       closeModal,
       inputRef,
       wageContentToggle,
-      cutoffsContentToggle,
-      windowWidth
+      cutoffsContentToggle
     } = props;
 
     if (!isActive) return <></>;
-    
-    const isFormActive = isActive && !isLoading && !hasSuccess;
-
-    const inputRefs = {
-      wage: extractWageInputRefs(this),
-      cutoffs: extractWkDayCutoffsInputRefs(this)
-    };
-    const contentToggles = {
-      wage: wageContentToggle,
-      cutoffs: cutoffsContentToggle
-    };
-
-    const topLevelFieldLabelRatio = 5.8;
-    const secondLevelFieldLabelRatio = 4.7;
-
-    const style = getStyle();
 
     return (
       <ModalSkeleton
@@ -371,117 +323,28 @@ class _NewJobModal_needsCollapsingAndData extends Component {
               />
             </Notification>
           )}
-          {inputs.map(
-            ({ propName, Comp, label, placeholder, helpText, isComplex, otherAttrs }, index) => (
-              <Comp
-                value={state[propName]}
+          {inputPropNames.map(
+            (propName, index) => (
+              <Input
                 {...{
                   propName,
-                  label,
-                  placeholder,
-                  helpText,
                   changeHandlerFactory,
-                  formId
+                  formId,
+                  wageContentToggle,
+                  cutoffsContentToggle
                 }}
+                value={state[propName]}
+                problems={problems && problems[propName]}
                 inputRef={index === 0 ? inputRef : undefined}
-                isActive={isFormActive}
-                hasProblem={problems && problems[propName]}
-                {...(
-                  isComplex ? (
-                    {
-                      problems: problems && problems[propName],
-                      refs: inputRefs[propName],
-                      contentToggle: contentToggles[propName],
-                      topLevelFieldLabelRatio,
-                      secondLevelFieldLabelRatio
-                    }
-                  ) : (
-                    {
-                      fieldToLabelRatio: topLevelFieldLabelRatio,
-                      isInline: true
-                    }
-                  )
-                )}
-                {...otherAttrs}
+                isActive={isActive && !isLoading && !hasSuccess}
+                topLevelFieldLabelRatio={5.8}
+                secondLevelFieldLabelRatio={4.7}
+                wageInputRefs={extractWageInputRefs(this)}
+                wkDayCutoffsInputRefs={extractWkDayCutoffsInputRefs(this)}
                 key={index}
               />
             )
           )}
-          {/* <TextInput
-            propName="name"
-            value={name}
-            label="Name:"
-            placeholder="Name this job..."
-            {...{
-              changeHandlerFactory,
-              inputRef,
-              formId
-            }}
-            isInline
-            isActive={isFormActive}
-            hasProblem={problems && problems.name}
-            fieldToLabelRatio={topLevelFieldLabelRatio}
-          />
-          <DateInput
-            isInline
-            propName="startDate"
-            value={startDate}
-            label="Start Date:"
-            placeholder="Type or select date..."
-            {...{
-              changeHandlerFactory,
-              formId
-            }}
-            isActive={isFormActive}
-            hasProblem={problems && problems.startDate}
-            helpText="Time can still be entered from before start date, so don't worry if you need to guess."
-            fieldToLabelRatio={topLevelFieldLabelRatio}
-          />
-          <SelectInput
-            propName="timezone"
-            value={timezone}
-            label="Timezone:"
-            placeholder="The timezone your hours are counted in..."
-            options={timezoneOptions}
-            {...{
-              changeHandlerFactory,
-              formId
-            }}
-            isInline
-            isActive={isFormActive}
-            hasProblem={problems && problems.timezone}
-            fieldToLabelRatio={topLevelFieldLabelRatio}
-          />
-          <WageInput
-            propName="wage"
-            value={wage}
-            isActive={isFormActive}
-            hasProblem={problems && problems.wage}
-            problems={problems && problems.wage}
-            {...{
-              changeHandlerFactory,
-              formId,
-              topLevelFieldLabelRatio,
-              secondLevelFieldLabelRatio
-            }}
-            refs={wageInputRefs}
-            contentToggle={wageContentToggle}
-          />
-          <WkDayCutoffsInput
-            propName="cutoffs"
-            value={cutoffs}
-            isActive={isFormActive}
-            hasProblem={problems && problems.cutoffs}
-            problems={problems && problems.cutoffs}
-            {...{
-              changeHandlerFactory,
-              formId,
-              topLevelFieldLabelRatio,
-              secondLevelFieldLabelRatio
-            }}
-            refs={cutoffsInputRefs}
-            contentToggle={cutoffsContentToggle}
-          /> */}
         </form>
       </ModalSkeleton>
     );
