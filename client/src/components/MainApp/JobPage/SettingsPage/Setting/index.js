@@ -87,10 +87,12 @@ class Setting extends Component {
         />
         {/* <ChangeDateModal
           {...commonModalAttrs}
-        />
-        <DeleteValueModal
-          {...commonModalAttrs}
         /> */}
+        <DeleteEntryModal
+          {...commonModalAttrs}
+          isActive={isDeleteValueModalOpen}
+          closeModal={() => toggleDeleteValueModal(false)}
+        />
       </>
     );
   };

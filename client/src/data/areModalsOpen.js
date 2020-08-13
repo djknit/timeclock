@@ -25,14 +25,14 @@ const service = dataServiceFactory({
   maxListeners: 40
 });
 
-service.getRegistrationId = function() {
+service.getId = function() {
   return state.newId;
 };
 
-service.reportModalsOpen = function(reporterId, reporterHasModalsOpen = true) {
+service.report = function(reporterId, reporterHasModalsOpen = true) {
   const wereModalsOpen = state.areAnyModalsOpen;
-  const _markState = reporterHasModalsOpen ? state.markOpen : state.markClosed;
-  _markState(reporterId);
+  const methodName = reporterHasModalsOpen ? 'markOpen' : 'markClosed';
+  state[methodName](reporterId);
   if (state.areAnyModalsOpen !== wereModalsOpen) {
     service._emit();
   }
