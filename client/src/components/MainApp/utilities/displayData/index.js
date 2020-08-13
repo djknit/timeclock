@@ -1,8 +1,13 @@
 import moment from 'moment';
+import { dates as dateUtils } from '../../../utilities';
 import { getDayCutoffTime } from '../elemental';
 import { getWageValueSummaryText } from './wage';
 
 export * from './wage';
+
+function formatMyDate(myDate, formatString) {
+  return dateUtils.getMoment(myDate).format(formatString || 'MMM D, YYYY');
+}
 
 function getWeekBeginsText(weekBeginsValue) {
   return moment().day(weekBeginsValue).format('dddd');
@@ -40,4 +45,7 @@ function getSimpleJobSettingValueText(settingName, value) {
   }
 }
 
-export { getSimpleJobSettingValueText };
+export {
+  formatMyDate,
+  getSimpleJobSettingValueText
+};

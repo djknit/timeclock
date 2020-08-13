@@ -10,7 +10,8 @@ import {
   processWageInput,
   getJobSettingInputProblems,
   processDayCutoffInput,
-  getDateRangeText
+  getDateRangeText,
+  processJobSettingInputValue
 } from '../../utilities';
 import { windowWidthService, currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
@@ -88,14 +89,10 @@ class _EditValueModal_needsCollapsingAndData extends Component {
   getDataProcessedToSubmit() {
     const { indexOfSchedEntryToEdit, valueSchedule, settingName, jobId } = this.props;
     const { updatedValue } = this.state;
-    let value;
-    if (settingName === 'wage') value = processWageInput(updatedValue);
-    else if (settingName === 'dayCutoff') value = processDayCutoffInput(updatedValue);
-    else value = updatedValue;
     const updates = {
       edit: [{
         id: valueSchedule[indexOfSchedEntryToEdit]._id.toString(),
-        value
+        value: processJobSettingInputValue(settingName, updatedValue)
       }]
     };
     return { jobId, updates };
@@ -136,7 +133,7 @@ class _EditValueModal_needsCollapsingAndData extends Component {
           }
         },
         1000 * stepSizeOfRedirectDelay
-      )
+      );
     })
     .catch(err => {
       console.log(err)
@@ -162,6 +159,9 @@ class _EditValueModal_needsCollapsingAndData extends Component {
       valueSchedule[indexOfSchedEntryToEdit].value
     );
     this.setState(getStartingState(settingName, currentValue));
+    if (this.props.wageContentToggle && this.props.wageContentToggle.reset) {
+      this.props.wageContentToggle.reset();
+    }
   };
 
   componentDidUpdate(prevProps) {

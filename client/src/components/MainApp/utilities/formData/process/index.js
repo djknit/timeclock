@@ -1,5 +1,5 @@
-import { getWageInputProblems } from './wage';
-import { getDayCutoffInputProblems } from './dayCutoff';
+import { getWageInputProblems, processWageInput } from './wage';
+import { getDayCutoffInputProblems, processDayCutoffInput } from './dayCutoff';
 
 export * from './wage';
 export * from './dayCutoff';
@@ -33,8 +33,23 @@ function getJobSettingInputProblems(settingName, inputValue, problemMessages) {
   return _jobSettingValidators[settingName](inputValue, problemMessages);
 }
 
+function processJobSettingInputValue(settingName, inputValue) {
+  switch (settingName) {
+    case 'wage':
+      return processWageInput(inputValue);
+
+    case 'dayCutoff':
+      return processDayCutoffInput(inputValue);
+
+    default:
+      return inputValue;
+
+  }
+}
+
 export {
   getWeekBeginsInputProblems,
   getTimezoneInputProblems,
-  getJobSettingInputProblems
+  getJobSettingInputProblems,
+  processJobSettingInputValue
 };

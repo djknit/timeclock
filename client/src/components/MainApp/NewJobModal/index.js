@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   api,
   constants,
-  guessUserTimezone,
   changeHandlerFactoryFactory,
   getWageInputProblems,
   processWageInput,
@@ -13,7 +12,8 @@ import {
   getDayCutoffInputProblems,
   getWeekBeginsInputProblems,
   getTimezoneInputProblems,
-  processDayCutoffInput
+  processDayCutoffInput,
+  getSettingInputInitialValues
 } from '../utilities';
 import { jobsService, currentJobService, windowWidthService } from '../../../data';
 import ModalSkeleton from '../../ModalSkeleton';
@@ -27,33 +27,16 @@ const { stepSizeOfRedirectDelay, secondsToDelayRedirect } = constants;
 
 const formId = 'new-user-form';
 function getStartingState() {
+  const settingInputInitialValues = getSettingInputInitialValues();
   return {
     name: '',
     startDate: null,
-    timezone: guessUserTimezone() || '',
-    wage: {
-      useWage: false,
-      rate: '',
-      currency: 'USD',
-      overtime: {
-        useOvertime: true,
-        useMultiplier: true,
-        multiplier: 1.5,
-        rate: '',
-        cutoff: {
-          hours: 40,
-          minutes: 0
-        }
-      }
-    },
+    timezone: settingInputInitialValues.timezone,
+    wage: settingInputInitialValues.wage,
     cutoffs: {
       useDefaults: true,
-      dayCutoff: {
-        hour: 0,
-        minute: 0,
-        is24hr: false
-      },
-      weekBegins: 0
+      dayCutoff: settingInputInitialValues.dayCutoff,
+      weekBegins: settingInputInitialValues.weekBegins
     },
     problems: {},
     hasSuccess: false,
@@ -211,6 +194,8 @@ class _NewJobModal_needsCollapsingAndData extends Component {
 
   reset() {
     this.setState(getStartingState());
+    this.props.wageContentToggle.reset();
+    this.props.cutoffsContentToggle.reset();
   };
 
   componentDidUpdate(prevProps) {

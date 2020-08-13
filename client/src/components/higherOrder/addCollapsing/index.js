@@ -79,7 +79,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
 
     render() {
 
-      const { containerRef, state, props, setHeight, clearHeight, toggle, setIsExpanded } = this;
+      const { containerRef, state, props, setHeight, clearHeight, toggle, setIsExpanded, reset } = this;
 
       const { containerHeight, isExpanded, isAnimationOn, hasBeenExpanded } = state;
 
@@ -97,7 +97,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
           setIsExpanded,
           hasBeenExpanded,
           isExpanded,
-          isHeightSet: !!(containerHeight || containerHeight === 0)
+          isHeightSet: !!(containerHeight || containerHeight === 0),
+          reset
         }
       };
 
