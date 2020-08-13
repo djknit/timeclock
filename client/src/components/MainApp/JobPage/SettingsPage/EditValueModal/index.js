@@ -3,14 +3,14 @@ import {
   api,
   constants,
   changeHandlerFactoryFactory,
-  formatMyDate,
   getSimpleJobSettingValueText,
   convertSettingValueToFormData,
   addWageInputRefs,
   extractWageInputRefs,
   processWageInput,
   getJobSettingInputProblems,
-  processDayCutoffInput
+  processDayCutoffInput,
+  getDateRangeText
 } from '../../utilities';
 import { windowWidthService, currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
@@ -229,6 +229,7 @@ class _EditValueModal_needsCollapsingAndData extends Component {
     const inputProblems = problems && problems.updatedValue;
 
     const dateRangeText = getDateRangeText(entryToEdit.startDate, endDate);
+    const dateRangeShortText = getDateRangeText(entryToEdit.startDate, endDate, true);
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
     const closeMessage = () => this.setState({ showMessage: false });
@@ -306,7 +307,15 @@ class _EditValueModal_needsCollapsingAndData extends Component {
               />
             </Notification>
           )}
-          <TagGroup align="center">
+          <TagGroup align="center" isInline>
+            <Tag theme="info" size={6}>
+              Time Period:
+            </Tag>
+            <Tag theme="info light" size={6}>
+              {dateRangeShortText}
+            </Tag>
+          </TagGroup>
+          <TagGroup align="center" isInline>
             <Tag theme="info" size={6}>
               Current Value:
             </Tag>
@@ -348,16 +357,3 @@ const EditValueModal = addCollapsing(
 );
 
 export default EditValueModal;
-
-function getDateRangeText(startDate, endDate) {
-  if (!startDate && !endDate) {
-    return 'all time';
-  }
-  if (!startDate) {
-    return `all dates prior to and including ${formatMyDate(endDate)}`;
-  }
-  if (!endDate) {
-    return `all dates on or after ${formatMyDate(startDate)}`;
-  }
-  return `${formatMyDate(startDate)} until ${formatMyDate(endDate)}`;
-}

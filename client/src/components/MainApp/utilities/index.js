@@ -7,8 +7,8 @@ export * from './elemental';
 export * from './formData';
 export * from './displayData';
 
-function formatMyDate(myDate) {
-  return utilities.dates.getMoment(myDate).format('MMM D, YYYY');
+function formatMyDate(myDate, formatString) {
+  return utilities.dates.getMoment(myDate).format(formatString || 'MMM D, YYYY');
 }
 
 function getValidTimezones() {

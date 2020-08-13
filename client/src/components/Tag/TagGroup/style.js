@@ -1,13 +1,16 @@
-export default function getStyle(hasAlign) {
+export default function getStyle(hasAlign, isInline) {
 
-  const marginBottom = 'calc(10px - .5rem)'; // .5rem come from Bulma .tag style
+  let style = {
+    marginBottom: 'calc(10px - .5rem)' // .5rem come from Bulma .tag style
+  };
 
-  return (
-    hasAlign ?
-    {
-      display: 'block',
-      marginBottom
-    } :
-    { marginBottom }
-  );
+  if (isInline) {
+    style.display = 'inline-block';
+    style.marginRight = style.marginLeft = '.5em'
+  }
+  else if (hasAlign) {
+    style.display = 'block';
+  }
+
+  return style;
 };
