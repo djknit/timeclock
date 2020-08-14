@@ -1,6 +1,7 @@
 import React from 'react';
 import { dates as dateUtilities } from '../../utilities';
 import 'react-datepicker/dist/react-datepicker.css';
+import './style.css'; // for setting popper z-index
 import DatePicker from 'react-datepicker';
 import getStyle from './style';
 import BoxInputFrame from '../BoxInputFrame';
@@ -21,7 +22,10 @@ function DateInput({
   formId,
   isInline,
   inputRef,
-  fieldToLabelRatio
+  fieldToLabelRatio,
+  labelStyle,
+  datePickerProps,
+  fieldStyle
 }) {
 
   function processInput(inputDate) {
@@ -32,7 +36,7 @@ function DateInput({
   let inputClassName = 'input';
   if (hasProblem) inputClassName += ' is-danger';
 
-  const style = getStyle();
+  const style = getStyle(labelStyle, fieldStyle);
 
   return (
     <BoxInputFrame
@@ -54,6 +58,7 @@ function DateInput({
         id={inputId}
         ref={inputRef}
         autoComplete="off"
+        {...(datePickerProps || {})}
       />
       {helpText &&
         <p className="help">{helpText}</p>

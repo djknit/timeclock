@@ -10,7 +10,8 @@ import {
   getSettingInputInitialValues,
   processWageValueForDisplay
 } from '../../utilities';
-import { windowWidthService, currentJobService } from '../../../../../data';
+import { currentJobService } from '../../../../../data';
+import getStyle from './style';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
@@ -36,7 +37,8 @@ function getStartingState(settingName) {
     hasBeenSubmitted: false, 
     secondsUntilRedirect: undefined,
     settingValue: jobSettingInitialInputValues[settingName],
-    startDate: null
+    startDate: null,
+    messagesAreaMinHeight: undefined
   };
 }
 
@@ -44,12 +46,15 @@ class _AddEntryModal_needsCollapsing extends Component {
   constructor(props) {
     super(props);
     this.afterChange = this.afterChange.bind(this);
+    this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
     this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
     this.getInputProblems = this.getInputProblems.bind(this);
     this.getInputDataProcessedToSubmit = this.getInputDataProcessedToSubmit.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     addWageInputRefs(this);
+    this.messagesArea = React.createRef();
+    this.firstInputArea = React.createRef();
     this.state = getStartingState(this.props.settingName);
   };
 
@@ -57,6 +62,23 @@ class _AddEntryModal_needsCollapsing extends Component {
     if (this.state.hasBeenSubmitted) {
       this.setState(this.getInputProblems());
     }
+  };
+
+  handleDatepickerPopperToggle(isActiveAfterToggle) {
+    // need to make space for datepicker popper above date input.
+    // popper w/ margin extends 289.3px above top of date input.
+    // area above date input consists of dateInput label, first input field, and messages area
+    // date input label w/ margin is 2rem
+    // NEED: 2rem + (1stInputAreaHeight) + (msgAreaHeight) >= 289.3px
+    // therefore: (msgAreaHeight) >= 289.3px - 2rem - (1stInputAreaHeight)
+    const firstInputHeight = this.firstInputArea.current.clientHeight;
+    this.setState({
+      messagesAreaMinHeight: isActiveAfterToggle ? (
+        `calc(289.3px - 2rem - ${firstInputHeight}px)`
+      ) : (
+        undefined
+      )
+    })
   };
 
   getInputProblems() {
@@ -174,7 +196,9 @@ class _AddEntryModal_needsCollapsing extends Component {
   };
 
   render() {
-    const { reset, submit, changeHandlerFactory } = this;
+    const {
+      reset, submit, changeHandlerFactory, messagesArea, firstInputArea, handleDatepickerPopperToggle
+    } = this;
     const {
       isActive,
       closeModal,
@@ -191,7 +215,8 @@ class _AddEntryModal_needsCollapsing extends Component {
       secondsUntilRedirect,
       settingValue,
       startDate,
-      isLoading
+      isLoading,
+      messagesAreaMinHeight
     } = this.state;
 
     const closeMessage = () => this.setState({ showMessage: false });
@@ -211,6 +236,8 @@ class _AddEntryModal_needsCollapsing extends Component {
         isActive: !isLoading && !hasSuccess
       })
     );
+
+    const style = getStyle(messagesAreaMinHeight);
 
     return (
       <ModalSkeleton
@@ -247,48 +274,61 @@ class _AddEntryModal_needsCollapsing extends Component {
         }
       >
         <form id={formId}>
-          {showMessage && !hasProblem && !hasSuccess && (
-            <Notification theme="info" close={closeMessage}>
-              <NotificationText isLast>
-                Enter the new {lowCaseSettingName} value and the date on which that value goes into effect below.
-              </NotificationText>
-            </Notification>
-          )}
-          {showMessage && problemMessages.length > 0 && (
-            <Notification theme="danger" close={closeMessage}>
-              {problemMessages.map(
-                (message, index, arr) => (
-                  <NotificationText key={message} isLast={index === arr.length - 1}>
-                    {message}
-                  </NotificationText>
-                )
-              )}
-            </Notification>
-          )}
-          {showMessage && hasSuccess && (
-            <Notification theme="success">
-              <NotificationText>
-                You successfully added a new {lowCaseSettingName} value to the schedule.
-              </NotificationText>
-              <NotificationText>
-                This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
-              </NotificationText>
-              <ProgressBar
-                theme="success"
-                value={secondsToDelayRedirect - secondsUntilRedirect}
-                max={secondsToDelayRedirect}
-              />
-            </Notification>
-          )}
-          <SettingValueInput
-            {...getCommonFormAttrs('settingValue')}
-            {...{ wageInputRefs }}
-            wageContentToggle={contentToggle}
-            label={`New ${settingDisplayName} Value:`}
-          />
+          <div ref={messagesArea} style={style.messagesArea}>
+            {showMessage && !hasProblem && !hasSuccess && (
+              <Notification theme="info" close={closeMessage}>
+                <NotificationText isLast>
+                  Enter the new {lowCaseSettingName} value and the date on which that value goes into effect below.
+                </NotificationText>
+              </Notification>
+            )}
+            {showMessage && problemMessages.length > 0 && (
+              <Notification theme="danger" close={closeMessage}>
+                {problemMessages.map(
+                  (message, index, arr) => (
+                    <NotificationText key={message} isLast={index === arr.length - 1}>
+                      {message}
+                    </NotificationText>
+                  )
+                )}
+              </Notification>
+            )}
+            {showMessage && hasSuccess && (
+              <Notification theme="success">
+                <NotificationText>
+                  You successfully added a new {lowCaseSettingName} value to the schedule.
+                </NotificationText>
+                <NotificationText>
+                  This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
+                </NotificationText>
+                <ProgressBar
+                  theme="success"
+                  value={secondsToDelayRedirect - secondsUntilRedirect}
+                  max={secondsToDelayRedirect}
+                />
+              </Notification>
+            )}
+          </div>
+          <div ref={firstInputArea} style={style.firstInputArea}>
+            <SettingValueInput
+              {...getCommonFormAttrs('settingValue')}
+              {...{ wageInputRefs }}
+              wageContentToggle={contentToggle}
+              label={`New ${settingDisplayName} Value:`}
+              fieldStyle={style.firstInputField}
+            />
+          </div>
           <DateInput
             {...getCommonFormAttrs('startDate')}
-
+            label="Start Date:"
+            helpText="When does the new value go into effect? Select the first day that the new setting value applies."
+            placeholder="Start date..."
+            labelStyle={style.inputLabel}
+            datePickerProps={{
+              popperPlacement: 'top-start',
+              onCalendarOpen: () => handleDatepickerPopperToggle(true),
+              onCalendarClose: () => handleDatepickerPopperToggle(false)
+            }}
           />
         </form>
       </ModalSkeleton>
