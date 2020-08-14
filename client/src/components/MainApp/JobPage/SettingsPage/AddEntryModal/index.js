@@ -5,11 +5,8 @@ import {
   changeHandlerFactoryFactory,
   addWageInputRefs,
   extractWageInputRefs,
-  processWageInput,
   getJobSettingInputProblems,
-  processDayCutoffInput,
   getDateRangeText,
-  convertSettingValueToFormData,
   getSettingInputInitialValues,
   processWageValueForDisplay
 } from '../../utilities';
@@ -19,14 +16,16 @@ import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
 import { ProgressBar, DateInput } from '../../../../formPieces';
-// import Input from './Input';
-import { addCollapsing, addData } from '../../../../higherOrder';
+import SettingValueInput from '../SettingValueInput';
+import { addCollapsing } from '../../../../higherOrder';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 const formId = 'add-job-setting-schedule-entry';
 function getStartingState(settingName) {
   const jobSettingInitialInputValues = getSettingInputInitialValues();
+  console.log('add entry start state for '+settingName)
+  console.log(jobSettingInitialInputValues[settingName])
   return {
     hasSuccess: false,
     hasProblem: false,
@@ -41,7 +40,7 @@ function getStartingState(settingName) {
   };
 }
 
-class AddEntryModal extends Component {
+class _AddEntryModal_needsCollapsing extends Component {
   constructor(props) {
     super(props);
     this.afterChange = this.afterChange.bind(this);
@@ -51,7 +50,7 @@ class AddEntryModal extends Component {
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     addWageInputRefs(this);
-    this.state = getStartingState();
+    this.state = getStartingState(this.props.settingName);
   };
 
   afterChange() {
@@ -155,18 +154,148 @@ class AddEntryModal extends Component {
   };
 
   reset() {
-    
+    const { settingName, contentToggle } = this.props;
+    this.setState(getStartingState(settingName));
+    if (contentToggle && contentToggle.reset) contentToggle.reset();
+  };
+
+  componentDidUpdate(prevProps) {
+    const { isActive, windowWidth, contentToggle, settingName } = this.props;
+    const shouldToggleBeSet = isActive && settingName === 'wage' && !!this.state.settingValue;
+    if (
+      shouldToggleBeSet &&
+      (!contentToggle.isHeightSet || windowWidth !== prevProps.windowWidth || !prevProps.isActive)
+    ) {
+      contentToggle.setHeight();
+    }
+    else if (!shouldToggleBeSet && contentToggle && contentToggle.isHeightSet) {
+      contentToggle.clearHeight();
+    }
   };
 
   render() {
+    const { reset, submit, changeHandlerFactory } = this;
+    const {
+      isActive,
+      closeModal,
+      settingDisplayName,
+      settingName,
+      contentToggle
+    } = this.props;
+    const {
+      hasSuccess,
+      hasProblem,
+      problems,
+      problemMessages,
+      showMessage,
+      secondsUntilRedirect,
+      settingValue,
+      startDate,
+      isLoading
+    } = this.state;
+
+    const closeMessage = () => this.setState({ showMessage: false });
+
+    const lowCaseSettingName = settingDisplayName.toLowerCase();
+
+    const wageInputRefs = extractWageInputRefs(this);
+
+    const getCommonFormAttrs = (
+      propName => ({
+        propName,
+        value: this.state[propName],
+        problems: problems && problems[propName],
+        settingName,
+        changeHandlerFactory,
+        formId,
+        isActive: !isLoading && !hasSuccess
+      })
+    );
+
     return (
       <ModalSkeleton
-
+        {...{
+          isActive,
+          closeModal
+        }}
+        title={`Add ${settingDisplayName} Schedule Entry`}
+        isCloseButtonDisabled={isLoading}
+        footerContent={
+          <>
+            <Button
+              theme="light"
+              onClick={() => {
+                reset();
+                closeModal();
+              }}
+            >
+              {hasSuccess ? 'Close' : 'Cancel'}
+            </Button>
+            <Button
+              theme={hasSuccess ? 'success' : 'primary'}
+              onClick={submit}
+              disabled={isLoading || hasSuccess || !startDate || !settingValue}
+              isSubmit
+              {...{
+                formId,
+                isLoading
+              }}
+            >
+              Submit
+            </Button>
+          </>
+        }
       >
+        <form id={formId}>
+          {showMessage && !hasProblem && !hasSuccess && (
+            <Notification theme="info" close={closeMessage}>
+              <NotificationText isLast>
+                Enter the new {lowCaseSettingName} value and the date on which that value goes into effect below.
+              </NotificationText>
+            </Notification>
+          )}
+          {showMessage && problemMessages.length > 0 && (
+            <Notification theme="danger" close={closeMessage}>
+              {problemMessages.map(
+                (message, index, arr) => (
+                  <NotificationText key={message} isLast={index === arr.length - 1}>
+                    {message}
+                  </NotificationText>
+                )
+              )}
+            </Notification>
+          )}
+          {showMessage && hasSuccess && (
+            <Notification theme="success">
+              <NotificationText>
+                You successfully added a new {lowCaseSettingName} value to the schedule.
+              </NotificationText>
+              <NotificationText>
+                This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
+              </NotificationText>
+              <ProgressBar
+                theme="success"
+                value={secondsToDelayRedirect - secondsUntilRedirect}
+                max={secondsToDelayRedirect}
+              />
+            </Notification>
+          )}
+          <SettingValueInput
+            {...getCommonFormAttrs('settingValue')}
+            {...{ wageInputRefs }}
+            wageContentToggle={contentToggle}
+            label={`New ${settingDisplayName} Value:`}
+          />
+          <DateInput
+            {...getCommonFormAttrs('startDate')}
 
+          />
+        </form>
       </ModalSkeleton>
     );
   };
 }
+
+const AddEntryModal = addCollapsing(_AddEntryModal_needsCollapsing, 'contentToggle', true, true);
 
 export default AddEntryModal;

@@ -1,8 +1,9 @@
 import React from 'react';
 import {
   changeHandlerFactoryForChildrenFactory,
-  getWeekdays
-} from '../../utilities';
+  getWeekdays,
+  formConstants
+} from '../utilities';
 import getStyle from './style';
 import CollapsableSection from '../CollapsableSection';
 import RadioInput from '../RadioInput';
@@ -27,6 +28,9 @@ function WkDayCutoffsInput ({
   secondLevelFieldLabelRatio,
   contentToggle
 }) {
+
+  const _topLevelFieldLabelRatio = topLevelFieldLabelRatio || formConstants.topLevelFieldLabelRatio;
+  const _secondLevelFieldLabelRatio = secondLevelFieldLabelRatio || formConstants.secondLevelFieldLabelRatio;
 
   const { useDefaults, weekBegins, dayCutoff } = value;
 
@@ -75,7 +79,7 @@ function WkDayCutoffsInput ({
           changeHandlerFactory={changeHandlerFactoryForChildren}
           isInline
           hasProblem={problems && problems.useDefaults}
-          fieldToLabelRatio={topLevelFieldLabelRatio}
+          fieldToLabelRatio={_topLevelFieldLabelRatio}
           {...{ isActive }}
           fieldStyle={style.useDefaultsInputField}
           helpText="Default values follow standard calendar weeks and days (Sun. - Sat.; 12 AM)."
@@ -96,7 +100,7 @@ function WkDayCutoffsInput ({
         {...{ formId }}
         isInline
         isActive={areInsideInputsActive}
-        fieldToLabelRatio={secondLevelFieldLabelRatio}
+        fieldToLabelRatio={_secondLevelFieldLabelRatio}
         fieldStyle={style.firstInputInSection}
         fieldLabelStyle={style.weekBeginsLabel}
       />
@@ -109,7 +113,7 @@ function WkDayCutoffsInput ({
         {...{ formId }}
         isInline
         isActive={areInsideInputsActive}
-        fieldToLabelRatio={secondLevelFieldLabelRatio}
+        fieldToLabelRatio={_secondLevelFieldLabelRatio}
         fieldStyle={style.firstInputInSection}
         fieldLabelStyle={style.weekBeginsLabel}
       />

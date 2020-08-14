@@ -1,7 +1,7 @@
 import React from 'react';
 import ccData from 'currency-codes/data';
 import getStyle from './style';
-import { changeHandlerFactoryForChildrenFactory } from '../../utilities';
+import { changeHandlerFactoryForChildrenFactory, formConstants } from '../utilities';
 import SelectInput from '../SelectInput';
 import CurrencyInput from '../CurrencyInput';
 import RadioInput from '../RadioInput';
@@ -42,6 +42,9 @@ function WageInput({
   secondLevelFieldLabelRatio,
   contentToggle
 }) {
+
+  const _topLevelFieldLabelRatio = topLevelFieldLabelRatio || formConstants.topLevelFieldLabelRatio;
+  const _secondLevelFieldLabelRatio = secondLevelFieldLabelRatio || formConstants.secondLevelFieldLabelRatio;
 
   const { rate, currency, overtime, useWage } = value;
 
@@ -84,7 +87,7 @@ function WageInput({
           changeHandlerFactory={changeHandlerFactoryForChildren}
           isInline
           hasProblem={problems && problems.useWage}
-          fieldToLabelRatio={topLevelFieldLabelRatio}
+          fieldToLabelRatio={_topLevelFieldLabelRatio}
           {...{ isActive }}
           fieldStyle={style.useWageInputField}
         />
@@ -104,7 +107,7 @@ function WageInput({
         {...{ formId }}
         isInline
         isActive={areInsideInputsActive}
-        fieldToLabelRatio={secondLevelFieldLabelRatio}
+        fieldToLabelRatio={_secondLevelFieldLabelRatio}
         fieldStyle={style.firstInputInSection}
       />
       <CurrencyInput
@@ -121,7 +124,7 @@ function WageInput({
         }}
         isInline
         isActive={areInsideInputsActive}
-        fieldToLabelRatio={secondLevelFieldLabelRatio}
+        fieldToLabelRatio={_secondLevelFieldLabelRatio}
       />
       <OvertimeInput
         propName="overtime"
@@ -132,14 +135,10 @@ function WageInput({
         changeHandlerFactory={changeHandlerFactoryForChildren}
         {...{
           formId,
-          // radioUseOvertimeTrueRef,
-          // radioUseOvertimeFalseRef,
-          // radioUseMultiplierTrueRef,
-          // radioUseMultiplierFalseRef,
           currency,
-          secondLevelFieldLabelRatio,
           refs
         }}
+        secondLevelFieldLabelRatio={_secondLevelFieldLabelRatio}
         isActive={areInsideInputsActive}
         rawBaseRate={rate}
       />

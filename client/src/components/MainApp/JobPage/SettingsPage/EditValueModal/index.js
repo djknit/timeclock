@@ -19,8 +19,8 @@ import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
 import { ProgressBar } from '../../../../formPieces';
-import Input from './Input';
-import { addCollapsing, addData } from '../../../../higherOrder';
+import SettingValueInput from '../SettingValueInput';
+import { addCollapsing } from '../../../../higherOrder';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
@@ -39,7 +39,7 @@ function getStartingState(settingName, currentValue) {
   };
 }
 
-class _EditValueModal_needsCollapsingAndData extends Component {
+class _EditValueModal_needsCollapsing extends Component {
   constructor(props) {
     super(props);
     this.afterChange = this.afterChange.bind(this);
@@ -153,14 +153,14 @@ class _EditValueModal_needsCollapsingAndData extends Component {
   };
 
   reset() {
-    const { indexOfSchedEntryToEdit, valueSchedule, settingName } = this.props;
+    const { indexOfSchedEntryToEdit, valueSchedule, settingName, wageContentToggle } = this.props;
     const currentValue = (
       (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) &&
       valueSchedule[indexOfSchedEntryToEdit].value
     );
     this.setState(getStartingState(settingName, currentValue));
-    if (this.props.wageContentToggle && this.props.wageContentToggle.reset) {
-      this.props.wageContentToggle.reset();
+    if (wageContentToggle && wageContentToggle.reset) {
+      wageContentToggle.reset();
     }
   };
 
@@ -213,7 +213,6 @@ class _EditValueModal_needsCollapsingAndData extends Component {
       updatedValue,
       isLoading
     } = this.state;
-    console.log(updatedValue)
 
     if (!isActive) {
       return <></>;
@@ -226,7 +225,6 @@ class _EditValueModal_needsCollapsingAndData extends Component {
       valueSchedule[indexOfSchedEntryToEdit + 1].startDate :
       undefined
     );
-    const inputProblems = problems && problems.updatedValue;
 
     const dateRangeText = getDateRangeText(entryToEdit.startDate, endDate);
     const dateRangeShortText = getDateRangeText(entryToEdit.startDate, endDate, true);
@@ -295,7 +293,7 @@ class _EditValueModal_needsCollapsingAndData extends Component {
           {showMessage && hasSuccess && (
             <Notification theme="success">
               <NotificationText>
-                You successfully updated the {lowCaseSettingName} fo {dateRangeText}.
+                You successfully updated the {lowCaseSettingName} for {dateRangeText}.
               </NotificationText>
               <NotificationText>
                 This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
@@ -327,7 +325,7 @@ class _EditValueModal_needsCollapsingAndData extends Component {
               )}
             </Tag>
           </TagGroup>
-          <Input
+          <SettingValueInput
             propName="updatedValue"
             value={updatedValue}
             {...{
@@ -337,8 +335,9 @@ class _EditValueModal_needsCollapsingAndData extends Component {
               wageInputRefs,
               wageContentToggle
             }}
-            problems={inputProblems}
-            hasProblem={inputProblems}
+            // topLevelFieldLabelRatio={5.8}
+            // secondLevelFieldLabelRatio={4.7}
+            problems={problems && problems.updatedValue}
             isActive={!isLoading && !hasSuccess}
             label={`New ${settingDisplayName} Value:`}
           />
@@ -347,10 +346,6 @@ class _EditValueModal_needsCollapsingAndData extends Component {
     );
   };
 }
-
-const _EditValueModal_needsCollapsing = addData(
-  _EditValueModal_needsCollapsingAndData, 'windowWidth', windowWidthService
-);
 
 const EditValueModal = addCollapsing(
   _EditValueModal_needsCollapsing, 'wageContentToggle', true, true
