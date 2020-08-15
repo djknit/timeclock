@@ -9,6 +9,11 @@ export default function getStyle(isWage) {
     // whiteSpace: 'nowrap'
   };
 
+// A NOTE ABOUT <td> WIDTHS:
+  // Currently using hardcoded pixel widths to ensure date and buttons fit and letting value take remaining width
+  // Needs adjusted at least for smaller screens.
+  // Should find a way to make sure everything fits and spread remaining space evenly.
+
   return {
     table: {
       width: '100%',
@@ -16,12 +21,15 @@ export default function getStyle(isWage) {
       backgroundColor: 'transparent'
     },
     td: {
-      width: '20%'
+      ...td,
+      width: 120
     },
     valueTd: {
+      ...td
+    },
+    buttonsTd: {
       ...td,
-      width: '100%',
-
+      width: 440
     },
     button: {
       innate: {

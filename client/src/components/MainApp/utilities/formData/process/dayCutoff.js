@@ -6,12 +6,16 @@ function getDayCutoffInputProblems(inputValue, problemMessages) {
       minute: true
     };
   }
-  const { hour, minute } = inputValue;
+  const { hour, minute = 0 } = inputValue;
   if (!hour && hour !== 0) {
     problemMessages.push('You must select the hour of the day cutoff time.');
     return { hour: true };
   }
-  const valueInMinutes = hour * 60 + (minute || 0);
+  if (minute < 0 || minute > 60) {
+    problemMessages.push('Invalid day cutoff time: invalid minutes.');
+    return { minute: true };
+  }
+  const valueInMinutes = hour * 60 + minute;
   if (Math.abs(valueInMinutes) > 12 * 60) {
     problemMessages.push(
       'Invalid day cutoff: can\'t be moved more than 12 hrs in either direction from the actual start of the day (midnight).'

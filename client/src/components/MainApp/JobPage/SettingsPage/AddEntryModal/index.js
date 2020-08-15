@@ -6,9 +6,8 @@ import {
   addWageInputRefs,
   extractWageInputRefs,
   getJobSettingInputProblems,
-  getDateRangeText,
   getSettingInputInitialValues,
-  processWageValueForDisplay
+  processJobSettingInputValue
 } from '../../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
@@ -53,7 +52,6 @@ class _AddEntryModal_needsCollapsing extends Component {
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     addWageInputRefs(this);
-    this.messagesArea = React.createRef();
     this.firstInputArea = React.createRef();
     this.state = getStartingState(this.props.settingName);
   };
@@ -116,7 +114,7 @@ class _AddEntryModal_needsCollapsing extends Component {
     const updates = {
       add: [{
         startDate,
-        value: processWageValueForDisplay(settingName, settingValue)
+        value: processJobSettingInputValue(settingName, settingValue)
       }]
     };
     return { jobId, updates };
@@ -135,6 +133,7 @@ class _AddEntryModal_needsCollapsing extends Component {
       return api.jobs.updateSetting(settingName, submissionData);
     })
     .then(res => {
+      console.log(res)
       let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
@@ -274,7 +273,7 @@ class _AddEntryModal_needsCollapsing extends Component {
         }
       >
         <form id={formId}>
-          <div ref={messagesArea} style={style.messagesArea}>
+          <div style={style.messagesArea}>
             {showMessage && !hasProblem && !hasSuccess && (
               <Notification theme="info" close={closeMessage}>
                 <NotificationText isLast>
