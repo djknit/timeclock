@@ -12,7 +12,7 @@ class SettingsPage extends Component {
   };
 
   render() {
-    const { job, parentPath, match } = this.props;
+    const { job, parentPath, match, catchApiUnauthorized } = this.props;
     const thisPath = match.url;
 
     const crumbChain = [
@@ -65,7 +65,8 @@ class SettingsPage extends Component {
                       <Setting
                         {...{
                           ...props,
-                          job
+                          job,
+                          catchApiUnauthorized
                         }}
                         settingName={RouteInfo.settingPropName}
                         settingDisplayName={RouteInfo.pageName}
@@ -74,7 +75,8 @@ class SettingsPage extends Component {
                       <RouteInfo.PageComp
                         {...{
                           ...props,
-                          job
+                          job,
+                          catchApiUnauthorized
                         }}
                       />
                     )}

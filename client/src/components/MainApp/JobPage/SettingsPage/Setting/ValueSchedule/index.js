@@ -62,7 +62,7 @@ function ValueSchedule({
                   detailsMarginTop=".4em"
                 />
               </td>
-              <td style={style.td}>
+              <td style={style.buttonsTd}>
                 <SchedEntryButton
                   text="Edit Value"
                   toggle={toggleEditValueModal}

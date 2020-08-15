@@ -1,56 +1,42 @@
 import React, { Component } from 'react';
-import getStyle from './style';
-import ModalSkeleton from '../../ModalSkeleton';
-import Button from '../../Button';
 import {
   api,
   constants,
-  getValidTimezones,
-  guessUserTimezone,
-  getTimezoneOptions,
-  processCurrencyInputValue,
   changeHandlerFactoryFactory,
-  validateWageInput,
-  processWageInput
+  getWageInputProblems,
+  processWageInput,
+  addWageInputRefs,
+  addWkDayCutoffsInputRefs,
+  extractWageInputRefs,
+  extractWkDayCutoffsInputRefs,
+  getDayCutoffInputProblems,
+  getWeekBeginsInputProblems,
+  getTimezoneInputProblems,
+  processDayCutoffInput,
+  getSettingInputInitialValues
 } from '../utilities';
-import Notification, { NotificationText } from '../../Notification';
-import {
-  TextInput, SelectInput, DateInput, WageInput, WkDayCutoffsInput, ProgressBar
-} from '../../formPieces';
 import { jobsService, currentJobService, windowWidthService } from '../../../data';
+import ModalSkeleton from '../../ModalSkeleton';
+import Button from '../../Button';
+import Notification, { NotificationText } from '../../Notification';
+import { ProgressBar } from '../../formPieces';
+import Input from './Input';
 import { addCollapsing, addData } from '../../higherOrder';
 
 const { stepSizeOfRedirectDelay, secondsToDelayRedirect } = constants;
 
 const formId = 'new-user-form';
 function getStartingState() {
+  const settingInputInitialValues = getSettingInputInitialValues();
   return {
     name: '',
     startDate: null,
-    timezone: guessUserTimezone() || '',
-    wage: {
-      useWage: false,
-      rate: '',
-      currency: 'USD',
-      overtime: {
-        useOvertime: true,
-        useMultiplier: true,
-        multiplier: 1.5,
-        rate: '',
-        cutoff: {
-          hours: 40,
-          minutes: 0
-        }
-      }
-    },
+    timezone: settingInputInitialValues.timezone,
+    wage: settingInputInitialValues.wage,
     cutoffs: {
       useDefaults: true,
-      dayCutoff: {
-        hour: 0,
-        minute: 0,
-        is24hr: false
-      },
-      weekBegins: 0
+      dayCutoff: settingInputInitialValues.dayCutoff,
+      weekBegins: settingInputInitialValues.weekBegins
     },
     problems: {},
     hasSuccess: false,
@@ -62,7 +48,7 @@ function getStartingState() {
     secondsUntilRedirect: undefined
   };
 }
-const timezoneOptions = getTimezoneOptions();
+const inputPropNames = ['name', 'startDate', 'timezone', 'wage', 'cutoffs'];
 
 class _NewJobModal_needsCollapsingAndData extends Component {
   constructor(props) {
@@ -74,27 +60,20 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     this.getInputDataProcessedToSubmit = this.getInputDataProcessedToSubmit.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
-    this.radioUseWageTrue = React.createRef();
-    this.radioUseWageFalse = React.createRef();
-    this.radioUseOvertimeTrue = React.createRef();
-    this.radioUseOvertimeFalse = React.createRef();
-    this.radioUseMultiplierTrue = React.createRef();
-    this.radioUseMultiplierFalse = React.createRef();
-    this.radioUseDefaultCutoffsTrue = React.createRef();
-    this.radioUseDefaultCutoffsFalse = React.createRef();
+    addWageInputRefs(this);
+    addWkDayCutoffsInputRefs(this);
     this.state = getStartingState();
   };
 
   getInputDataProcessedToSubmit() {
     const { name, startDate, timezone, wage, cutoffs } = this.state;
-    const dayCutoffInMinutes = (cutoffs.dayCutoff.hour || 0) * 60 + (cutoffs.dayCutoff.minute || 0);
     return {
       name,
       startDate,
       timezone,
       wage: processWageInput(wage),
       weekBegins: cutoffs.weekBegins,
-      dayCutoff: dayCutoffInMinutes * 60 * 1000
+      dayCutoff: processDayCutoffInput(cutoffs.dayCutoff)
     };
   };
 
@@ -122,7 +101,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
       problems.name = true;
       problemMessages.push('You must name the job.');
     }
-    else if (jobsService.getValue().map(({ name }) => name).indexOf(name) !== -1) {
+    else if (jobsService.getValue().map(({ name }) => name).includes(name)) {
       problems.name = true;
       problemMessages.push('You already have a job with that name.');
     }
@@ -130,27 +109,14 @@ class _NewJobModal_needsCollapsingAndData extends Component {
       problems.startDate = true;
       problemMessages.push('You must enter a start date');
     }
-    if (!timezone) {
-      problems.timezone = true;
-      problemMessages.push('You must select a timezone.');
+    problems.timezone = getTimezoneInputProblems(timezone, problemMessages);
+    if (!cutoffs.useDefaults) {
+      let _cutoffProbs = {};
+      _cutoffProbs.dayCutoff = getDayCutoffInputProblems(cutoffs.dayCutoff, problemMessages);
+      _cutoffProbs.weekBegins = getWeekBeginsInputProblems(cutoffs.weekBegins, problemMessages, true);
+      problems.cutoffs = (_cutoffProbs.dayCutoff || _cutoffProbs.weekBegins) ? _cutoffProbs : undefined;
     }
-    if (!cutoffs.useDefaults && !cutoffs.weekBegins && cutoffs.weekBegins !== 0) {
-      problems.cutoffs = { weekBegins: true };
-      problemMessages.push('Missing week begins day (under "Week and Day Cutoffs").');
-    }
-    const dayCutoffInMinutes = (cutoffs.dayCutoff.hour || 0) * 60 + (cutoffs.dayCutoff.minute || 0);
-    if (!cutoffs.useDefaults && Math.abs(dayCutoffInMinutes) > 12 * 60) {
-      problems.cutoffs = {
-        dayCutoff: true,
-        ...(problems.cutoffs || {})
-      };
-      problemMessages.push('Invalid day cutoff: can\'t be moved more than 12 hrs in either direction from the actual start of the day (midnight).');
-    }
-    const wageProblemsInfo = validateWageInput(wage);
-    if (wageProblemsInfo) {
-      problems.wage = wageProblemsInfo.problems;
-      problemMessages.push(...wageProblemsInfo.problemMessages);
-    }
+    problems.wage = getWageInputProblems(wage, problemMessages);
     return { problems, problemMessages };
   };
 
@@ -228,6 +194,8 @@ class _NewJobModal_needsCollapsingAndData extends Component {
 
   reset() {
     this.setState(getStartingState());
+    this.props.wageContentToggle.reset();
+    this.props.cutoffsContentToggle.reset();
   };
 
   componentDidUpdate(prevProps) {
@@ -248,11 +216,6 @@ class _NewJobModal_needsCollapsingAndData extends Component {
 
     const { state, props, changeHandlerFactory } = this;
     const {
-      name,
-      startDate,
-      timezone,
-      wage,
-      cutoffs,
       problems,
       hasProblem,
       isLoading,
@@ -267,18 +230,10 @@ class _NewJobModal_needsCollapsingAndData extends Component {
       closeModal,
       inputRef,
       wageContentToggle,
-      cutoffsContentToggle,
-      windowWidth
+      cutoffsContentToggle
     } = props;
 
     if (!isActive) return <></>;
-    
-    const isFormActive = isActive && !isLoading && !hasSuccess;
-
-    const topLevelFieldLabelRatio = 5.8;
-    const secondLevelFieldLabelRatio = 4.7;
-
-    const style = getStyle();
 
     return (
       <ModalSkeleton
@@ -353,87 +308,28 @@ class _NewJobModal_needsCollapsingAndData extends Component {
               />
             </Notification>
           )}
-          <TextInput
-            propName="name"
-            value={name}
-            label="Name:"
-            placeholder="Name this job..."
-            {...{
-              changeHandlerFactory,
-              inputRef,
-              formId
-            }}
-            isInline
-            isActive={isFormActive}
-            hasProblem={problems && problems.name}
-            fieldToLabelRatio={topLevelFieldLabelRatio}
-          />
-          <DateInput
-            isInline
-            propName="startDate"
-            value={startDate}
-            label="Start Date:"
-            placeholder="Type or select date..."
-            {...{
-              changeHandlerFactory,
-              formId
-            }}
-            isActive={isFormActive}
-            hasProblem={problems && problems.startDate}
-            helpText="Time can still be entered from before start date, so don't worry if you need to guess."
-            fieldToLabelRatio={topLevelFieldLabelRatio}
-          />
-          <SelectInput
-            propName="timezone"
-            value={timezone}
-            label="Timezone:"
-            placeholder="The timezone your hours are counted in..."
-            options={timezoneOptions}
-            {...{
-              changeHandlerFactory,
-              formId
-            }}
-            isInline
-            isActive={isFormActive}
-            hasProblem={problems && problems.timezone}
-            fieldToLabelRatio={topLevelFieldLabelRatio}
-          />
-          <WageInput
-            propName="wage"
-            value={wage}
-            isActive={isFormActive}
-            hasProblem={problems && problems.wage}
-            problems={problems && problems.wage}
-            {...{
-              changeHandlerFactory,
-              formId,
-              topLevelFieldLabelRatio,
-              secondLevelFieldLabelRatio
-            }}
-            radioUseWageTrueRef={this.radioUseWageTrue}
-            radioUseWageFalseRef={this.radioUseWageFalse}
-            radioUseOvertimeTrueRef={this.radioUseOvertimeTrue}
-            radioUseOvertimeFalseRef={this.radioUseOvertimeFalse}
-            radioUseMultiplierTrueRef={this.radioUseMultiplierTrue}
-            radioUseMultiplierFalseRef={this.radioUseMultiplierFalse}
-            contentToggle={wageContentToggle}
-          />
-          <WkDayCutoffsInput
-            propName="cutoffs"
-            value={cutoffs}
-            isActive={isFormActive}
-            hasProblem={problems && problems.cutoffs}
-            problems={problems && problems.cutoffs}
-            {...{
-              changeHandlerFactory,
-              formId,
-              topLevelFieldLabelRatio,
-              secondLevelFieldLabelRatio
-            }}
-            radioUseDefaultCutoffsTrueRef={this.radioUseDefaultCutoffsTrue}
-            radioUseDefaultCutoffsFalseRef={this.radioUseDefaultCutoffsFalse}
-            contentToggle={cutoffsContentToggle}
-          />
+          {inputPropNames.map(
+            (propName, index) => (
+              <Input
+                {...{
+                  propName,
+                  changeHandlerFactory,
+                  formId,
+                  wageContentToggle,
+                  cutoffsContentToggle
+                }}
+                value={state[propName]}
+                problems={problems && problems[propName]}
+                inputRef={index === 0 ? inputRef : undefined}
+                isActive={isActive && !isLoading && !hasSuccess}
+                topLevelFieldLabelRatio={5.8}
+                secondLevelFieldLabelRatio={4.7}
+                wageInputRefs={extractWageInputRefs(this)}
+                wkDayCutoffsInputRefs={extractWkDayCutoffsInputRefs(this)}
+                key={index}
+              />
+            )
+          )}
         </form>
       </ModalSkeleton>
     );

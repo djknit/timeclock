@@ -24,7 +24,8 @@ export default function getStyle(contentToggleStyles, arrowTogglePseudoState) {
       right: 0,
       fontSize: toggleBtnFontSize,
       bottom: `calc(-.5em + 1px)`,
-      color: isToggleBlack ? bulmaFormBlack : bulmaFormBlue
+      color: isToggleBlack ? bulmaFormBlack : bulmaFormBlue,
+      outline: 'none'
     }
   };
 };

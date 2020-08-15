@@ -1,8 +1,7 @@
 export * from '../../utilities';
-export * from './elemental';
+export * from './currency';
 export * from './formData';
 export * from './constants';
-export * from './displayData';
 
 function promiseToSetState(component, updatedState) {
   return new Promise(resolve => component.setState(updatedState, resolve));

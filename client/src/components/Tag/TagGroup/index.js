@@ -3,7 +3,8 @@ import getStyle from './style';
 
 function TagGroup({
   children,
-  align
+  align,
+  isInline
 }) {
 
   let hasAlign, alignmentClass;
@@ -13,7 +14,7 @@ function TagGroup({
   }
   else alignmentClass = '';
 
-  const style = getStyle(hasAlign);
+  const style = getStyle(hasAlign, isInline);
 
   return (
     <div

@@ -1,22 +1,26 @@
 import React, { Component } from 'react';
 import getStyle from './style';
 import { formatMyDate } from '../../utilities';
-import ContentArea from '../../../ContentArea';
+import { windowWidthService } from '../../../../../data';
+import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
 import EditValueModal from '../EditValueModal';
-import DeleteValueModal from '../DeleteValueModal';
+import AddEntryModal from '../AddEntryModal';
+import DeleteEntryModal from '../DeleteEntryModal';
 import ChangeDateModal from '../ChangeDateModal';
 import ValueSchedule from './ValueSchedule';
+import { addData } from '../../../../higherOrder';
 
-class Setting extends Component {
+class _Setting_needsData extends Component {
   constructor(props) {
     super(props);
     this.modalTogglerFactory = this.modalTogglerFactory.bind(this);
     this.state = {
       indexOfSchedEntryToEdit: undefined,
       isEditValueModalOpen: false,
-      isDeleteValueModalOpen: false,
-      isChangeDateModalOpen: false
+      isDeleteEntryModalOpen: false,
+      isChangeDateModalOpen: false,
+      isAddEntryModalActive: false
     };
   };
 
@@ -33,24 +37,54 @@ class Setting extends Component {
 
   render() {
     const { modalTogglerFactory } = this;
-    const { job, settingName, settingDisplayName } = this.props;
     const {
-      indexOfSchedEntryToEdit, isEditValueModalOpen, isDeleteValueModalOpen, isChangeDateModalOpen
+      job, settingName, settingDisplayName, catchApiUnauthorized, style, areAnyModalsOpen, windowWidth
+    } = this.props;
+    const {
+      indexOfSchedEntryToEdit,
+      isEditValueModalOpen,
+      isDeleteEntryModalOpen,
+      isChangeDateModalOpen,
+      isAddEntryModalActive
     } = this.state;
+    
+    const completeAreModalsOpen = (
+      areAnyModalsOpen ||
+      isEditValueModalOpen ||
+      isDeleteEntryModalOpen ||
+      isChangeDateModalOpen ||
+      isAddEntryModalActive
+    );
     
     const valueSchedule = job[settingName];
 
-    const style = getStyle();
+    const completeStyle = getStyle(style);
 
     const toggleEditValueModal = modalTogglerFactory('isEditValueModalOpen');
-    const toggleDeleteValueModal = modalTogglerFactory('isDeleteValueModalOpen');
+    const toggleDeleteValueModal = modalTogglerFactory('isDeleteEntryModalOpen');
     const toggleChangeDateModal = modalTogglerFactory('isChangeDateModalOpen');
+    const toggleAddEntryModal = modalTogglerFactory('isAddEntryModalActive');
   
-    const commonModalAttrs = { settingName, settingDisplayName, indexOfSchedEntryToEdit, valueSchedule };
+    const jobId = job._id.toString();
+    const commonModalAttrs = {
+      settingName, settingDisplayName, jobId, catchApiUnauthorized, windowWidth
+    };
+    const mostlyCommonModalAttrs = { ...commonModalAttrs, indexOfSchedEntryToEdit, valueSchedule };
   
     return (
       <>
-        <ContentArea title={`${settingDisplayName} Value Schedule`}>
+        <ContentArea style={completeStyle.contentArea}>
+          <ContentAreaTitle style={completeStyle.areaTitle}>
+            {settingDisplayName} Value Schedule
+          </ContentAreaTitle>
+          <Button
+            styles={completeStyle.addValBtn}
+            theme="primary"
+            onClick={() => toggleAddEntryModal(true)}
+            allowTabFocus={completeAreModalsOpen}
+          >
+            <i className="fas fa-plus"/> Add Value
+          </Button>
           <ValueSchedule
             {...{
               valueSchedule,
@@ -61,20 +95,29 @@ class Setting extends Component {
             }}
           />
         </ContentArea>
-        <EditValueModal
+        <AddEntryModal
           {...commonModalAttrs}
+          isActive={isAddEntryModalActive}
+          closeModal={() => toggleAddEntryModal(false)}
+        />
+        <EditValueModal
+          {...mostlyCommonModalAttrs}
           isActive={isEditValueModalOpen}
           closeModal={() => toggleEditValueModal(false)}
         />
         {/* <ChangeDateModal
           {...commonModalAttrs}
-        />
-        <DeleteValueModal
-          {...commonModalAttrs}
         /> */}
+        <DeleteEntryModal
+          {...mostlyCommonModalAttrs}
+          isActive={isDeleteEntryModalOpen}
+          closeModal={() => toggleDeleteValueModal(false)}
+        />
       </>
     );
   };
 }
+
+const Setting = addData(_Setting_needsData, 'windowWidth', windowWidthService);
 
 export default Setting;

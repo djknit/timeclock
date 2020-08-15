@@ -4,7 +4,7 @@ import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './App.css';
 import getStyle from './AppStyle';
-import { windowWidthService } from './data';
+import { windowWidthService, areModalsOpenService } from './data';
 import LandingPage from './components/LandingPage';
 import MainApp from './components/MainApp';
 import NotFound from './components/NotFound';
@@ -24,12 +24,15 @@ class App extends Component {
     windowWidthService.reportChange(window.innerWidth);
   };
 
-  setAreAnyModalsOpen(areAnyModalsOpenAfterChange) {
-    this.setState({ areAnyModalsOpen: !!areAnyModalsOpenAfterChange });
+  setAreAnyModalsOpen() {
+    this.setState({
+      areAnyModalsOpen: areModalsOpenService.getValue()
+    });
   };
 
   componentDidMount() {
     this.reportWindowWidthChange();
+    areModalsOpenService.subscribe(this.setAreAnyModalsOpen);
     window.addEventListener('resize', this.reportWindowWidthChange);
   };
 
@@ -64,7 +67,7 @@ class App extends Component {
                     {...props}
                     {...{
                       areAnyModalsOpen,
-                      setAreAnyModalsOpen
+                      // setAreAnyModalsOpen
                     }}
                   />
                 }

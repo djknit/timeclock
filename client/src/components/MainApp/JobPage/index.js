@@ -86,7 +86,9 @@ class _JobPage_needsData extends Component {
     const {
       toggleEditJobNameModal, toggleDeleteJobModal, editJobNameInputRef, deleteJobModalInputRef
     } = this;
-    const { job, match, returnToDashboard, history, catchApiUnauthorized, dashboardPath } = this.props;
+    const {
+      job, match, returnToDashboard, history, catchApiUnauthorized, dashboardPath
+    } = this.props;
     const {
       isLoading, problemMessages, isEditJobNameModalActive, isDeleteJobModalActive
     } = this.state;
@@ -103,7 +105,8 @@ class _JobPage_needsData extends Component {
 
     const commonRouteAttributes = {
       job,
-      parentPath: match.url
+      parentPath: match.url,
+      catchApiUnauthorized
     };
 
     return (

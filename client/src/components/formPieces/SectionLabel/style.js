@@ -7,8 +7,8 @@ export default function getStyle() {
       position: 'absolute',
       left: 0,
       top: 0,
-      backgroundColor: '#ffffff',
       zIndex: 1,
+      backgroundColor: '#ffffff',
       paddingRight: 10
     },
     sectionLabelHr: {

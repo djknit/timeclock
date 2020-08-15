@@ -1,24 +1,28 @@
-export { dashContentBtnSpecs, adjustBtnSpecs, getBtnStyleFromSpecs } from '../../style';
+import {
+  dashContentBtnSpecs, getContentAreaCornerButtonStyles, adjustBtnSpecs, contentAreaPadding
+} from '../../style';
+export * from '../../style';
 
-export default function getStyle() {
-  // const btnSpecs = adjustBtnSpecs(dashContentBtnSpecs, 1.1);
-  // const
+export default function getStyle(additionalStyle) {
+  const addValBtnWidthPerHeight = 5.6335; // Measured. Depends on text and needs changed manually if text changes.
+
+  const btnSpecs = adjustBtnSpecs(dashContentBtnSpecs, 1.5);
+
+  const { btnInnateStyle, titleWidth } = getContentAreaCornerButtonStyles(
+    btnSpecs, addValBtnWidthPerHeight, contentAreaPadding, contentAreaPadding, 8
+  );
+
 
   return {
-    // table: {
-    //   width: '100%',
-    //   textAlign: 'center',
-    //   backgroundColor: 'transparent'
-    // },
-    // td: {
-    //   verticalAlign: 'middle',
-    //   textAlign: 'center'
-    // },
-    // button: {
-    //   innate: {
-    //     ...getBtnStyleFromSpecs(btnSpecs),
-    //     marginRight: '.5rem'
-    //   }
-    // }
+    contentArea: {
+      position: 'relative',
+      ...(additionalStyle || {})
+    },
+    areaTitle: {
+      width: titleWidth
+    },
+    addValBtn: {
+      innate: btnInnateStyle
+    }
   };
 };
