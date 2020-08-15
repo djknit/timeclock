@@ -1,8 +1,9 @@
 import React from 'react';
 import {
   changeHandlerFactoryForChildrenFactory,
-  getWeekdays
-} from '../../utilities';
+  getWeekdays,
+  formConstants
+} from '../utilities';
 import getStyle from './style';
 import CollapsableSection from '../CollapsableSection';
 import RadioInput from '../RadioInput';
@@ -18,16 +19,18 @@ function WkDayCutoffsInput ({
   propName,
   value,
   isActive,
-  hasProblem,
+  // hasProblem,
   problems,
   changeHandlerFactory,
   formId,
-  radioUseDefaultCutoffsTrueRef,
-  radioUseDefaultCutoffsFalseRef,
+  refs,
   topLevelFieldLabelRatio,
   secondLevelFieldLabelRatio,
   contentToggle
 }) {
+
+  const _topLevelFieldLabelRatio = topLevelFieldLabelRatio || formConstants.topLevelFieldLabelRatio;
+  const _secondLevelFieldLabelRatio = secondLevelFieldLabelRatio || formConstants.secondLevelFieldLabelRatio;
 
   const { useDefaults, weekBegins, dayCutoff } = value;
 
@@ -47,6 +50,12 @@ function WkDayCutoffsInput ({
 
   const areInsideInputsActive = isActive && !useDefaults && isExpanded;
 
+  const defaultDayCutoff = {
+    hour: 0,
+    minute: 0,
+    is24hr: dayCutoff.is24hr
+  };
+
   return (
     <CollapsableSection
       label="Week and Day Cutoffs"
@@ -60,17 +69,17 @@ function WkDayCutoffsInput ({
             {
               value: false,
               label: 'Yes, adjust cutoffs',
-              ref: radioUseDefaultCutoffsFalseRef
+              ref: refs.radioUseDefaultCutoffsFalse
             }, {
               value: true,
               label: 'No, use standard values',
-              ref: radioUseDefaultCutoffsTrueRef
+              ref: refs.radioUseDefaultCutoffsTrue
             }
           ]}
           changeHandlerFactory={changeHandlerFactoryForChildren}
           isInline
           hasProblem={problems && problems.useDefaults}
-          fieldToLabelRatio={topLevelFieldLabelRatio}
+          fieldToLabelRatio={_topLevelFieldLabelRatio}
           {...{ isActive }}
           fieldStyle={style.useDefaultsInputField}
           helpText="Default values follow standard calendar weeks and days (Sun. - Sat.; 12 AM)."
@@ -91,20 +100,20 @@ function WkDayCutoffsInput ({
         {...{ formId }}
         isInline
         isActive={areInsideInputsActive}
-        fieldToLabelRatio={secondLevelFieldLabelRatio}
+        fieldToLabelRatio={_secondLevelFieldLabelRatio}
         fieldStyle={style.firstInputInSection}
         fieldLabelStyle={style.weekBeginsLabel}
       />
       <DayCutoffInput
         propName="dayCutoff"
         sectionName={propName}
-        value={useDefaults ? { hour: 0, minute: 0, is24hr: dayCutoff.is24hr } : dayCutoff}
+        value={useDefaults ? defaultDayCutoff : dayCutoff}
         changeHandlerFactory={changeHandlerFactoryForChildren}
         hasProblem={problems && problems.dayCutoff}
         {...{ formId }}
         isInline
         isActive={areInsideInputsActive}
-        fieldToLabelRatio={secondLevelFieldLabelRatio}
+        fieldToLabelRatio={_secondLevelFieldLabelRatio}
         fieldStyle={style.firstInputInSection}
         fieldLabelStyle={style.weekBeginsLabel}
       />

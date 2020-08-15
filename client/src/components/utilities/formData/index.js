@@ -1,9 +1,6 @@
-import accountUtils from './account';
-
+export * from './account';
 export * from './currency';
 export * from './time';
-export * from './wage';
-export * from './account';
 
 /*
 For use in the component where the form state is kept (top-level component for form).
@@ -46,5 +43,4 @@ function changeHandlerFactoryForChildrenFactory(handleChange) {
 export {
   changeHandlerFactoryFactory,
   changeHandlerFactoryForChildrenFactory,
-  accountUtils
 };

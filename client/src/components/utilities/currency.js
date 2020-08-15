@@ -1,7 +1,3 @@
-/* ABOUT THIS FILE/FOLDER:
-  This folder ('elemental') is for functions that are used in BOTH the form data processing ('../formData') and saved data processing ('../displayData')
-*/
-
 import React from 'react';
 import cc from 'currency-codes';
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -24,19 +20,19 @@ function getCurrencyNumericDisplay(amount, currencyCode) {
   );
 }
 
-function addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode) {
+function addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode, isShort) {
   const currencySymbol = getCurrencySymbol(currencyCode);
   return (
     currencySymbol ?
-    <>{currencySymbol}&nbsp;{numericDisplay}</> :
+    <>{currencySymbol}{!isShort && <>&nbsp;</>}{numericDisplay}</> :
     numericDisplay
   );
 };
 
-function getCurrencyAmountDisplay(amount, currencyCode) {
+function getCurrencyAmountDisplay(amount, currencyCode, isShort) {
   // const numDecimalDigits = getDecimalDigits(currencyCode || '');
   const numericDisplay = getCurrencyNumericDisplay(amount, currencyCode);
-  return addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode);
+  return addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode, isShort);
 }
 
 function getCurrencyAmountDisplayAndRounded(amount, currencyCode) {

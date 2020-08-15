@@ -1,4 +1,5 @@
 import React from 'react';
+import { keyTriggerCheckerFactory } from '../../utilities';
 import getStyle from './style';
 import SectionLabel from '../SectionLabel';
 import { addPseudoPseudoClasses } from '../../higherOrder';
@@ -28,6 +29,8 @@ function _CollapsableSection_needsPseudo({
           style={style.sectionToggle}
           {...pseudoHandlers}
           onClick={contentToggle.toggle}
+          tabIndex={0}
+          onKeyDown={keyTriggerCheckerFactory(contentToggle.toggle)}
         />
       </div>
     </>

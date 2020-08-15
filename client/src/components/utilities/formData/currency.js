@@ -2,7 +2,7 @@ import React from 'react';
 // import cc from 'currency-codes';
 // import getSymbolFromCurrency from 'currency-symbol-map';
 
-import { getCurrencyAmountDisplayAndRounded, getCurrencyMutiplierDisplay } from '../elemental';
+import { getCurrencyAmountDisplayAndRounded, getCurrencyMutiplierDisplay } from '../currency';
 
 function processCurrencyInputValue(raw, currencyCode) {
   const parsedValue = parseFloat(raw);

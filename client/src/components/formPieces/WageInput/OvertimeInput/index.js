@@ -14,10 +14,11 @@ function OvertimeInput({
   changeHandlerFactory,
   isActive,
   currency,
-  radioUseOvertimeTrueRef,
-  radioUseOvertimeFalseRef,
-  radioUseMultiplierTrueRef,
-  radioUseMultiplierFalseRef,
+  refs,
+  // radioUseOvertimeTrueRef,
+  // radioUseOvertimeFalseRef,
+  // radioUseMultiplierTrueRef,
+  // radioUseMultiplierFalseRef,
   formId,
   rawBaseRate,
   secondLevelFieldLabelRatio
@@ -84,11 +85,11 @@ function OvertimeInput({
           {
             value: true,
             label: 'On',
-            ref: radioUseOvertimeTrueRef
+            ref: refs.radioUseOvertimeTrue
           }, {
             value: false,
             label: 'Off',
-            ref: radioUseOvertimeFalseRef
+            ref: refs.radioUseOvertimeFalse
           }
         ]}
         hasProblem={problems && problems.useOvertime}
@@ -107,11 +108,11 @@ function OvertimeInput({
           {
             value: true,
             label: 'Yes',
-            ref: radioUseMultiplierTrueRef
+            ref: refs.radioUseMultiplierTrue
           }, {
             value: false,
             label: 'No',
-            ref: radioUseMultiplierFalseRef
+            ref: refs.radioUseMultiplierFalse
           }
         ]}
         hasProblem={problems && problems.useMultiplier}

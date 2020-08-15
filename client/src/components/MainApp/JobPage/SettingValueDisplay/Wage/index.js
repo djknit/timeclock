@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { processWageValueForDisplay } from '../../utilities';
+import { processWageValueForDisplay, keyTriggerCheckerFactory } from '../../utilities';
 import { windowWidthService } from '../../../../../data';
 import { addCollapsing, addData, addPseudoPseudoClasses } from '../../../../higherOrder';
 
@@ -54,6 +54,7 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
           {...pseudoHandlers}
           tabIndex={disabled ? -1 : 0}
           onClick={sectionToggle.toggle}
+          onKeyDown={keyTriggerCheckerFactory(sectionToggle.toggle)}
         >
           <span style={style.toggleOpenText}>Show Details</span>
           <span style={style.toggleClosedText}>Hide Details</span>

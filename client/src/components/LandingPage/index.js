@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import logo from '../../logo_wide.png'
-import { windowWidthService, userService } from '../../data';
+import { windowWidthService, userService, areModalsOpenService } from '../../data';
 import getStyle from './style';
 import { api } from './utilities';
 import Button from '../Button';
@@ -18,29 +18,34 @@ class _LandingPage_needsData extends Component {
     this.loginInputRef = React.createRef();
     this.state = {
       isLoginModalActive: false,
-      isNewUserModalActive: false
+      isNewUserModalActive: false,
+      modalsRegistrationId: undefined
     };
   };
 
   toggleLoginModal(isActiveAfterToggle) {
+    const hadModalsOpen = this.state.isLoginModalActive || this.state.isNewUserModalActive;
     this.setState(
       { isLoginModalActive: isActiveAfterToggle },
-      this.afterToggleCbFactory(isActiveAfterToggle, this.loginInputRef)
+      this.afterToggleCbFactory(isActiveAfterToggle, this.loginInputRef, hadModalsOpen)
     );
   };
 
   toggleNewUserModal(isActiveAfterToggle) {
+    const hadModalsOpen = this.state.isLoginModalActive || this.state.isNewUserModalActive;
     this.setState(
       { isNewUserModalActive: isActiveAfterToggle },
-      this.afterToggleCbFactory(isActiveAfterToggle, this.newUserInputRef)
+      this.afterToggleCbFactory(isActiveAfterToggle, this.newUserInputRef, hadModalsOpen)
     );
   };
 
-  afterToggleCbFactory(isActiveAfterToggle, inputRef) {
+  afterToggleCbFactory(isActiveAfterToggle, inputRef, hadModalsOpen) {
     return (() => {
       if (isActiveAfterToggle) inputRef.current.focus();
       const hasModalOpen = this.state.isLoginModalActive || this.state.isNewUserModalActive;
-      if (hasModalOpen !== this.props.areAnyModalsOpen) this.props.setAreAnyModalsOpen(hasModalOpen);
+      if (hasModalOpen !== hadModalsOpen) {
+        areModalsOpenService.report(this.state.modalsRegistrationId, hasModalOpen);
+      }
     });
   };
 
@@ -50,12 +55,14 @@ class _LandingPage_needsData extends Component {
       if (!res.data.user) return console.error('Missing user.');
       userService.setUser(res.data.user);
       this.props.history.push('/app');
-    })
-    .catch(err => {});
+    });
+    this.setState({
+      modalsRegistrationId: areModalsOpenService.getId()
+    });
   };
 
   componentWillUnmount() {
-    this.props.setAreAnyModalsOpen(false);
+    areModalsOpenService.report(this.state.modalsRegistrationId, false);
   };
 
   render() {
