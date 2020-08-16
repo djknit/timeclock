@@ -7,7 +7,8 @@ import {
   extractWageInputRefs,
   getJobSettingInputProblems,
   getSettingInputInitialValues,
-  processJobSettingInputValue
+  processJobSettingInputValue,
+  formatMyDate
 } from '../../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
@@ -30,6 +31,7 @@ function getStartingState(settingName) {
     hasSuccess: false,
     hasProblem: false,
     isLoading: false,
+    hasWarning: false,
     problems: {},
     problemMessages: [],
     showMessage: true,
@@ -129,6 +131,7 @@ class _AddEntryModal_needsCollapsing extends Component {
       if (problemMessages.length > 0) {
         throw { problems, messages: problemMessages };
       }
+      // check for sched entry with same start date unless `hasWarning === true`
       const submissionData = this.getInputDataProcessedToSubmit();
       return api.jobs.updateSetting(settingName, submissionData);
     })
@@ -196,7 +199,7 @@ class _AddEntryModal_needsCollapsing extends Component {
 
   render() {
     const {
-      reset, submit, changeHandlerFactory, messagesArea, firstInputArea, handleDatepickerPopperToggle
+      reset, submit, changeHandlerFactory, firstInputArea, handleDatepickerPopperToggle
     } = this;
     const {
       isActive,
@@ -208,6 +211,7 @@ class _AddEntryModal_needsCollapsing extends Component {
     const {
       hasSuccess,
       hasProblem,
+      hasWarning,
       problems,
       problemMessages,
       showMessage,
@@ -257,8 +261,17 @@ class _AddEntryModal_needsCollapsing extends Component {
             >
               {hasSuccess ? 'Close' : 'Cancel'}
             </Button>
+            {hasWarning && (
+              <Button
+                theme="info"
+                onClick={() => undefined} // set hasWarning=false, hasProblem=false, hasBeenSubmitted=false
+                disabled={isLoading || hasSuccess}
+              >
+                Edit Form
+              </Button>
+            )}
             <Button
-              theme={hasSuccess ? 'success' : 'primary'}
+              theme={(hasSuccess && 'success') || (hasWarning && 'warning') || 'primary'}
               onClick={submit}
               disabled={isLoading || hasSuccess || !startDate || !settingValue}
               isSubmit
@@ -267,14 +280,14 @@ class _AddEntryModal_needsCollapsing extends Component {
                 isLoading
               }}
             >
-              Submit
+              {hasWarning ? 'Yes, Replace Value' : 'Submit'}
             </Button>
           </>
         }
       >
         <form id={formId}>
           <div style={style.messagesArea}>
-            {showMessage && !hasProblem && !hasSuccess && (
+            {showMessage && !hasProblem && !hasSuccess && !hasWarning && (
               <Notification theme="info" close={closeMessage}>
                 <NotificationText isLast>
                   Enter the new {lowCaseSettingName} value and the date on which that value goes into effect below.
@@ -290,6 +303,16 @@ class _AddEntryModal_needsCollapsing extends Component {
                     </NotificationText>
                   )
                 )}
+              </Notification>
+            )}
+            {showMessage && hasWarning && (
+              <Notification theme="warning">
+                <NotificationText>
+                  You already have a {lowCaseSettingName} value with the same start date ({formatMyDate(startDate)}).
+                </NotificationText>
+                <NotificationText isLast>
+                  Are you sure you want to replace the existing schedule value?
+                </NotificationText>
               </Notification>
             )}
             {showMessage && hasSuccess && (

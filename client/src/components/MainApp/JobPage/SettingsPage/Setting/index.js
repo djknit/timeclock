@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { formatMyDate } from '../../utilities';
+import { preprocessScheduleForDisplay } from '../utilities';
 import { windowWidthService } from '../../../../../data';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
@@ -56,7 +56,7 @@ class _Setting_needsData extends Component {
       isAddEntryModalActive
     );
     
-    const valueSchedule = job[settingName];
+    const valueSchedule = preprocessScheduleForDisplay(job[settingName], settingName);
 
     const completeStyle = getStyle(style);
 

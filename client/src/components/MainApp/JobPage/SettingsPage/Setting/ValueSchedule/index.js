@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  formatMyDate,
   getSimpleJobSettingValueText
 } from '../../../utilities';
 import getStyle from './style';
@@ -44,15 +43,17 @@ function ValueSchedule({
       </thead>
       <tbody>
         {valueSchedule.map(
-          ({ value, startDate, _id }, index) => (
+          ({ value, startDateText, _id }, index) => (
             <tr key={_id}>
-              <td style={style.td}>
-                {index === 0 ? (
-                  <>&mdash;</>
-                ) : (
-                  formatMyDate(startDate)
-                )}
-              </td>
+              {index === 0 ? (
+                <td style={style.dateTdNoDate}>
+                  &mdash;
+                </td>
+              ) : (
+                <td styled={style.dateTd}>
+                  {startDateText}
+                </td>
+              )}
               <td style={style.valueTd}>
                 <SettingValueDisplay
                   {...{

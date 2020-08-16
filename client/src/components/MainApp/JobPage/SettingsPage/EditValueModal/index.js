@@ -11,7 +11,8 @@ import {
   getJobSettingInputProblems,
   processDayCutoffInput,
   getDateRangeText,
-  processJobSettingInputValue
+  processJobSettingInputValue,
+  dates as dateUtils
 } from '../../utilities';
 import { windowWidthService, currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
@@ -23,6 +24,7 @@ import SettingValueInput from '../SettingValueInput';
 import { addCollapsing } from '../../../../higherOrder';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
+const { getPrecedingDate } = dateUtils;
 
 const formId = 'edit-job-setting-value-form';
 function getStartingState(settingName, currentValue) {
@@ -205,7 +207,7 @@ class _EditValueModal_needsCollapsing extends Component {
     } = this.props;
     const {
       hasSuccess,
-      hasProblem,
+      hasProblem, 
       problems,
       problemMessages,
       showMessage,
@@ -218,16 +220,10 @@ class _EditValueModal_needsCollapsing extends Component {
       return <></>;
     }
 
-    const entryToEdit = valueSchedule[indexOfSchedEntryToEdit];
-    const currentValue = entryToEdit.value;
-    const endDate = (
-      indexOfSchedEntryToEdit !== valueSchedule.length - 1 ?
-      valueSchedule[indexOfSchedEntryToEdit + 1].startDate :
-      undefined
-    );
+    const {
+      valueSimpleText, dateRangeText, dateRangeShortText
+    } = valueSchedule[indexOfSchedEntryToEdit];
 
-    const dateRangeText = getDateRangeText(entryToEdit.startDate, endDate);
-    const dateRangeShortText = getDateRangeText(entryToEdit.startDate, endDate, true);
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
     const closeMessage = () => this.setState({ showMessage: false });
@@ -318,11 +314,7 @@ class _EditValueModal_needsCollapsing extends Component {
               Current Value:
             </Tag>
             <Tag theme="info light" size={6}>
-              {(currentValue || currentValue === 0) ? (
-                getSimpleJobSettingValueText(settingName, currentValue)
-              ) : (
-                'none'
-              )}
+              {valueSimpleText}
             </Tag>
           </TagGroup>
           <SettingValueInput
