@@ -55,6 +55,7 @@ class DeleteEntryModal extends Component {
 
   submit(event) {
     event.preventDefault();
+    let response, secondsUntilRedirect;
     this.setSubmissionProcessingState()
     .then(() => {
       const { indexOfSchedEntryToEdit, valueSchedule, settingName, jobId } = this.props;
@@ -63,10 +64,11 @@ class DeleteEntryModal extends Component {
           id: valueSchedule[indexOfSchedEntryToEdit]._id.toString()
         }]
       };
-      return api.jobs.updateSetting(settingName, { updates, jobId })
+      return api.jobs.updateSetting(settingName, { updates, jobId });
     })
-    .then(res => {
-      let secondsUntilRedirect = secondsToDelayRedirect;
+    .then(_res => {
+      response = _res;
+      secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
         isLoading: false,
@@ -76,7 +78,10 @@ class DeleteEntryModal extends Component {
         problemMessages: [],
         secondsUntilRedirect
       });
-      currentJobService.setCurrentJob(res.data);
+      return this.props.clearEntryToEditIndex();
+    })
+    .then(() => {
+      currentJobService.setCurrentJob(response.data);
       const intervalId = setInterval(
         () => {
           secondsUntilRedirect -= stepSizeOfRedirectDelay;
@@ -88,7 +93,7 @@ class DeleteEntryModal extends Component {
           }
         },
         1000 * stepSizeOfRedirectDelay
-      )
+      );
     })
     .catch(err => {
       this.props.catchApiUnauthorized(err);
@@ -134,17 +139,9 @@ class DeleteEntryModal extends Component {
       return <></>;
     }
 
-    const entryToEdit = valueSchedule[indexOfSchedEntryToEdit];
-    const currentValue = entryToEdit.value;
-    const endDate = (
-      indexOfSchedEntryToEdit !== valueSchedule.length - 1 ?
-      valueSchedule[indexOfSchedEntryToEdit + 1].startDate :
-      undefined
-    );
-
-    const startDateText = formatMyDate(entryToEdit.startDate, 'MMM. D')
-    const dateRangeText = getDateRangeText(entryToEdit.startDate, endDate);
-    const dateRangeShortText = getDateRangeText(entryToEdit.startDate, endDate, true);
+    const {
+      valueSimpleText, dateRangeText, dateRangeShortText, startDateText
+    } = (indexOfSchedEntryToEdit && valueSchedule[indexOfSchedEntryToEdit]) || {};
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
     const closeMessage = () => this.setState({ showMessage: false });
@@ -188,7 +185,7 @@ class DeleteEntryModal extends Component {
               The {lowCaseSettingName} will no longer change on {startDateText}.
             </NotificationText>
             <NotificationText isLast>
-              Press "Submit" to precede.
+              Press "Submit" to procede.
             </NotificationText>
           </Notification>
         )}
@@ -231,11 +228,7 @@ class DeleteEntryModal extends Component {
             Current Value:
           </Tag>
           <Tag theme="info light" size={6}>
-            {(currentValue || currentValue === 0) ? (
-              getSimpleJobSettingValueText(settingName, currentValue)
-            ) : (
-              'none'
-            )}
+            {valueSimpleText}
           </Tag>
         </TagGroup>
       </ModalSkeleton>

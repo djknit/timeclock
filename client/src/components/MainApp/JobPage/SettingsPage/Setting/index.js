@@ -15,6 +15,7 @@ class _Setting_needsData extends Component {
   constructor(props) {
     super(props);
     this.modalTogglerFactory = this.modalTogglerFactory.bind(this);
+    this.clearEntryToEditIndex = this.clearEntryToEditIndex.bind(this);
     this.state = {
       indexOfSchedEntryToEdit: undefined,
       isEditValueModalOpen: false,
@@ -35,8 +36,14 @@ class _Setting_needsData extends Component {
     };
   };
 
+  clearEntryToEditIndex() {
+    return new Promise(resolve => {
+      this.setState({ indexOfSchedEntryToEdit: null }, resolve);
+    });
+  }
+
   render() {
-    const { modalTogglerFactory } = this;
+    const { modalTogglerFactory, clearEntryToEditIndex } = this;
     const {
       job, settingName, settingDisplayName, catchApiUnauthorized, style, areAnyModalsOpen, windowWidth
     } = this.props;
@@ -64,7 +71,7 @@ class _Setting_needsData extends Component {
     const toggleDeleteValueModal = modalTogglerFactory('isDeleteEntryModalOpen');
     const toggleChangeDateModal = modalTogglerFactory('isChangeDateModalOpen');
     const toggleAddEntryModal = modalTogglerFactory('isAddEntryModalActive');
-  
+
     const jobId = job._id.toString();
     const commonModalAttrs = {
       settingName, settingDisplayName, jobId, catchApiUnauthorized, windowWidth
@@ -112,6 +119,7 @@ class _Setting_needsData extends Component {
           {...mostlyCommonModalAttrs}
           isActive={isDeleteEntryModalOpen}
           closeModal={() => toggleDeleteValueModal(false)}
+          {...{ clearEntryToEditIndex }}
         />
       </>
     );
