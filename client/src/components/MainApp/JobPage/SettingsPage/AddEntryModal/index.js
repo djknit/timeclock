@@ -7,8 +7,10 @@ import {
   extractWageInputRefs,
   getJobSettingInputProblems,
   getSettingInputInitialValues,
-  processJobSettingInputValue
-} from '../../utilities';
+  processJobSettingInputValue,
+  formatMyDate,
+  doesEntryExistWithStartDate
+} from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
 import ModalSkeleton from '../../../../ModalSkeleton';
@@ -30,6 +32,7 @@ function getStartingState(settingName) {
     hasSuccess: false,
     hasProblem: false,
     isLoading: false,
+    hasWarning: false,
     problems: {},
     problemMessages: [],
     showMessage: true,
@@ -122,12 +125,25 @@ class _AddEntryModal_needsCollapsing extends Component {
 
   submit(event) {
     event.preventDefault();
-    const { settingName } = this.props;
+    const { settingName, valueSchedule } = this.props;
+    const { hasWarning, startDate } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
       const { problems, problemMessages } = this.getInputProblems();
       if (problemMessages.length > 0) {
         throw { problems, messages: problemMessages };
+      }
+      // check for sched entry with same start date unless `hasWarning === true`
+      if (!hasWarning && doesEntryExistWithStartDate(startDate, valueSchedule)) {
+        this.setState({
+          isLoading: false,
+          hasProblem: false,
+          problemMessages: [],
+          problems: {},
+          showMessage: true,
+          hasWarning: true
+        });
+        throw { isWarning: true };
       }
       const submissionData = this.getInputDataProcessedToSubmit();
       return api.jobs.updateSetting(settingName, submissionData);
@@ -140,6 +156,7 @@ class _AddEntryModal_needsCollapsing extends Component {
         isLoading: false,
         hasProblem: false,
         showMessage: true,
+        hasWarning: false,
         problems: {},
         problemMessages: [],
         secondsUntilRedirect
@@ -159,6 +176,7 @@ class _AddEntryModal_needsCollapsing extends Component {
       );
     })
     .catch(err => {
+      if (err && err.isWarning) return;
       this.props.catchApiUnauthorized(err);
       const errorData = (err && err.response && err.response.data) || err || {};
       let { problems, messages } = errorData;
@@ -169,7 +187,8 @@ class _AddEntryModal_needsCollapsing extends Component {
         problemMessages: messages,
         hasProblem: true,
         isLoading: false,
-        showMessage: true
+        showMessage: true,
+        hasWarning: false
       });
     })
   };
@@ -196,7 +215,7 @@ class _AddEntryModal_needsCollapsing extends Component {
 
   render() {
     const {
-      reset, submit, changeHandlerFactory, messagesArea, firstInputArea, handleDatepickerPopperToggle
+      reset, submit, changeHandlerFactory, firstInputArea, handleDatepickerPopperToggle
     } = this;
     const {
       isActive,
@@ -208,6 +227,7 @@ class _AddEntryModal_needsCollapsing extends Component {
     const {
       hasSuccess,
       hasProblem,
+      hasWarning,
       problems,
       problemMessages,
       showMessage,
@@ -232,7 +252,7 @@ class _AddEntryModal_needsCollapsing extends Component {
         settingName,
         changeHandlerFactory,
         formId,
-        isActive: !isLoading && !hasSuccess
+        isActive: !isLoading && !hasSuccess && !hasWarning
       })
     );
 
@@ -257,8 +277,17 @@ class _AddEntryModal_needsCollapsing extends Component {
             >
               {hasSuccess ? 'Close' : 'Cancel'}
             </Button>
+            {hasWarning && (
+              <Button
+                theme="info"
+                onClick={() => this.setState({ hasWarning: false })}
+                disabled={isLoading || hasSuccess}
+              >
+                Edit Form
+              </Button>
+            )}
             <Button
-              theme={hasSuccess ? 'success' : 'primary'}
+              theme={(hasSuccess && 'success') || (hasWarning && 'warning') || 'primary'}
               onClick={submit}
               disabled={isLoading || hasSuccess || !startDate || !settingValue}
               isSubmit
@@ -267,14 +296,14 @@ class _AddEntryModal_needsCollapsing extends Component {
                 isLoading
               }}
             >
-              Submit
+              {hasWarning ? 'Yes, Replace Value' : 'Submit'}
             </Button>
           </>
         }
       >
         <form id={formId}>
           <div style={style.messagesArea}>
-            {showMessage && !hasProblem && !hasSuccess && (
+            {showMessage && !hasProblem && !hasSuccess && !hasWarning && (
               <Notification theme="info" close={closeMessage}>
                 <NotificationText isLast>
                   Enter the new {lowCaseSettingName} value and the date on which that value goes into effect below.
@@ -290,6 +319,16 @@ class _AddEntryModal_needsCollapsing extends Component {
                     </NotificationText>
                   )
                 )}
+              </Notification>
+            )}
+            {showMessage && hasWarning && (
+              <Notification theme="warning">
+                <NotificationText>
+                  You already have a {lowCaseSettingName} value with the same start date ({formatMyDate(startDate)}).
+                </NotificationText>
+                <NotificationText isLast>
+                  Are you sure you want to replace the existing schedule value?
+                </NotificationText>
               </Notification>
             )}
             {showMessage && hasSuccess && (

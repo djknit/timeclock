@@ -20,7 +20,9 @@ function SettingValueDisplay({
 
   function P({ children }) {
     return hasP ? (
-      <p style={pStyle || {}}>{children}</p>
+      <p style={pStyle || {}}>
+        {children}
+      </p>
     ) : (
       children
     );
