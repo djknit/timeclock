@@ -7,7 +7,7 @@ import {
 
 export * from '../../utilities';
 
-const { getPrecedingDate } = dateUtils;
+const { getPrecedingDate, areDatesEquivalent } = dateUtils;
 
 function preprocessScheduleForDisplay(schedule, settingName) {
   return schedule.map(
@@ -21,7 +21,8 @@ function preprocessScheduleForDisplay(schedule, settingName) {
       return {
         ...entry,
         endDate,
-        startDateText: startDate && formatMyDate(startDate, 'MMM. D'),
+        startDateText: startDate && formatMyDate(startDate),
+        startDateShortText: startDate && formatMyDate(startDate, 'MMM. D'),
         dateRangeText: getDateRangeText(startDate, endDate),
         dateRangeShortText: getDateRangeText(startDate, endDate, true),
         valueSimpleText: getSimpleJobSettingValueText(settingName, value)
@@ -30,6 +31,23 @@ function preprocessScheduleForDisplay(schedule, settingName) {
   );
 }
 
+function findIndexOfSchedEntryWithDate(date, schedule) {
+  if (!date || !schedule || schedule.length === 1) return null;
+  for (let i = 1; i < schedule.length; i++) {
+    if (areDatesEquivalent(schedule[i].startDate, date)) {
+      return i;
+    }
+  }
+  return null;
+}
+
+function doesEntryExistWithStartDate(date, schedule) {
+  const indexOfEntryWithDate = findIndexOfSchedEntryWithDate(date, schedule);
+  return !!(indexOfEntryWithDate || indexOfEntryWithDate === 0);
+}
+
 export {
-  preprocessScheduleForDisplay
+  preprocessScheduleForDisplay,
+  findIndexOfSchedEntryWithDate,
+  doesEntryExistWithStartDate
 };

@@ -25,10 +25,14 @@ function getDateRangeShortText(startDate, endDate, dateFormatString) {
       let arr = [];
       for (let i = 0; i < n; i++) {
         arr.push(
-          <Fragment key={i}><i className={`fas fa-caret-${direction}`} /></Fragment>
+          <Fragment key={i}>
+            <i className={`fas fa-caret-${direction}`} />
+          </Fragment>
         );
         if (i !== n - 1) {
-          arr.push(<Fragment key={i + .5}>&nbsp;</Fragment>)
+          arr.push(
+            <Fragment key={i + .5}>&nbsp;</Fragment>
+          );
         };
       }
       return arr;

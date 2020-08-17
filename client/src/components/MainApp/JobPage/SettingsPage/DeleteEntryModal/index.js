@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import {
   api,
-  constants,
-  getSimpleJobSettingValueText,
-  getDateRangeText,
-  formatMyDate
+  constants
 } from '../../utilities';
 import { currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
@@ -122,8 +119,7 @@ class DeleteEntryModal extends Component {
       closeModal,
       settingDisplayName,
       valueSchedule,
-      indexOfSchedEntryToEdit,
-      settingName
+      indexOfSchedEntryToEdit
     } = this.props;
     const {
       hasSuccess,
@@ -140,7 +136,7 @@ class DeleteEntryModal extends Component {
     }
 
     const {
-      valueSimpleText, dateRangeText, dateRangeShortText, startDateText
+      valueSimpleText, dateRangeText, dateRangeShortText, startDateShortText
     } = (indexOfSchedEntryToEdit && valueSchedule[indexOfSchedEntryToEdit]) || {};
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
@@ -182,7 +178,7 @@ class DeleteEntryModal extends Component {
               You are deleting the {lowCaseSettingName} value for {dateRangeText}.
             </NotificationText>
             <NotificationText>
-              The {lowCaseSettingName} will no longer change on {startDateText}.
+              The {lowCaseSettingName} will no longer change on {startDateShortText}.
             </NotificationText>
             <NotificationText isLast>
               Press "Submit" to procede.

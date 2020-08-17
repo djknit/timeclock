@@ -3,18 +3,13 @@ import {
   api,
   constants,
   changeHandlerFactoryFactory,
-  getSimpleJobSettingValueText,
   convertSettingValueToFormData,
   addWageInputRefs,
   extractWageInputRefs,
-  processWageInput,
   getJobSettingInputProblems,
-  processDayCutoffInput,
-  getDateRangeText,
-  processJobSettingInputValue,
-  dates as dateUtils
-} from '../../utilities';
-import { windowWidthService, currentJobService } from '../../../../../data';
+  processJobSettingInputValue
+} from '../utilities';
+import { currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
@@ -24,7 +19,6 @@ import SettingValueInput from '../SettingValueInput';
 import { addCollapsing } from '../../../../higherOrder';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
-const { getPrecedingDate } = dateUtils;
 
 const formId = 'edit-job-setting-value-form';
 function getStartingState(settingName, currentValue) {
@@ -109,6 +103,7 @@ class _EditValueModal_needsCollapsing extends Component {
       if (problemMessages && problemMessages.length > 0) {
         throw { problems, messages: problemMessages };
       }
+      
       const submissionData = this.getDataProcessedToSubmit();
       return api.jobs.updateSetting(settingName, submissionData);
     })
@@ -167,7 +162,9 @@ class _EditValueModal_needsCollapsing extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { indexOfSchedEntryToEdit, valueSchedule, isActive, windowWidth, wageContentToggle, settingName } = this.props;
+    const {
+      indexOfSchedEntryToEdit, valueSchedule, isActive, windowWidth, wageContentToggle, settingName
+    } = this.props;
     // checking if sched index has changed to see if form needs reset
     const previousIndex = prevProps.indexOfSchedEntryToEdit;
     const currentEntryId = (
@@ -187,9 +184,7 @@ class _EditValueModal_needsCollapsing extends Component {
     ) {
       wageContentToggle.setHeight();
     }
-    else if (
-      wageContentToggle.isHeightSet && !shouldToggleBeSet
-    ) {
+    else if (wageContentToggle.isHeightSet && !shouldToggleBeSet) {
       wageContentToggle.clearHeight();
     }
   };
@@ -327,8 +322,6 @@ class _EditValueModal_needsCollapsing extends Component {
               wageInputRefs,
               wageContentToggle
             }}
-            // topLevelFieldLabelRatio={5.8}
-            // secondLevelFieldLabelRatio={4.7}
             problems={problems && problems.updatedValue}
             isActive={!isLoading && !hasSuccess}
             label={`New ${settingDisplayName} Value:`}
