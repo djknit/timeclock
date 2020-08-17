@@ -3,17 +3,13 @@ import {
   api,
   constants,
   changeHandlerFactoryFactory,
-  getSimpleJobSettingValueText,
   convertSettingValueToFormData,
   addWageInputRefs,
   extractWageInputRefs,
-  processWageInput,
   getJobSettingInputProblems,
-  processDayCutoffInput,
-  getDateRangeText,
   processJobSettingInputValue
-} from '../../utilities';
-import { windowWidthService, currentJobService } from '../../../../../data';
+} from '../utilities';
+import { currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
@@ -107,6 +103,7 @@ class _EditValueModal_needsCollapsing extends Component {
       if (problemMessages && problemMessages.length > 0) {
         throw { problems, messages: problemMessages };
       }
+      
       const submissionData = this.getDataProcessedToSubmit();
       return api.jobs.updateSetting(settingName, submissionData);
     })
@@ -165,7 +162,9 @@ class _EditValueModal_needsCollapsing extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { indexOfSchedEntryToEdit, valueSchedule, isActive, windowWidth, wageContentToggle, settingName } = this.props;
+    const {
+      indexOfSchedEntryToEdit, valueSchedule, isActive, windowWidth, wageContentToggle, settingName
+    } = this.props;
     // checking if sched index has changed to see if form needs reset
     const previousIndex = prevProps.indexOfSchedEntryToEdit;
     const currentEntryId = (
@@ -185,9 +184,7 @@ class _EditValueModal_needsCollapsing extends Component {
     ) {
       wageContentToggle.setHeight();
     }
-    else if (
-      wageContentToggle.isHeightSet && !shouldToggleBeSet
-    ) {
+    else if (wageContentToggle.isHeightSet && !shouldToggleBeSet) {
       wageContentToggle.clearHeight();
     }
   };
@@ -205,7 +202,7 @@ class _EditValueModal_needsCollapsing extends Component {
     } = this.props;
     const {
       hasSuccess,
-      hasProblem,
+      hasProblem, 
       problems,
       problemMessages,
       showMessage,
@@ -218,16 +215,10 @@ class _EditValueModal_needsCollapsing extends Component {
       return <></>;
     }
 
-    const entryToEdit = valueSchedule[indexOfSchedEntryToEdit];
-    const currentValue = entryToEdit.value;
-    const endDate = (
-      indexOfSchedEntryToEdit !== valueSchedule.length - 1 ?
-      valueSchedule[indexOfSchedEntryToEdit + 1].startDate :
-      undefined
-    );
+    const {
+      valueSimpleText, dateRangeText, dateRangeShortText
+    } = valueSchedule[indexOfSchedEntryToEdit];
 
-    const dateRangeText = getDateRangeText(entryToEdit.startDate, endDate);
-    const dateRangeShortText = getDateRangeText(entryToEdit.startDate, endDate, true);
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
     const closeMessage = () => this.setState({ showMessage: false });
@@ -318,11 +309,7 @@ class _EditValueModal_needsCollapsing extends Component {
               Current Value:
             </Tag>
             <Tag theme="info light" size={6}>
-              {(currentValue || currentValue === 0) ? (
-                getSimpleJobSettingValueText(settingName, currentValue)
-              ) : (
-                'none'
-              )}
+              {valueSimpleText}
             </Tag>
           </TagGroup>
           <SettingValueInput
@@ -335,8 +322,6 @@ class _EditValueModal_needsCollapsing extends Component {
               wageInputRefs,
               wageContentToggle
             }}
-            // topLevelFieldLabelRatio={5.8}
-            // secondLevelFieldLabelRatio={4.7}
             problems={problems && problems.updatedValue}
             isActive={!isLoading && !hasSuccess}
             label={`New ${settingDisplayName} Value:`}

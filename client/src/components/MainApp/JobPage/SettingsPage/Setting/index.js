@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { formatMyDate } from '../../utilities';
+import { preprocessScheduleForDisplay } from '../utilities';
 import { windowWidthService } from '../../../../../data';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
@@ -15,11 +15,12 @@ class _Setting_needsData extends Component {
   constructor(props) {
     super(props);
     this.modalTogglerFactory = this.modalTogglerFactory.bind(this);
+    this.clearEntryToEditIndex = this.clearEntryToEditIndex.bind(this);
     this.state = {
       indexOfSchedEntryToEdit: undefined,
-      isEditValueModalOpen: false,
-      isDeleteEntryModalOpen: false,
-      isChangeDateModalOpen: false,
+      isEditValueModalActive: false,
+      isDeleteEntryModalActive: false,
+      isChangeDateModalActive: false,
       isAddEntryModalActive: false
     };
   };
@@ -35,41 +36,47 @@ class _Setting_needsData extends Component {
     };
   };
 
+  clearEntryToEditIndex() {
+    return new Promise(resolve => {
+      this.setState({ indexOfSchedEntryToEdit: null }, resolve);
+    });
+  }
+
   render() {
-    const { modalTogglerFactory } = this;
+    const { modalTogglerFactory, clearEntryToEditIndex } = this;
     const {
       job, settingName, settingDisplayName, catchApiUnauthorized, style, areAnyModalsOpen, windowWidth
     } = this.props;
     const {
       indexOfSchedEntryToEdit,
-      isEditValueModalOpen,
-      isDeleteEntryModalOpen,
-      isChangeDateModalOpen,
+      isEditValueModalActive,
+      isDeleteEntryModalActive,
+      isChangeDateModalActive,
       isAddEntryModalActive
     } = this.state;
     
     const completeAreModalsOpen = (
       areAnyModalsOpen ||
-      isEditValueModalOpen ||
-      isDeleteEntryModalOpen ||
-      isChangeDateModalOpen ||
+      isEditValueModalActive ||
+      isDeleteEntryModalActive ||
+      isChangeDateModalActive ||
       isAddEntryModalActive
     );
     
-    const valueSchedule = job[settingName];
+    const valueSchedule = preprocessScheduleForDisplay(job[settingName], settingName);
 
     const completeStyle = getStyle(style);
 
-    const toggleEditValueModal = modalTogglerFactory('isEditValueModalOpen');
-    const toggleDeleteValueModal = modalTogglerFactory('isDeleteEntryModalOpen');
-    const toggleChangeDateModal = modalTogglerFactory('isChangeDateModalOpen');
+    const toggleEditValueModal = modalTogglerFactory('isEditValueModalActive');
+    const toggleDeleteValueModal = modalTogglerFactory('isDeleteEntryModalActive');
+    const toggleChangeDateModal = modalTogglerFactory('isChangeDateModalActive');
     const toggleAddEntryModal = modalTogglerFactory('isAddEntryModalActive');
-  
+
     const jobId = job._id.toString();
     const commonModalAttrs = {
-      settingName, settingDisplayName, jobId, catchApiUnauthorized, windowWidth
+      settingName, settingDisplayName, jobId, catchApiUnauthorized, windowWidth, valueSchedule
     };
-    const mostlyCommonModalAttrs = { ...commonModalAttrs, indexOfSchedEntryToEdit, valueSchedule };
+    const mostlyCommonModalAttrs = { ...commonModalAttrs, indexOfSchedEntryToEdit };
   
     return (
       <>
@@ -102,16 +109,19 @@ class _Setting_needsData extends Component {
         />
         <EditValueModal
           {...mostlyCommonModalAttrs}
-          isActive={isEditValueModalOpen}
+          isActive={isEditValueModalActive}
           closeModal={() => toggleEditValueModal(false)}
         />
-        {/* <ChangeDateModal
+        <ChangeDateModal
           {...commonModalAttrs}
-        /> */}
+          isActive={isChangeDateModalActive}
+          closeModal={() => toggleChangeDateModal(false)}
+        />
         <DeleteEntryModal
           {...mostlyCommonModalAttrs}
-          isActive={isDeleteEntryModalOpen}
+          isActive={isDeleteEntryModalActive}
           closeModal={() => toggleDeleteValueModal(false)}
+          {...{ clearEntryToEditIndex }}
         />
       </>
     );

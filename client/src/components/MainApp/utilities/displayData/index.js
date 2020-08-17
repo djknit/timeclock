@@ -6,7 +6,7 @@ import { getWageValueSummaryText } from './wage';
 export * from './wage';
 
 function formatMyDate(myDate, formatString) {
-  return dateUtils.getMoment(myDate).format(formatString || 'MMM D, YYYY');
+  return dateUtils.getMoment(myDate).format(formatString || 'MMM. D, YYYY');
 }
 
 function getWeekBeginsText(weekBeginsValue) {
@@ -31,6 +31,9 @@ function getTimeText({ hour, minute, isPm }) {
 }
 
 function getSimpleJobSettingValueText(settingName, value) {
+  if (!value && value !== 0) {
+    return 'none';
+  }
   switch (settingName) {
     case 'dayCutoff':
       return getDayCutoffText(value);

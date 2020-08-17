@@ -35,6 +35,8 @@ function getBackgroundColorStyles(colorTheme) {
       return getResult('#2e8cca', '#35a1e9');
     case 'success':
       return getResult('#42b76b', '#4cd37b');
+    case 'warning':
+      return getResult('#e5c74e', '#ffea5c');
     default: // = 'light'
       return getResult('#e7e7e7', '#f8f8f8');
   }
@@ -63,5 +65,11 @@ function getBackgroundColorStyles(colorTheme) {
       hover: #3ec46d = (62, 196, 109)  -->  (.861, .985, .940)
       focus: #42b76b = (66, 183, 107)  -->  (.917, .920, .922)
       active: #4cd37b = (76, 211, 123)  -->  (1.056, 1.060, 1.060)
+
+    warning
+      innert: #ffdd57 = (255, 221, 87) --> (1, 1, 1)
+      hover: #ffdb4a = (255, 219, 74) --> (1, .991, .851)
+      focus: #e5c74e = (229, 199, 78)
+      active: #ffea5c = (255, 234, 92)
 */
 }

@@ -4,14 +4,19 @@ export default function getStyle(isWage) {
   const btnSpecs = adjustBtnSpecs(dashContentBtnSpecs, 1.1);
   
   const td = {
-    verticalAlign: 'middle',
+    verticalAlign: 'top',
     textAlign: 'left',
-    // whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap'
+  };
+
+  const dateTdWidth = '13.793%'; // needs ~120px
+  const dateTd = {
+    ...td,
+    width: dateTdWidth
   };
 
 // A NOTE ABOUT <td> WIDTHS:
-  // Currently using hardcoded pixel widths to ensure date and buttons fit and letting value take remaining width
-  // Needs adjusted at least for smaller screens.
+  // Needs adjusted at least for smaller screens (< ~940px).
   // Should find a way to make sure everything fits and spread remaining space evenly.
 
   return {
@@ -20,16 +25,19 @@ export default function getStyle(isWage) {
       textAlign: 'center',
       backgroundColor: 'transparent'
     },
-    td: {
-      ...td,
-      width: 120
+    dateTd,
+    dateTdNoDate: {
+      ...dateTd,
+      textAlign: 'center',
+      paddingRight: `calc(${dateTdWidth} - 100px + .75em)` // (td width) - (text width) + (regular td padding)
     },
     valueTd: {
-      ...td
+      ...td,
+      width: '35.632%' // wage needs ~310px
     },
     buttonsTd: {
       ...td,
-      width: 440
+      width: '50.575%' // needs ~440px
     },
     button: {
       innate: {
