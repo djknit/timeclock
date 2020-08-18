@@ -311,15 +311,7 @@ class _AddEntryModal_needsCollapsing extends Component {
               </Notification>
             )}
             {showMessage && problemMessages.length > 0 && (
-              <Notification theme="danger" close={closeMessage}>
-                {problemMessages.map(
-                  (message, index, arr) => (
-                    <NotificationText key={message} isLast={index === arr.length - 1}>
-                      {message}
-                    </NotificationText>
-                  )
-                )}
-              </Notification>
+              <Notification theme="danger" close={closeMessage} messages={problemMessages} />
             )}
             {showMessage && hasWarning && (
               <Notification theme="warning">
