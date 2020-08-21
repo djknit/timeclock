@@ -6,13 +6,15 @@ import {
 } from '../../utilities';
 
 export * from '../../utilities';
+export * from './getUpdateWarnings';
 
-const { getPrecedingDate, areDatesEquivalent } = dateUtils;
+const { getPrecedingDate } = dateUtils;
 
 function preprocessScheduleForDisplay(schedule, settingName) {
   return schedule.map(
     (entry, index) => {
       const { startDate, value } = entry;
+      console.log(entry._id)
       const endDate = (
         index !== schedule.length - 1 ?
         getPrecedingDate(schedule[index + 1].startDate) :
@@ -31,23 +33,6 @@ function preprocessScheduleForDisplay(schedule, settingName) {
   );
 }
 
-function findIndexOfSchedEntryWithDate(date, schedule) {
-  if (!date || !schedule || schedule.length === 1) return null;
-  for (let i = 1; i < schedule.length; i++) {
-    if (areDatesEquivalent(schedule[i].startDate, date)) {
-      return i;
-    }
-  }
-  return null;
-}
-
-function doesEntryExistWithStartDate(date, schedule) {
-  const indexOfEntryWithDate = findIndexOfSchedEntryWithDate(date, schedule);
-  return !!(indexOfEntryWithDate || indexOfEntryWithDate === 0);
-}
-
 export {
-  preprocessScheduleForDisplay,
-  findIndexOfSchedEntryWithDate,
-  doesEntryExistWithStartDate
+  preprocessScheduleForDisplay
 };

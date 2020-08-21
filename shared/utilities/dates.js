@@ -47,7 +47,7 @@ function getUtcMoment(myDate) {
 }
 
 function getUtcDateTime(myDate) {
-  return myDate ? moment.utc(getMomentFriendlyDate(myDate)).valueOf() : null;
+  return myDate ? getUtcMoment(myDate).valueOf() : null;
 }
 
 function convertMomentToMyDate(moment_) {

@@ -2,6 +2,9 @@ export default function getStyle(messageDivMinHeight) {
   const areaDiv = { overflow: 'auto' };
 
   return {
+    label: {
+      textAlign: 'left'
+    },
     messagesArea: messageDivMinHeight ? (
       {
         ...areaDiv,
@@ -9,13 +12,6 @@ export default function getStyle(messageDivMinHeight) {
       }
     ) : (
       areaDiv
-    ),
-    firstInputArea: areaDiv,
-    inputLabel: {
-      textAlign: 'left'
-    },
-    firstInputField: {
-      marginBottom: '.75rem' // matches Bulma style for .field:not(:last-child)
-    }
+    )
   };
-};
+}

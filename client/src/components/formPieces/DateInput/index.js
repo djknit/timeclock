@@ -25,7 +25,8 @@ function DateInput({
   fieldToLabelRatio,
   labelStyle,
   datePickerProps,
-  fieldStyle
+  fieldStyle,
+  openToDate
 }) {
 
   function processInput(inputDate) {
@@ -59,6 +60,7 @@ function DateInput({
         ref={inputRef}
         autoComplete="off"
         {...(datePickerProps || {})}
+        openToDate={openToDate && getDate(openToDate)}
       />
       {helpText &&
         <p className="help">{helpText}</p>
