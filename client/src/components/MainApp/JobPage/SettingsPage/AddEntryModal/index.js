@@ -16,7 +16,6 @@ import getStyle from './style';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
-import Tag, { TagGroup } from '../../../../Tag';
 import { ProgressBar, DateInput } from '../../../../formPieces';
 import SettingValueInput from '../SettingValueInput';
 import { addCollapsing } from '../../../../higherOrder';
@@ -77,7 +76,7 @@ class _AddEntryModal_needsCollapsing extends Component {
       ) : (
         undefined
       )
-    })
+    });
   };
 
   getInputProblems() {
