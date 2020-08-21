@@ -113,7 +113,7 @@ class _Setting_needsData extends Component {
           closeModal={() => toggleEditValueModal(false)}
         />
         <ChangeDateModal
-          {...commonModalAttrs}
+          {...mostlyCommonModalAttrs}
           isActive={isChangeDateModalActive}
           closeModal={() => toggleChangeDateModal(false)}
         />

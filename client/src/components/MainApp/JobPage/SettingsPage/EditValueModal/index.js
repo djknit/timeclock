@@ -103,7 +103,6 @@ class _EditValueModal_needsCollapsing extends Component {
       if (problemMessages && problemMessages.length > 0) {
         throw { problems, messages: problemMessages };
       }
-      
       const submissionData = this.getDataProcessedToSubmit();
       return api.jobs.updateSetting(settingName, submissionData);
     })
@@ -173,7 +172,7 @@ class _EditValueModal_needsCollapsing extends Component {
     );
     const previousEntryId = (
       (previousIndex || previousIndex === 0) &&
-      prevProps.valueSchedule[previousIndex]._id
+      prevProps.valueSchedule[previousIndex]._id.toString()
     );
     if (currentEntryId !== previousEntryId) this.reset();
     // checking if toggle is active and needs set or cleared

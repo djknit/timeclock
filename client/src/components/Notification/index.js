@@ -5,7 +5,8 @@ import { getColorClass } from '../utilities';
 function Notification({
   children,
   theme,
-  close
+  close,
+  messages
 }) {
 
   const style = getStyle();
@@ -23,7 +24,17 @@ function Notification({
       {close && (
         <button className="delete" onClick={_close} type="button"></button>
       )}
-      {children}
+      {messages ? (
+        messages.map(
+          (msg, index, arr) => (
+            <NotificationText key={msg} isLast={index === arr.length - 1}>
+              {msg}
+            </NotificationText>
+          )
+        )
+      ) : (
+        children
+      )}
     </div>
   );
 }

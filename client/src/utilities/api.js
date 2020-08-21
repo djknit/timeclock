@@ -39,6 +39,7 @@ export const jobs = {
     return jobsAxios.post(`/delete/${jobId}`, { password });
   },
   updateSetting(propName, { jobId, updates }) {
+    console.log(updates)
     return jobsAxios.post(`/update-setting/${propName}`, { jobId, updates });
   },
   rename({ jobId, name }) {
