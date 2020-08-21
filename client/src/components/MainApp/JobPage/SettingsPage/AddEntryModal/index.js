@@ -9,7 +9,7 @@ import {
   getSettingInputInitialValues,
   processJobSettingInputValue,
   formatMyDate,
-  doesEntryExistWithStartDate
+  getAddUpdateWarnings
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
@@ -26,8 +26,6 @@ const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 const formId = 'add-job-setting-schedule-entry';
 function getStartingState(settingName) {
   const jobSettingInitialInputValues = getSettingInputInitialValues();
-  console.log('add entry start state for '+settingName)
-  console.log(jobSettingInitialInputValues[settingName])
   return {
     hasSuccess: false,
     hasProblem: false,
@@ -125,7 +123,7 @@ class _AddEntryModal_needsCollapsing extends Component {
 
   submit(event) {
     event.preventDefault();
-    const { settingName, valueSchedule } = this.props;
+    const { settingName, valueSchedule, settingDisplayName } = this.props;
     const { hasWarning, startDate } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
@@ -133,23 +131,18 @@ class _AddEntryModal_needsCollapsing extends Component {
       if (problemMessages.length > 0) {
         throw { problems, messages: problemMessages };
       }
-      // check for sched entry with same start date unless `hasWarning === true`
-      if (!hasWarning && doesEntryExistWithStartDate(startDate, valueSchedule)) {
-        this.setState({
-          isLoading: false,
-          hasProblem: false,
-          problemMessages: [],
-          problems: {},
-          showMessage: true,
-          hasWarning: true
-        });
-        throw { isWarning: true };
+      // only check for warning if NOT already in warning state
+      let _warningInfo = hasWarning ? {} : getAddUpdateWarnings(startDate, valueSchedule, settingDisplayName);
+      if (_warningInfo.hasWarning) {
+        throw {
+          isWarning: true,
+          messages: _warningInfo.warningMessages
+        };
       }
       const submissionData = this.getInputDataProcessedToSubmit();
       return api.jobs.updateSetting(settingName, submissionData);
     })
     .then(res => {
-      console.log(res)
       let secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
@@ -176,19 +169,19 @@ class _AddEntryModal_needsCollapsing extends Component {
       );
     })
     .catch(err => {
-      if (err && err.isWarning) return;
+      const { isWarning } = err || {};
       this.props.catchApiUnauthorized(err);
       const errorData = (err && err.response && err.response.data) || err || {};
       let { problems, messages } = errorData;
-      if (!problems) problems = {};
       if (!messages) messages = [];
       this.setState({
-        problems,
-        problemMessages: messages,
-        hasProblem: true,
+        problems: problems || {},
+        problemMessages: !isWarning ? messages : [],
+        hasProblem: !isWarning,
         isLoading: false,
         showMessage: true,
-        hasWarning: false
+        hasWarning: isWarning,
+        warningMessages: isWarning ? messages : []
       });
     })
   };

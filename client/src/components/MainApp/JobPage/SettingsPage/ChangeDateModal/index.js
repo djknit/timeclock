@@ -3,7 +3,7 @@ import {
   api, 
   constants,
   changeHandlerFactoryFactory,
-  doesEntryExistWithStartDate
+  getDateChangeUpdateWarnings
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
@@ -98,20 +98,27 @@ class ChangeDateModal extends Component {
     };
     return { jobId, updates };
   };
-  
 
   submit(event) {
     event.preventDefault();
-    const { settingName } = this.props;
-    const { hasWarning } = this.state;
+    const { settingName, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit } = this.props;
+    const { hasWarning, updatedStartDate } = this.state;
     this.setSubmissionProcessingState()
     .then(() => {
       const { problems, problemMessages } = this.getInputProblems();
       if (problemMessages && problemMessages.length > 0) {
         throw { problems, messages: problemMessages };
       }
-      // make utility fxns to check for warnings
-      // if (!hasWarning)
+      const oldStartDate = valueSchedule[indexOfSchedEntryToEdit].startDate;
+      let _warningInfo = (
+        hasWarning ? {} : getDateChangeUpdateWarnings(oldStartDate, updatedStartDate, valueSchedule, settingDisplayName)
+      );
+      if (_warningInfo.hasWarning) {
+        throw {
+          isWarning: true,
+          messages: _warningInfo.warningMessages
+        };
+      }
       const submissionData = this.getDataProcessedToSubmit();
       return api.jobs.updateSetting(settingName, submissionData);
     })
@@ -142,27 +149,24 @@ class ChangeDateModal extends Component {
       );
     })
     .catch(err => {
-      if (err && err.isWarning) return;
+      const { isWarning } = err || {};
       this.props.catchApiUnauthorized(err);
       const errorData = (err && err.response && err.response.data) || err || {};
       let { problems, messages } = errorData;
+      if (!messages) messages = [];
       this.setState({
         problems: problems || {},
-        problemMessages: messages || [],
-        hasProblem: true,
+        problemMessages: !isWarning ? messages : [],
+        hasProblem: !isWarning,
         isLoading: false,
         showMessage: true,
-        hasWarning: false
+        hasWarning: isWarning,
+        warningMessages: isWarning ? messages : []
       });
     })
   };
 
   reset() {
-    const { indexOfSchedEntryToEdit, valueSchedule } = this.props;
-    const currentValue = (
-      (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) &&
-      valueSchedule[indexOfSchedEntryToEdit].value
-    );
     this.setState(getStartingState());
   };
 
@@ -180,7 +184,7 @@ class ChangeDateModal extends Component {
   render() {
     const { reset, submit, changeHandlerFactory, handleDatepickerPopperToggle } = this;
     const {
-      isActive, closeModal, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit, settingName
+      isActive, closeModal, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit
     } = this.props;
     const {
       hasSuccess,
@@ -200,7 +204,7 @@ class ChangeDateModal extends Component {
       return <></>;
     }
 
-    const { dateRangeShortText, valueSimpleText } = valueSchedule[indexOfSchedEntryToEdit];
+    const { dateRangeShortText, valueSimpleText, startDate } = valueSchedule[indexOfSchedEntryToEdit] || {};
 
     const closeMessage = () => this.setState({ showMessage: false });
 
@@ -316,6 +320,7 @@ class ChangeDateModal extends Component {
               onCalendarOpen: () => handleDatepickerPopperToggle(true),
               onCalendarClose: () => handleDatepickerPopperToggle(false)
             }}
+            openToDate={startDate}
           />
         </form>
       </ModalSkeleton>
