@@ -25,7 +25,7 @@ function getDateChangeUpdateWarnings(oldDate, newDate, schedule, settingDisplayN
     hasEntryInRangeWarning ? (
       'Are you sure you want to continue?'
     ) : (
-      'Are you wure you want to replace the existing value?'
+      'Are you sure you want to replace the existing value?'
     )
   );
   return { hasWarning, warningMessages };

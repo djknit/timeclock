@@ -75,7 +75,7 @@ class DeleteEntryModal extends Component {
         problemMessages: [],
         secondsUntilRedirect
       });
-      return this.props.clearEntryToEditIndex();
+      return this.props.setEntryToEditById(null);
     })
     .then(() => {
       currentJobService.setCurrentJob(response.data);
@@ -95,12 +95,9 @@ class DeleteEntryModal extends Component {
     .catch(err => {
       this.props.catchApiUnauthorized(err);
       const errorData = (err && err.response && err.response.data) || err || {};
-      let { problems, messages } = errorData;
-      if (!problems) problems = { unknown: true };
-      if (!messages) messages = ['An unknown problem has occurred.'];
       this.setState({
-        problems,
-        problemMessages: messages,
+        problems: errorData.problems || { unknown: true },
+        problemMessages: errorData.messages || ['An unknown problem has occurred.'],
         hasProblem: true,
         isLoading: false,
         showMessage: true
@@ -211,22 +208,26 @@ class DeleteEntryModal extends Component {
             />
           </Notification>
         )}
-        <TagGroup align="center" isInline>
-          <Tag theme="info" size={6}>
-            Time Period:
-          </Tag>
-          <Tag theme="info light" size={6}>
-            {dateRangeShortText}
-          </Tag>
-        </TagGroup>
-        <TagGroup align="center" isInline>
-          <Tag theme="info" size={6}>
-            Current Value:
-          </Tag>
-          <Tag theme="info light" size={6}>
-            {valueSimpleText}
-          </Tag>
-        </TagGroup>
+        {!hasSuccess && (
+          <>
+            <TagGroup align="center" isInline>
+              <Tag theme="info" size={6}>
+                Time Period:
+              </Tag>
+              <Tag theme="info light" size={6}>
+                {dateRangeShortText}
+              </Tag>
+            </TagGroup>
+            <TagGroup align="center" isInline>
+              <Tag theme="info" size={6}>
+                Current Value:
+              </Tag>
+              <Tag theme="info light" size={6}>
+                {valueSimpleText}
+              </Tag>
+            </TagGroup>
+          </>
+        )}
       </ModalSkeleton>
     );
   };

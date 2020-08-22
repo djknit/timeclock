@@ -103,6 +103,7 @@ class ChangeDateModal extends Component {
     event.preventDefault();
     const { settingName, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit } = this.props;
     const { hasWarning, updatedStartDate } = this.state;
+    let response, secondsUntilRedirect;
     this.setSubmissionProcessingState()
     .then(() => {
       const { problems, problemMessages } = this.getInputProblems();
@@ -123,7 +124,8 @@ class ChangeDateModal extends Component {
       return api.jobs.updateSetting(settingName, submissionData);
     })
     .then(res => {
-      let secondsUntilRedirect = secondsToDelayRedirect;
+      response = res;
+      secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
         isLoading: false,
@@ -134,7 +136,11 @@ class ChangeDateModal extends Component {
         problemMessages: [],
         secondsUntilRedirect
       });
-      currentJobService.setCurrentJob(res.data);
+      const entryId = valueSchedule[indexOfSchedEntryToEdit]._id;
+      return this.props.setEntryToEditById(entryId);
+    })
+    .then(() => {
+      currentJobService.setCurrentJob(response.data);
       const intervalId = setInterval(
         () => {
           secondsUntilRedirect -= stepSizeOfRedirectDelay;

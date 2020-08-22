@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { preprocessScheduleForDisplay } from '../utilities';
+import { preprocessScheduleForDisplay, getIndexOfSchedEntryFromId } from '../utilities';
 import { windowWidthService } from '../../../../../data';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
@@ -15,7 +15,7 @@ class _Setting_needsData extends Component {
   constructor(props) {
     super(props);
     this.modalTogglerFactory = this.modalTogglerFactory.bind(this);
-    this.clearEntryToEditIndex = this.clearEntryToEditIndex.bind(this);
+    this.setEntryToEditById = this.setEntryToEditById.bind(this);
     this.state = {
       indexOfSchedEntryToEdit: undefined,
       isEditValueModalActive: false,
@@ -36,14 +36,18 @@ class _Setting_needsData extends Component {
     };
   };
 
-  clearEntryToEditIndex() {
+  setEntryToEditById(entryId) {
+    const { job, settingName } = this.props;
     return new Promise(resolve => {
-      this.setState({ indexOfSchedEntryToEdit: null }, resolve);
+      this.setState(
+        { indexOfSchedEntryToEdit: getIndexOfSchedEntryFromId(entryId, job[settingName]) },
+        resolve
+      );
     });
-  }
+  };
 
   render() {
-    const { modalTogglerFactory, clearEntryToEditIndex } = this;
+    const { modalTogglerFactory, setEntryToEditById } = this;
     const {
       job, settingName, settingDisplayName, catchApiUnauthorized, style, areAnyModalsOpen, windowWidth
     } = this.props;
@@ -74,9 +78,15 @@ class _Setting_needsData extends Component {
 
     const jobId = job._id.toString();
     const commonModalAttrs = {
-      settingName, settingDisplayName, jobId, catchApiUnauthorized, windowWidth, valueSchedule
+      settingName,
+      settingDisplayName,
+      jobId,
+      catchApiUnauthorized,
+      windowWidth,
+      valueSchedule
     };
     const mostlyCommonModalAttrs = { ...commonModalAttrs, indexOfSchedEntryToEdit };
+    const lessCommonModalAttrs = { ...mostlyCommonModalAttrs, setEntryToEditById };
   
     return (
       <>
@@ -113,15 +123,14 @@ class _Setting_needsData extends Component {
           closeModal={() => toggleEditValueModal(false)}
         />
         <ChangeDateModal
-          {...mostlyCommonModalAttrs}
+          {...lessCommonModalAttrs}
           isActive={isChangeDateModalActive}
           closeModal={() => toggleChangeDateModal(false)}
         />
         <DeleteEntryModal
-          {...mostlyCommonModalAttrs}
+          {...lessCommonModalAttrs}
           isActive={isDeleteEntryModalActive}
           closeModal={() => toggleDeleteValueModal(false)}
-          {...{ clearEntryToEditIndex }}
         />
       </>
     );

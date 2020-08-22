@@ -20,21 +20,23 @@ function Notification({
   }
 
   return (
-    <div className={className} style={style.notification}>
+    <div {...{ className }} style={style.notification}>
       {close && (
-        <button className="delete" onClick={_close} type="button"></button>
+        <button className="delete" onClick={_close} type="button" />
       )}
-      {messages ? (
+      {messages && (
         messages.map(
           (msg, index, arr) => (
-            <NotificationText key={msg} isLast={index === arr.length - 1}>
+            <NotificationText
+              key={msg}
+              isLast={index === arr.length - 1 && !children}
+            >
               {msg}
             </NotificationText>
           )
         )
-      ) : (
-        children
       )}
+      {children}
     </div>
   );
 }
