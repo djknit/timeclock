@@ -5,7 +5,8 @@ import { getColorClass } from '../../utilities';
 function ProgressBar({
   theme,
   value,
-  max
+  max,
+  remaining
 }) {
 
   const colorClass = getColorClass(theme);
@@ -16,11 +17,9 @@ function ProgressBar({
     <progress
       className={`progress ${colorClass}`}
       style={style.progress}
-      {...{
-        value,
-        max
-      }}
-    ></progress>
+      {...{ max }}
+      value={remaining ? (max - remaining) : value}
+    />
   );
 }
 

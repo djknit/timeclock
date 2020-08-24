@@ -14,7 +14,6 @@ function preprocessScheduleForDisplay(schedule, settingName) {
   return schedule.map(
     (entry, index) => {
       const { startDate, value } = entry;
-      console.log(entry._id)
       const endDate = (
         index !== schedule.length - 1 ?
         getPrecedingDate(schedule[index + 1].startDate) :
@@ -33,6 +32,16 @@ function preprocessScheduleForDisplay(schedule, settingName) {
   );
 }
 
+function getIndexOfSchedEntryFromId(entryId, schedule) {
+  if (!schedule || !entryId) return null;
+  for (let i = 0; i < schedule.length; i++) {
+    if (schedule[i]._id.toString() === entryId.toString()) {
+      return i;
+    }
+  }
+}
+
 export {
-  preprocessScheduleForDisplay
+  preprocessScheduleForDisplay,
+  getIndexOfSchedEntryFromId
 };

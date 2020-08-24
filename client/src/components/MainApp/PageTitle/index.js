@@ -6,7 +6,8 @@ import CrumbLink from './CrumbLink';
 function PageTitle({
   children,
   style,
-  crumbChain
+  crumbChain,
+  areAnyModalsOpen
 }) {
 
   const completeStyle = getStyle(style);
@@ -19,7 +20,7 @@ function PageTitle({
             (crumb, index) => (
               index !== crumbChain.length - 1 ? (
                 <React.Fragment key={crumb.text}>
-                  <CrumbLink to={crumb.url}>
+                  <CrumbLink to={crumb.url} allowTabFocus={!areAnyModalsOpen}>
                     {crumb.text}
                   </CrumbLink>
                   <i style={completeStyle.breadcrumbSeparator} className="fas fa-chevron-right" />

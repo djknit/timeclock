@@ -40,7 +40,8 @@ function WageInput({
   // radioUseMultiplierFalseRef,
   topLevelFieldLabelRatio,
   secondLevelFieldLabelRatio,
-  contentToggle
+  contentToggle,
+  inputRef
 }) {
 
   const _topLevelFieldLabelRatio = topLevelFieldLabelRatio || formConstants.topLevelFieldLabelRatio;
@@ -120,7 +121,8 @@ function WageInput({
         changeHandlerFactory={changeHandlerFactoryForChildren}
         {...{
           formId,
-          currency
+          currency,
+          inputRef
         }}
         isInline
         isActive={areInsideInputsActive}

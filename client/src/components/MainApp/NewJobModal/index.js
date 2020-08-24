@@ -19,7 +19,7 @@ import { jobsService, currentJobService, windowWidthService } from '../../../dat
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import Notification, { NotificationText } from '../../Notification';
-import { ProgressBar } from '../../formPieces';
+import { ProgressBar, FormMessages } from '../../formPieces';
 import Input from './Input';
 import { addCollapsing, addData } from '../../higherOrder';
 
@@ -269,45 +269,29 @@ class _NewJobModal_needsCollapsingAndData extends Component {
         }
       >
         <form id={formId}>
-          {showMessage && !hasProblem && !hasSuccess && (
-            <Notification theme="info" close={() => this.setState({ showMessage: false })}>
-              <NotificationText>
-                Fill out the form below to add a job and start tracking your hours.
-              </NotificationText>
-              <NotificationText>
-                For basic time tracking, only the first three fields are required.
-              </NotificationText>
-              <NotificationText isLast={true}>
-                If your settings change during the course of the job, you will be able to enter those changes once the job is created.
-              </NotificationText>
-            </Notification>
-          )}
-          {showMessage && problemMessages.length > 0 && (
-            <Notification theme="danger" close={() => this.setState({ showMessage: false })}>
-              {problemMessages.map(
-                (message, index, arr) => (
-                  <NotificationText key={message} isLast={index === arr.length - 1}>
-                    {message}
-                  </NotificationText>
-                )
-              )}
-            </Notification>
-          )}
-          {showMessage && hasSuccess && (
-            <Notification theme="success">
-              <NotificationText>
-                <strong>Success!</strong> New job created.
-              </NotificationText>
-              <NotificationText>
-                You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
-              </NotificationText>
-              <ProgressBar
-                theme="success"
-                value={secondsToDelayRedirect - secondsUntilRedirect}
-                max={secondsToDelayRedirect}
-              />
-            </Notification>
-          )}
+          <FormMessages
+            {...{
+              showMessage,
+              hasSuccess,
+              problemMessages,
+            }}
+            hasProblem={hasProblem}
+            infoMessages={[
+              'Fill out the form below to add a job and start tracking your hours.',
+              'For basic time tracking, only the first three fields are required.',
+              'If your settings change during the course of the job, you will be able to enter those changes once the job is created.'
+            ]}
+            successMessages={[
+              <><strong>Success!</strong> New job created.</>,
+              <>You are now signed in.</>
+            ]}
+            successRedirect={{
+              secondsToDelayRedirect,
+              secondsRemaining: secondsUntilRedirect,
+              messageFragment: 'You will be redirected'
+            }}
+            closeMessage={() => this.setState({ showMessage: false })}
+          />
           {inputPropNames.map(
             (propName, index) => (
               <Input

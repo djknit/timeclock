@@ -11,42 +11,34 @@ import { addData } from '../higherOrder';
 class _LandingPage_needsData extends Component {
   constructor(props) {
     super(props);
-    this.toggleLoginModal = this.toggleLoginModal.bind(this);
-    this.toggleNewUserModal = this.toggleNewUserModal.bind(this);
-    this.afterToggleCbFactory = this.afterToggleCbFactory.bind(this);
+    this.modalToggleFactory = this.modalToggleFactory.bind(this);
     this.newUserInputRef = React.createRef();
     this.loginInputRef = React.createRef();
+    this.toggleNewUserModal = (
+      this.modalToggleFactory('isNewUserModalActive', this.newUserInputRef).bind(this)
+    );
+    this.toggleLoginModal = (
+      this.modalToggleFactory('isLoginModalActive', this.loginInputRef).bind(this)
+    );
     this.state = {
       isLoginModalActive: false,
       isNewUserModalActive: false,
       modalsRegistrationId: undefined
     };
   };
-
-  toggleLoginModal(isActiveAfterToggle) {
-    const hadModalsOpen = this.state.isLoginModalActive || this.state.isNewUserModalActive;
-    this.setState(
-      { isLoginModalActive: isActiveAfterToggle },
-      this.afterToggleCbFactory(isActiveAfterToggle, this.loginInputRef, hadModalsOpen)
-    );
-  };
-
-  toggleNewUserModal(isActiveAfterToggle) {
-    const hadModalsOpen = this.state.isLoginModalActive || this.state.isNewUserModalActive;
-    this.setState(
-      { isNewUserModalActive: isActiveAfterToggle },
-      this.afterToggleCbFactory(isActiveAfterToggle, this.newUserInputRef, hadModalsOpen)
-    );
-  };
-
-  afterToggleCbFactory(isActiveAfterToggle, inputRef, hadModalsOpen) {
-    return (() => {
-      if (isActiveAfterToggle) inputRef.current.focus();
-      const hasModalOpen = this.state.isLoginModalActive || this.state.isNewUserModalActive;
-      if (hasModalOpen !== hadModalsOpen) {
-        areModalsOpenService.report(this.state.modalsRegistrationId, hasModalOpen);
-      }
-    });
+  
+  modalToggleFactory(modalIsActivePropName, inputRef) {
+    return function(isActiveAfterToggle) {
+      this.setState(
+        { [modalIsActivePropName]: !!isActiveAfterToggle },
+        () => {
+          if (isActiveAfterToggle) inputRef.current.focus();
+          const { isLoginModalActive, isNewUserModalActive, modalsRegistrationId } = this.state;
+          const areModalsOpen = isLoginModalActive || isNewUserModalActive;
+          areModalsOpenService.report(modalsRegistrationId, areModalsOpen);
+        }
+      );
+    };
   };
 
   componentDidMount() {
@@ -55,7 +47,8 @@ class _LandingPage_needsData extends Component {
       if (!res.data.user) return console.error('Missing user.');
       userService.setUser(res.data.user);
       this.props.history.push('/app');
-    });
+    })
+    .catch(() => {});
     this.setState({
       modalsRegistrationId: areModalsOpenService.getId()
     });
@@ -67,7 +60,9 @@ class _LandingPage_needsData extends Component {
 
   render() {
 
-    const { state, props, toggleLoginModal, toggleNewUserModal, loginInputRef, newUserInputRef } = this;
+    const {
+      state, props, toggleLoginModal, toggleNewUserModal, loginInputRef, newUserInputRef
+    } = this;
     const { isNewUserModalActive, isLoginModalActive } = state;
     const { windowWidth, areAnyModalsOpen } = props;
 

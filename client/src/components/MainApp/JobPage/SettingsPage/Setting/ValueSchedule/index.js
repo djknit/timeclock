@@ -1,7 +1,4 @@
 import React from 'react';
-import {
-  getSimpleJobSettingValueText
-} from '../../../utilities';
 import getStyle from './style';
 import Button from '../../../../../Button';
 import SettingValueDisplay from '../../../SettingValueDisplay';
@@ -11,7 +8,8 @@ function ValueSchedule({
   toggleEditValueModal,
   toggleDeleteValueModal,
   toggleChangeDateModal,
-  settingName
+  settingName,
+  areAnyModalsOpen
 }) {
 
   const style = getStyle(settingName === 'wage');
@@ -22,6 +20,7 @@ function ValueSchedule({
         styles={style.button}
         theme={isRemove ? 'danger' : 'primary'}
         onClick={() => toggle(true, index)}
+        allowTabFocus={!areAnyModalsOpen}
       >
         <i className={iconClass} />&ensp;{text}
       </Button>
