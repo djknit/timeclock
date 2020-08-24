@@ -2,11 +2,16 @@ import moment from 'moment';
 import { dates as dateUtils } from '../../../utilities';
 import { getDayCutoffTime } from '../elemental';
 import { getWageValueSummaryText } from './wage';
+import { convertStringToNonbreakingHtml } from './textFormatting';
 
 export * from './wage';
+export * from './textFormatting';
 
-function formatMyDate(myDate, formatString) {
-  return dateUtils.getMoment(myDate).format(formatString || 'MMM. D, YYYY');
+function formatMyDate(myDate, formatString, isString) {
+  const stringResult = dateUtils.getMoment(myDate || {}).format(formatString || 'MMM. D, YYYY') || '';
+  console.log(stringResult)
+  console.log(myDate)
+  return isString ? stringResult : convertStringToNonbreakingHtml(stringResult);
 }
 
 function getWeekBeginsText(weekBeginsValue) {

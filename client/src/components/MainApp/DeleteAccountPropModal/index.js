@@ -5,7 +5,7 @@ import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
 import Notification, { NotificationText } from '../../Notification';
 import Tag, { TagGroup } from '../../Tag';
-import { TextInput, ProgressBar } from '../../formPieces';
+import { TextInput, ProgressBar, FormMessages } from '../../formPieces';
 import { addData } from '../../higherOrder';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
@@ -149,8 +149,6 @@ class _DeleteAccountPropModal_needsData extends Component {
     const propToDeleteCurrentValue = user && user[propToDeleteName];
     const capPropToDeleteName = capitalizeFirstLetter(propToDeleteName);
 
-    const closeMessage = () => this.setState({ showMessage: false });
-
     return (
       <ModalSkeleton
         {...{
@@ -189,42 +187,27 @@ class _DeleteAccountPropModal_needsData extends Component {
         }
       >
         <form id={formId}>
-          {showMessage && !hasProblem && !hasSuccess && (
-            <Notification theme="info" close={closeMessage}>
-              <NotificationText>
-                You are about to delete your {propToDeleteName}.
-              </NotificationText>
-              <NotificationText isLast>
-                Enter your password to proceed.
-              </NotificationText>
-            </Notification>
-          )}
-          {showMessage && problemMessages.length > 0 && (
-            <Notification theme="danger" close={closeMessage}>
-              {problemMessages.map(
-                (message, index, arr) => (
-                  <NotificationText key={message} isLast={index === arr.length - 1}>
-                    {message}
-                  </NotificationText>
-                )
-              )}
-            </Notification>
-          )}
-          {showMessage && hasSuccess && (
-            <Notification theme="success">
-              <NotificationText>
-                <strong>Success!</strong> Your {propToDeleteName} was deleted.
-              </NotificationText>
-              <NotificationText>
-                This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
-              </NotificationText>
-              <ProgressBar
-                theme="success"
-                value={secondsToDelayRedirect - secondsUntilRedirect}
-                max={secondsToDelayRedirect}
-              />
-            </Notification>
-          )}
+          <FormMessages
+            {...{
+              showMessage,
+              hasSuccess,
+              problemMessages,
+            }}
+            hasProblem={hasProblem}
+            infoMessages={[
+              `You are about to delete your ${propToDeleteName}.`,
+              'Enter your password to proceed.'
+            ]}
+            successMessages={[
+              <><strong>Success!</strong> Your {propToDeleteName} was deleted.</>
+            ]}
+            successRedirect={{
+              secondsToDelayRedirect,
+              secondsRemaining: secondsUntilRedirect,
+              messageFragment: 'This dialog box will close'
+            }}
+            closeMessage={() => this.setState({ showMessage: false })}
+          />
           <TagGroup align="center">
             <Tag theme="info" size={6}>
               {`Current ${capPropToDeleteName}:`}

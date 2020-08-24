@@ -12,9 +12,8 @@ import {
 import { currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
-import Notification, { NotificationText } from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
-import { ProgressBar } from '../../../../formPieces';
+import { FormMessages } from '../../../../formPieces';
 import SettingValueInput from '../SettingValueInput';
 import { addCollapsing } from '../../../../higherOrder';
 
@@ -49,12 +48,16 @@ class _EditValueModal_needsCollapsing extends Component {
     this.state = getStartingState();
   };
 
+  // possibly mostly the same for many
   afterChange() {
     if (this.state.hasBeenSubmitted) {
       this.setState(this.getInputProblems());
     }
   };
 
+  // unique;
+    // possibly should be related to constructor or at least share some values such as propNames
+    // also tied to processing for submit
   getInputProblems() {
     const { settingName } = this.props;
     const { updatedValue } = this.state;
@@ -64,6 +67,7 @@ class _EditValueModal_needsCollapsing extends Component {
     return { problems, problemMessages };
   };
 
+  // exact same for most or all forms
   setSubmissionProcessingState() {
     return new Promise(
       resolve => {
@@ -82,6 +86,7 @@ class _EditValueModal_needsCollapsing extends Component {
     );
   };
 
+  // unique
   getDataProcessedToSubmit() {
     const { indexOfSchedEntryToEdit, valueSchedule, settingName, jobId } = this.props;
     const { updatedValue } = this.state;
@@ -197,7 +202,8 @@ class _EditValueModal_needsCollapsing extends Component {
       valueSchedule,
       indexOfSchedEntryToEdit,
       settingName,
-      wageContentToggle
+      wageContentToggle,
+      inputRef
     } = this.props;
     const {
       hasSuccess,
@@ -219,8 +225,6 @@ class _EditValueModal_needsCollapsing extends Component {
     } = valueSchedule[indexOfSchedEntryToEdit];
 
     const lowCaseSettingName = settingDisplayName.toLowerCase();
-
-    const closeMessage = () => this.setState({ showMessage: false });
 
     const wageInputRefs = extractWageInputRefs(this);
 
@@ -246,7 +250,7 @@ class _EditValueModal_needsCollapsing extends Component {
             <Button
               theme={hasSuccess ? 'success' : 'primary'}
               onClick={submit}
-              disabled={isLoading || hasSuccess || !updatedValue}
+              disabled={isLoading || hasSuccess || (!updatedValue && updatedValue !== 0)}
               isSubmit
               {...{
                 formId,
@@ -259,42 +263,27 @@ class _EditValueModal_needsCollapsing extends Component {
         }
       >
         <form id={formId}>
-          {showMessage && !hasProblem && !hasSuccess && (
-            <Notification theme="info" close={closeMessage}>
-              <NotificationText>
-                You are editing the {lowCaseSettingName} for {dateRangeText}.
-              </NotificationText>
-              <NotificationText isLast>
-                Enter the new value below.
-              </NotificationText>
-            </Notification>
-          )}
-          {showMessage && problemMessages.length > 0 && (
-            <Notification theme="danger" close={closeMessage}>
-              {problemMessages.map(
-                (message, index, arr) => (
-                  <NotificationText key={message} isLast={index === arr.length - 1}>
-                    {message}
-                  </NotificationText>
-                )
-              )}
-            </Notification>
-          )}
-          {showMessage && hasSuccess && (
-            <Notification theme="success">
-              <NotificationText>
-                You successfully updated the {lowCaseSettingName} for {dateRangeText}.
-              </NotificationText>
-              <NotificationText>
-                This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
-              </NotificationText>
-              <ProgressBar
-                theme="success"
-                value={secondsToDelayRedirect - secondsUntilRedirect}
-                max={secondsToDelayRedirect}
-              />
-            </Notification>
-          )}
+          <FormMessages
+            {...{
+              showMessage,
+              hasSuccess,
+              problemMessages
+            }}
+            hasProblem={hasProblem}
+            infoMessages={[
+              <>You are editing the {lowCaseSettingName} for {dateRangeText}.</>,
+              <>Enter the new value below.</>
+            ]}
+            successMessages={[
+              <>You successfully updated the {lowCaseSettingName} for {dateRangeText}.</>
+            ]}
+            successRedirect={{
+              secondsToDelayRedirect,
+              secondsRemaining: secondsUntilRedirect,
+              messageFragment: 'This dialog box will close',
+            }}
+            closeMessage={() => this.setState({ showMessage: false })}
+          />
           <TagGroup align="center" isInline>
             <Tag theme="info" size={6}>
               Time Period:
@@ -319,7 +308,8 @@ class _EditValueModal_needsCollapsing extends Component {
               changeHandlerFactory,
               formId,
               wageInputRefs,
-              wageContentToggle
+              wageContentToggle,
+              inputRef
             }}
             problems={problems && problems.updatedValue}
             isActive={!isLoading && !hasSuccess}

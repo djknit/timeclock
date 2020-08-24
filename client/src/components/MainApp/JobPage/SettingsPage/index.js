@@ -12,7 +12,7 @@ class SettingsPage extends Component {
   };
 
   render() {
-    const { job, parentPath, match, catchApiUnauthorized } = this.props;
+    const { job, parentPath, match, catchApiUnauthorized, areAnyModalsOpen } = this.props;
     const thisPath = match.url;
 
     const crumbChain = [
@@ -51,6 +51,8 @@ class SettingsPage extends Component {
       getRouteInfoObj('all', 'All Settings', undefined, All)
     ];
 
+    const commonRouteAttrs = { ...this.props, job, catchApiUnauthorized, areAnyModalsOpen };
+
     return (
       <>
         <Switch>
@@ -60,24 +62,16 @@ class SettingsPage extends Component {
                 path={RouteInfo.path}
                 render={props => (
                   <>
-                    <PageTitle crumbChain={RouteInfo.crumbChain} />
+                    <PageTitle crumbChain={RouteInfo.crumbChain} {...{ areAnyModalsOpen }}/>
                     {RouteInfo.settingPropName ? (
                       <Setting
-                        {...{
-                          ...props,
-                          job,
-                          catchApiUnauthorized
-                        }}
+                        {...commonRouteAttrs}
                         settingName={RouteInfo.settingPropName}
                         settingDisplayName={RouteInfo.pageName}
                       />
                     ) : (
                       <RouteInfo.PageComp
-                        {...{
-                          ...props,
-                          job,
-                          catchApiUnauthorized
-                        }}
+                        {...commonRouteAttrs}
                       />
                     )}
                   </>
@@ -90,7 +84,7 @@ class SettingsPage extends Component {
             path={thisPath}
             render={props => (
               <>
-                <PageTitle {...{ crumbChain }} />
+                <PageTitle {...{ crumbChain, areAnyModalsOpen }} />
                 <Landing
                   {...{
                     childRoutes,

@@ -8,12 +8,12 @@ function getDateRangeText(startDate, endDate, isShort, dateFormatString) {
   }
   const _formatDate = date => formatMyDate(date, dateFormatString);
   if (!startDate) {
-    return `all dates prior to and including ${_formatDate(endDate)}`;
+    return <>all dates prior to and including {_formatDate(endDate)}</>;
   }
   if (!endDate) {
-    return `all dates on or after ${_formatDate(startDate)}`;
+    return <>All dates on or after {_formatDate(startDate)}</>;
   }
-  return `${_formatDate(startDate)} until ${_formatDate(endDate)}`;
+  return <>{_formatDate(startDate)} until {_formatDate(endDate)}</>;
 }
 
 function getDateRangeShortText(startDate, endDate, dateFormatString) {

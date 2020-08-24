@@ -7,13 +7,22 @@ function _CrumbLink_needsPseudo({
   pseudoState,
   pseudoHandlers,
   children,
-  to
+  to,
+  allowTabFocus
 }) {
 
   const style = getStyle(pseudoState);
 
   return (
-    <Link {...{ to, children, ...pseudoHandlers, style }} />
+    <Link
+      tabIndex={allowTabFocus ? 0 : -1}
+      {...{
+        to,
+        children,
+        ...pseudoHandlers,
+        style
+      }}
+    />
   );
 }
 

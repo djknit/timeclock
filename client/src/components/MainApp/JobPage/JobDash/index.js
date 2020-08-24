@@ -15,7 +15,6 @@ class _JobDash_needsData extends Component {
   };
 
   render() {
-    const { state, props } = this;
     const {
       job,
       areAnyModalsOpen,
@@ -25,8 +24,8 @@ class _JobDash_needsData extends Component {
       buildSettingsSubPath,
       jobSettingsPath,
       timePagePath,
-      dashboardPath
-    } = props;
+      dashboardPath,
+    } = this.props;
 
     const style = getStyle(windowWidth);
 

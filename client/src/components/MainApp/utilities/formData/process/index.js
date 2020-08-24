@@ -40,6 +40,9 @@ function processJobSettingInputValue(settingName, inputValue) {
 
     case 'dayCutoff':
       return processDayCutoffInput(inputValue);
+    
+    case 'weekBegins':
+      return parseInt(inputValue);
 
     default:
       return inputValue;

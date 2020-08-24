@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import { TextInput, ProgressBar } from '../../formPieces';
+import { TextInput, ProgressBar, FormMessages } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
 import { api, constants, changeHandlerFactoryFactory } from '../utilities';
 import { userService } from '../../../data';
@@ -175,7 +175,7 @@ class LoginModal extends Component {
         title="Sign In"
         isActive={isActive}
         closeModal={closeModal}
-        isCloseButtonDisabled={isLoading|| hasSuccess}
+        isCloseButtonDisabled={isLoading || hasSuccess}
         footerContent={
           <>
             <Button
@@ -189,9 +189,11 @@ class LoginModal extends Component {
               Cancel
             </Button>
             <Button
-              theme={hasSuccess ? 'success' : 'primary'}
+              theme={hasSuccess ? "success" : "primary"}
               onClick={this.submit}
-              disabled={isLoading || hasSuccess || !usernameOrEmail || !password}
+              disabled={
+                isLoading || hasSuccess || !usernameOrEmail || !password
+              }
               formId={formId}
               isSubmit={true}
               isLoading={isLoading}
@@ -202,47 +204,34 @@ class LoginModal extends Component {
         }
       >
         <form id={formId}>
-          {showMessage && problemMessages.length > 0 && (
-            <Notification theme="danger" close={() => this.setState({ showMessage: false })}>
-              {problemMessages.map(
-                (message, index, arr) => (
-                  <NotificationText key={message} isLast={index === arr.length - 1}>
-                    {message}
-                  </NotificationText>
-                )
-              )}
-            </Notification>
-          )}
-          {showMessage && hasSuccess && (
-            <Notification theme="success">
-              <NotificationText>
-                <strong>Success!</strong> You are signed in.
-              </NotificationText>
-              <NotificationText>
-                You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
-              </NotificationText>
-              <ProgressBar
-                theme="success"
-                value={secondsToDelayRedirect - secondsUntilRedirect}
-                max={secondsToDelayRedirect}
-              />
-            </Notification>
-          )}
-          {fieldsInfo.map(
-            (field, index) => (
-              <TextInput
-                {...field}
-                formId={formId}
-                value={this.state[field.propName]}
-                changeHandlerFactory={this.changeHandlerFactory}
-                isActive={isActive && !isLoading && !hasSuccess}
-                hasProblem={problems[field.propName]}
-                key={index}
-                inputRef={index === 0 ? inputRef : undefined}
-                iconClass={getIconClass(field.propName, hasSuccess)}
-              />
-            )
-          )}
+          <FormMessages
+            {...{
+              showMessage,
+              hasSuccess,
+              problemMessages,
+            }}
+            hasProblem={!!problems}
+            successMessages={[<><strong>Success!</strong> You are signed in.</>]}
+            successRedirect={{
+              secondsToDelayRedirect,
+              secondsRemaining: secondsUntilRedirect,
+              messageFragment: 'You will be redirected'
+            }}
+            closeMessage={() => this.setState({ showMessage: false })}
+          />
+          {fieldsInfo.map((field, index) => (
+            <TextInput
+              {...field}
+              formId={formId}
+              value={this.state[field.propName]}
+              changeHandlerFactory={this.changeHandlerFactory}
+              isActive={isActive && !isLoading && !hasSuccess}
+              hasProblem={problems[field.propName]}
+              key={index}
+              inputRef={index === 0 ? inputRef : undefined}
+              iconClass={getIconClass(field.propName, hasSuccess)}
+            />
+          ))}
         </form>
       </ModalSkeleton>
     );

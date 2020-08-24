@@ -11,7 +11,7 @@ import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
-import { DateInput, ProgressBar } from '../../../../formPieces';
+import { DateInput, ProgressBar, FormMessages } from '../../../../formPieces';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
@@ -103,6 +103,7 @@ class ChangeDateModal extends Component {
     event.preventDefault();
     const { settingName, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit } = this.props;
     const { hasWarning, updatedStartDate } = this.state;
+    let response, secondsUntilRedirect;
     this.setSubmissionProcessingState()
     .then(() => {
       const { problems, problemMessages } = this.getInputProblems();
@@ -123,7 +124,8 @@ class ChangeDateModal extends Component {
       return api.jobs.updateSetting(settingName, submissionData);
     })
     .then(res => {
-      let secondsUntilRedirect = secondsToDelayRedirect;
+      response = res;
+      secondsUntilRedirect = secondsToDelayRedirect;
       this.setState({
         hasSuccess: true,
         isLoading: false,
@@ -134,7 +136,11 @@ class ChangeDateModal extends Component {
         problemMessages: [],
         secondsUntilRedirect
       });
-      currentJobService.setCurrentJob(res.data);
+      const entryId = valueSchedule[indexOfSchedEntryToEdit]._id;
+      return this.props.setEntryToEditById(entryId);
+    })
+    .then(() => {
+      currentJobService.setCurrentJob(response.data);
       const intervalId = setInterval(
         () => {
           secondsUntilRedirect -= stepSizeOfRedirectDelay;
@@ -184,7 +190,7 @@ class ChangeDateModal extends Component {
   render() {
     const { reset, submit, changeHandlerFactory, handleDatepickerPopperToggle } = this;
     const {
-      isActive, closeModal, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit
+      isActive, closeModal, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit, inputRef
     } = this.props;
     const {
       hasSuccess,
@@ -206,8 +212,6 @@ class ChangeDateModal extends Component {
 
     const { dateRangeShortText, valueSimpleText, startDate } = valueSchedule[indexOfSchedEntryToEdit] || {};
 
-    const closeMessage = () => this.setState({ showMessage: false });
-
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
     const style = getStyle(messagesAreaMinHeight);
@@ -216,7 +220,7 @@ class ChangeDateModal extends Component {
       <ModalSkeleton
         {...{
           isActive,
-          closeModal
+          closeModal,
         }}
         title={`Change ${settingDisplayName} Schedule Entry Start Date`}
         isCloseButtonDisabled={isLoading}
@@ -229,7 +233,7 @@ class ChangeDateModal extends Component {
                 closeModal();
               }}
             >
-              {hasSuccess ? 'Close' : 'Cancel'}
+              {hasSuccess ? "Close" : "Cancel"}
             </Button>
             {hasWarning && (
               <Button
@@ -241,50 +245,48 @@ class ChangeDateModal extends Component {
               </Button>
             )}
             <Button
-              theme={(hasSuccess && 'success') || (hasWarning && 'warning') || 'primary'}
+              theme={
+                (hasSuccess && "success") ||
+                (hasWarning && "warning") ||
+                "primary"
+              }
               onClick={submit}
-              disabled={isLoading || hasSuccess || !updatedStartDate }
+              disabled={isLoading || hasSuccess || !updatedStartDate}
               isSubmit
               {...{
                 formId,
-                isLoading
+                isLoading,
               }}
             >
-              {hasWarning ? 'Yes, Continue' : 'Submit'}
+              {hasWarning ? "Yes, Continue" : "Submit"}
             </Button>
           </>
         }
       >
         <form id={formId}>
           <div style={style.messagesArea}>
-            {showMessage && !hasProblem && !hasSuccess && !hasWarning && (
-              <Notification theme="info" close={closeMessage}>
-                <NotificationText isLast>
-                  To change the date on which this {lowCaseSettingName} value takes effect, enter the new date below.
-                </NotificationText>
-              </Notification>
-            )}
-            {showMessage && problemMessages.length > 0 && (
-              <Notification theme="danger" close={closeMessage} messages={problemMessages} />
-            )}
-            {showMessage && hasWarning && warningMessages.length > 0 && (
-              <Notification theme="warning" messages={warningMessages} />
-            )}
-            {showMessage && hasSuccess && (
-              <Notification theme="success">
-                <NotificationText>
-                  You successfully added a new {lowCaseSettingName} value to the schedule.
-                </NotificationText>
-                <NotificationText>
-                  This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
-                </NotificationText>
-                <ProgressBar
-                  theme="success"
-                  value={secondsToDelayRedirect - secondsUntilRedirect}
-                  max={secondsToDelayRedirect}
-                />
-              </Notification>
-            )}
+            <FormMessages
+              {...{
+                showMessage,
+                hasSuccess,
+                problemMessages,
+                hasWarning,
+              }}
+              hasProblem={hasProblem}
+              infoMessages={[
+                `To change the date on which this ${lowCaseSettingName} vaue takes effect, enter the new date below.`,
+              ]}
+              successMessages={[
+                `You successfully changed the start date for this ${lowCaseSettingName} value.`,
+              ]}
+              warningMessages={warningMessages}
+              successRedirect={{
+                secondsToDelayRedirect,
+                secondsRemaining: secondsUntilRedirect,
+                messageFragment: 'This dialog box will close',
+              }}
+              closeMessage={() => this.setState({ showMessage: false })}
+            />
             <TagGroup align="center" isInline>
               <Tag theme="info" size={6}>
                 Time Period:
@@ -307,7 +309,8 @@ class ChangeDateModal extends Component {
             value={updatedStartDate}
             {...{
               changeHandlerFactory,
-              formId
+              formId,
+              inputRef,
             }}
             label="Start Date:"
             placeholder="Type or select date..."
@@ -316,9 +319,9 @@ class ChangeDateModal extends Component {
             hasProblem={problems && problems.updatedStartDate}
             isActive={!isLoading && !hasSuccess && !hasWarning}
             datePickerProps={{
-              popperPlacement: 'top-start',
+              popperPlacement: "top-start",
               onCalendarOpen: () => handleDatepickerPopperToggle(true),
-              onCalendarClose: () => handleDatepickerPopperToggle(false)
+              onCalendarClose: () => handleDatepickerPopperToggle(false),
             }}
             openToDate={startDate}
           />

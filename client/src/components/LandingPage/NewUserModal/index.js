@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import ModalSkeleton from '../../ModalSkeleton';
 import Button from '../../Button';
-import { TextInput, ProgressBar } from '../../formPieces';
+import { TextInput, ProgressBar, FormMessages } from '../../formPieces';
 import Notification, { NotificationText } from '../../Notification';
 import {
   api,
@@ -199,7 +199,17 @@ class NewUserModal extends Component {
   render() {
     const { isActive, closeModal, inputRef } = this.props;
     const {
-      hasSuccess, isLoading, hasProblem, problems, showMessage, problemMessages, username, email, password, verifyPassword, secondsUntilRedirect
+      hasSuccess,
+      isLoading,
+      hasProblem,
+      problems,
+      showMessage,
+      problemMessages,
+      username,
+      email,
+      password,
+      verifyPassword,
+      secondsUntilRedirect
     } = this.state;
 
     const style = getStyle();
@@ -236,45 +246,30 @@ class NewUserModal extends Component {
         }
       >
         <form id={formId}>
-          {showMessage && !hasProblem && !hasSuccess && (
-            <Notification theme="info" close={() => this.setState({ showMessage: false })}>
-              <NotificationText>
-                You must create a username <strong>and/or</strong> provide an e-mail address.
-              </NotificationText>
-              <NotificationText isLast={true}>
+          <FormMessages
+            {...{
+              showMessage,
+              hasSuccess,
+              problemMessages,
+            }}
+            hasProblem={hasProblem}
+            infoMessages={[
+              <>You must create a username <strong>and/or</strong> provide an e-mail address.</>,
+              <>
                 If you provide an email, you will be able to use it to recover your account if you forget your password.
-              </NotificationText>
-            </Notification>
-          )}
-          {showMessage && problemMessages.length > 0 && (
-            <Notification theme="danger" close={() => this.setState({ showMessage: false })}>
-              {problemMessages.map(
-                (message, index, arr) => (
-                  <NotificationText key={message} isLast={index === arr.length - 1}>
-                    {message}
-                  </NotificationText>
-                )
-              )}
-            </Notification>
-          )}
-          {showMessage && hasSuccess && (
-            <Notification theme="success">
-              <NotificationText>
-                <strong>Success!</strong> Your account was created.
-              </NotificationText>
-              <NotificationText>
-                You are now signed in.
-              </NotificationText>
-              <NotificationText>
-                You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
-              </NotificationText>
-              <ProgressBar
-                theme="success"
-                value={secondsToDelayRedirect - secondsUntilRedirect}
-                max={secondsToDelayRedirect}
-              />
-            </Notification>
-          )}
+              </>
+            ]}
+            successMessages={[
+              <><strong>Success!</strong> Your account was created.</>,
+              <>You are now signed in.</>
+            ]}
+            successRedirect={{
+              secondsToDelayRedirect,
+              secondsRemaining: secondsUntilRedirect,
+              messageFragment: 'You will be redirected'
+            }}
+            closeMessage={() => this.setState({ showMessage: false })}
+          />
           {fieldsInfo.map(
             (field, index) => (
               <TextInput

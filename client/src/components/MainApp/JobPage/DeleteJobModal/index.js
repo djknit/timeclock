@@ -4,7 +4,7 @@ import ModalSkeleton from '../../../ModalSkeleton';
 import Button from '../../../Button';
 import Notification, { NotificationText } from '../../../Notification';
 import { jobsService, currentJobService } from '../../../../data';
-import { TextInput, ProgressBar } from '../../../formPieces';
+import { TextInput, ProgressBar, FormMessages } from '../../../formPieces';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
@@ -139,8 +139,6 @@ class DeleteJobModal extends Component {
       return <></>;
     }
 
-    const closeMessage = () => this.setState({ showMessage: false });
-
     return (
       <ModalSkeleton
         {...{
@@ -179,42 +177,27 @@ class DeleteJobModal extends Component {
         }
       >
         <form id={formId}>
-          {showMessage && !hasProblem && !hasSuccess && (
-            <Notification theme="warning" close={closeMessage}>
-              <NotificationText>
-                You are about to permanently this job ("{job.name}").
-              </NotificationText>
-              <NotificationText isLast>
-                You will <b>not</b> be able to restore the job once it is deleted.
-              </NotificationText>
-            </Notification>
-          )}
-          {showMessage && problemMessages.length > 0 && (
-            <Notification theme="danger" close={closeMessage}>
-              {problemMessages.map(
-                (message, index, arr) => (
-                  <NotificationText key={message} isLast={index === arr.length - 1}>
-                    {message}
-                  </NotificationText>
-                )
-              )}
-            </Notification>
-          )}
-          {showMessage && hasSuccess && (
-            <Notification theme="success">
-              <NotificationText>
-                <strong>Success!</strong> The job "{job.name}" was deleted.
-              </NotificationText>
-              <NotificationText>
-                You will be redirected in {Math.floor(secondsUntilRedirect + .5)} seconds...
-              </NotificationText>
-              <ProgressBar
-                theme="success"
-                value={secondsToDelayRedirect - secondsUntilRedirect}
-                max={secondsToDelayRedirect}
-              />
-            </Notification>
-          )}
+          <FormMessages
+            {...{
+              showMessage,
+              hasSuccess,
+              problemMessages,
+            }}
+            hasProblem={hasProblem}
+            infoMessages={[
+              `You are about to permanently this job ("${job.name}").`,
+              <>You will <strong>not</strong> be able to restore the job once it is deleted.</>
+            ]}
+            successMessages={[
+              <><strong>Success!</strong> The job "{job.name}"" was deleted.</>
+            ]}
+            successRedirect={{
+              secondsToDelayRedirect,
+              secondsRemaining: secondsUntilRedirect,
+              messageFragment: 'You will be redirected'
+            }}
+            closeMessage={() => this.setState({ showMessage: false })}
+          />
           <TextInput
             propName="password"
             value={password}
