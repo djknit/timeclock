@@ -212,8 +212,6 @@ class ChangeDateModal extends Component {
 
     const { dateRangeShortText, valueSimpleText, startDate } = valueSchedule[indexOfSchedEntryToEdit] || {};
 
-    const closeMessage = () => this.setState({ showMessage: false });
-
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
     const style = getStyle(messagesAreaMinHeight);

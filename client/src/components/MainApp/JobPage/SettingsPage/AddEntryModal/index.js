@@ -231,7 +231,9 @@ class _AddEntryModal_needsCollapsing extends Component {
       messagesAreaMinHeight
     } = this.state;
 
-    const closeMessage = () => this.setState({ showMessage: false });
+    if (!isActive) {
+      return <></>;
+    }
 
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
@@ -282,7 +284,7 @@ class _AddEntryModal_needsCollapsing extends Component {
             <Button
               theme={(hasSuccess && 'success') || (hasWarning && 'warning') || 'primary'}
               onClick={submit}
-              disabled={isLoading || hasSuccess || !startDate || !settingValue}
+              disabled={isLoading || hasSuccess || !startDate || (!settingValue && settingValue !== 0)}
               isSubmit
               {...{
                 formId,

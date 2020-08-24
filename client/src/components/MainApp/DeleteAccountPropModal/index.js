@@ -149,8 +149,6 @@ class _DeleteAccountPropModal_needsData extends Component {
     const propToDeleteCurrentValue = user && user[propToDeleteName];
     const capPropToDeleteName = capitalizeFirstLetter(propToDeleteName);
 
-    const closeMessage = () => this.setState({ showMessage: false });
-
     return (
       <ModalSkeleton
         {...{

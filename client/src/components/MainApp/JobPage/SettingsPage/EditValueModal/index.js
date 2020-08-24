@@ -48,12 +48,16 @@ class _EditValueModal_needsCollapsing extends Component {
     this.state = getStartingState();
   };
 
+  // possibly mostly the same for many
   afterChange() {
     if (this.state.hasBeenSubmitted) {
       this.setState(this.getInputProblems());
     }
   };
 
+  // unique;
+    // possibly should be related to constructor or at least share some values such as propNames
+    // also tied to processing for submit
   getInputProblems() {
     const { settingName } = this.props;
     const { updatedValue } = this.state;
@@ -63,6 +67,7 @@ class _EditValueModal_needsCollapsing extends Component {
     return { problems, problemMessages };
   };
 
+  // exact same for most or all forms
   setSubmissionProcessingState() {
     return new Promise(
       resolve => {
@@ -81,6 +86,7 @@ class _EditValueModal_needsCollapsing extends Component {
     );
   };
 
+  // unique
   getDataProcessedToSubmit() {
     const { indexOfSchedEntryToEdit, valueSchedule, settingName, jobId } = this.props;
     const { updatedValue } = this.state;
@@ -220,8 +226,6 @@ class _EditValueModal_needsCollapsing extends Component {
 
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
-    const closeMessage = () => this.setState({ showMessage: false });
-
     const wageInputRefs = extractWageInputRefs(this);
 
     return (
@@ -246,7 +250,7 @@ class _EditValueModal_needsCollapsing extends Component {
             <Button
               theme={hasSuccess ? 'success' : 'primary'}
               onClick={submit}
-              disabled={isLoading || hasSuccess || !updatedValue}
+              disabled={isLoading || hasSuccess || (!updatedValue && updatedValue !== 0)}
               isSubmit
               {...{
                 formId,

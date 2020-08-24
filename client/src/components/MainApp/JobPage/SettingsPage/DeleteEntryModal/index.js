@@ -137,8 +137,6 @@ class DeleteEntryModal extends Component {
     } = (indexOfSchedEntryToEdit && valueSchedule[indexOfSchedEntryToEdit]) || {};
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
-    const closeMessage = () => this.setState({ showMessage: false });
-
     return (
       <ModalSkeleton
         {...{

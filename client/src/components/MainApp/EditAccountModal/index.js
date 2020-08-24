@@ -256,8 +256,6 @@ class _EditAccountModal_needsData extends Component {
 
     const isMissingVerifyPassword = propToEditName === 'password' && !verifyUpdatedPassword;
 
-    const closeMessage = () => this.setState({ showMessage: false });
-
     const style = getStyle();
 
     return (

@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   dates as dateUtils,
   formatMyDate
@@ -24,7 +25,7 @@ function getEntryWithDateExistsWarning(date, schedule, warningMessages, settingD
   const needsWarning = doesEntryExistWithStartDate(date, schedule);
   if (needsWarning) {
     warningMessages.push(
-      `You already have a ${settingDisplayName.toLowerCase()} value with the same start date (${formatMyDate(date)}).`
+      <>You already have a {settingDisplayName.toLowerCase()} value with the same start date ({formatMyDate(date)}).</>
     );
   }
   return needsWarning;

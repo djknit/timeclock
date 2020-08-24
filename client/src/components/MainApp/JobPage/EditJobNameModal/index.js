@@ -167,8 +167,6 @@ class EditJobNameModal extends Component {
       return <></>;
     }
 
-    const closeMessage = () => this.setState({ showMessage: false });
-
     return (
       <ModalSkeleton
         {...{

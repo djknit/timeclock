@@ -1,13 +1,12 @@
 import React, { Fragment } from 'react';
 import { formatMyDate } from '../../utilities';
-import { convertStringToNonbreakingHtml } from './textFormatting';
 
 function getDateRangeText(startDate, endDate, isShort, dateFormatString) {
   if (isShort) return getDateRangeShortText(startDate, endDate, dateFormatString);
   if (!startDate && !endDate) {
     return 'all time';
   }
-  const _formatDate = date => convertStringToNonbreakingHtml(formatMyDate(date, dateFormatString));
+  const _formatDate = date => formatMyDate(date, dateFormatString);
   if (!startDate) {
     return <>all dates prior to and including {_formatDate(endDate)}</>;
   }
@@ -40,7 +39,7 @@ function getDateRangeShortText(startDate, endDate, dateFormatString) {
     }
   );
   const getDateText = (date, arrowDirection) => (
-    date ? convertStringToNonbreakingHtml(formatMyDate(date, dateFormatString)) : getArrows(arrowDirection)
+    date ? formatMyDate(date, dateFormatString) : getArrows(arrowDirection)
   );
   return (
     <>{getDateText(startDate, 'left')}&ensp;&mdash;&ensp;{getDateText(endDate, 'right')}</>
