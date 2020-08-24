@@ -45,7 +45,7 @@ function FormMessages({
 
   return (showMessage && (hasMessages || hasProgressBar)) ? (
     <Notification {...{ theme, messages, close }}>
-      {successRedirect && (
+      {hasSuccess && successRedirect && (
         <ProgressBar
           {...{ theme }}
           remaining={secondsRemaining}

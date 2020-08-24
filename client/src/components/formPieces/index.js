@@ -8,6 +8,7 @@ import DurationInput from './DurationInput';
 import WkDayCutoffsInput from './WkDayCutoffsInput';
 import ProgressBar from './ProgressBar';
 import DayCutoffInput from './DayCutoffInput';
+import FormMessages from './FormMessages';
 
 export {
   TextInput,
@@ -19,5 +20,6 @@ export {
   DurationInput,
   WkDayCutoffsInput,
   ProgressBar,
-  DayCutoffInput
+  DayCutoffInput,
+  FormMessages
 };

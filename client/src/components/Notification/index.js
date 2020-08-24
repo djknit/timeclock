@@ -28,7 +28,7 @@ function Notification({
         messages.map(
           (msg, index, arr) => (
             <NotificationText
-              key={msg}
+              key={index}
               isLast={index === arr.length - 1 && !children}
             >
               {msg}

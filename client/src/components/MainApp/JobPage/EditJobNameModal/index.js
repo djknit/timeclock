@@ -9,7 +9,7 @@ import ModalSkeleton from '../../../ModalSkeleton';
 import Button from '../../../Button';
 import Notification, { NotificationText } from '../../../Notification';
 import Tag, { TagGroup } from '../../../Tag';
-import { TextInput, ProgressBar } from '../../../formPieces';
+import { TextInput, ProgressBar, FormMessages } from '../../../formPieces';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 const formId = 'edit-job-name-form';
@@ -173,7 +173,7 @@ class EditJobNameModal extends Component {
       <ModalSkeleton
         {...{
           isActive,
-          closeModal
+          closeModal,
         }}
         title="Edit Job Name"
         isCloseButtonDisabled={isLoading}
@@ -187,18 +187,16 @@ class EditJobNameModal extends Component {
               }}
               disabled={isLoading}
             >
-              {hasSuccess ? 'Close' : 'Cancel'}
+              {hasSuccess ? "Close" : "Cancel"}
             </Button>
             <Button
-              theme={hasSuccess ? 'success' : 'primary'}
+              theme={hasSuccess ? "success" : "primary"}
               onClick={submit}
-              disabled={
-                isLoading || hasSuccess || !updatedJobName
-              }
+              disabled={isLoading || hasSuccess || !updatedJobName}
               isSubmit
               {...{
                 formId,
-                isLoading
+                isLoading,
               }}
             >
               Submit
@@ -207,39 +205,26 @@ class EditJobNameModal extends Component {
         }
       >
         <form id={formId}>
-          {showMessage && !hasProblem && !hasSuccess && (
-            <Notification theme="info" close={closeMessage}>
-              <NotificationText isLast>
-                Complete the form below to rename this job.
-              </NotificationText>
-            </Notification>
-          )}
-          {showMessage && problemMessages.length > 0 && (
-            <Notification theme="danger" close={closeMessage}>
-              {problemMessages.map(
-                (message, index, arr) => (
-                  <NotificationText key={message} isLast={index === arr.length - 1}>
-                    {message}
-                  </NotificationText>
-                )
-              )}
-            </Notification>
-          )}
-          {showMessage && hasSuccess && (
-            <Notification theme="success">
-              <NotificationText>
+          <FormMessages
+            {...{
+              showMessage,
+              hasSuccess,
+              problemMessages,
+            }}
+            hasProblem={hasProblem}
+            infoMessages={['Complete the form below to rename this job.']}
+            successMessages={[
+              <>
                 <strong>Success!</strong> The name for this job was updated.
-              </NotificationText>
-              <NotificationText>
-                This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
-              </NotificationText>
-              <ProgressBar
-                theme="success"
-                value={secondsToDelayRedirect - secondsUntilRedirect}
-                max={secondsToDelayRedirect}
-              />
-            </Notification>
-          )}
+              </>,
+            ]}
+            successRedirect={{
+              secondsToDelayRedirect,
+              secondsRemaining: secondsUntilRedirect,
+              messageFragment: 'This dialog box will close',
+            }}
+            closeMessage={() => this.setState({ showMessage: false })}
+          />
           <TagGroup align="center">
             <Tag theme="info" size={6}>
               Current Name:
@@ -260,7 +245,7 @@ class EditJobNameModal extends Component {
             {...{
               changeHandlerFactory,
               formId,
-              inputRef
+              inputRef,
             }}
           />
         </form>

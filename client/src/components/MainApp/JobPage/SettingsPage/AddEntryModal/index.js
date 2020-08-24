@@ -16,7 +16,7 @@ import getStyle from './style';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
-import { ProgressBar, DateInput } from '../../../../formPieces';
+import { ProgressBar, DateInput, FormMessages } from '../../../../formPieces';
 import SettingValueInput from '../SettingValueInput';
 import { addCollapsing } from '../../../../higherOrder';
 
@@ -296,41 +296,34 @@ class _AddEntryModal_needsCollapsing extends Component {
       >
         <form id={formId}>
           <div style={style.messagesArea}>
-            {showMessage && !hasProblem && !hasSuccess && !hasWarning && (
-              <Notification theme="info" close={closeMessage}>
-                <NotificationText isLast>
-                  Enter the new {lowCaseSettingName} value and the date on which that value goes into effect below.
-                </NotificationText>
-              </Notification>
-            )}
-            {showMessage && problemMessages.length > 0 && (
-              <Notification theme="danger" close={closeMessage} messages={problemMessages} />
-            )}
-            {showMessage && hasWarning && (
-              <Notification theme="warning">
-                <NotificationText>
+            <FormMessages
+              {...{
+                showMessage,
+                hasSuccess,
+                problemMessages,
+                hasWarning
+              }}
+              hasProblem={hasProblem}
+              infoMessages={[
+                `Enter the new ${lowCaseSettingName} value and the date on which that value goes into effect below.`
+              ]}
+              successMessages={[
+                `You successfully added a new ${lowCaseSettingName} value to the schedule.`
+              ]}
+              warningMessages={[
+                <>
                   You already have a {lowCaseSettingName} value with the same start date ({formatMyDate(startDate)}).
-                </NotificationText>
-                <NotificationText isLast>
-                  Are you sure you want to replace the existing schedule value?
-                </NotificationText>
-              </Notification>
-            )}
-            {showMessage && hasSuccess && (
-              <Notification theme="success">
-                <NotificationText>
-                  You successfully added a new {lowCaseSettingName} value to the schedule.
-                </NotificationText>
-                <NotificationText>
-                  This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
-                </NotificationText>
-                <ProgressBar
-                  theme="success"
-                  value={secondsToDelayRedirect - secondsUntilRedirect}
-                  max={secondsToDelayRedirect}
-                />
-              </Notification>
-            )}
+                </>,
+                <>Are you sure you want to replace the existing schedule value?</>
+              ]}
+                
+              successRedirect={{
+                secondsToDelayRedirect,
+                secondsRemaining: secondsUntilRedirect,
+                messageFragment: 'This dialog box will close'
+              }}
+              closeMessage={() => this.setState({ showMessage: false })}
+            />
           </div>
           <div ref={firstInputArea} style={style.firstInputArea}>
             <SettingValueInput

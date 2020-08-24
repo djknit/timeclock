@@ -8,7 +8,7 @@ import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
 import Notification, { NotificationText } from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
-import { ProgressBar } from '../../../../formPieces';
+import { ProgressBar, FormMessages } from '../../../../formPieces';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
@@ -169,45 +169,28 @@ class DeleteEntryModal extends Component {
           </>
         }
       >
-        {showMessage && !hasProblem && !hasSuccess && (
-          <Notification theme="info" close={closeMessage}>
-            <NotificationText>
-              You are deleting the {lowCaseSettingName} value for {dateRangeText}.
-            </NotificationText>
-            <NotificationText>
-              The {lowCaseSettingName} will no longer change on {startDateShortText}.
-            </NotificationText>
-            <NotificationText isLast>
-              Press "Submit" to procede.
-            </NotificationText>
-          </Notification>
-        )}
-        {showMessage && problemMessages.length > 0 && (
-          <Notification theme="danger" close={closeMessage}>
-            {problemMessages.map(
-              (message, index, arr) => (
-                <NotificationText key={message} isLast={index === arr.length - 1}>
-                  {message}
-                </NotificationText>
-              )
-            )}
-          </Notification>
-        )}
-        {showMessage && hasSuccess && (
-          <Notification theme="success">
-            <NotificationText>
-              The {lowCaseSettingName} value schedule entry was successfully removed.
-            </NotificationText>
-            <NotificationText>
-              This dialog box will close in {Math.floor(secondsUntilRedirect + .5)} seconds...
-            </NotificationText>
-            <ProgressBar
-              theme="success"
-              value={secondsToDelayRedirect - secondsUntilRedirect}
-              max={secondsToDelayRedirect}
-            />
-          </Notification>
-        )}
+        <FormMessages
+          {...{
+            showMessage,
+            hasSuccess,
+            problemMessages
+          }}
+          hasProblem={hasProblem}
+          infoMessages={[
+            <>You are deleting the {lowCaseSettingName} value for {dateRangeText}.</>,
+            <>The {lowCaseSettingName} will no longer change on {startDateShortText}.</>,
+            <>Press "Submit" to procede.</>
+          ]}
+          successMessages={[
+            `The ${lowCaseSettingName} value schedule entry was successfully removed.`,
+          ]}
+          successRedirect={{
+            secondsToDelayRedirect,
+            secondsRemaining: secondsUntilRedirect,
+            messageFragment: 'This dialog box will close',
+          }}
+          closeMessage={() => this.setState({ showMessage: false })}
+        />
         {!hasSuccess && (
           <>
             <TagGroup align="center" isInline>
