@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { userService } from '../../data';
+import { userService, areModalsOpenService } from '../../data';
 import { api } from './utilities';
 import getStyle from './style';
 import Navbar from './Navbar';
@@ -17,29 +17,47 @@ class MainApp extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
+    this.reportModalActivity = this.reportModalActivity.bind(this);
     this.modalToggleFactory = this.modalToggleFactory.bind(this);
     this.catchApiUnauthorized = this.catchApiUnauthorized.bind(this);
     this.newJobInputRef = React.createRef();
     this.deletingAccountPropInputRef = React.createRef();
     this.editingAccountPropInputRef = React.createRef();
-    this.toggleNewJobModal = this.modalToggleFactory('isNewJobModalActive', this.newJobInputRef).bind(this);
-    this.toggleEditAccountModal = this
+    this.toggleNewJobModal = (
+      this.modalToggleFactory('isNewJobModalActive', this.newJobInputRef).bind(this)
+    );
+    this.toggleEditAccountModal = (
+      this
       .modalToggleFactory('isEditAccountModalActive', this.editingAccountPropInputRef, true)
-      .bind(this);
-    this.toggleDeleteAccountPropModal = this
+      .bind(this)
+    );
+    this.toggleDeleteAccountPropModal = (
+      this
       .modalToggleFactory('isDeleteAccountPropModalActive', this.deletingAccountPropInputRef, true)
-      .bind(this);
+      .bind(this)
+    );
     this.state = {
       navHeight: undefined,
       isNewJobModalActive: false,
       isEditAccountModalActive: false,
       isDeleteAccountPropModalActive: false,
-      accountPropToEditName: undefined
+      accountPropToEditName: undefined,
+      modalsRegistrationId: undefined
     };
   };
 
   setNavHeight(navHeight) {
     this.setState({ navHeight });
+  };
+
+  reportModalActivity() {
+    const { state } = this;
+    const hasModalActive = (
+      state.isNewJobModalActive ||
+      state.isEditAccountModalActive ||
+      state.isDeleteAccountPropModalActive
+    );
+    areModalsOpenService.report(state.modalsRegistrationId, hasModalActive);
   };
 
   modalToggleFactory(modalIsActivePropName, inputRef, usesAccountEdit) {
@@ -50,12 +68,7 @@ class MainApp extends Component {
         stateUpdates,
         () => {
           if (isActiveAfterToggle) inputRef.current.focus();
-          const hasModalOpen = (
-            this.state.isNewJobModalActive ||
-            this.state.isEditAccountModalActive ||
-            this.state.isDeleteAccountPropModalActive
-          );
-          if (hasModalOpen !== this.props.areAnyModalsOpen) this.props.setAreAnyModalsOpen(hasModalOpen);
+          this.reportModalActivity();
         }
       );
     };
@@ -85,10 +98,13 @@ class MainApp extends Component {
       userService.clearUser();
       this.props.history.push('/');
     });
+    this.setState({
+      modalsRegistrationId: areModalsOpenService.getId()
+    });
   };
 
   componentWillUnmount() {
-    this.props.setAreAnyModalsOpen(false);
+    areModalsOpenService.report(this.state.modalsRegistrationId, false);
   };
 
   render() {
@@ -106,7 +122,6 @@ class MainApp extends Component {
       history,
       match,
       areAnyModalsOpen,
-      setAreAnyModalsOpen
     } = this.props;
     const {
       navHeight,
@@ -142,7 +157,6 @@ class MainApp extends Component {
           accountEditingModalOpenerFactory,
           accountPropDeletingModalOpenerFactory,
           areAnyModalsOpen,
-          setAreAnyModalsOpen,
           getJobPagePath
         }}
       />
@@ -182,7 +196,6 @@ class MainApp extends Component {
                     catchApiUnauthorized,
                     areAnyModalsOpen,
                     returnToDashboard,
-                    setAreAnyModalsOpen,
                     dashboardPath
                   }}
                 />

@@ -1,19 +1,20 @@
 import React, { Fragment } from 'react';
 import { formatMyDate } from '../../utilities';
+import { convertStringToNonbreakingHtml } from './textFormatting';
 
 function getDateRangeText(startDate, endDate, isShort, dateFormatString) {
   if (isShort) return getDateRangeShortText(startDate, endDate, dateFormatString);
   if (!startDate && !endDate) {
     return 'all time';
   }
-  const _formatDate = date => formatMyDate(date, dateFormatString);
+  const _formatDate = date => convertStringToNonbreakingHtml(formatMyDate(date, dateFormatString));
   if (!startDate) {
-    return `all dates prior to and including ${_formatDate(endDate)}`;
+    return <>all dates prior to and including {_formatDate(endDate)}</>;
   }
   if (!endDate) {
-    return `all dates on or after ${_formatDate(startDate)}`;
+    return <>All dates on or after {_formatDate(startDate)}</>;
   }
-  return `${_formatDate(startDate)} until ${_formatDate(endDate)}`;
+  return <>{_formatDate(startDate)} until {_formatDate(endDate)}</>;
 }
 
 function getDateRangeShortText(startDate, endDate, dateFormatString) {
@@ -39,7 +40,7 @@ function getDateRangeShortText(startDate, endDate, dateFormatString) {
     }
   );
   const getDateText = (date, arrowDirection) => (
-    date ? formatMyDate(date, dateFormatString) : getArrows(arrowDirection)
+    date ? convertStringToNonbreakingHtml(formatMyDate(date, dateFormatString)) : getArrows(arrowDirection)
   );
   return (
     <>{getDateText(startDate, 'left')}&ensp;&mdash;&ensp;{getDateText(endDate, 'right')}</>

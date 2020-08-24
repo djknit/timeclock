@@ -197,7 +197,8 @@ class _EditValueModal_needsCollapsing extends Component {
       valueSchedule,
       indexOfSchedEntryToEdit,
       settingName,
-      wageContentToggle
+      wageContentToggle,
+      inputRef
     } = this.props;
     const {
       hasSuccess,
@@ -319,7 +320,8 @@ class _EditValueModal_needsCollapsing extends Component {
               changeHandlerFactory,
               formId,
               wageInputRefs,
-              wageContentToggle
+              wageContentToggle,
+              inputRef
             }}
             problems={problems && problems.updatedValue}
             isActive={!isLoading && !hasSuccess}

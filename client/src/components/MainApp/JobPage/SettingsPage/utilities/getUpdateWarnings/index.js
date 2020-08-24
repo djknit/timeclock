@@ -1,5 +1,8 @@
+import { dates as dateUtils } from '../../../utilities';
 import { getEntryWithDateExistsWarning } from './sameDate';
 import { getEntriesInAffectedRangeWarning } from './inAffectedRange';
+
+const { areDatesEquivalent } = dateUtils;
 
 function getAddUpdateWarnings(startDate, schedule, settingDisplayName) {
   let warningMessages = [];
@@ -11,8 +14,9 @@ function getAddUpdateWarnings(startDate, schedule, settingDisplayName) {
 
 function getDateChangeUpdateWarnings(oldDate, newDate, schedule, settingDisplayName) {
   let warningMessages = [];
-  const hasSameDateWarning = getEntryWithDateExistsWarning(
-    newDate, schedule, warningMessages, settingDisplayName
+  const hasSameDateWarning = (
+    !areDatesEquivalent(oldDate, newDate) &&
+    getEntryWithDateExistsWarning(newDate, schedule, warningMessages, settingDisplayName)
   );
   const hasEntryInRangeWarning = getEntriesInAffectedRangeWarning(
     oldDate, newDate, schedule, warningMessages, settingDisplayName

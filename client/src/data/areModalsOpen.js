@@ -1,7 +1,14 @@
 import { dataServiceFactory } from '../utilities';
 
+// ABOUT THIS FILE:
+/*
+  Each component that has modals gets a unique id integer when mounted.
+  The id is then added and removed from the list of pages with modals open as needed.
+  When component will unmount, make sure the id is not on the list.
+*/
+
 let state = {
-  _nextId: 0,
+  _nextId: 0, 
   get newId() {
     return this._nextId++;
   },

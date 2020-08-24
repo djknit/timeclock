@@ -190,7 +190,7 @@ class ChangeDateModal extends Component {
   render() {
     const { reset, submit, changeHandlerFactory, handleDatepickerPopperToggle } = this;
     const {
-      isActive, closeModal, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit
+      isActive, closeModal, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit, inputRef
     } = this.props;
     const {
       hasSuccess,
@@ -313,7 +313,8 @@ class ChangeDateModal extends Component {
             value={updatedStartDate}
             {...{
               changeHandlerFactory,
-              formId
+              formId,
+              inputRef
             }}
             label="Start Date:"
             placeholder="Type or select date..."

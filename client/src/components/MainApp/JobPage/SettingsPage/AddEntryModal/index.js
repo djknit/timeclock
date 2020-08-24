@@ -214,7 +214,8 @@ class _AddEntryModal_needsCollapsing extends Component {
       closeModal,
       settingDisplayName,
       settingName,
-      contentToggle
+      contentToggle,
+      inputRef
     } = this.props;
     const {
       hasSuccess,
@@ -334,7 +335,10 @@ class _AddEntryModal_needsCollapsing extends Component {
           <div ref={firstInputArea} style={style.firstInputArea}>
             <SettingValueInput
               {...getCommonFormAttrs('settingValue')}
-              {...{ wageInputRefs }}
+              {...{
+                wageInputRefs,
+                inputRef
+              }}
               wageContentToggle={contentToggle}
               label={`New ${settingDisplayName} Value:`}
               fieldStyle={style.firstInputField}

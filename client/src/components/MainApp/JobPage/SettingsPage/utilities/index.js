@@ -14,7 +14,6 @@ function preprocessScheduleForDisplay(schedule, settingName) {
   return schedule.map(
     (entry, index) => {
       const { startDate, value } = entry;
-      console.log(entry._id)
       const endDate = (
         index !== schedule.length - 1 ?
         getPrecedingDate(schedule[index + 1].startDate) :
