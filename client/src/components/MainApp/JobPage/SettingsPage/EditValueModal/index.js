@@ -7,7 +7,9 @@ import {
   addWageInputRefs,
   extractWageInputRefs,
   getJobSettingInputProblems,
-  processJobSettingInputValue
+  processJobSettingInputValue,
+  setSubmissionProcessingStateFactory,
+  genericFormStates
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
@@ -22,14 +24,7 @@ const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 const formId = 'edit-job-setting-value-form';
 function getStartingState(settingName, currentValue) {
   return {
-    hasSuccess: false,
-    hasProblem: false,
-    isLoading: false,
-    problems: {},
-    problemMessages: [],
-    showMessage: true,
-    hasBeenSubmitted: false, 
-    secondsUntilRedirect: undefined,
+    ...genericFormStates.starting,
     updatedValue: convertSettingValueToFormData(currentValue, settingName)
   };
 }
@@ -40,7 +35,7 @@ class _EditValueModal_needsCollapsing extends Component {
     this.afterChange = this.afterChange.bind(this);
     this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
     this.getInputProblems = this.getInputProblems.bind(this);
-    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
+    this.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(this);
     this.getDataProcessedToSubmit = this.getDataProcessedToSubmit.bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
@@ -65,25 +60,6 @@ class _EditValueModal_needsCollapsing extends Component {
     let problemMessages = [];
     problems.updatedValue = getJobSettingInputProblems(settingName, updatedValue, problemMessages);
     return { problems, problemMessages };
-  };
-
-  // exact same for most or all forms
-  setSubmissionProcessingState() {
-    return new Promise(
-      resolve => {
-        this.setState(
-          {
-            hasProblem: false,
-            isLoading: true,
-            problems: {},
-            problemMessages: [],
-            showMessage: false,
-            hasBeenSubmitted: true
-          },
-          resolve
-        );
-      }
-    );
   };
 
   // unique
@@ -113,15 +89,7 @@ class _EditValueModal_needsCollapsing extends Component {
     })
     .then(res => {
       let secondsUntilRedirect = secondsToDelayRedirect;
-      this.setState({
-        hasSuccess: true,
-        isLoading: false,
-        hasProblem: false,
-        showMessage: true,
-        problems: {},
-        problemMessages: [],
-        secondsUntilRedirect
-      });
+      this.setState({ ...genericFormStates.success, secondsUntilRedirect });
       currentJobService.setCurrentJob(res.data);
       const intervalId = setInterval(
         () => {
@@ -146,9 +114,7 @@ class _EditValueModal_needsCollapsing extends Component {
       this.setState({
         problems,
         problemMessages: messages,
-        hasProblem: true,
-        isLoading: false,
-        showMessage: true
+        ...genericFormStates.problem
       });
     });
   };

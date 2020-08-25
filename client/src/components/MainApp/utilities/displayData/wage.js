@@ -5,7 +5,6 @@ import {
 } from '../../../utilities';
 
 function processWageValueForDisplay(wageValue) {
-  console.log('processWageValueForDisplay')
   if (!wageValue) return null;
   const { rate, currency, overtime } = wageValue;
   return {
@@ -72,9 +71,6 @@ function addPerHr(rawText, isShort) {
 function getWageValueSummaryText(wageValue) {
   if (!wageValue) return 'none';
   const { rate, overtime, shortRate } = processWageValueForDisplay(wageValue);
-  console.log(rate)
-  console.log(overtime)
-  console.log('rat spagetti')
   return overtime ? (
     <>
       {shortRate} (>{overtime.shortCutoff}@{overtime.shortRate})

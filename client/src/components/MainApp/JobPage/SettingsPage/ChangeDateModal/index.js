@@ -3,48 +3,46 @@ import {
   api, 
   constants,
   changeHandlerFactoryFactory,
-  getDateChangeUpdateWarnings
+  getDateChangeUpdateWarnings,
+  setSubmissionProcessingStateFactory,
+  submitFactory,
+  getStartingStateFactory,
+  resetFactory
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
-import Notification, { NotificationText } from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
-import { DateInput, ProgressBar, FormMessages } from '../../../../formPieces';
+import { DateInput, FormMessages } from '../../../../formPieces';
 
-const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
+const { secondsToDelayRedirect } = constants;
 
 const formId = 'change-job-setting-date-form';
-function getStartingState(currentStartDate) {
-  return {
-    hasSuccess: false,
-    hasProblem: false,
-    hasWarning: false,
-    isLoading: false,
-    problems: {},
-    problemMessages: [],
-    warningMessages: [],
-    showMessage: true,
-    hasBeenSubmitted: false,
-    secondsUntilRedirect: undefined,
-    updatedStartDate: currentStartDate,
-    messagesAreaMinHeight: undefined
-  };
-}
 
 class ChangeDateModal extends Component {
   constructor(props) {
     super(props);
     this.afterChange = this.afterChange.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
+    this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
+    this.getStartingState = getStartingStateFactory().bind(this);
     this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
     this.getInputProblems = this.getInputProblems.bind(this);
-    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
-    this.getDataProcessedToSubmit = this.getDataProcessedToSubmit.bind(this);
-    this.submit = this.submit.bind(this);
-    this.reset = this.reset.bind(this);
-    this.state = getStartingState();
+    this.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(this);
+    this.processAndSubmitData = this.processAndSubmitData.bind(this);
+    this.getWarnings = this.getWarnings.bind(this);
+    this.processSuccessResponse = this.processSuccessResponse.bind(this);
+    this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
+    this.submit = submitFactory().bind(this);
+    this.reset = resetFactory().bind(this);
+    this.state = this.getStartingState();
+  };
+
+  getUniqueStartingState() {
+    return {
+      updatedStartDate: null,
+      messagesAreaMinHeight: undefined
+    };
   };
 
   afterChange() {
@@ -66,29 +64,16 @@ class ChangeDateModal extends Component {
     let problemMessages = [];
     if (!updatedStartDate) {
       problems.updatedStartDate = true;
-      problemMessages.push('Missing start date. You must specify the date that this value should go into effect.');
-    }
-    return { problems, problemMessages };
-  };
-
-  setSubmissionProcessingState() {
-    return new Promise(resolve => {
-      this.setState(
-        {
-          hasBeenSubmitted: true,
-          isLoading: true,
-          hasProblem: false,
-          showMessage: false,
-          problems: {},
-          problemMessages: []
-        },
-        resolve
+      problemMessages.push(
+        'Missing start date. You must specify the date that this value should go into effect.'
       );
-    });
+    }
+    const hasProblem = problemMessages.length > 0;
+    return { problems, problemMessages, hasProblem };
   };
 
-  getDataProcessedToSubmit() {
-    const { indexOfSchedEntryToEdit, valueSchedule, jobId } = this.props;
+  processAndSubmitData() {
+    const { indexOfSchedEntryToEdit, valueSchedule, jobId, settingName } = this.props;
     const { updatedStartDate } = this.state;
     const updates = {
       changeDate: [{
@@ -96,85 +81,96 @@ class ChangeDateModal extends Component {
         startDate: updatedStartDate
       }]
     };
-    return { jobId, updates };
+    return api.jobs.updateSetting(settingName, { jobId, updates });
   };
 
-  submit(event) {
-    event.preventDefault();
-    const { settingName, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit } = this.props;
+  getWarnings() {
+    const { valueSchedule, indexOfSchedEntryToEdit, settingDisplayName } = this.props;
     const { hasWarning, updatedStartDate } = this.state;
-    let response, secondsUntilRedirect;
-    this.setSubmissionProcessingState()
-    .then(() => {
-      const { problems, problemMessages } = this.getInputProblems();
-      if (problemMessages && problemMessages.length > 0) {
-        throw { problems, messages: problemMessages };
-      }
-      const oldStartDate = valueSchedule[indexOfSchedEntryToEdit].startDate;
-      let _warningInfo = (
-        hasWarning ? {} : getDateChangeUpdateWarnings(oldStartDate, updatedStartDate, valueSchedule, settingDisplayName)
-      );
-      if (_warningInfo.hasWarning) {
-        throw {
-          isWarning: true,
-          messages: _warningInfo.warningMessages
-        };
-      }
-      const submissionData = this.getDataProcessedToSubmit();
-      return api.jobs.updateSetting(settingName, submissionData);
-    })
-    .then(res => {
-      response = res;
-      secondsUntilRedirect = secondsToDelayRedirect;
-      this.setState({
-        hasSuccess: true,
-        isLoading: false,
-        hasProblem: false,
-        showMessage: true,
-        hasWarning: false,
-        problems: {},
-        problemMessages: [],
-        secondsUntilRedirect
-      });
-      const entryId = valueSchedule[indexOfSchedEntryToEdit]._id;
-      return this.props.setEntryToEditById(entryId);
-    })
-    .then(() => {
-      currentJobService.setCurrentJob(response.data);
-      const intervalId = setInterval(
-        () => {
-          secondsUntilRedirect -= stepSizeOfRedirectDelay;
-          this.setState({ secondsUntilRedirect });
-          if (secondsUntilRedirect <= 0) {
-            clearInterval(intervalId);
-            this.props.closeModal();
-            this.reset();
-          }
-        },
-        1000 * stepSizeOfRedirectDelay
-      );
-    })
-    .catch(err => {
-      const { isWarning } = err || {};
-      this.props.catchApiUnauthorized(err);
-      const errorData = (err && err.response && err.response.data) || err || {};
-      let { problems, messages } = errorData;
-      if (!messages) messages = [];
-      this.setState({
-        problems: problems || {},
-        problemMessages: !isWarning ? messages : [],
-        hasProblem: !isWarning,
-        isLoading: false,
-        showMessage: true,
-        hasWarning: isWarning,
-        warningMessages: isWarning ? messages : []
-      });
-    })
+    const oldStartDate = valueSchedule[indexOfSchedEntryToEdit].startDate;
+    return hasWarning ? (
+      { hasWarning: false, warningMessages: [] }
+    ) : (
+      getDateChangeUpdateWarnings(oldStartDate, updatedStartDate, valueSchedule, settingDisplayName)
+    );
   };
 
-  reset() {
-    this.setState(getStartingState());
+  processSuccessResponse(response) {
+    const { valueSchedule, indexOfSchedEntryToEdit, setEntryToEditById } = this.props;
+    const entryId = valueSchedule[indexOfSchedEntryToEdit]._id;
+    return setEntryToEditById(entryId)
+    .then(() => {
+      return currentJobService.setCurrentJob(response.data);
+    });
   };
+
+  afterSuccessCountdown() {
+    this.props.closeModal();
+  };
+
+  // submit(event) {
+  //   event.preventDefault();
+  //   const { valueSchedule, indexOfSchedEntryToEdit } = this.props;
+  //   let response, secondsUntilRedirect;
+  //   this.setSubmissionProcessingState()
+  //   .then(() => {
+  //     const { problems, problemMessages } = this.getInputProblems();
+  //     if (problemMessages && problemMessages.length > 0) {
+  //       throw { problems, messages: problemMessages };
+  //     }
+  //     const { hasWarning, warningMessages } = this.getWarnings();
+  //     if (hasWarning) {
+  //       throw {
+  //         isWarning: true,
+  //         messages: warningMessages
+  //       };
+  //     }
+  //     return this.processAndSubmitData();
+  //   })
+  //   .then(res => {
+  //     response = res;
+  //     secondsUntilRedirect = secondsToDelayRedirect;
+  //     this.setState({
+  //       ...genericFormStates.success,
+  //       secondsUntilRedirect
+  //     });
+  //     const entryId = valueSchedule[indexOfSchedEntryToEdit]._id;
+  //     return this.processSuccessResponse && this.processSuccessResponse();
+  //   })
+  //   .then(() => {
+  //     const intervalId = setInterval(
+  //       () => {
+  //         secondsUntilRedirect -= stepSizeOfRedirectDelay;
+  //         this.setState({ secondsUntilRedirect });
+  //         if (secondsUntilRedirect <= 0) {
+  //           clearInterval(intervalId);
+  //           if (this.afterSuccessCountdown) this.afterSuccessCountdown();
+  //           this.reset();
+  //         }
+  //       },
+  //       1000 * stepSizeOfRedirectDelay
+  //     );
+  //   }) 
+  //   .catch(err => {
+  //     const { isWarning } = err || {};
+  //     this.props.catchApiUnauthorized(err);
+  //     const errorData = (err && err.response && err.response.data) || err || {};
+  //     let { problems, messages = [] } = errorData;
+  //     const stateType = isWarning ? 'warning' : 'problem';
+  //     let stateUpdates = {
+  //       problemMessages: [],
+  //       warningMessages: [],
+  //       problems: problems || {},
+  //       ...genericFormStates[stateType]
+  //     };
+  //     stateUpdates[`${stateType}Messages`] = messages;
+  //     this.setState(stateUpdates);
+  //   })
+  // };
+
+  // reset() {
+  //   this.setState(getUniqueStartingState());
+  // };
 
   componentDidUpdate(prevProps) {
     const { indexOfSchedEntryToEdit, valueSchedule } = this.props;
@@ -271,15 +267,15 @@ class ChangeDateModal extends Component {
                 hasSuccess,
                 problemMessages,
                 hasWarning,
+                hasProblem,
+                warningMessages
               }}
-              hasProblem={hasProblem}
               infoMessages={[
                 `To change the date on which this ${lowCaseSettingName} vaue takes effect, enter the new date below.`,
               ]}
               successMessages={[
                 `You successfully changed the start date for this ${lowCaseSettingName} value.`,
               ]}
-              warningMessages={warningMessages}
               successRedirect={{
                 secondsToDelayRedirect,
                 secondsRemaining: secondsUntilRedirect,

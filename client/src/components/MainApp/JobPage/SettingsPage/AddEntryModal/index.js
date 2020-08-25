@@ -9,14 +9,14 @@ import {
   getSettingInputInitialValues,
   processJobSettingInputValue,
   formatMyDate,
-  getAddUpdateWarnings
+  getAddUpdateWarnings,
+  setSubmissionProcessingStateFactory
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
-import Notification, { NotificationText } from '../../../../Notification';
-import { ProgressBar, DateInput, FormMessages } from '../../../../formPieces';
+import { DateInput, FormMessages } from '../../../../formPieces';
 import SettingValueInput from '../SettingValueInput';
 import { addCollapsing } from '../../../../higherOrder';
 
@@ -49,6 +49,7 @@ class _AddEntryModal_needsCollapsing extends Component {
     this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
     this.getInputProblems = this.getInputProblems.bind(this);
     this.getInputDataProcessedToSubmit = this.getInputDataProcessedToSubmit.bind(this);
+    this.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(this);
     this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     addWageInputRefs(this);
@@ -90,22 +91,6 @@ class _AddEntryModal_needsCollapsing extends Component {
       problemMessages.push('You must enter the start date.');
     }
     return { problems, problemMessages };
-  };
-
-  setSubmissionProcessingState() {
-    return new Promise(resolve => {
-      this.setState(
-        {
-          hasBeenSubmitted: true,
-          isLoading: true,
-          hasProblem: false,
-          showMessage: false,
-          problems: {},
-          problemMessages: []
-        },
-        resolve
-      );
-    });
   };
 
   getInputDataProcessedToSubmit() {
