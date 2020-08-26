@@ -9,11 +9,15 @@ function submitFactory() {
     let secondsUntilRedirect; 
     this.setSubmissionProcessingState()
     .then(() => {
-      const { problems, problemMessages } = this.getInputProblems();
+      const {
+        problems, problemMessages
+      } = this.getInputProblems ? this.getInputProblems() : {};
       if (problemMessages && problemMessages.length > 0) {
         throw { problems, messages: problemMessages };
       }
-      const { hasWarning, warningMessages } = this.getWarnings();
+      const {
+        hasWarning, warningMessages
+      } = this.getWarnings ? this.getWarnings() : {};
       if (hasWarning) {
         throw {
           isWarning: true,

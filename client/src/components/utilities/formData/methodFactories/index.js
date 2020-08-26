@@ -1,8 +1,18 @@
 import { genericFormStates } from '../formState';
+import { changeHandlerFactoryFactory } from './changeHandlers';
+import { submitFactory } from './submit';
 
 export * from '../formState'
 export * from './changeHandlers';
 export * from './submit';
+
+function bindCommonFormMethods(component) {
+  component.changeHandlerFactory = changeHandlerFactoryFactory().bind(component);
+  component.getStartingState = getStartingStateFactory().bind(component);
+  component.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(component);
+  component.submit = submitFactory().bind(this);
+  component.reset = resetFactory().bind(this);
+}
 
 function setSubmissionProcessingStateFactory() {
   return function () {
@@ -26,6 +36,7 @@ function resetFactory() {
 }
 
 export {
+  bindCommonFormMethods,
   setSubmissionProcessingStateFactory,
   getStartingStateFactory,
   resetFactory

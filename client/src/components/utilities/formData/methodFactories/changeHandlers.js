@@ -9,16 +9,22 @@ Children then call the inner factory function to generate the change handler fun
 */
 function changeHandlerFactoryFactory() {
   return function changeHandlerFactory(propName, isEvent, processValue) {
+    const genericAfterChange = () => {
+      if (this.state.hasBeenSubmitted && this.getInputProblems) {
+        this.setState(this.getInputProblems());
+      }
+    };
     return (eventOrValue) => {
       let value = isEvent ? eventOrValue.target.value : eventOrValue;
       if (processValue) value = processValue(value);
-      return (
-        this.afterChange ?
-        this.setState(
-          { [propName]: value },
-          () => this.afterChange(propName)
-        ) :
-        this.setState({ [propName]: value })
+      this.setState(
+        { [propName]: value },
+        () => {
+          if (this.afterChange) this.afterChange(propName);
+          else if (this.state.hasBeenSubmitted && this.getInputProblems) {
+            this.setState(this.getInputProblems());
+          }
+        }
       );
     };
   };

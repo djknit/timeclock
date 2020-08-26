@@ -2,12 +2,8 @@ import React, { Component } from 'react';
 import {
   api, 
   constants,
-  changeHandlerFactoryFactory,
   getDateChangeUpdateWarnings,
-  setSubmissionProcessingStateFactory,
-  submitFactory,
-  getStartingStateFactory,
-  resetFactory
+  bindCommonFormMethods
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
@@ -23,18 +19,14 @@ const formId = 'change-job-setting-date-form';
 class ChangeDateModal extends Component {
   constructor(props) {
     super(props);
-    this.afterChange = this.afterChange.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
-    this.getStartingState = getStartingStateFactory().bind(this);
+    this.getUniqueStartingState = this.getUniqueStartingState.bind(this);
     this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
     this.getInputProblems = this.getInputProblems.bind(this);
-    this.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(this);
     this.processAndSubmitData = this.processAndSubmitData.bind(this);
     this.getWarnings = this.getWarnings.bind(this);
     this.processSuccessResponse = this.processSuccessResponse.bind(this);
     this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
-    this.submit = submitFactory().bind(this);
-    this.reset = resetFactory().bind(this);
+    bindCommonFormMethods(this);
     this.state = this.getStartingState();
   };
 
@@ -45,17 +37,11 @@ class ChangeDateModal extends Component {
     };
   };
 
-  afterChange() {
-    if (this.state.hasBeenSubmitted) {
-      this.setState(this.getInputProblems());
-    }
-  };
-
   handleDatepickerPopperToggle(isActiveAfterToggle) {
     // Make room for popper in above input. Needs 289.3px height. Input label w/ margin is 2rem.
     this.setState({
       messagesAreaMinHeight: isActiveAfterToggle ? `calc(289.3px - 2rem)` : undefined
-    })
+    });
   };
 
   getInputProblems() {
@@ -99,78 +85,12 @@ class ChangeDateModal extends Component {
     const { valueSchedule, indexOfSchedEntryToEdit, setEntryToEditById } = this.props;
     const entryId = valueSchedule[indexOfSchedEntryToEdit]._id;
     return setEntryToEditById(entryId)
-    .then(() => {
-      return currentJobService.setCurrentJob(response.data);
-    });
+    .then(() => currentJobService.setCurrentJob(response.data));
   };
 
   afterSuccessCountdown() {
     this.props.closeModal();
   };
-
-  // submit(event) {
-  //   event.preventDefault();
-  //   const { valueSchedule, indexOfSchedEntryToEdit } = this.props;
-  //   let response, secondsUntilRedirect;
-  //   this.setSubmissionProcessingState()
-  //   .then(() => {
-  //     const { problems, problemMessages } = this.getInputProblems();
-  //     if (problemMessages && problemMessages.length > 0) {
-  //       throw { problems, messages: problemMessages };
-  //     }
-  //     const { hasWarning, warningMessages } = this.getWarnings();
-  //     if (hasWarning) {
-  //       throw {
-  //         isWarning: true,
-  //         messages: warningMessages
-  //       };
-  //     }
-  //     return this.processAndSubmitData();
-  //   })
-  //   .then(res => {
-  //     response = res;
-  //     secondsUntilRedirect = secondsToDelayRedirect;
-  //     this.setState({
-  //       ...genericFormStates.success,
-  //       secondsUntilRedirect
-  //     });
-  //     const entryId = valueSchedule[indexOfSchedEntryToEdit]._id;
-  //     return this.processSuccessResponse && this.processSuccessResponse();
-  //   })
-  //   .then(() => {
-  //     const intervalId = setInterval(
-  //       () => {
-  //         secondsUntilRedirect -= stepSizeOfRedirectDelay;
-  //         this.setState({ secondsUntilRedirect });
-  //         if (secondsUntilRedirect <= 0) {
-  //           clearInterval(intervalId);
-  //           if (this.afterSuccessCountdown) this.afterSuccessCountdown();
-  //           this.reset();
-  //         }
-  //       },
-  //       1000 * stepSizeOfRedirectDelay
-  //     );
-  //   }) 
-  //   .catch(err => {
-  //     const { isWarning } = err || {};
-  //     this.props.catchApiUnauthorized(err);
-  //     const errorData = (err && err.response && err.response.data) || err || {};
-  //     let { problems, messages = [] } = errorData;
-  //     const stateType = isWarning ? 'warning' : 'problem';
-  //     let stateUpdates = {
-  //       problemMessages: [],
-  //       warningMessages: [],
-  //       problems: problems || {},
-  //       ...genericFormStates[stateType]
-  //     };
-  //     stateUpdates[`${stateType}Messages`] = messages;
-  //     this.setState(stateUpdates);
-  //   })
-  // };
-
-  // reset() {
-  //   this.setState(getUniqueStartingState());
-  // };
 
   componentDidUpdate(prevProps) {
     const { indexOfSchedEntryToEdit, valueSchedule } = this.props;
@@ -271,7 +191,7 @@ class ChangeDateModal extends Component {
                 warningMessages
               }}
               infoMessages={[
-                `To change the date on which this ${lowCaseSettingName} vaue takes effect, enter the new date below.`,
+                `To change the date on which this ${lowCaseSettingName} vaue takes effect, enter the new date below.`
               ]}
               successMessages={[
                 `You successfully changed the start date for this ${lowCaseSettingName} value.`,
