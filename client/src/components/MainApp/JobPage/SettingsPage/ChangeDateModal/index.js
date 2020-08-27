@@ -3,14 +3,14 @@ import {
   api, 
   constants,
   getDateChangeUpdateWarnings,
-  bindCommonFormMethods
+  bindCommonFormMethods,
+  getSchedEntryFromId
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
 import ModalSkeleton from '../../../../ModalSkeleton';
-import Button from '../../../../Button';
 import Tag, { TagGroup } from '../../../../Tag';
-import { DateInput, FormMessages } from '../../../../formPieces';
+import { DateInput, FormMessages, FormButtons } from '../../../../formPieces';
 
 const { secondsToDelayRedirect } = constants;
 
@@ -59,11 +59,11 @@ class ChangeDateModal extends Component {
   };
 
   processAndSubmitData() {
-    const { indexOfSchedEntryToEdit, valueSchedule, jobId, settingName } = this.props;
+    const { entryToEditId, jobId, settingName } = this.props;
     const { updatedStartDate } = this.state;
     const updates = {
       changeDate: [{
-        id: valueSchedule[indexOfSchedEntryToEdit]._id.toString(),
+        id: entryToEditId,
         startDate: updatedStartDate
       }]
     };
@@ -71,9 +71,9 @@ class ChangeDateModal extends Component {
   };
 
   getWarnings() {
-    const { valueSchedule, indexOfSchedEntryToEdit, settingDisplayName } = this.props;
+    const { valueSchedule, entryToEditId, settingDisplayName } = this.props;
     const { hasWarning, updatedStartDate } = this.state;
-    const oldStartDate = valueSchedule[indexOfSchedEntryToEdit].startDate;
+    const oldStartDate = getSchedEntryFromId(entryToEditId, valueSchedule).startDate;
     return hasWarning ? (
       { hasWarning: false, warningMessages: [] }
     ) : (
@@ -82,10 +82,7 @@ class ChangeDateModal extends Component {
   };
 
   processSuccessResponse(response) {
-    const { valueSchedule, indexOfSchedEntryToEdit, setEntryToEditById } = this.props;
-    const entryId = valueSchedule[indexOfSchedEntryToEdit]._id;
-    return setEntryToEditById(entryId)
-    .then(() => currentJobService.setCurrentJob(response.data));
+    return currentJobService.setCurrentJob(response.data);
   };
 
   afterSuccessCountdown() {
@@ -93,20 +90,15 @@ class ChangeDateModal extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { indexOfSchedEntryToEdit, valueSchedule } = this.props;
-    const prevIndex = prevProps.indexOfSchedEntryToEdit;
-    const currentEntryId = (
-      (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) &&
-      valueSchedule[indexOfSchedEntryToEdit]._id.toString()
-    );
-    const prevEntryId = (prevIndex || prevIndex === 0) && prevProps.valueSchedule[prevIndex]._id.toString();
-    if (currentEntryId !== prevEntryId) this.reset();
+    if (this.props.entryToEditId !== prevProps.entryToEditId) {
+      this.reset();
+    }
   };
 
   render() {
     const { reset, submit, changeHandlerFactory, handleDatepickerPopperToggle } = this;
     const {
-      isActive, closeModal, settingDisplayName, valueSchedule, indexOfSchedEntryToEdit, inputRef
+      isActive, closeModal, settingDisplayName, valueSchedule, entryToEditId, inputRef
     } = this.props;
     const {
       hasSuccess,
@@ -126,7 +118,7 @@ class ChangeDateModal extends Component {
       return <></>;
     }
 
-    const { dateRangeShortText, valueSimpleText, startDate } = valueSchedule[indexOfSchedEntryToEdit] || {};
+    const { dateRangeShortText, valueSimpleText, startDate } = getSchedEntryFromId(entryToEditId, valueSchedule) || {};
 
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
@@ -141,42 +133,21 @@ class ChangeDateModal extends Component {
         title={`Change ${settingDisplayName} Schedule Entry Start Date`}
         isCloseButtonDisabled={isLoading}
         footerContent={
-          <>
-            <Button
-              theme="light"
-              onClick={() => {
-                reset();
-                closeModal();
-              }}
-            >
-              {hasSuccess ? "Close" : "Cancel"}
-            </Button>
-            {hasWarning && (
-              <Button
-                theme="info"
-                onClick={() => this.setState({ hasWarning: false })}
-                disabled={isLoading || hasSuccess}
-              >
-                Edit Form
-              </Button>
-            )}
-            <Button
-              theme={
-                (hasSuccess && "success") ||
-                (hasWarning && "warning") ||
-                "primary"
-              }
-              onClick={submit}
-              disabled={isLoading || hasSuccess || !updatedStartDate}
-              isSubmit
-              {...{
-                formId,
-                isLoading,
-              }}
-            >
-              {hasWarning ? "Yes, Continue" : "Submit"}
-            </Button>
-          </>
+          <FormButtons
+            {...{
+              hasSuccess,
+              hasWarning,
+              isLoading,
+              submit,
+              formId
+            }}
+            cancel={() => {
+              reset();
+              closeModal();
+            }}
+            reverseWarning={() => this.setState({ hasWarning: false })}
+            isFormIncomplete={!updatedStartDate}
+          />
         }
       >
         <form id={formId}>

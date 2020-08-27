@@ -40,7 +40,7 @@ function FormButtons({
         }
         onClick={submit}
         disabled={isLoading || hasSuccess || isFormIncomplete}
-        isSubmit
+        isSubmit={!!formId}
         {...{
           formId,
           isLoading,

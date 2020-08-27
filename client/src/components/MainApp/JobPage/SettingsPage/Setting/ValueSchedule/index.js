@@ -14,12 +14,12 @@ function ValueSchedule({
 
   const style = getStyle(settingName === 'wage');
 
-  function SchedEntryButton({ text, toggle, iconClass, isRemove, index }) {
+  function SchedEntryButton({ text, toggle, iconClass, isRemove, schedEntryId }) {
     return (
       <Button
         styles={style.button}
         theme={isRemove ? 'danger' : 'primary'}
-        onClick={() => toggle(true, index)}
+        onClick={() => toggle(true, schedEntryId)}
         allowTabFocus={!areAnyModalsOpen}
       >
         <i className={iconClass} />&ensp;{text}
@@ -67,7 +67,7 @@ function ValueSchedule({
                   text="Edit Value"
                   toggle={toggleEditValueModal}
                   iconClass="fas fa-edit"
-                  {...{ index }}
+                  schedEntryId={_id}
                 />
                 {index !== 0 && (
                   <>
@@ -75,14 +75,14 @@ function ValueSchedule({
                       text="Change Date"
                       toggle={toggleChangeDateModal}
                       iconClass="fas fa-exchange-alt"
-                      {...{ index }}
+                      schedEntryId={_id}
                     />
                     <SchedEntryButton
                       text="Remove Value"
                       toggle={toggleDeleteValueModal}
                       iconClass="fas fa-trash-alt"
                       isRemove
-                      {...{ index }}
+                      schedEntryId={_id}
                     />
                   </>
                 )}

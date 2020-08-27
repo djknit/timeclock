@@ -1,127 +1,62 @@
 import React, { Component } from 'react';
 import {
   api,
-  constants
-} from '../../utilities';
+  constants,
+  getSchedEntryFromId,
+  bindCommonFormMethods
+} from '../utilities';
 import { currentJobService } from '../../../../../data';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import Button from '../../../../Button';
-import Notification, { NotificationText } from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
-import { ProgressBar, FormMessages } from '../../../../formPieces';
+import { FormButtons, FormMessages } from '../../../../formPieces';
 
-const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
-
-function getStartingState() {
-  return {
-    hasSuccess: false,
-    hasProblem: false,
-    isLoading: false,
-    problems: {},
-    problemMessages: [],
-    showMessage: true,
-    secondsUntilRedirect: undefined
-  };
-}
+const { secondsToDelayRedirect } = constants;
 
 class DeleteEntryModal extends Component {
   constructor(props) {
     super(props);
-    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
-    this.submit = this.submit.bind(this);
-    this.reset = this.reset.bind(this);
-    this.state = getStartingState();
+    this.processAndSubmitData = this.processAndSubmitData.bind(this);
+    this.processSuccessResponse = this.processSuccessResponse.bind(this);
+    this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
+    bindCommonFormMethods(this);
+    this.state = this.getStartingState();
   };
 
-  setSubmissionProcessingState() {
-    return new Promise(
-      resolve => {
-        this.setState(
-          {
-            hasProblem: false,
-            isLoading: true,
-            problems: {},
-            problemMessages: [],
-            showMessage: false
-          },
-          resolve
-        );
-      }
-    );
+  processAndSubmitData() {
+    const { entryToEditId, settingName, jobId } = this.props;
+    const updates = {
+      remove: [{ id: entryToEditId }]
+    };
+    return api.jobs.updateSetting(settingName, { jobId, updates });
   };
 
-  submit(event) {
-    event.preventDefault();
-    let response, secondsUntilRedirect;
-    this.setSubmissionProcessingState()
-    .then(() => {
-      const { indexOfSchedEntryToEdit, valueSchedule, settingName, jobId } = this.props;
-      const updates = {
-        remove: [{
-          id: valueSchedule[indexOfSchedEntryToEdit]._id.toString()
-        }]
-      };
-      return api.jobs.updateSetting(settingName, { updates, jobId });
-    })
-    .then(_res => {
-      response = _res;
-      secondsUntilRedirect = secondsToDelayRedirect;
-      this.setState({
-        hasSuccess: true,
-        isLoading: false,
-        hasProblem: false,
-        showMessage: true,
-        problems: {},
-        problemMessages: [],
-        secondsUntilRedirect
-      });
-      return this.props.setEntryToEditById(null);
-    })
-    .then(() => {
-      currentJobService.setCurrentJob(response.data);
-      const intervalId = setInterval(
-        () => {
-          secondsUntilRedirect -= stepSizeOfRedirectDelay;
-          this.setState({ secondsUntilRedirect });
-          if (secondsUntilRedirect <= 0) {
-            clearInterval(intervalId);
-            this.props.closeModal();
-            this.reset();
-          }
-        },
-        1000 * stepSizeOfRedirectDelay
-      );
-    })
-    .catch(err => {
-      this.props.catchApiUnauthorized(err);
-      const errorData = (err && err.response && err.response.data) || err || {};
-      this.setState({
-        problems: errorData.problems || { unknown: true },
-        problemMessages: errorData.messages || ['An unknown problem has occurred.'],
-        hasProblem: true,
-        isLoading: false,
-        showMessage: true
-      });
-    });
+  processSuccessResponse(response) {
+    return this.props.setEntryToEditId(null)
+    .then(() => currentJobService.setCurrentJob(response.data));
   };
 
-  reset() {
-    this.setState(getStartingState());
+  afterSuccessCountdown() {
+    this.props.closeModal();
+  };
+
+  componentDidUpdate(prevProps) {
+    const { entryToEditId } = this.props;
+    if (entryToEditId && (entryToEditId !== prevProps.entryToEditId)) this.reset();
   };
 
   render() {
-    const { reset } = this;
+    const { reset, submit } = this;
     const {
       isActive,
       closeModal,
       settingDisplayName,
       valueSchedule,
-      indexOfSchedEntryToEdit
+      entryToEditId
     } = this.props;
     const {
       hasSuccess,
       hasProblem,
-      problems,
       problemMessages,
       showMessage,
       secondsUntilRedirect,
@@ -134,7 +69,7 @@ class DeleteEntryModal extends Component {
 
     const {
       valueSimpleText, dateRangeText, dateRangeShortText, startDateShortText
-    } = (indexOfSchedEntryToEdit && valueSchedule[indexOfSchedEntryToEdit]) || {};
+    } = getSchedEntryFromId(entryToEditId, valueSchedule) || {};
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
     return (
@@ -146,25 +81,17 @@ class DeleteEntryModal extends Component {
         title={`Delete ${settingDisplayName} Schedule Entry`}
         isCloseButtonDisabled={isLoading}
         footerContent={
-          <>
-            <Button
-              theme="light"
-              onClick={() => {
-                reset();
-                closeModal();
-              }}
-            >
-              {hasSuccess ? 'Close' : 'Cancel'}
-            </Button>
-            <Button
-              theme={hasSuccess ? 'success' : 'primary'}
-              onClick={this.submit}
-              disabled={isLoading || hasSuccess}
-              {...{ isLoading }}
-            >
-              Submit
-            </Button>
-          </>
+          <FormButtons
+            {...{
+              hasSuccess,
+              isLoading,
+              submit
+            }}
+            cancel={() => {
+              reset();
+              closeModal();
+            }}
+          />
         }
       >
         <FormMessages

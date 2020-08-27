@@ -10,8 +10,8 @@ function bindCommonFormMethods(component) {
   component.changeHandlerFactory = changeHandlerFactoryFactory().bind(component);
   component.getStartingState = getStartingStateFactory().bind(component);
   component.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(component);
-  component.submit = submitFactory().bind(this);
-  component.reset = resetFactory().bind(this);
+  component.submit = submitFactory().bind(component);
+  component.reset = resetFactory().bind(component);
 }
 
 function setSubmissionProcessingStateFactory() {
