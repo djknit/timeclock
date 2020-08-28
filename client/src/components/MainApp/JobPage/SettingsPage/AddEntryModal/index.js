@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   api,
   constants,
-  changeHandlerFactoryFactory,
   addWageInputRefs,
   extractWageInputRefs,
   getJobSettingInputProblems,
@@ -10,7 +9,7 @@ import {
   processJobSettingInputValue,
   formatMyDate,
   getAddUpdateWarnings,
-  setSubmissionProcessingStateFactory
+  bindCommonFormMethods
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
@@ -20,47 +19,31 @@ import { DateInput, FormMessages } from '../../../../formPieces';
 import SettingValueInput from '../SettingValueInput';
 import { addCollapsing } from '../../../../higherOrder';
 
-const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
+const { secondsToDelayRedirect } = constants;
 
 const formId = 'add-job-setting-schedule-entry';
-function getStartingState(settingName) {
-  const jobSettingInitialInputValues = getSettingInputInitialValues();
-  return {
-    hasSuccess: false,
-    hasProblem: false,
-    isLoading: false,
-    hasWarning: false,
-    problems: {},
-    problemMessages: [],
-    showMessage: true,
-    hasBeenSubmitted: false, 
-    secondsUntilRedirect: undefined,
-    settingValue: jobSettingInitialInputValues[settingName],
-    startDate: null,
-    messagesAreaMinHeight: undefined
-  };
-}
 
 class _AddEntryModal_needsCollapsing extends Component {
   constructor(props) {
     super(props);
-    this.afterChange = this.afterChange.bind(this);
     this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
     this.getInputProblems = this.getInputProblems.bind(this);
-    this.getInputDataProcessedToSubmit = this.getInputDataProcessedToSubmit.bind(this);
-    this.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(this);
-    this.submit = this.submit.bind(this);
-    this.reset = this.reset.bind(this);
+    this.processAndSubmitData = this.processAndSubmitData.bind(this);
+    this.processSuccessResponse = this.processSuccessResponse.bind(this);
+    this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
+    bindCommonFormMethods(this);
     addWageInputRefs(this);
     this.firstInputArea = React.createRef();
-    this.state = getStartingState(this.props.settingName);
+    this.state = this.getStartingState();
   };
 
-  afterChange() {
-    if (this.state.hasBeenSubmitted) {
-      this.setState(this.getInputProblems());
-    }
+  getUniqueStartingState() {
+    const jobSettingInitialInputValues = getSettingInputInitialValues();
+    return {
+      settingValue: jobSettingInitialInputValues[this.props.settingName],
+      startDate: null,
+      messagesAreaMinHeight: undefined
+    };
   };
 
   handleDatepickerPopperToggle(isActiveAfterToggle) {
@@ -90,10 +73,11 @@ class _AddEntryModal_needsCollapsing extends Component {
       problems.startDate = true;
       problemMessages.push('You must enter the start date.');
     }
-    return { problems, problemMessages };
+    const hasProblem = problemMessages.length > 0;
+    return { problems, problemMessages, hasProblem };
   };
 
-  getInputDataProcessedToSubmit() {
+  processAndSubmitData() {
     const { settingName, jobId } = this.props;
     const { startDate, settingValue } = this.state;
     const updates = {
@@ -102,78 +86,25 @@ class _AddEntryModal_needsCollapsing extends Component {
         value: processJobSettingInputValue(settingName, settingValue)
       }]
     };
-    return { jobId, updates };
+    return api.jobs.updateSetting(settingName, { jobId, updates });
   };
 
-  submit(event) {
-    event.preventDefault();
-    const { settingName, valueSchedule, settingDisplayName } = this.props;
+  getWarnings() {
+    const { valueSchedule, settingDisplayName } = this.props;
     const { hasWarning, startDate } = this.state;
-    this.setSubmissionProcessingState()
-    .then(() => {
-      const { problems, problemMessages } = this.getInputProblems();
-      if (problemMessages.length > 0) {
-        throw { problems, messages: problemMessages };
-      }
-      // only check for warning if NOT already in warning state
-      let _warningInfo = hasWarning ? {} : getAddUpdateWarnings(startDate, valueSchedule, settingDisplayName);
-      if (_warningInfo.hasWarning) {
-        throw {
-          isWarning: true,
-          messages: _warningInfo.warningMessages
-        };
-      }
-      const submissionData = this.getInputDataProcessedToSubmit();
-      return api.jobs.updateSetting(settingName, submissionData);
-    })
-    .then(res => {
-      let secondsUntilRedirect = secondsToDelayRedirect;
-      this.setState({
-        hasSuccess: true,
-        isLoading: false,
-        hasProblem: false,
-        showMessage: true,
-        hasWarning: false,
-        problems: {},
-        problemMessages: [],
-        secondsUntilRedirect
-      });
-      currentJobService.setCurrentJob(res.data);
-      const intervalId = setInterval(
-        () => {
-          secondsUntilRedirect -= stepSizeOfRedirectDelay;
-          this.setState({ secondsUntilRedirect });
-          if (secondsUntilRedirect <= 0) {
-            clearInterval(intervalId);
-            this.props.closeModal();
-            this.reset();
-          }
-        },
-        1000 * stepSizeOfRedirectDelay
-      );
-    })
-    .catch(err => {
-      const { isWarning } = err || {};
-      this.props.catchApiUnauthorized(err);
-      const errorData = (err && err.response && err.response.data) || err || {};
-      let { problems, messages } = errorData;
-      if (!messages) messages = [];
-      this.setState({
-        problems: problems || {},
-        problemMessages: !isWarning ? messages : [],
-        hasProblem: !isWarning,
-        isLoading: false,
-        showMessage: true,
-        hasWarning: isWarning,
-        warningMessages: isWarning ? messages : []
-      });
-    })
+    return hasWarning ? (
+      { hasWarning: false, warningMessages: [] }
+    ) : (
+      getAddUpdateWarnings(startDate, valueSchedule, settingDisplayName)
+    );
   };
 
-  reset() {
-    const { settingName, contentToggle } = this.props;
-    this.setState(getStartingState(settingName));
-    if (contentToggle && contentToggle.reset) contentToggle.reset();
+  processSuccessResponse(response) {
+    return currentJobService.setCurrentJob(response.data);
+  };
+
+  afterSuccessCountdown() {
+    this.props.closeModal();
   };
 
   componentDidUpdate(prevProps) {

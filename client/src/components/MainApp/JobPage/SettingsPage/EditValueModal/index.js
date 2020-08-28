@@ -7,15 +7,13 @@ import {
   extractWageInputRefs,
   getJobSettingInputProblems,
   processJobSettingInputValue,
-  genericFormStates,
   bindCommonFormMethods,
   getSchedEntryFromId
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
-import ModalSkeleton from '../../../../ModalSkeleton';
 import Tag, { TagGroup } from '../../../../Tag';
-import { FormMessages, FormButtons } from '../../../../formPieces';
 import SettingValueInput from '../SettingValueInput';
+import FormModal from '../../../../FormModal';
 import { addCollapsing } from '../../../../higherOrder';
 
 const { secondsToDelayRedirect } = constants;
@@ -90,10 +88,9 @@ class _EditValueModal_needsCollapsing extends Component {
   };
 
   render() {
-    const { reset, submit, changeHandlerFactory } = this;
+    const { changeHandlerFactory } = this;
     const {
       isActive,
-      closeModal,
       settingDisplayName,
       valueSchedule,
       entryToEditId,
@@ -103,11 +100,7 @@ class _EditValueModal_needsCollapsing extends Component {
     } = this.props;
     const {
       hasSuccess,
-      hasProblem, 
       problems,
-      problemMessages,
-      showMessage,
-      secondsUntilRedirect,
       updatedValue,
       isLoading
     } = this.state;
@@ -125,84 +118,55 @@ class _EditValueModal_needsCollapsing extends Component {
     const wageInputRefs = extractWageInputRefs(this);
 
     return (
-      <ModalSkeleton
+      <FormModal
+        formMgmtComponent={this}
+        isFormIncomplete={!updatedValue && updatedValue !== 0}
         {...{
-          isActive,
-          closeModal
+          formId,
+          secondsToDelayRedirect
         }}
+        infoMessages={[
+          <>You are editing the {lowCaseSettingName} for {dateRangeText}.</>,
+          <>Enter the new value below.</>
+        ]}
+        successMessages={[
+          <>You successfully updated the {lowCaseSettingName} for {dateRangeText}.</>
+        ]}
+        successRedirectMessageFragment="This dialog box will close"
         title={`Edit ${settingDisplayName} Schedule Entry Value`}
-        isCloseButtonDisabled={isLoading}
-        footerContent={
-          <FormButtons
-            {...{
-              hasSuccess,
-              isLoading,
-              submit,
-              formId
-            }}
-            cancel={() => {
-              reset();
-              closeModal();
-            }}
-            isFormIncomplete={!updatedValue && updatedValue !== 0}
-          />
-        }
       >
-        <form id={formId}>
-          <FormMessages
-            {...{
-              showMessage,
-              hasSuccess,
-              problemMessages
-            }}
-            hasProblem={hasProblem}
-            infoMessages={[
-              <>You are editing the {lowCaseSettingName} for {dateRangeText}.</>,
-              <>Enter the new value below.</>
-            ]}
-            successMessages={[
-              <>You successfully updated the {lowCaseSettingName} for {dateRangeText}.</>
-            ]}
-            successRedirect={{
-              secondsToDelayRedirect,
-              secondsRemaining: secondsUntilRedirect,
-              messageFragment: 'This dialog box will close',
-            }}
-            closeMessage={() => this.setState({ showMessage: false })}
-          />
-          <TagGroup align="center" isInline>
-            <Tag theme="info" size={6}>
-              Time Period:
-            </Tag>
-            <Tag theme="info light" size={6}>
-              {dateRangeShortText}
-            </Tag>
-          </TagGroup>
-          <TagGroup align="center" isInline>
-            <Tag theme="info" size={6}>
-              Current Value:
-            </Tag>
-            <Tag theme="info light" size={6}>
-              {valueSimpleText}
-            </Tag>
-          </TagGroup>
-          <SettingValueInput
-            propName="updatedValue"
-            value={updatedValue}
-            {...{
-              settingName,
-              changeHandlerFactory,
-              formId,
-              wageInputRefs,
-              wageContentToggle,
-              inputRef
-            }}
-            problems={problems && problems.updatedValue}
-            isActive={!isLoading && !hasSuccess}
-            label={`New ${settingDisplayName} Value:`}
-          />
-        </form>
-      </ModalSkeleton>
+        <TagGroup align="center" isInline>
+          <Tag theme="info" size={6}>
+            Time Period:
+          </Tag>
+          <Tag theme="info light" size={6}>
+            {dateRangeShortText}
+          </Tag>
+        </TagGroup>
+        <TagGroup align="center" isInline>
+          <Tag theme="info" size={6}>
+            Current Value:
+          </Tag>
+          <Tag theme="info light" size={6}>
+            {valueSimpleText}
+          </Tag>
+        </TagGroup>
+        <SettingValueInput
+          propName="updatedValue"
+          value={updatedValue}
+          {...{
+            settingName,
+            changeHandlerFactory,
+            formId,
+            wageInputRefs,
+            wageContentToggle,
+            inputRef
+          }}
+          problems={problems && problems.updatedValue}
+          isActive={!isLoading && !hasSuccess}
+          label={`New ${settingDisplayName} Value:`}
+        />
+      </FormModal>
     );
   };
 }
