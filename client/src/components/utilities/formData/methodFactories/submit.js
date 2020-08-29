@@ -4,7 +4,8 @@ import { genericFormStates } from '../formState.js';
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 function submitFactory() {
-  return function(event) {
+
+  return function (event) {
     event.preventDefault();
     let secondsUntilRedirect; 
     this.setSubmissionProcessingState()
@@ -41,8 +42,8 @@ function submitFactory() {
           this.setState({ secondsUntilRedirect });
           if (secondsUntilRedirect <= 0) {
             clearInterval(intervalId);
-            if (this.afterSuccessCountdown) this.afterSuccessCountdown();
             this.reset();
+            if (this.afterSuccessCountdown) this.afterSuccessCountdown();
           }
         },
         1000 * stepSizeOfRedirectDelay
@@ -63,8 +64,9 @@ function submitFactory() {
       };
       stateUpdates[`${stateType}Messages`] = messages;
       this.setState(stateUpdates);
-    })
+    });
   };
+
 }
 
 export { submitFactory };

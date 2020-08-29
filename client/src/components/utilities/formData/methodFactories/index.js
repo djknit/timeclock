@@ -11,7 +11,7 @@ function bindCommonFormMethods(component) {
   component.getStartingState = getStartingStateFactory().bind(component);
   component.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(component);
   component.submit = submitFactory().bind(component);
-  component.reset = resetFactory().bind(component);
+  component.reset = component.reset ? component.reset.bind(component) : resetFactory().bind(component);
 }
 
 function setSubmissionProcessingStateFactory() {
@@ -31,6 +31,7 @@ function getStartingStateFactory() {
 
 function resetFactory() {
   return function () {
+    console.log('generic reset')
     this.setState(this.getStartingState());
   };
 }
