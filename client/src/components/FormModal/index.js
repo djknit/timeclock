@@ -13,7 +13,10 @@ function FormModal({
   secondsToDelayRedirect = constants.secondsToDelayRedirect,
   messagesAreaStyle,
   title,
-  children
+  children,
+  messagesAreaContent,
+  submitText,
+  warningSubmitText
 }) {
 
   const { submit, reset } = formMgmtComponent;
@@ -55,7 +58,9 @@ function FormModal({
             isLoading,
             submit,
             formId,
-            isFormIncomplete
+            isFormIncomplete,
+            submitText,
+            warningSubmitText
           }}
           cancel={() => {
             reset();
@@ -65,7 +70,7 @@ function FormModal({
         />
       }
     >
-      <form id={formId}>
+      <Form {...{ formId }}>
         <MessagesArea style={messagesAreaStyle}>
           <FormMessages
             {...{
@@ -81,24 +86,26 @@ function FormModal({
             }}
             closeMessage={() => formMgmtComponent.setState({ showMessage: false })}
           />
+          {messagesAreaContent}
         </MessagesArea>
         {children}
-      </form>
+      </Form>
     </ModalSkeleton>
   );
 }
 
 export default FormModal;
 
+function Form({
+  formId,
+  children
+}) {
+  return formId ? (<form id={formId}>{children}</form>) : children;
+}
+
 function MessagesArea({
   style,
   children
 }) {
-  return style ? (
-    <div {...{ style }}>
-      {children}
-    </div>
-  ) : (
-    children
-  );
+  return style ? (<div {...{ style }}>{children}</div>) : children;
 }

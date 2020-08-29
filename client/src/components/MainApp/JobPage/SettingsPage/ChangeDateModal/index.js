@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 import {
   api, 
-  constants,
   getDateChangeUpdateWarnings,
   bindCommonFormMethods,
   getSchedEntryFromId
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
-import ModalSkeleton from '../../../../ModalSkeleton';
 import Tag, { TagGroup } from '../../../../Tag';
-import { DateInput, FormMessages, FormButtons } from '../../../../formPieces';
-
-const { secondsToDelayRedirect } = constants;
+import { DateInput } from '../../../../formPieces';
+import FormModal from '../../../../FormModal';
 
 const formId = 'change-job-setting-date-form';
 
@@ -96,21 +93,16 @@ class ChangeDateModal extends Component {
   };
 
   render() {
-    const { reset, submit, changeHandlerFactory, handleDatepickerPopperToggle } = this;
+    const { changeHandlerFactory, handleDatepickerPopperToggle } = this;
     const {
-      isActive, closeModal, settingDisplayName, valueSchedule, entryToEditId, inputRef
+      isActive, settingDisplayName, valueSchedule, entryToEditId, inputRef
     } = this.props;
     const {
       hasSuccess,
-      hasProblem,
       hasWarning,
       problems,
-      problemMessages,
-      showMessage,
-      secondsUntilRedirect,
       updatedStartDate,
       isLoading,
-      warningMessages,
       messagesAreaMinHeight
     } = this.state;
 
@@ -125,55 +117,23 @@ class ChangeDateModal extends Component {
     const style = getStyle(messagesAreaMinHeight);
 
     return (
-      <ModalSkeleton
+      <FormModal
+        formMgmtComponent={this}
+        isFormIncomplete={!updatedStartDate}
         {...{
-          isActive,
-          closeModal,
+          formId
         }}
+        infoMessages={[
+          `To change the date on which this ${lowCaseSettingName} vaue takes effect, enter the new date below.`
+        ]}
+        successMessages={[
+          `You successfully changed the start date for this ${lowCaseSettingName} value.`,
+        ]}
+        successRedirectMessageFragment="This dialog box will close"
+        messagesAreaStyle={style.messagesArea}
         title={`Change ${settingDisplayName} Schedule Entry Start Date`}
-        isCloseButtonDisabled={isLoading}
-        footerContent={
-          <FormButtons
-            {...{
-              hasSuccess,
-              hasWarning,
-              isLoading,
-              submit,
-              formId
-            }}
-            cancel={() => {
-              reset();
-              closeModal();
-            }}
-            reverseWarning={() => this.setState({ hasWarning: false })}
-            isFormIncomplete={!updatedStartDate}
-          />
-        }
-      >
-        <form id={formId}>
-          <div style={style.messagesArea}>
-            <FormMessages
-              {...{
-                showMessage,
-                hasSuccess,
-                problemMessages,
-                hasWarning,
-                hasProblem,
-                warningMessages
-              }}
-              infoMessages={[
-                `To change the date on which this ${lowCaseSettingName} vaue takes effect, enter the new date below.`
-              ]}
-              successMessages={[
-                `You successfully changed the start date for this ${lowCaseSettingName} value.`,
-              ]}
-              successRedirect={{
-                secondsToDelayRedirect,
-                secondsRemaining: secondsUntilRedirect,
-                messageFragment: 'This dialog box will close',
-              }}
-              closeMessage={() => this.setState({ showMessage: false })}
-            />
+        messagesAreaContent={
+          <>
             <TagGroup align="center" isInline>
               <Tag theme="info" size={6}>
                 Time Period:
@@ -190,30 +150,31 @@ class ChangeDateModal extends Component {
                 {valueSimpleText}
               </Tag>
             </TagGroup>
-          </div>
-          <DateInput
-            propName="updatedStartDate"
-            value={updatedStartDate}
-            {...{
-              changeHandlerFactory,
-              formId,
-              inputRef,
-            }}
-            label="Start Date:"
-            placeholder="Type or select date..."
-            helpText="When does the new value go into effect? Select the first day that the new setting value applies."
-            labelStyle={style.label}
-            hasProblem={problems && problems.updatedStartDate}
-            isActive={!isLoading && !hasSuccess && !hasWarning}
-            datePickerProps={{
-              popperPlacement: "top-start",
-              onCalendarOpen: () => handleDatepickerPopperToggle(true),
-              onCalendarClose: () => handleDatepickerPopperToggle(false),
-            }}
-            openToDate={startDate}
-          />
-        </form>
-      </ModalSkeleton>
+          </>
+        }
+      >
+        <DateInput
+          propName="updatedStartDate"
+          value={updatedStartDate}
+          {...{
+            changeHandlerFactory,
+            formId,
+            inputRef,
+          }}
+          label="Start Date:"
+          placeholder="Type or select date..."
+          helpText="When does the new value go into effect? Select the first day that the new setting value applies."
+          labelStyle={style.label}
+          hasProblem={problems && problems.updatedStartDate}
+          isActive={!isLoading && !hasSuccess && !hasWarning}
+          datePickerProps={{
+            popperPlacement: "top-start",
+            onCalendarOpen: () => handleDatepickerPopperToggle(true),
+            onCalendarClose: () => handleDatepickerPopperToggle(false),
+          }}
+          openToDate={startDate}
+        />
+      </FormModal>
     );
   };
 }

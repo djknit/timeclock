@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 import {
   api,
-  constants,
   getSchedEntryFromId,
   bindCommonFormMethods
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
-import ModalSkeleton from '../../../../ModalSkeleton';
-import Button from '../../../../Button';
 import Tag, { TagGroup } from '../../../../Tag';
-import { FormButtons, FormMessages } from '../../../../formPieces';
-
-const { secondsToDelayRedirect } = constants;
+import FormModal from '../../../../FormModal';
 
 class DeleteEntryModal extends Component {
   constructor(props) {
@@ -46,21 +41,14 @@ class DeleteEntryModal extends Component {
   };
 
   render() {
-    const { reset, submit } = this;
     const {
       isActive,
-      closeModal,
       settingDisplayName,
       valueSchedule,
       entryToEditId
     } = this.props;
     const {
       hasSuccess,
-      hasProblem,
-      problemMessages,
-      showMessage,
-      secondsUntilRedirect,
-      isLoading
     } = this.state;
 
     if (!isActive) {
@@ -73,49 +61,19 @@ class DeleteEntryModal extends Component {
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
     return (
-      <ModalSkeleton
-        {...{
-          isActive,
-          closeModal
-        }}
+      <FormModal
+        formMgmtComponent={this}
+        infoMessages={[
+          <>You are deleting the {lowCaseSettingName} value for {dateRangeText}.</>,
+          <>The {lowCaseSettingName} will no longer change on {startDateShortText}.</>,
+          <>Press "Submit" to procede.</>
+        ]}
+        successMessages={[
+          `The ${lowCaseSettingName} value schedule entry was successfully removed.`,
+        ]}
+        successRedirectMessageFragment="This dialog box will close"
         title={`Delete ${settingDisplayName} Schedule Entry`}
-        isCloseButtonDisabled={isLoading}
-        footerContent={
-          <FormButtons
-            {...{
-              hasSuccess,
-              isLoading,
-              submit
-            }}
-            cancel={() => {
-              reset();
-              closeModal();
-            }}
-          />
-        }
       >
-        <FormMessages
-          {...{
-            showMessage,
-            hasSuccess,
-            problemMessages
-          }}
-          hasProblem={hasProblem}
-          infoMessages={[
-            <>You are deleting the {lowCaseSettingName} value for {dateRangeText}.</>,
-            <>The {lowCaseSettingName} will no longer change on {startDateShortText}.</>,
-            <>Press "Submit" to procede.</>
-          ]}
-          successMessages={[
-            `The ${lowCaseSettingName} value schedule entry was successfully removed.`,
-          ]}
-          successRedirect={{
-            secondsToDelayRedirect,
-            secondsRemaining: secondsUntilRedirect,
-            messageFragment: 'This dialog box will close',
-          }}
-          closeMessage={() => this.setState({ showMessage: false })}
-        />
         {!hasSuccess && (
           <>
             <TagGroup align="center" isInline>
@@ -136,7 +94,7 @@ class DeleteEntryModal extends Component {
             </TagGroup>
           </>
         )}
-      </ModalSkeleton>
+      </FormModal>
     );
   };
 }

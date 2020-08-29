@@ -1,25 +1,20 @@
 import React, { Component } from 'react';
 import {
   api,
-  constants,
   addWageInputRefs,
   extractWageInputRefs,
   getJobSettingInputProblems,
   getSettingInputInitialValues,
   processJobSettingInputValue,
-  formatMyDate,
   getAddUpdateWarnings,
   bindCommonFormMethods
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
-import ModalSkeleton from '../../../../ModalSkeleton';
-import Button from '../../../../Button';
-import { DateInput, FormMessages } from '../../../../formPieces';
+import { DateInput } from '../../../../formPieces';
 import SettingValueInput from '../SettingValueInput';
 import { addCollapsing } from '../../../../higherOrder';
-
-const { secondsToDelayRedirect } = constants;
+import FormModal from '../../../../FormModal';
 
 const formId = 'add-job-setting-schedule-entry';
 
@@ -123,11 +118,10 @@ class _AddEntryModal_needsCollapsing extends Component {
 
   render() {
     const {
-      reset, submit, changeHandlerFactory, firstInputArea, handleDatepickerPopperToggle
+      changeHandlerFactory, firstInputArea, handleDatepickerPopperToggle
     } = this;
     const {
       isActive,
-      closeModal,
       settingDisplayName,
       settingName,
       contentToggle,
@@ -135,12 +129,8 @@ class _AddEntryModal_needsCollapsing extends Component {
     } = this.props;
     const {
       hasSuccess,
-      hasProblem,
       hasWarning,
       problems,
-      problemMessages,
-      showMessage,
-      secondsUntilRedirect,
       settingValue,
       startDate,
       isLoading,
@@ -170,105 +160,48 @@ class _AddEntryModal_needsCollapsing extends Component {
     const style = getStyle(messagesAreaMinHeight);
 
     return (
-      <ModalSkeleton
+      <FormModal
+        formMgmtComponent={this}
+        isFormIncomplete={!startDate || (!settingValue && settingValue !== 0)}
         {...{
-          isActive,
-          closeModal
+          formId
         }}
+        infoMessages={[
+          `Enter the new ${lowCaseSettingName} value and the date on which that value goes into effect below.`
+        ]}
+        successMessages={[
+          `You successfully added a new ${lowCaseSettingName} value to the schedule.`
+        ]}
+        successRedirectMessageFragment="This dialog box will close"
+        messagesAreaStyle={style.messagesArea}
         title={`Add ${settingDisplayName} Schedule Entry`}
-        isCloseButtonDisabled={isLoading}
-        footerContent={
-          <>
-            <Button
-              theme="light"
-              onClick={() => {
-                reset();
-                closeModal();
-              }}
-            >
-              {hasSuccess ? 'Close' : 'Cancel'}
-            </Button>
-            {hasWarning && (
-              <Button
-                theme="info"
-                onClick={() => this.setState({ hasWarning: false })}
-                disabled={isLoading || hasSuccess}
-              >
-                Edit Form
-              </Button>
-            )}
-            <Button
-              theme={(hasSuccess && 'success') || (hasWarning && 'warning') || 'primary'}
-              onClick={submit}
-              disabled={isLoading || hasSuccess || !startDate || (!settingValue && settingValue !== 0)}
-              isSubmit
-              {...{
-                formId,
-                isLoading
-              }}
-            >
-              {hasWarning ? 'Yes, Replace Value' : 'Submit'}
-            </Button>
-          </>
-        }
+        warningSubmitText="Yes, Replace Value"
       >
-        <form id={formId}>
-          <div style={style.messagesArea}>
-            <FormMessages
-              {...{
-                showMessage,
-                hasSuccess,
-                problemMessages,
-                hasWarning
-              }}
-              hasProblem={hasProblem}
-              infoMessages={[
-                `Enter the new ${lowCaseSettingName} value and the date on which that value goes into effect below.`
-              ]}
-              successMessages={[
-                `You successfully added a new ${lowCaseSettingName} value to the schedule.`
-              ]}
-              warningMessages={[
-                <>
-                  You already have a {lowCaseSettingName} value with the same start date ({formatMyDate(startDate)}).
-                </>,
-                <>Are you sure you want to replace the existing schedule value?</>
-              ]}
-                
-              successRedirect={{
-                secondsToDelayRedirect,
-                secondsRemaining: secondsUntilRedirect,
-                messageFragment: 'This dialog box will close'
-              }}
-              closeMessage={() => this.setState({ showMessage: false })}
-            />
-          </div>
-          <div ref={firstInputArea} style={style.firstInputArea}>
-            <SettingValueInput
-              {...getCommonFormAttrs('settingValue')}
-              {...{
-                wageInputRefs,
-                inputRef
-              }}
-              wageContentToggle={contentToggle}
-              label={`New ${settingDisplayName} Value:`}
-              fieldStyle={style.firstInputField}
-            />
-          </div>
-          <DateInput
-            {...getCommonFormAttrs('startDate')}
-            label="Start Date:"
-            helpText="When does the new value go into effect? Select the first day that the new setting value applies."
-            placeholder="Start date..."
-            labelStyle={style.inputLabel}
-            datePickerProps={{
-              popperPlacement: 'top-start',
-              onCalendarOpen: () => handleDatepickerPopperToggle(true),
-              onCalendarClose: () => handleDatepickerPopperToggle(false)
+        <div ref={firstInputArea} style={style.firstInputArea}>
+          <SettingValueInput
+            {...getCommonFormAttrs('settingValue')}
+            {...{
+              wageInputRefs,
+              inputRef
             }}
+            wageContentToggle={contentToggle}
+            label={`New ${settingDisplayName} Value:`}
+            fieldStyle={style.firstInputField}
           />
-        </form>
-      </ModalSkeleton>
+        </div>
+        <DateInput
+          {...getCommonFormAttrs('startDate')}
+          label="Start Date:"
+          helpText="When does the new value go into effect? Select the first day that the new setting value applies."
+          placeholder="Start date..."
+          labelStyle={style.inputLabel}
+          datePickerProps={{
+            popperPlacement: 'top-start',
+            onCalendarOpen: () => handleDatepickerPopperToggle(true),
+            onCalendarClose: () => handleDatepickerPopperToggle(false)
+          }}
+        />
+      </FormModal>
     );
   };
 }
