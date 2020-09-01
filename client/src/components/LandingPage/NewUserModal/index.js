@@ -5,7 +5,8 @@ import {
   getUsernameProblems,
   getEmailProblems,
   getPasswordProblems,
-  bindCommonFormMethods
+  bindCommonFormMethods,
+  checkApiResProbMsgsForTakenUsernameOrEmail
 } from '../utilities';
 import { userService } from '../../../data';
 import { TextInput } from '../../formPieces';
@@ -101,6 +102,22 @@ class NewUserModal extends Component {
     userService.setUser(response.data.user);
   };
 
+  processErrorResponse(response) {
+    const { email, username } = this.state;
+    let { unavailableEmails, unavailableUsernames } = this.state;
+    checkApiResProbMsgsForTakenUsernameOrEmail(
+      response.data.messages,
+      { email, username },
+      {
+        usernames: unavailableUsernames,
+        emails: unavailableEmails
+      }
+    );
+    return new Promise(resolve => {
+      this.setState({ unavailableEmails, unavailableUsernames }, resolve);
+    });
+  };
+
   afterSuccessCountdown() {
     this.props.history.push('/app');
   };
@@ -114,7 +131,7 @@ class NewUserModal extends Component {
       username,
       email,
       password,
-      verifyPassword,
+      verifyPassword
     } = this.state;
 
     const style = getStyle();
@@ -138,6 +155,7 @@ class NewUserModal extends Component {
         ]}
         successRedirectMessageFragment="You will be redirected"
         title="New User Sign Up"
+        disableCloseOnSuccess
       >
         {fieldsInfo.map(
           (field, index) => (

@@ -7,7 +7,7 @@ function submitFactory() {
 
   return function (event) {
     event.preventDefault();
-    let secondsUntilRedirect; 
+    let secondsUntilRedirect;
     this.setSubmissionProcessingState()
     .then(() => {
       const {
@@ -50,20 +50,21 @@ function submitFactory() {
       );
     }) 
     .catch(err => {
-      const { isWarning } = err || {};
-      const { catchApiUnauthorized } = this.props;
-      if (catchApiUnauthorized) catchApiUnauthorized(err);
-      const errorData = (err && err.response && err.response.data) || err || {};
-      let { problems = {}, messages = [] } = errorData;
-      const stateType = isWarning ? 'warning' : 'problem';
-      let stateUpdates = {
-        problemMessages: [],
-        warningMessages: [],
+      const _err = err || {};
+      if (this.props.catchApiUnauthorized) this.props.catchApiUnauthorized(err);
+      let { response } = _err;
+      if (response && this.processErrorResponse) this.processErrorResponse(response);
+      const { isWarning } = _err;
+      let {
+        problems = {}, messages = []
+      } = (response && response.data) || _err;
+      if (!isWarning && !messages.length) messages.push('An unknown problem has occured.');
+      this.setState({
+        problemMessages: !isWarning ? messages : [],
+        warningMessages: isWarning ? messages : [],
         problems,
-        ...genericFormStates[stateType]
-      };
-      stateUpdates[`${stateType}Messages`] = messages;
-      this.setState(stateUpdates);
+        ...genericFormStates[isWarning ? 'warning' : 'problem']
+      });
     });
   };
 

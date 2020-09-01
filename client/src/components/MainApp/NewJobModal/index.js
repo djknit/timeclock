@@ -122,7 +122,6 @@ class _NewJobModal_needsCollapsingAndData extends Component {
   };
 
   reset() {
-    console.log('new job reset')
     this.setState(this.getStartingState());
     this.props.wageContentToggle.reset();
     this.props.cutoffsContentToggle.reset();
@@ -180,6 +179,7 @@ class _NewJobModal_needsCollapsingAndData extends Component {
         ]}
         successRedirectMessageFragment="You will be redirected"
         title="Create Job"
+        disableCloseOnSuccess
       >
         {inputPropNames.map(
           (propName, index) => (
@@ -208,7 +208,9 @@ class _NewJobModal_needsCollapsingAndData extends Component {
   };
 }
 
-const _NewJobModal_needsCollapsing = addData(_NewJobModal_needsCollapsingAndData, 'windowWidth', windowWidthService);
+const _NewJobModal_needsCollapsing = (
+  addData(_NewJobModal_needsCollapsingAndData, 'windowWidth', windowWidthService)
+);
 
 const _NewJobModal_needsMoreCollapsing = (
   addCollapsing(_NewJobModal_needsCollapsing, 'wageContentToggle', false, true)

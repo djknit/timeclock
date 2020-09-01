@@ -16,7 +16,8 @@ function FormModal({
   children,
   messagesAreaContent,
   submitText,
-  warningSubmitText
+  warningSubmitText,
+  disableCloseOnSuccess
 }) {
 
   const { submit, reset } = formMgmtComponent;
@@ -41,15 +42,17 @@ function FormModal({
   ) : (
     {}
   );
+  
+  const isCloseButtonDisabled = isLoading || (disableCloseOnSuccess && hasSuccess);
 
   return (
     <ModalSkeleton
       {...{
         isActive,
         closeModal,
-        title
+        title,
+        isCloseButtonDisabled
       }}
-      isCloseButtonDisabled={isLoading}
       footerContent={
         <FormButtons
           {...{
@@ -62,6 +65,7 @@ function FormModal({
             submitText,
             warningSubmitText
           }}
+          isCancelDisabled={isCloseButtonDisabled}
           cancel={() => {
             reset();
             closeModal();
@@ -96,16 +100,18 @@ function FormModal({
 
 export default FormModal;
 
-function Form({
-  formId,
-  children
-}) {
-  return formId ? (<form id={formId}>{children}</form>) : children;
+function Form({ formId, children }) {
+  return formId ? (
+    <form id={formId}>{children}</form>
+  ) : (
+    children
+  );
 }
 
-function MessagesArea({
-  style,
-  children
-}) {
-  return style ? (<div {...{ style }}>{children}</div>) : children;
+function MessagesArea({ style, children }) {
+  return style ? (
+    <div {...{ style }}>{children}</div>
+  ) : (
+    children
+  );
 }

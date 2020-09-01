@@ -11,7 +11,8 @@ function FormButtons({
   formId,
   submitText = 'Submit',
   warningSubmitText = 'Yes, Continue',
-  isFormIncomplete
+  isFormIncomplete,
+  isCancelDisabled
 }) {
   
   return (
@@ -19,9 +20,9 @@ function FormButtons({
       <Button
         theme="light"
         onClick={cancel}
-        disabled={isLoading}
+        disabled={isCancelDisabled}
       >
-        {hasSuccess ? 'Close' : 'Cancel'}
+        {(hasSuccess && !isCancelDisabled) ? 'Close' : 'Cancel'}
       </Button> 
       {hasWarning && (
         <Button

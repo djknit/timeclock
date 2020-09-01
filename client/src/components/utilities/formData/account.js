@@ -57,18 +57,15 @@ function getPasswordProblems(password, problemMessages, verifyPassword) {
 
 function checkApiResProbMsgsForTakenUsernameOrEmail(problemMessages, inputs, takenPropValues) {
   const { username, email } = inputs;
-  let problems = {};
   const takenUsernameMessage = 'That username is taken.';
   const takenEmailMessage = 'There is already an account for that email address.';
   const takenUsernameMessageIndex = problemMessages.indexOf(takenUsernameMessage);
   const takenEmailMessageIndex = problemMessages.indexOf(takenEmailMessage);
   if (takenUsernameMessageIndex !== -1) {
-    problems.username = true;
     problemMessages[takenUsernameMessageIndex] = getTakenUsernameDisplayMessage(username);
     takenPropValues.usernames.push(username);
   }
   if (takenEmailMessageIndex !== -1) {
-    problems.email = true;
     problemMessages[takenEmailMessageIndex] = getTakenEmailDisplayMessage(email);
     takenPropValues.emails.push(email);
   }

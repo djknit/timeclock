@@ -107,6 +107,7 @@ class LoginModal extends Component {
         successMessages={[<><strong>Success!</strong> You are signed in.</>]}
         successRedirectMessageFragment="You will be redirected"
         title="Sign In"
+        disableCloseOnSuccess
       >
         {fieldsInfo.map((field, index) => (
           <TextInput
