@@ -8,7 +8,7 @@ import {
   getEmailProblems,
   getPasswordProblems,
   checkApiResProbMsgsForTakenUsernameOrEmail,
-  bindCommonFormMethods
+  bindFormMethods
 } from '../utilities';
 import FormModal from '../../FormModal';
 import Tag, { TagGroup } from '../../Tag';
@@ -48,14 +48,7 @@ const formId = 'edit-account-form';
 class _EditAccountModal_needsData extends Component {
   constructor(props) {
     super(props);
-    this.getUniqueStartingState = this.getUniqueStartingState.bind(this);
-    this.afterChange = this.afterChange.bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.processAndSubmitData = this.processAndSubmitData.bind(this);
-    this.processSuccessResponse = this.processSuccessResponse.bind(this);
-    this.processErrorResponse = this.processErrorResponse.bind(this);
-    this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
-    bindCommonFormMethods(this);
+    bindFormMethods(this);
     this.state = this.getStartingState();
   };
 
@@ -84,14 +77,21 @@ class _EditAccountModal_needsData extends Component {
 
   getInputProblems(problemsToKeep, problemMessagesToKeep) {
     const {
-      updatedAccountProp, verifyUpdatedPassword, unavailableEmails, unavailableUsernames
+      updatedAccountProp, verifyUpdatedPassword, unavailableEmails, unavailableUsernames, currentPassword
     } = this.state;
     const { propToEditName } = this.props;
     let problems = problemsToKeep || {};
     let problemMessages = problemMessagesToKeep || [];
+    if (!currentPassword && !problems.currentPassword) {
+      problems.currentPassword = true;
+      problemMessages.push(
+        'You must enter your current password for security in order to complete the update to your account.'
+      );
+    }
     if (!updatedAccountProp) {
       problems.updatedAccountProp = true;
       problemMessages.push(`You must enter your new ${propToEditName}.`);
+      return { problems, problemMessages };
     }
     switch (propToEditName) {
       case 'username':

@@ -6,6 +6,7 @@ import {
   getEmailProblems,
   getPasswordProblems,
   bindCommonFormMethods,
+  bindFormMethods,
   checkApiResProbMsgsForTakenUsernameOrEmail
 } from '../utilities';
 import { userService } from '../../../data';
@@ -51,11 +52,7 @@ const formId = 'new-user-form';
 class NewUserModal extends Component {
   constructor(props) {
     super(props);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.processAndSubmitData = this.processAndSubmitData.bind(this);
-    this.processSuccessResponse = this.processSuccessResponse.bind(this);
-    this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
-    bindCommonFormMethods(this);
+    bindFormMethods(this);
     this.state = this.getStartingState();
   };
 

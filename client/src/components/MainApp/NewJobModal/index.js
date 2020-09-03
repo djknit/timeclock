@@ -12,7 +12,7 @@ import {
   getTimezoneInputProblems,
   processDayCutoffInput,
   getSettingInputInitialValues,
-  bindCommonFormMethods
+  bindFormMethods
 } from '../utilities';
 import { jobsService, currentJobService, windowWidthService } from '../../../data';
 import Input from './Input';
@@ -25,16 +25,10 @@ const inputPropNames = ['name', 'startDate', 'timezone', 'wage', 'cutoffs'];
 class _NewJobModal_needsCollapsingAndData extends Component {
   constructor(props) {
     super(props);
-    this.getUniqueStartingState = this.getUniqueStartingState.bind(this);
-    this.afterChange = this.afterChange.bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.processAndSubmitData = this.processAndSubmitData.bind(this);
-    this.processSuccessResponse = this.processSuccessResponse.bind(this);
-    this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
     this.reset = this.reset.bind(this);
     addWageInputRefs(this);
     addWkDayCutoffsInputRefs(this);
-    bindCommonFormMethods(this)
+    bindFormMethods(this);
     this.state = this.getStartingState();
   };
 

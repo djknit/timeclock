@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { api, bindCommonFormMethods } from '../utilities';
+import { api, bindFormMethods } from '../utilities';
 import { userService } from '../../../data';
 import FormModal from '../../FormModal';
 import { TextInput } from '../../formPieces';
@@ -29,11 +29,7 @@ const formId = 'login-form';
 class LoginModal extends Component {
   constructor(props) {
     super(props);
-    this.getUniqueStartingState = this.getUniqueStartingState.bind(this);
-    this.afterChange = this.afterChange.bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.processAndSubmitData = this.processAndSubmitData.bind(this);
-    bindCommonFormMethods(this);
+    bindFormMethods(this);
     this.state = this.getStartingState();
   };
 

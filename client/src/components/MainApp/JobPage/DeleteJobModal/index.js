@@ -1,41 +1,20 @@
 import React, { Component } from 'react';
-import { api, changeHandlerFactoryFactory, constants } from '../../utilities';
-import ModalSkeleton from '../../../ModalSkeleton';
-import Button from '../../../Button';
-import Notification, { NotificationText } from '../../../Notification';
+import { api, bindFormMethods } from '../../utilities';
+import FormModal from '../../../FormModal';
 import { jobsService, currentJobService } from '../../../../data';
-import { TextInput, ProgressBar, FormMessages } from '../../../formPieces';
+import { TextInput } from '../../../formPieces';
 
-const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
-
-function getStartingState() {
-  return {
-    password: '',
-    problems: {},
-    hasSuccess: false,
-    isLoading: false,
-    hasProblem: false,
-    problemMessages: [],
-    showMessage: true,
-    hasBeenSubmitted: false
-  };
-}
 const formId = 'delete-job-modal';
 
 class DeleteJobModal extends Component {
   constructor(props) {
     super(props);
-    this.afterChange = this.afterChange.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
-    this.submit = this.submit.bind(this);
-    this.reset = this.reset.bind(this);
-    this.state = getStartingState();
+    bindFormMethods(this);
+    this.state = this.getStartingState();
   };
 
-  afterChange() {
-    if (this.state.hasBeenSubmitted) this.setState(this.getInputProblems());
+  getUniqueStartingState() {
+    return { password: '' };
   };
 
   getInputProblems() {
@@ -49,172 +28,65 @@ class DeleteJobModal extends Component {
     return { problems, problemMessages };
   };
 
-  setSubmissionProcessingState() {
-    return new Promise(resolve => {
-      this.setState(
-        {
-          hasBeenSubmitted: true,
-          isLoading: true,
-          hasProblem: false,
-          showMessage: false,
-          problems: {},
-          problemMessages: []
-        },
-        resolve
-      );
+  processAndSubmitData() {
+    return api.jobs.delete({
+      jobId: this.props.job._id,
+      password: this.state.password
     });
   };
 
-  submit(event) {
-    event.preventDefault();
-    const { job, returnToDashboard } = this.props;
-    const { password } = this.state;
-    this.setSubmissionProcessingState()
-    .then(() => {
-      const { problems, problemMessages } = this.getInputProblems();
-      if (problemMessages.length > 0) {
-        throw {
-          problems,
-          messages: problemMessages
-        };
-      }
-      return api.jobs.delete({
-        jobId: job._id,
-        password
-      });
-    })
-    .then(res => {
-      // console.log(res)
-      let secondsUntilRedirect = secondsToDelayRedirect;
-      this.setState({
-        hasSuccess: true,
-        isLoading: false,
-        hasProblem: false,
-        showMessage: true,
-        problems: {},
-        problemMessages: [],
-        secondsUntilRedirect
-      });
-      jobsService.removeJob(job._id);
-      const intervalId = setInterval(
-        () => {
-          secondsUntilRedirect -= stepSizeOfRedirectDelay;
-          this.setState({ secondsUntilRedirect });
-          if (secondsUntilRedirect <= 0) {
-            clearInterval(intervalId);
-            this.reset();
-            returnToDashboard();
-            currentJobService.clearCurrentJob();
-          }
-        },
-        1000 * stepSizeOfRedirectDelay
-      );
-    })
-    .catch(err => {
-      this.props.catchApiUnauthorized(err);
-      const errorData = (err && err.response && err.response.data) || err || {};
-      const { problems, messages } = errorData;
-      this.setState({
-        problems: problems || { unknown: true },
-        problemMessages: messages || ['An unknown problem has occured.'],
-        hasProblem: true,
-        isLoading: false,
-        showMessage: true
-      });
-    });
+  processSuccessResponse() {
+    jobsService.removeJob(this.props.job._id);
   };
 
-  reset() {
-    this.setState(getStartingState());
+  afterSuccessCountdown() {
+    this.props.returnToDashboard();
+    currentJobService.clearCurrentJob();
   };
 
   render() {
-    const { props, state, reset, submit, changeHandlerFactory } = this;
-    const { isActive, closeModal, job, inputRef } = props;
-    const {
-      password, problems, hasSuccess, isLoading, hasProblem, problemMessages, showMessage, secondsUntilRedirect
-    } = state;
+    const { props, state, changeHandlerFactory } = this;
+    const { isActive, job, inputRef } = props;
+    const { password, problems, hasSuccess, isLoading } = state;
 
     if (!isActive) {
       return <></>;
     }
 
     return (
-      <ModalSkeleton
+      <FormModal
+        formMgmtComponent={this}
+        isFormIncomplete={!password}
         {...{
-          isActive,
-          closeModal
+          formId
         }}
+        infoMessages={[
+          `You are about to permanently this job ("${job.name}").`,
+          <>You will <strong>not</strong> be able to restore the job once it is deleted.</>
+        ]}
+        successMessages={[
+          <><strong>Success!</strong> The job "{job.name}" was deleted.</>
+        ]}
+        successRedirectMessageFragment="You will be redirected"
         title="Delete Job"
-        isCloseButtonDisabled={isLoading}
-        footerContent={
-          <>
-            <Button
-              theme="light"
-              onClick={() => {
-                reset();
-                closeModal();
-              }}
-              disabled={isLoading || hasSuccess}
-            >
-              Cancel
-            </Button>
-            <Button
-              theme={hasSuccess ? 'success' : 'primary'}
-              onClick={submit}
-              disabled={
-                isLoading || hasSuccess || !password
-              }
-              isSubmit
-              {...{
-                formId,
-                isLoading
-              }}
-            >
-              Submit
-            </Button>
-          </>
-        }
+        disableCloseOnSuccess
       >
-        <form id={formId}>
-          <FormMessages
-            {...{
-              showMessage,
-              hasSuccess,
-              problemMessages,
-            }}
-            hasProblem={hasProblem}
-            infoMessages={[
-              `You are about to permanently this job ("${job.name}").`,
-              <>You will <strong>not</strong> be able to restore the job once it is deleted.</>
-            ]}
-            successMessages={[
-              <><strong>Success!</strong> The job "{job.name}"" was deleted.</>
-            ]}
-            successRedirect={{
-              secondsToDelayRedirect,
-              secondsRemaining: secondsUntilRedirect,
-              messageFragment: 'You will be redirected'
-            }}
-            closeMessage={() => this.setState({ showMessage: false })}
-          />
-          <TextInput
-            propName="password"
-            value={password}
-            label="Enter Your Password to Continue"
-            placeholder="Your password..."
-            hasProblem={problems && problems.password}
-            iconClass={hasSuccess ? 'fas fa-unlock' : 'fas fa-lock'}
-            isActive={!isLoading && !hasSuccess}
-            {...{
-              changeHandlerFactory,
-              formId,
-              inputRef
-            }}
-            type="password"
-          />
-        </form>
-      </ModalSkeleton>
+        <TextInput
+          propName="password"
+          value={password}
+          label="Enter Your Password to Continue"
+          placeholder="Your password..."
+          hasProblem={problems && problems.password}
+          iconClass={hasSuccess ? 'fas fa-unlock' : 'fas fa-lock'}
+          isActive={!isLoading && !hasSuccess}
+          {...{
+            changeHandlerFactory,
+            formId,
+            inputRef
+          }}
+          type="password"
+        />
+      </FormModal>
     );
   };
 }
