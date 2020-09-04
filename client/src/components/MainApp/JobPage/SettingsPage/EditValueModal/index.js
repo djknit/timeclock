@@ -7,8 +7,8 @@ import {
   extractWageInputRefs,
   getJobSettingInputProblems,
   processJobSettingInputValue,
-  bindCommonFormMethods,
-  getSchedEntryFromId
+  getSchedEntryFromId,
+  bindFormMethods
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import Tag, { TagGroup } from '../../../../Tag';
@@ -23,13 +23,8 @@ const formId = 'edit-job-setting-value-form';
 class _EditValueModal_needsCollapsing extends Component {
   constructor(props) {
     super(props);
-    this.getUniqueStartingState = this.getUniqueStartingState.bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.processAndSubmitData = this.processAndSubmitData.bind(this);
-    this.processSuccessResponse = this.processSuccessResponse.bind(this);
-    this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
     addWageInputRefs(this);
-    bindCommonFormMethods(this);
+    bindFormMethods(this);
     this.state = this.getStartingState();
   };
 

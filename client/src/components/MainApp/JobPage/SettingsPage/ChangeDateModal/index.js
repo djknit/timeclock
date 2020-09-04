@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import {
   api, 
   getDateChangeUpdateWarnings,
-  bindCommonFormMethods,
-  getSchedEntryFromId
+  getSchedEntryFromId,
+  bindFormMethods
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
@@ -16,14 +16,8 @@ const formId = 'change-job-setting-date-form';
 class ChangeDateModal extends Component {
   constructor(props) {
     super(props);
-    this.getUniqueStartingState = this.getUniqueStartingState.bind(this);
     this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.processAndSubmitData = this.processAndSubmitData.bind(this);
-    this.getWarnings = this.getWarnings.bind(this);
-    this.processSuccessResponse = this.processSuccessResponse.bind(this);
-    this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
-    bindCommonFormMethods(this);
+    bindFormMethods(this);
     this.state = this.getStartingState();
   };
 

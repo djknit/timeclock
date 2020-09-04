@@ -5,7 +5,6 @@ import {
   getUsernameProblems,
   getEmailProblems,
   getPasswordProblems,
-  bindCommonFormMethods,
   bindFormMethods,
   checkApiResProbMsgsForTakenUsernameOrEmail
 } from '../utilities';

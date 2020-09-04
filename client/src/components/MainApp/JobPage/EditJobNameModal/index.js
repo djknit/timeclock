@@ -1,31 +1,11 @@
 import React, { Component } from 'react';
 import { jobsService, currentJobService } from '../../../../data';
-import {
-  api,
-  constants,
-  bindFormMethods
-} from '../../utilities';
+import { api, bindFormMethods } from '../../utilities';
 import FormModal from '../../../FormModal';
-import ModalSkeleton from '../../../ModalSkeleton';
-import Button from '../../../Button';
 import Tag, { TagGroup } from '../../../Tag';
-import { TextInput, ProgressBar, FormMessages } from '../../../formPieces';
+import { TextInput } from '../../../formPieces';
 
-const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 const formId = 'edit-job-name-form';
-function getStartingState() {
-  return {
-    updatedJobName: '',
-    problems: {},
-    hasSuccess: false,
-    isLoading: false,
-    hasProblem: false,
-    problemMessages: [],
-    showMessage: true,
-    hasBeenSubmitted: false,
-    secondsUntilRedirect: undefined
-  };
-}
 
 class EditJobNameModal extends Component {
   constructor(props) {
@@ -48,7 +28,9 @@ class EditJobNameModal extends Component {
     }
     else if (jobsService.getValue().map(job => job.name).includes(updatedJobName)) {
       problems.updatedJobName = true;
-      problemMessages.push(`You already have a job with the name "${updatedJobName}". Each job must have a unique name.`);
+      problemMessages.push(
+        `You already have a job with the name "${updatedJobName}". Each job must have a unique name.`
+      );
     }
     return { problems, problemMessages };
   };

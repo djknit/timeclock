@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   api,
   getSchedEntryFromId,
-  bindCommonFormMethods
+  bindFormMethods
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import Tag, { TagGroup } from '../../../../Tag';
@@ -11,10 +11,7 @@ import FormModal from '../../../../FormModal';
 class DeleteEntryModal extends Component {
   constructor(props) {
     super(props);
-    this.processAndSubmitData = this.processAndSubmitData.bind(this);
-    this.processSuccessResponse = this.processSuccessResponse.bind(this);
-    this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
-    bindCommonFormMethods(this);
+    bindFormMethods(this);
     this.state = this.getStartingState();
   };
 

@@ -37,7 +37,5 @@ function bindFormMethods(component) {
 }
 
 export {
-  bindCommonFormMethods,
-  bindFormSpecificMethods,
   bindFormMethods
 };

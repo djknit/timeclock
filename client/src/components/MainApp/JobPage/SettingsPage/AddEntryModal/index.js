@@ -7,7 +7,7 @@ import {
   getSettingInputInitialValues,
   processJobSettingInputValue,
   getAddUpdateWarnings,
-  bindCommonFormMethods
+  bindFormMethods
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
@@ -22,11 +22,7 @@ class _AddEntryModal_needsCollapsing extends Component {
   constructor(props) {
     super(props);
     this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.processAndSubmitData = this.processAndSubmitData.bind(this);
-    this.processSuccessResponse = this.processSuccessResponse.bind(this);
-    this.afterSuccessCountdown = this.afterSuccessCountdown.bind(this);
-    bindCommonFormMethods(this);
+    bindFormMethods(this);
     addWageInputRefs(this);
     this.firstInputArea = React.createRef();
     this.state = this.getStartingState();
