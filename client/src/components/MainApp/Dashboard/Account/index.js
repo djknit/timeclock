@@ -7,7 +7,7 @@ import { addData } from '../../../higherOrder';
 
 function _Account_needsData({
   user,
-  styleProp,
+  style: styleProp,
   accountEditingModalOpenerFactory,
   accountPropDeletingModalOpenerFactory,
   areAnyModalsOpen
