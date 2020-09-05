@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import { windowWidthService } from '../../../../data';
 import PageTitle from '../../PageTitle';
-import Button from '../../../Button';
 import QuickNav from './QuickNav';
 import Basics from './Basics';
 import Settings from './Settings';
 import { addData } from '../../../higherOrder';
 
-class _JobDash_needsData extends Component {
+class JobDash extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -65,6 +64,6 @@ class _JobDash_needsData extends Component {
   };
 }
 
-const JobDash = addData(_JobDash_needsData, 'windowWidth', windowWidthService);
+// const JobDash = addData(_JobDash_needsData, 'windowWidth', windowWidthService);
 
 export default JobDash;

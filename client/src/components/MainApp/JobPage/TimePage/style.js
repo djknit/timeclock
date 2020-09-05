@@ -1,18 +1,27 @@
-export default function getStyle() {
+import { isWindowWide } from '../utilities';
+import { contentAreasGridStyles, mainAreaPadding } from '../style';
+
+const { contentAreasRow, columnContentArea } = contentAreasGridStyles;
+
+export default function getStyle(windowWidth) {
+  
+  const rightColWidthPercent = 36;
+
+  const useColumns = isWindowWide(windowWidth);
+  
+  const contentAreaNotLast = { marginBottom: mainAreaPadding };
+
   return {
-    breadcrumbSeparator: {
-      display: 'inline-block',
-      padding: '0 .6em',
-      color: '#595959'
+    contentAreasRow: {
+      ...contentAreasRow
     },
-    breadcrumbLink: {
-      color: '#707070',
-      textDecoration: 'none',
-      cursor: 'pointer',
-      fontWeight: 500
+    summaryArea: {
+      ...columnContentArea(100 - rightColWidthPercent, useColumns, true),
+      ...contentAreaNotLast
     },
-    currentCrumb: {
-      // fontStyle: 'italic'
+    generalEntryArea: {
+      ...columnContentArea(rightColWidthPercent, useColumns, false),
+      ...contentAreaNotLast
     }
   };
 };

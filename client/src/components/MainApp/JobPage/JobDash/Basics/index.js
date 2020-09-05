@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatMyDate } from '../../../utilities';
 import getStyle from './style';
-import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
+import ContentArea from '../../../ContentArea';
 import Button from '../../../../Button';
 
 function BasicsArea({
