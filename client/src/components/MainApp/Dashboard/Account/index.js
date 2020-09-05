@@ -7,20 +7,20 @@ import { addData } from '../../../higherOrder';
 
 function _Account_needsData({
   user,
-  style,
+  styleProp,
   accountEditingModalOpenerFactory,
   accountPropDeletingModalOpenerFactory,
   areAnyModalsOpen
 }) {
 
-  const completeStyle = getStyle(style);
+  const style = getStyle(styleProp);
 
   function EditAccountButtons({ propToEditName }) {
     return (
       <>
         <Button
           theme="primary"
-          styles={completeStyle.button}
+          styles={style.button}
           onClick={accountEditingModalOpenerFactory(propToEditName)}
           allowTabFocus={!areAnyModalsOpen}
         >
@@ -32,7 +32,7 @@ function _Account_needsData({
         {user.username && user.email && propToEditName !== 'password' &&
           <Button
             theme="danger"
-            styles={completeStyle.buttonNotFirst}
+            styles={style.buttonNotFirst}
             onClick={accountPropDeletingModalOpenerFactory(propToEditName)}
             allowTabFocus={!areAnyModalsOpen}
           >
@@ -44,11 +44,11 @@ function _Account_needsData({
   }
 
   return (
-    <ContentArea title="Account" style={completeStyle.contentArea}>
+    <ContentArea title="Account" style={style.contentArea}>
       {user &&
         <>
-          <div style={completeStyle.accountPropAreaNotLast}>
-            <p style={completeStyle.propAreaText}>
+          <div style={style.accountPropAreaNotLast}>
+            <p style={style.propAreaText}>
               <strong>Username:</strong>
               {user.username ?
                 ` "${user.username}"` :
@@ -57,8 +57,8 @@ function _Account_needsData({
             </p>
             <EditAccountButtons propToEditName="username" />
           </div>
-          <div style={completeStyle.accountPropAreaNotLast}>
-            <p style={completeStyle.propAreaText}>
+          <div style={style.accountPropAreaNotLast}>
+            <p style={style.propAreaText}>
               <strong>Email:</strong>
               {user.email ?
                 ` "${user.email}"` :
@@ -67,8 +67,8 @@ function _Account_needsData({
             </p>
             <EditAccountButtons propToEditName="email" />
           </div>
-          <div style={completeStyle.lastAccountPropArea}>
-            <p style={completeStyle.propAreaText}>
+          <div style={style.lastAccountPropArea}>
+            <p style={style.propAreaText}>
               <strong>Password:</strong> "&bull;&bull;&bull;&bull;..."
             </p>
             <EditAccountButtons propToEditName="password" />

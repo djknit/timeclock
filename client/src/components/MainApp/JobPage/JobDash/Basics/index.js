@@ -6,40 +6,40 @@ import Button from '../../../../Button';
 
 function BasicsArea({
   job,
-  style,
+  style: styleProp,
   disabled,
   toggleEditJobNameModal,
   toggleDeleteJobModal
 }) {
 
-  const completeStyle = getStyle(style);
+  const style = getStyle(styleProp);
 
   return (
-    <ContentArea title="Basics" style={completeStyle.contentArea}>
+    <ContentArea title="Basics" style={style.contentArea}>
       {job &&
         <>
-          <div style={completeStyle.areaNotLastHasBtns}>
-            <p style={completeStyle.jobNameText}>
+          <div style={style.areaNotLastHasBtns}>
+            <p style={style.jobNameText}>
               <strong>Job Name:</strong> "{job.name}"
             </p>
             <Button
               theme="primary"
-              styles={completeStyle.firstBtn}
+              styles={style.firstBtn}
               onClick={() => toggleEditJobNameModal(true)}
               allowTabFocus={!disabled}
             >
               <i className="fas fa-edit" /> Edit
             </Button>
           </div>
-          <div style={completeStyle.areaNotLastNoBtns}>
-            <p style={completeStyle.noBtnsAreaText}>
+          <div style={style.areaNotLastNoBtns}>
+            <p style={style.noBtnsAreaText}>
               <strong>Start Date:</strong> {formatMyDate(job.startDate || {})}
             </p>
           </div>
-          <div style={completeStyle.lastAreaHasBtnsNoText}>
+          <div style={style.lastAreaHasBtnsNoText}>
             <Button
               theme="danger"
-              styles={completeStyle.firstBtn}
+              styles={style.firstBtn}
               onClick={() => toggleDeleteJobModal(true)}
               allowTabFocus={!disabled}
             >
