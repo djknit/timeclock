@@ -3,6 +3,7 @@ import logo from './logo192.png';
 import { isLoggedInService, profileService, userService } from '../../../data';
 import { api } from '../utilities';
 import getStyle from './style';
+import NavItem from './NavItem';
 import Button from '../../Button';
 import { addData } from '../../higherOrder';
 
@@ -16,7 +17,8 @@ class _Navbar_needsData extends Component {
     this.state = {
       brandItemInnerHeight: undefined,
       isLoading: false,
-      hasProblem: false
+      hasProblem: false,
+      isMenuActive: false
     };
   };
 
@@ -52,75 +54,108 @@ class _Navbar_needsData extends Component {
 
   render() {
     const { isLoggedIn, profileData, totalHeight, areAnyModalsOpen } = this.props;
-    const { brandItemInnerHeight, isLoading, hasProblem } = this.state;
+    const { brandItemInnerHeight, isLoading, hasProblem, isMenuActive } = this.state;
+
+    const isActiveClass = isMenuActive ? ' is-active' : '';
+
+    const toggleMenu = () => this.setState({ isMenuActive: !isMenuActive });
 
     const style = getStyle(brandItemInnerHeight, totalHeight);
 
     return (
       <nav className="navbar" role="navigation" aria-label="main navigation" style={style.nav}>
         <div className="navbar-brand" style={style.brand}>
-          <div className="navbar-item" style={style.brandImgItem}>
+          <div className="navbar-item" style={style.navItem} style={style.brandImgItem}>
             <img src={logo} style={style.brandImg} />
           </div>
-          <div className="navbar-item" style={style.brandTextItem} ref={this.brandItem}>
+          <div className="navbar-item" style={style.navItem} style={style.brandTextItem} ref={this.brandItem}>
             <span style={style.brandText} ref={this.brandText}>
               TIME<br />CLOCK
             </span>
           </div>
 
-          {/* <a
+          <a
             role="button"
-            className="navbar-burger burger"
+            className={`navbar-burger burger${isActiveClass}`}
             aria-label="menu"
             aria-expanded="false"
             data-target="navbarBasicExample"
+            style={style.burger}
+            onClick={toggleMenu}
           >
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
-          </a> */}
+          </a>
         </div>
   
-        <div id="navbarBasicExample" className="navbar-menu">
+        <div id="navbarBasicExample" className={`navbar-menu${isActiveClass}`}>
           <div className="navbar-start">
-            {/* <a className="navbar-item">
-              Home
-            </a>
+            <NavItem>
+              Dashboard
+            </NavItem>
   
-            <a className="navbar-item">
-              Documentation
-            </a>
-  
-            <div className="navbar-item has-dropdown is-hoverable">
-              <a className="navbar-link">
-                More
+            <NavItem hasDropdown>
+              <a className="navbar-link is-arrowless" style={style.navItem}>
+                Jobs&nbsp;<i className="fas fa-chevron-down" style={style.dropdownArrow} />
               </a>
   
               <div className="navbar-dropdown">
-                <a className="navbar-item">
-                  About
-                </a>
-                <a className="navbar-item">
+                <NavItem>
+                  <i className="fas fa-plus" /> New
+                </NavItem>
+                <NavItem>
                   Jobs
-                </a>
-                <a className="navbar-item">
+                </NavItem>
+                <NavItem>
                   Contact
-                </a>
+                </NavItem>
                 <hr className="navbar-divider" />
-                <a className="navbar-item">
+                <NavItem>
                   Report an issue
-                </a>
+                </NavItem>
               </div>
+            </NavItem>
+
+            {/* <div className="navbar-item has-dropdown is-hoverable">
+              
+            </div> */}
+
+            <NavItem hasDropdown>
+              <a className="navbar-link is-arrowless" style={style.navItem}>
+                Jobs&nbsp;<i className="fas fa-angle-down" style={style.dropdownArrow} />
+              </a>
+  
+              <div className="navbar-dropdown">
+                <NavItem>
+                  About
+                </NavItem>
+                <NavItem>
+                  Jobs
+                </NavItem>
+                <NavItem>
+                  Contact
+                </NavItem>
+                <hr className="navbar-divider" />
+                <NavItem>
+                  Report an issue
+                </NavItem>
+              </div>
+            </NavItem>
+
+            {/* <div className="navbar-item has-dropdown is-hoverable">
+              
             </div> */}
           </div>
 
           <div className="navbar-end">
-            <div className="navbar-item">
+            <div className="navbar-item" style={style.navItem}>
               <span style={style.welcomeText}>
-                {profileData && isLoggedIn ?
-                  <>Hi, <strong style={style.welcomeText}>{profileData.username || profileData.email}</strong>!</> :
+                {profileData && isLoggedIn ? (
+                  <>Hi, <strong style={style.welcomeText}>{profileData.username || profileData.email}</strong>!</>
+                ) : (
                   <>No user found.</>
-                }
+                )}
                 {hasProblem &&
                   <>Unexpected outcome.</>
                 }

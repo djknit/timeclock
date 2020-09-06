@@ -138,7 +138,7 @@ class ChangeDateModal extends Component {
             </TagGroup>
             <TagGroup align="center" isInline>
               <Tag theme="info" size={6}>
-                Current Value:
+                Value:
               </Tag>
               <Tag theme="info light" size={6}>
                 {valueSimpleText}

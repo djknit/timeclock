@@ -30,6 +30,18 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       maxHeight: totalHeight,
       width: totalHeight
     },
+    // navItem: {
+    //   color: textColor
+    // },
+    dropdownArrow: {
+      display: 'inline-block',
+      position: 'relative',
+      top: '.2em',
+      fontSize: '.8em'
+    },
+    burger: {
+      color: textColor
+    },
     welcomeText: {
       color: textColor
     },
@@ -38,3 +50,5 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
     }
   };
 };
+
+export { textColor };

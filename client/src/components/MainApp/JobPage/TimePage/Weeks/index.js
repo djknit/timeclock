@@ -9,7 +9,7 @@ function Weeks({
   const style = getStyle(styleProp);
   
   return (
-    <ContentArea style={style.contentArea}>
+    <ContentArea title="View/Enter Time By Week" style={style.contentArea}>
 
     </ContentArea>
   );
