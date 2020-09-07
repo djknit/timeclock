@@ -63,7 +63,9 @@ class MainApp extends Component {
   modalToggleFactory(modalIsActivePropName, inputRef, usesAccountEdit) {
     return function(isActiveAfterToggle, propToEditName) {
       let stateUpdates = { [modalIsActivePropName]: !!isActiveAfterToggle };
-      if (usesAccountEdit) stateUpdates.accountPropToEditName = propToEditName;
+      if (usesAccountEdit && propToEditName) {
+        stateUpdates.accountPropToEditName = propToEditName;
+      }
       this.setState(
         stateUpdates,
         () => {

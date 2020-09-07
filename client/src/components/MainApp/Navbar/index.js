@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import logo from './logo192.png';
+import getStyle from './style';
 import { isLoggedInService, profileService, userService } from '../../../data';
 import { api } from '../utilities';
-import getStyle from './style';
+import NavItem from './NavItem';
+import { DropdownContainer, Dropdown, DropdownLink } from './dropdownPieces';
 import Button from '../../Button';
 import { addData } from '../../higherOrder';
+
+const menuId = 'navbar-menu';
 
 class _Navbar_needsData extends Component {
   constructor(props) {
@@ -16,7 +20,8 @@ class _Navbar_needsData extends Component {
     this.state = {
       brandItemInnerHeight: undefined,
       isLoading: false,
-      hasProblem: false
+      hasProblem: false,
+      isMenuActive: false
     };
   };
 
@@ -52,7 +57,11 @@ class _Navbar_needsData extends Component {
 
   render() {
     const { isLoggedIn, profileData, totalHeight, areAnyModalsOpen } = this.props;
-    const { brandItemInnerHeight, isLoading, hasProblem } = this.state;
+    const { brandItemInnerHeight, isLoading, hasProblem, isMenuActive } = this.state;
+
+    const isActiveClass = isMenuActive ? ' is-active' : '';
+
+    const toggleMenu = () => this.setState({ isMenuActive: !isMenuActive });
 
     const style = getStyle(brandItemInnerHeight, totalHeight);
 
@@ -68,59 +77,80 @@ class _Navbar_needsData extends Component {
             </span>
           </div>
 
-          {/* <a
+          <a
             role="button"
-            className="navbar-burger burger"
+            className={`navbar-burger burger${isActiveClass}`}
             aria-label="menu"
             aria-expanded="false"
-            data-target="navbarBasicExample"
+            data-target={menuId}
+            style={style.burger}
+            onClick={toggleMenu}
           >
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-          </a> */}
+            {[...Array(3)].map((_e, _i) => (
+              <span aria-hidden="true" key={_i} />
+            ))}
+          </a>
         </div>
   
-        <div id="navbarBasicExample" className="navbar-menu">
-          <div className="navbar-start">
-            {/* <a className="navbar-item">
-              Home
-            </a>
+        <div id={menuId} className={`navbar-menu${isActiveClass}`}>
+          <div className="navbar-start" style={style.navStart}>
+            <NavItem>
+              Dashboard
+            </NavItem>
   
-            <a className="navbar-item">
-              Documentation
-            </a>
+            <DropdownContainer>
+              <DropdownLink>
+                Jobs
+              </DropdownLink>
   
+              <Dropdown>
+                <NavItem>
+                  <i className="fas fa-plus" />&nbsp;New
+                </NavItem>
+                <NavItem>
+                  Jobs
+                </NavItem>
+                <NavItem>
+                  Contact
+                </NavItem>
+                <hr className="navbar-divider" />
+                <NavItem>
+                  Report an issue
+                </NavItem>
+              </Dropdown>
+            </DropdownContainer>
+
             <div className="navbar-item has-dropdown is-hoverable">
-              <a className="navbar-link">
-                More
-              </a>
+              <DropdownLink>
+                Jobs
+              </DropdownLink>
   
               <div className="navbar-dropdown">
-                <a className="navbar-item">
+                <NavItem>
                   About
-                </a>
-                <a className="navbar-item">
+                </NavItem>
+                <NavItem>
                   Jobs
-                </a>
-                <a className="navbar-item">
+                </NavItem>
+                <NavItem>
                   Contact
-                </a>
+                </NavItem>
                 <hr className="navbar-divider" />
-                <a className="navbar-item">
+                <NavItem>
                   Report an issue
-                </a>
+                </NavItem>
               </div>
-            </div> */}
+            </div>
           </div>
 
           <div className="navbar-end">
             <div className="navbar-item">
               <span style={style.welcomeText}>
-                {profileData && isLoggedIn ?
-                  <>Hi, <strong style={style.welcomeText}>{profileData.username || profileData.email}</strong>!</> :
+                {profileData && isLoggedIn ? (
+                  <>Hi, <strong style={style.welcomeText}>{profileData.username || profileData.email}</strong>!</>
+                ) : (
                   <>No user found.</>
-                }
+                )}
                 {hasProblem &&
                   <>Unexpected outcome.</>
                 }

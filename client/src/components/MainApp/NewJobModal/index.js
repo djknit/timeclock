@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import {
   api,
-  constants,
-  changeHandlerFactoryFactory,
   getWageInputProblems,
   processWageInput,
   addWageInputRefs,
@@ -13,67 +11,39 @@ import {
   getWeekBeginsInputProblems,
   getTimezoneInputProblems,
   processDayCutoffInput,
-  getSettingInputInitialValues
+  getSettingInputInitialValues,
+  bindFormMethods
 } from '../utilities';
 import { jobsService, currentJobService, windowWidthService } from '../../../data';
-import ModalSkeleton from '../../ModalSkeleton';
-import Button from '../../Button';
-import Notification, { NotificationText } from '../../Notification';
-import { ProgressBar, FormMessages } from '../../formPieces';
 import Input from './Input';
 import { addCollapsing, addData } from '../../higherOrder';
-
-const { stepSizeOfRedirectDelay, secondsToDelayRedirect } = constants;
+import FormModal from '../../FormModal';
 
 const formId = 'new-user-form';
-function getStartingState() {
-  const settingInputInitialValues = getSettingInputInitialValues();
-  return {
-    name: '',
-    startDate: null,
-    timezone: settingInputInitialValues.timezone,
-    wage: settingInputInitialValues.wage,
-    cutoffs: {
-      useDefaults: true,
-      dayCutoff: settingInputInitialValues.dayCutoff,
-      weekBegins: settingInputInitialValues.weekBegins
-    },
-    problems: {},
-    hasSuccess: false,
-    isLoading: false,
-    hasProblem: false,
-    problemMessages: [],
-    showMessage: true,
-    hasBeenSubmitted: false,
-    secondsUntilRedirect: undefined
-  };
-}
 const inputPropNames = ['name', 'startDate', 'timezone', 'wage', 'cutoffs'];
 
 class _NewJobModal_needsCollapsingAndData extends Component {
   constructor(props) {
     super(props);
-    this.afterChange = this.afterChange.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
-    this.getInputDataProcessedToSubmit = this.getInputDataProcessedToSubmit.bind(this);
-    this.submit = this.submit.bind(this);
     this.reset = this.reset.bind(this);
     addWageInputRefs(this);
     addWkDayCutoffsInputRefs(this);
-    this.state = getStartingState();
+    bindFormMethods(this);
+    this.state = this.getStartingState();
   };
 
-  getInputDataProcessedToSubmit() {
-    const { name, startDate, timezone, wage, cutoffs } = this.state;
+  getUniqueStartingState() {
+    const settingInputInitialValues = getSettingInputInitialValues();
     return {
-      name,
-      startDate,
-      timezone,
-      wage: processWageInput(wage),
-      weekBegins: cutoffs.weekBegins,
-      dayCutoff: processDayCutoffInput(cutoffs.dayCutoff)
+      name: '',
+      startDate: null,
+      timezone: settingInputInitialValues.timezone,
+      wage: settingInputInitialValues.wage,
+      cutoffs: {
+        useDefaults: true,
+        dayCutoff: settingInputInitialValues.dayCutoff,
+        weekBegins: settingInputInitialValues.weekBegins
+      }
     };
   };
 
@@ -120,80 +90,33 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     return { problems, problemMessages };
   };
 
-  setSubmissionProcessingState() {
-    return new Promise(resolve => {
-      this.setState(
-        {
-          hasBeenSubmitted: true,
-          isLoading: true,
-          hasProblem: false,
-          showMessage: false,
-          problems: {},
-          problemMessages: []
-        },
-        resolve
-      );
-    });
+  processAndSubmitData() {
+    const { name, startDate, timezone, wage, cutoffs } = this.state;
+    const newJob = {
+      name,
+      startDate,
+      timezone,
+      wage: processWageInput(wage),
+      weekBegins: cutoffs.weekBegins,
+      dayCutoff: processDayCutoffInput(cutoffs.dayCutoff)
+    };
+    return api.jobs.create(newJob);
   };
 
-  submit(event) {
-    event.preventDefault();
-    this.setSubmissionProcessingState()
-    .then(() => {
-      const { problems, problemMessages } = this.getInputProblems();
-      if (problemMessages && problemMessages.length > 0) {
-        throw { problems, messages: problemMessages };
-      }
-      const newJob = this.getInputDataProcessedToSubmit();
-      return api.jobs.create(newJob);
-    })
-    .then(res => {
-      let secondsUntilRedirect = secondsToDelayRedirect;
-      this.setState({
-        hasSuccess: true,
-        isLoading: false,
-        hasProblem: false,
-        showMessage: true,
-        problems: {},
-        problemMessages: [],
-        secondsUntilRedirect
-      });
-      // * * set currentJob and jobs data * *
-      const { jobs, newJob } = res.data;
-      jobsService.setJobs(jobs);
-      currentJobService.setCurrentJob(newJob);
-      const intervalId = setInterval(
-        () => {
-          secondsUntilRedirect -= stepSizeOfRedirectDelay;
-          this.setState({ secondsUntilRedirect });
-          if (secondsUntilRedirect <= 0) {
-            clearInterval(intervalId);
-            this.props.closeModal();
-            this.reset();
-            this.props.redirectToJobPage(newJob._id);
-          }
-        },
-        1000 * stepSizeOfRedirectDelay
-      )
-    })
-    .catch(err => {
-      this.props.catchApiUnauthorized(err);
-      const errorData = (err && err.response && err.response.data) || err || {};
-      let { problems, messages } = errorData;
-      if (!problems) problems = { unknown: true };
-      if (!messages) messages = ['An unknown problem has occurred.'];
-      this.setState({
-        problems,
-        problemMessages: messages,
-        hasProblem: true,
-        isLoading: false,
-        showMessage: true
-      });
-    });
+  processSuccessResponse(response) {
+    const { jobs, newJob } = response.data;
+    jobsService.setJobs(jobs);
+    return currentJobService.setCurrentJob(newJob);
+  };
+
+  afterSuccessCountdown() {
+    const newJob = currentJobService.getValue();
+    this.props.redirectToJobPage(newJob._id);
+    this.props.closeModal();
   };
 
   reset() {
-    this.setState(getStartingState());
+    this.setState(this.getStartingState());
     this.props.wageContentToggle.reset();
     this.props.cutoffsContentToggle.reset();
   };
@@ -217,17 +140,14 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     const { state, props, changeHandlerFactory } = this;
     const {
       problems,
-      hasProblem,
       isLoading,
       hasSuccess, 
-      problemMessages,
-      showMessage,
-      secondsUntilRedirect
+      name,
+      startDate
     } = state;
 
     const {
       isActive,
-      closeModal,
       inputRef,
       wageContentToggle,
       cutoffsContentToggle
@@ -236,91 +156,55 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     if (!isActive) return <></>;
 
     return (
-      <ModalSkeleton
+      <FormModal
+        formMgmtComponent={this}
+        isFormIncomplete={!name || !startDate}
+        {...{
+          formId
+        }}
+        infoMessages={[
+          'Fill out the form below to add a job and start tracking your hours.',
+          'For basic time tracking, only the first three fields are required.',
+          'If your settings change during the course of the job, you will be able to enter those changes once the job is created.'
+        ]}
+        successMessages={[
+          <><strong>Success!</strong> New job created.</>,
+          <>You are now signed in.</>
+        ]}
+        successRedirectMessageFragment="You will be redirected"
         title="Create Job"
-        isActive={isActive}
-        closeModal={closeModal}
-        isCloseButtonDisabled={hasSuccess}
-        footerContent={
-          <>
-            <Button
-              theme="light"
-              onClick={() => {
-                this.reset();
-                closeModal();
-              }}
-              disabled={isLoading || hasSuccess}
-            >
-              Cancel
-            </Button>
-            <Button
-              theme={hasSuccess ? 'success' : 'primary'}
-              onClick={this.submit}
-              disabled={isLoading || hasSuccess}
-              {...{
-                formId,
-                isLoading
-              }}
-              isSubmit={true}
-            >
-              Submit
-            </Button>
-          </>
-        }
+        disableCloseOnSuccess
       >
-        <form id={formId}>
-          <FormMessages
-            {...{
-              showMessage,
-              hasSuccess,
-              problemMessages,
-            }}
-            hasProblem={hasProblem}
-            infoMessages={[
-              'Fill out the form below to add a job and start tracking your hours.',
-              'For basic time tracking, only the first three fields are required.',
-              'If your settings change during the course of the job, you will be able to enter those changes once the job is created.'
-            ]}
-            successMessages={[
-              <><strong>Success!</strong> New job created.</>,
-              <>You are now signed in.</>
-            ]}
-            successRedirect={{
-              secondsToDelayRedirect,
-              secondsRemaining: secondsUntilRedirect,
-              messageFragment: 'You will be redirected'
-            }}
-            closeMessage={() => this.setState({ showMessage: false })}
-          />
-          {inputPropNames.map(
-            (propName, index) => (
-              <Input
-                {...{
-                  propName,
-                  changeHandlerFactory,
-                  formId,
-                  wageContentToggle,
-                  cutoffsContentToggle
-                }}
-                value={state[propName]}
-                problems={problems && problems[propName]}
-                inputRef={index === 0 ? inputRef : undefined}
-                isActive={isActive && !isLoading && !hasSuccess}
-                topLevelFieldLabelRatio={5.8}
-                secondLevelFieldLabelRatio={4.7}
-                wageInputRefs={extractWageInputRefs(this)}
-                wkDayCutoffsInputRefs={extractWkDayCutoffsInputRefs(this)}
-                key={index}
-              />
-            )
-          )}
-        </form>
-      </ModalSkeleton>
+        {inputPropNames.map(
+          (propName, index) => (
+            <Input
+              {...{
+                propName,
+                changeHandlerFactory,
+                formId,
+                wageContentToggle,
+                cutoffsContentToggle
+              }}
+              value={state[propName]}
+              problems={problems && problems[propName]}
+              inputRef={index === 0 ? inputRef : undefined}
+              isActive={isActive && !isLoading && !hasSuccess}
+              topLevelFieldLabelRatio={5.8}
+              secondLevelFieldLabelRatio={4.7}
+              wageInputRefs={extractWageInputRefs(this)}
+              wkDayCutoffsInputRefs={extractWkDayCutoffsInputRefs(this)}
+              key={index}
+            />
+          )
+        )}
+      </FormModal>
     );
   };
 }
 
-const _NewJobModal_needsCollapsing = addData(_NewJobModal_needsCollapsingAndData, 'windowWidth', windowWidthService);
+const _NewJobModal_needsCollapsing = (
+  addData(_NewJobModal_needsCollapsingAndData, 'windowWidth', windowWidthService)
+);
 
 const _NewJobModal_needsMoreCollapsing = (
   addCollapsing(_NewJobModal_needsCollapsing, 'wageContentToggle', false, true)

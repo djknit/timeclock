@@ -32,16 +32,16 @@ function preprocessScheduleForDisplay(schedule, settingName) {
   );
 }
 
-function getIndexOfSchedEntryFromId(entryId, schedule) {
+function getSchedEntryFromId(entryId, schedule) {
   if (!schedule || !entryId) return null;
   for (let i = 0; i < schedule.length; i++) {
     if (schedule[i]._id.toString() === entryId.toString()) {
-      return i;
+      return schedule[i];
     }
   }
 }
 
 export {
   preprocessScheduleForDisplay,
-  getIndexOfSchedEntryFromId
+  getSchedEntryFromId
 };

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import {
   preprocessScheduleForDisplay,
-  getIndexOfSchedEntryFromId
+  getSchedEntryFromId
 } from '../utilities';
 import { windowWidthService, areModalsOpenService } from '../../../../../data';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
@@ -44,19 +44,19 @@ class _Setting_needsData extends Component {
       state[isActiveStateProp] = false;
     });
     this.reportModalActivity = this.reportModalActivity.bind(this);
-    this.setEntryToEditById = this.setEntryToEditById.bind(this);
+    this.setEntryToEditId = this.setEntryToEditId.bind(this);
     this.state = {
-      indexOfSchedEntryToEdit: undefined,
+      entryToEditId: undefined,
       ...state,
       modalsRegistrationId: undefined,
     };
-  }
+  };
 
   modalTogglerFactory(modalIsOpenStatePropName, inputRef, hasDateInputAsPrimary) {
-    return (isOpenAfterToggle, indexOfSchedEntryToEdit) => {
+    return (isOpenAfterToggle, entryToEditId) => {
       let stateUpdates = { [modalIsOpenStatePropName]: !!isOpenAfterToggle };
-      if (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) {
-        Object.assign(stateUpdates, { indexOfSchedEntryToEdit });
+      if (entryToEditId || entryToEditId === 0) {
+        Object.assign(stateUpdates, { entryToEditId });
       }
       this.setState(
         stateUpdates,
@@ -69,7 +69,7 @@ class _Setting_needsData extends Component {
         }
       );
     };
-  }
+  };
 
   reportModalActivity() {
     let hasModalOpen = false;
@@ -77,31 +77,27 @@ class _Setting_needsData extends Component {
       if (this.state[isActiveStateProp]) hasModalOpen = true;
     });
     areModalsOpenService.report(this.state.modalsRegistrationId, hasModalOpen);
-  }
+  };
 
-  setEntryToEditById(entryId) {
-    const { job, settingName } = this.props;
-    const stateUpdates = {
-      indexOfSchedEntryToEdit: getIndexOfSchedEntryFromId(entryId, job[settingName])
-    };
+  setEntryToEditId(entryId) {
     return new Promise((resolve) => {
-      this.setState(stateUpdates, resolve);
+      this.setState({ entryToEditId: entryId }, resolve);
     });
-  }
+  };
 
   componentDidMount() {
     this.setState({
       modalsRegistrationId: areModalsOpenService.getId(),
     });
-  }
+  };
 
   componentWillUnmount() {
     areModalsOpenService.report(this.state.modalsRegistrationId, false);
-  }
+  };
 
   render() {
     const {
-      setEntryToEditById,
+      setEntryToEditId,
       toggleAddUpdateModal,
       toggleEditUpdateModal,
       toggleChangeDateUpdateModal,
@@ -116,7 +112,7 @@ class _Setting_needsData extends Component {
       areAnyModalsOpen,
       windowWidth,
     } = this.props;
-    const { indexOfSchedEntryToEdit } = this.state;
+    const { entryToEditId } = this.state;
 
     const valueSchedule = preprocessScheduleForDisplay(job[settingName], settingName);
 
@@ -131,8 +127,8 @@ class _Setting_needsData extends Component {
       windowWidth,
       valueSchedule,
       areAnyModalsOpen,
-      indexOfSchedEntryToEdit,
-      setEntryToEditById
+      entryToEditId,
+      setEntryToEditId
     };
 
     return (
@@ -171,7 +167,7 @@ class _Setting_needsData extends Component {
         ))}
       </>
     );
-  }
+  };
 }
 
 const Setting = addData(_Setting_needsData, 'windowWidth', windowWidthService);

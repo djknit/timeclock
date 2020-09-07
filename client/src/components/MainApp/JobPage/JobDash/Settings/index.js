@@ -28,16 +28,16 @@ const settingsLabelsAndPropNamesAndPagePaths = [
 ];
 
 function SettingsArea({
-  style,
+  style: styleProp,
   disabled,
   job,
   buildSettingsSubPath
 }) {
 
-  const completeStyle = getStyle(style);
+  const style = getStyle(styleProp);
 
   return (
-    <ContentArea style={completeStyle.contentArea}>
+    <ContentArea style={style.contentArea}>
       <ContentAreaTitle>Settings Summary</ContentAreaTitle>
       {
         settingsLabelsAndPropNamesAndPagePaths.map(
@@ -45,12 +45,12 @@ function SettingsArea({
             <div
               style={
                 index === settingsLabelsAndPropNamesAndPagePaths.length - 1 ?
-                completeStyle.lastAreaHasBtns :
-                completeStyle.areaNotLastHasBtns
+                style.lastAreaHasBtns :
+                style.areaNotLastHasBtns
               }
               key={label}
             >
-              <p style={completeStyle.areaLabel}>
+              <p style={style.areaLabel}>
                 {label}
               </p>
               <CurrentItemValueDisplay
@@ -61,14 +61,14 @@ function SettingsArea({
                 }}
               />
               {job[propName].length > 1 && (
-                <p style={completeStyle.areaHasBtnsText}>
+                <p style={style.areaHasBtnsText}>
                   This value is not the same for all time periods.
                 </p>
               )}
               <Button
                 theme="primary"
                 isLink
-                styles={completeStyle.firstBtn}
+                styles={style.firstBtn}
                 to={buildSettingsSubPath(pagePath)}
                 allowTabFocus={!disabled}
               >

@@ -1,4 +1,4 @@
-import { dataServiceFactory } from '../../utilities';
+import { dataServiceFactory } from '../utilities';
 import isLoggedInService from './isLoggedIn';
 import profileService from './profile';
 import jobsService from './jobs';

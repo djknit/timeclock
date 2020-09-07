@@ -1,11 +1,12 @@
 import { headingFontFam, shadow, secondaryBackgroundColor, mainBackgroundColor } from '../style';
 
 const textColor = '#ffffff';
+const backgroundColor = secondaryBackgroundColor;
 
 export default function getStyle(brandItemInnerHeight, totalHeight) {
   return {
     nav: {
-      backgroundColor: secondaryBackgroundColor,
+      backgroundColor,
       ...shadow(7, {})
     },
     brandTextItem: {
@@ -24,11 +25,23 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       paddingTop: 0,
       paddingBottom: 0,
       paddingRight: 0
-    },
+    }, 
     brandImg: {
       height: totalHeight,
       maxHeight: totalHeight,
       width: totalHeight
+    },
+    navStart: {
+      // zIndex: 5
+    },
+    dropdownArrow: {
+      display: 'inline-block',
+      position: 'relative',
+      top: '.2em',
+      fontSize: '.8em'
+    },
+    burger: {
+      color: textColor
     },
     welcomeText: {
       color: textColor
@@ -38,3 +51,5 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
     }
   };
 };
+
+export { textColor, backgroundColor, shadow };

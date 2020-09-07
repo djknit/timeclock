@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-// import { Link } from 'react-router-dom';
 import getStyle from './style';
 import PageTitle from '../../PageTitle';
-import ContentArea, { ContentAreaTitle } from '../../ContentArea';
+import GeneralEntry from './GeneralEntry';
+import Summary from './Summary';
+import Weeks from './Weeks';
 
 class TimePage extends Component {
   constructor(props) {
@@ -12,7 +13,7 @@ class TimePage extends Component {
 
   render() {
 
-    const { job, parentPath } = this.props;
+    const { job, parentPath, windowWidth } = this.props;
 
     const crumbChain = [
       {
@@ -22,14 +23,16 @@ class TimePage extends Component {
       { text: 'Time' }
     ];
 
-    const style = getStyle();
+    const style = getStyle(windowWidth);
 
     return (
       <>
         <PageTitle {...{ crumbChain }} />
-        <ContentArea>
-          <ContentAreaTitle>Time Stuff</ContentAreaTitle>
-        </ContentArea>
+        <div style={style.contentAreasRow}>
+          <Summary style={style.summaryArea} />
+          <GeneralEntry style={style.generalEntryArea} />
+        </div>
+        <Weeks />
       </>
     );
   };

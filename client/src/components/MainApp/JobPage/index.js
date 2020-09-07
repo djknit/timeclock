@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { currentJobService, areModalsOpenService } from '../../../data';
+import { currentJobService, areModalsOpenService, windowWidthService } from '../../../data';
 import { api } from '../utilities'
 import getStyle from './style';
 import ContentArea from '../ContentArea';
@@ -93,7 +93,7 @@ class _JobPage_needsData extends Component {
       toggleEditJobNameModal, toggleDeleteJobModal, editJobNameInputRef, deleteJobModalInputRef
     } = this;
     const {
-      job, match, returnToDashboard, areAnyModalsOpen, catchApiUnauthorized, dashboardPath
+      job, match, returnToDashboard, areAnyModalsOpen, catchApiUnauthorized, dashboardPath, windowWidth
     } = this.props;
     const {
       isLoading, problemMessages, isEditJobNameModalActive, isDeleteJobModalActive
@@ -137,7 +137,8 @@ class _JobPage_needsData extends Component {
                 <TimePage
                   {...{
                     ...props,
-                    ...commonRouteAttributes
+                    ...commonRouteAttributes,
+                    windowWidth
                   }}
                 />
               )}
@@ -155,7 +156,8 @@ class _JobPage_needsData extends Component {
                     buildSettingsSubPath,
                     jobSettingsPath,
                     timePagePath,
-                    dashboardPath
+                    dashboardPath,
+                    windowWidth
                   }}
                 />
               )}
@@ -221,7 +223,8 @@ class _JobPage_needsData extends Component {
   };
 }
 
-const JobPage = addData(_JobPage_needsData, 'job', currentJobService);
+const _JobPage_stillNeedsData = addData(_JobPage_needsData, 'job', currentJobService);
+const JobPage = addData(_JobPage_stillNeedsData, 'windowWidth', windowWidthService);
 
 export default JobPage;
 
