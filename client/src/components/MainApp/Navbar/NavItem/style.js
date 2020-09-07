@@ -1,7 +1,7 @@
 import { calculateStyleForPseudoClassState } from '../../../higherOrder';
 import { textColor } from '../style';
 
-export default function getStyle(pseudoState) {
+export default function getStyle(pseudoState, additionalStyle) {
 
   const variableStyles = {
     innate: {
@@ -25,7 +25,14 @@ export default function getStyle(pseudoState) {
   return {
     navItem: {
       color: textColor,
-      ...calculateStyleForPseudoClassState(variableStyles, pseudoState)
+      ...calculateStyleForPseudoClassState(variableStyles, pseudoState),
+      ...(additionalStyle || {})
+    },
+    dropdownArrow: {
+      display: 'inline-block',
+      position: 'relative',
+      top: '.2em',
+      fontSize: '.8em'
     }
   };
 }

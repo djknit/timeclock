@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import logo from './logo192.png';
+import getStyle from './style';
 import { isLoggedInService, profileService, userService } from '../../../data';
 import { api } from '../utilities';
-import getStyle from './style';
 import NavItem from './NavItem';
+import { DropdownContainer, Dropdown, DropdownLink } from './dropdownPieces';
 import Button from '../../Button';
 import { addData } from '../../higherOrder';
+
+const menuId = 'navbar-menu';
 
 class _Navbar_needsData extends Component {
   constructor(props) {
@@ -65,10 +68,10 @@ class _Navbar_needsData extends Component {
     return (
       <nav className="navbar" role="navigation" aria-label="main navigation" style={style.nav}>
         <div className="navbar-brand" style={style.brand}>
-          <div className="navbar-item" style={style.navItem} style={style.brandImgItem}>
+          <div className="navbar-item" style={style.brandImgItem}>
             <img src={logo} style={style.brandImg} />
           </div>
-          <div className="navbar-item" style={style.navItem} style={style.brandTextItem} ref={this.brandItem}>
+          <div className="navbar-item" style={style.brandTextItem} ref={this.brandItem}>
             <span style={style.brandText} ref={this.brandText}>
               TIME<br />CLOCK
             </span>
@@ -79,30 +82,30 @@ class _Navbar_needsData extends Component {
             className={`navbar-burger burger${isActiveClass}`}
             aria-label="menu"
             aria-expanded="false"
-            data-target="navbarBasicExample"
+            data-target={menuId}
             style={style.burger}
             onClick={toggleMenu}
           >
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
+            {[...Array(3)].map((_e, _i) => (
+              <span aria-hidden="true" key={_i} />
+            ))}
           </a>
         </div>
   
-        <div id="navbarBasicExample" className={`navbar-menu${isActiveClass}`}>
-          <div className="navbar-start">
+        <div id={menuId} className={`navbar-menu${isActiveClass}`}>
+          <div className="navbar-start" style={style.navStart}>
             <NavItem>
               Dashboard
             </NavItem>
   
-            <NavItem hasDropdown>
-              <a className="navbar-link is-arrowless" style={style.navItem}>
-                Jobs&nbsp;<i className="fas fa-chevron-down" style={style.dropdownArrow} />
-              </a>
+            <DropdownContainer>
+              <DropdownLink>
+                Jobs
+              </DropdownLink>
   
-              <div className="navbar-dropdown">
+              <Dropdown>
                 <NavItem>
-                  <i className="fas fa-plus" /> New
+                  <i className="fas fa-plus" />&nbsp;New
                 </NavItem>
                 <NavItem>
                   Jobs
@@ -114,17 +117,13 @@ class _Navbar_needsData extends Component {
                 <NavItem>
                   Report an issue
                 </NavItem>
-              </div>
-            </NavItem>
+              </Dropdown>
+            </DropdownContainer>
 
-            {/* <div className="navbar-item has-dropdown is-hoverable">
-              
-            </div> */}
-
-            <NavItem hasDropdown>
-              <a className="navbar-link is-arrowless" style={style.navItem}>
-                Jobs&nbsp;<i className="fas fa-angle-down" style={style.dropdownArrow} />
-              </a>
+            <div className="navbar-item has-dropdown is-hoverable">
+              <DropdownLink>
+                Jobs
+              </DropdownLink>
   
               <div className="navbar-dropdown">
                 <NavItem>
@@ -141,15 +140,11 @@ class _Navbar_needsData extends Component {
                   Report an issue
                 </NavItem>
               </div>
-            </NavItem>
-
-            {/* <div className="navbar-item has-dropdown is-hoverable">
-              
-            </div> */}
+            </div>
           </div>
 
           <div className="navbar-end">
-            <div className="navbar-item" style={style.navItem}>
+            <div className="navbar-item">
               <span style={style.welcomeText}>
                 {profileData && isLoggedIn ? (
                   <>Hi, <strong style={style.welcomeText}>{profileData.username || profileData.email}</strong>!</>

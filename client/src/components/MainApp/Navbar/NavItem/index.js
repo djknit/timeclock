@@ -5,33 +5,28 @@ import { addPseudoPseudoClasses } from '../../../higherOrder';
 function _NavItem_needsPseudo({
   children,
   isActive,
-  hasDropdown,
+  isDropdownLink,
   pseudoHandlers,
-  pseudoState
+  pseudoState,
+  style: styleProp
 }) {
 
-  let className = 'navbar-item';
+  let className = isDropdownLink ? 'navbar-link is-arrowless' : 'navbar-item';
   if (isActive) className += ' is-active';
-  if (hasDropdown) className += ' has-dropdown is-hoverable';
 
-  const style = getStyle(pseudoState);
-
-  function TopLevelEl({ children: _children, ..._props }) {
-    return hasDropdown ? (
-      <div {..._props}>{_children}</div>
-    ) : (
-      <a {..._props}>{_children}</a>
-    );
-  }
+  const style = getStyle(pseudoState, styleProp);
 
   return (
-    <TopLevelEl
+    <a
       {...{ className }}
       {...pseudoHandlers}
       style={style.navItem}
     >
       {children}
-    </TopLevelEl>
+      {isDropdownLink && (
+        <>&nbsp;<i className="fas fa-chevron-down" style={style.dropdownArrow} /></>
+      )}
+    </a>
   );
 }
 

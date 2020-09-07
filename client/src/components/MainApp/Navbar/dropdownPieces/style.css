@@ -1,0 +1,9 @@
+.navbar-dropdown::before {
+  display: block;
+  width: 100%;
+  height: 7px; /* must be less than padding-bottom on .navbar-link above dropdown (8px) */
+  background-color: inherit;
+  content: " ";
+  top: -9px; /* == [- (height + dropdown border-top width)] == - (7px + 2px) */
+  position: absolute;
+}
