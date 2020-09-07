@@ -1,4 +1,4 @@
-import { dataServiceFactory } from '../utilities';
+import { dataServiceFactory } from './utilities';
 
 let windowWidth;
 

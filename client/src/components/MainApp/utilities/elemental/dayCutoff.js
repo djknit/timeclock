@@ -10,7 +10,6 @@ function getDayCutoffTime(cutoffValueInMinutes, is24hr) {
     time.isPm = time.hour >= 12;
     time.hour = (time.hour % 12) || 12;
   }
-  console.log(time)
   return time;
 }
 

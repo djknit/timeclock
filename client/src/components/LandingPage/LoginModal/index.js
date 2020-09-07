@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import ModalSkeleton from '../../ModalSkeleton';
-import Button from '../../Button';
-import { TextInput, ProgressBar, FormMessages } from '../../formPieces';
-import Notification, { NotificationText } from '../../Notification';
-import { api, constants, changeHandlerFactoryFactory } from '../utilities';
+import { api, bindFormMethods } from '../utilities';
 import { userService } from '../../../data';
+import FormModal from '../../FormModal';
+import { TextInput } from '../../formPieces';
 
 const fieldsInfo = [
   {
@@ -27,32 +25,19 @@ function getIconClass(fieldName, hasSuccess) {
   return hasSuccess ? 'fas fa-unlock' : 'fas fa-lock';
 }
 const formId = 'login-form';
-function getStartingState() {
-  return {
-    usernameOrEmail: '',
-    password: '',
-    problems: {},
-    hasSuccess: false,
-    isLoading: false,
-    hasProblem: false,
-    problemMessages: [],
-    showMessage: true,
-    hasBeenSubmitted: false,
-    secondsUntilRedirect: undefined
-  };
-}
-const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 class LoginModal extends Component {
   constructor(props) {
     super(props);
-    this.afterChange = this.afterChange.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.submit = this.submit.bind(this);
-    this.reset = this.reset.bind(this);
-    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
-    this.state = getStartingState();
+    bindFormMethods(this);
+    this.state = this.getStartingState();
+  };
+
+  getUniqueStartingState() {
+    return {
+      usernameOrEmail: '',
+      password: ''
+    };
   };
 
   afterChange(propName) {
@@ -82,158 +67,58 @@ class LoginModal extends Component {
       problems.password = true;
       problemMessages.push('You must enter a password.');
     }
-    return { problems, problemMessages };
+    const hasProblem = problemMessages.length > 0;
+    return { problems, problemMessages, hasProblem };
   };
 
-  setSubmissionProcessingState() {
-    return new Promise(resolve => {
-      this.setState(
-        {
-          hasBeenSubmitted: true,
-          isLoading: true,
-          hasProblem: false,
-          showMessage: false,
-          problems: {},
-          problemMessages: []
-        },
-        resolve
-      );
-    });
-  };
-
-  submit(event) {
-    event.preventDefault();
+  processAndSubmitData() {
     const { usernameOrEmail, password } = this.state;
-    this.setSubmissionProcessingState()
-    .then(() => {
-      const { problems, problemMessages } = this.getInputProblems();
-      if (problemMessages.length > 0) {
-        throw {
-          problems,
-          messages: problemMessages
-        };
-      }
-      return api.auth.login({ usernameOrEmail, password });
-    })
-    .then(res => {
-      let secondsUntilRedirect = secondsToDelayRedirect;
-      this.setState({
-        hasSuccess: true,
-        isLoading: false,
-        hasProblem: false,
-        showMessage: true,
-        problems: {},
-        problemMessages: [],
-        secondsUntilRedirect
-      });
-      userService.setUser(res.data.user);
-      const intervalId = setInterval(
-        () => {
-          secondsUntilRedirect -= stepSizeOfRedirectDelay;
-          this.setState({ secondsUntilRedirect });
-          if (secondsUntilRedirect <= 0) {
-            clearInterval(intervalId);
-            this.setState(getStartingState());
-            this.props.history.push('/app/dashboard');
-          }
-        },
-        1000 * stepSizeOfRedirectDelay
-      );
-    })
-    .catch(err => {
-      const errorData = (err && err.response && err.response.data) || err || {};
-      const { problems, messages } = errorData;
-      this.setState({
-        problems: problems || { unknown: true },
-        problemMessages: messages || ['An unknown problem has occured.'],
-        hasProblem: true,
-        isLoading: false,
-        showMessage: true
-      });
-    });
+    return api.auth.login({ usernameOrEmail, password });
   };
 
-  reset() {
-    this.setState(getStartingState());
+  processSuccessResponse(response) {
+    return userService.setUser(response.data.user);
+  };
+
+  afterSuccessCountdown() {
+    this.props.history.push('/app/dashboard');
   };
 
   render() {
-    const { isActive, closeModal, inputRef } = this.props;
+    const { isActive, inputRef } = this.props;
     const {
       hasSuccess,
       isLoading,
       problems,
-      showMessage,
-      problemMessages,
       usernameOrEmail,
       password,
-      secondsUntilRedirect
     } = this.state;
-
     return (
-      <ModalSkeleton
+      <FormModal
+        formMgmtComponent={this}
+        isFormIncomplete={!usernameOrEmail || !password}
+        {...{
+          formId
+        }}
+        successMessages={[<><strong>Success!</strong> You are signed in.</>]}
+        successRedirectMessageFragment="You will be redirected"
         title="Sign In"
-        isActive={isActive}
-        closeModal={closeModal}
-        isCloseButtonDisabled={isLoading || hasSuccess}
-        footerContent={
-          <>
-            <Button
-              theme="light"
-              onClick={() => {
-                this.reset();
-                closeModal();
-              }}
-              disabled={isLoading || hasSuccess}
-            >
-              Cancel
-            </Button>
-            <Button
-              theme={hasSuccess ? "success" : "primary"}
-              onClick={this.submit}
-              disabled={
-                isLoading || hasSuccess || !usernameOrEmail || !password
-              }
-              formId={formId}
-              isSubmit={true}
-              isLoading={isLoading}
-            >
-              Submit
-            </Button>
-          </>
-        }
+        disableCloseOnSuccess
       >
-        <form id={formId}>
-          <FormMessages
-            {...{
-              showMessage,
-              hasSuccess,
-              problemMessages,
-            }}
-            hasProblem={!!problems}
-            successMessages={[<><strong>Success!</strong> You are signed in.</>]}
-            successRedirect={{
-              secondsToDelayRedirect,
-              secondsRemaining: secondsUntilRedirect,
-              messageFragment: 'You will be redirected'
-            }}
-            closeMessage={() => this.setState({ showMessage: false })}
+        {fieldsInfo.map((field, index) => (
+          <TextInput
+            {...field}
+            formId={formId}
+            value={this.state[field.propName]}
+            changeHandlerFactory={this.changeHandlerFactory}
+            isActive={isActive && !isLoading && !hasSuccess}
+            hasProblem={problems[field.propName]}
+            key={index}
+            inputRef={index === 0 ? inputRef : undefined}
+            iconClass={getIconClass(field.propName, hasSuccess)}
           />
-          {fieldsInfo.map((field, index) => (
-            <TextInput
-              {...field}
-              formId={formId}
-              value={this.state[field.propName]}
-              changeHandlerFactory={this.changeHandlerFactory}
-              isActive={isActive && !isLoading && !hasSuccess}
-              hasProblem={problems[field.propName]}
-              key={index}
-              inputRef={index === 0 ? inputRef : undefined}
-              iconClass={getIconClass(field.propName, hasSuccess)}
-            />
-          ))}
-        </form>
-      </ModalSkeleton>
+        ))}
+      </FormModal>
     );
   };
 }

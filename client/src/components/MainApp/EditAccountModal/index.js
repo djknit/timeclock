@@ -3,22 +3,17 @@ import getStyle from './style';
 import { profileService } from '../../../data';
 import {
   api,
-  constants,
-  changeHandlerFactoryFactory,
   capitalizeFirstLetter,
   getUsernameProblems,
   getEmailProblems,
   getPasswordProblems,
-  checkApiResProbMsgsForTakenUsernameOrEmail
+  checkApiResProbMsgsForTakenUsernameOrEmail,
+  bindFormMethods
 } from '../utilities';
-import ModalSkeleton from '../../ModalSkeleton';
-import Button from '../../Button';
-import Notification, { NotificationText } from '../../Notification';
+import FormModal from '../../FormModal';
 import Tag, { TagGroup } from '../../Tag';
-import { TextInput, ProgressBar, FormMessages } from '../../formPieces';
+import { TextInput } from '../../formPieces';
 import { addData } from '../../higherOrder';
-
-const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
 function getVariableInputAttrs(propToEditName) {
   if (!propToEditName) return {};
@@ -49,34 +44,22 @@ function getVariableInputAttrs(propToEditName) {
   };
 }
 const formId = 'edit-account-form';
-function getStartingState() {
-  return {
-    updatedAccountProp: '',
-    verifyUpdatedPassword: '',
-    currentPassword: '',
-    problems: {},
-    hasSuccess: false,
-    isLoading: false,
-    hasProblem: false,
-    problemMessages: [],
-    showMessage: true,
-    hasBeenSubmitted: false,
-    unavailableUsernames: [],
-    unavailableEmails: [],
-    secondsUntilRedirect: undefined
-  };
-}
 
 class _EditAccountModal_needsData extends Component {
   constructor(props) {
     super(props);
-    this.afterChange = this.afterChange.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
-    this.submit = this.submit.bind(this);
-    this.reset = this.reset.bind(this);
-    this.state = getStartingState();
+    bindFormMethods(this);
+    this.state = this.getStartingState();
+  };
+
+  getUniqueStartingState() {
+    return {
+      updatedAccountProp: '',
+      verifyUpdatedPassword: '',
+      currentPassword: '',
+      unavailableUsernames: [],
+      unavailableEmails: []
+    };
   };
 
   afterChange(propName) { // `propName` is the name of the property of the state of this component) that was changed
@@ -94,14 +77,21 @@ class _EditAccountModal_needsData extends Component {
 
   getInputProblems(problemsToKeep, problemMessagesToKeep) {
     const {
-      updatedAccountProp, verifyUpdatedPassword, unavailableEmails, unavailableUsernames
+      updatedAccountProp, verifyUpdatedPassword, unavailableEmails, unavailableUsernames, currentPassword
     } = this.state;
     const { propToEditName } = this.props;
     let problems = problemsToKeep || {};
     let problemMessages = problemMessagesToKeep || [];
+    if (!currentPassword && !problems.currentPassword) {
+      problems.currentPassword = true;
+      problemMessages.push(
+        'You must enter your current password for security in order to complete the update to your account.'
+      );
+    }
     if (!updatedAccountProp) {
       problems.updatedAccountProp = true;
       problemMessages.push(`You must enter your new ${propToEditName}.`);
+      return { problems, problemMessages };
     }
     switch (propToEditName) {
       case 'username':
@@ -123,101 +113,43 @@ class _EditAccountModal_needsData extends Component {
     return { problems, problemMessages };
   };
 
-  setSubmissionProcessingState() {
+  processAndSubmitData() {
+    return api.auth.editInfo({
+      password: this.state.currentPassword,
+      updatedProps: { [this.props.propToEditName]: this.state.updatedAccountProp }
+    });
+  };
+
+  processSuccessResponse(response) {
+    profileService.setUser(response.data.user);
+  };
+
+  processErrorResponse(response) {
+    const { data } = response;
+    const { updatedAccountProp } = this.state;
+    let { unavailableEmails, unavailableUsernames } = this.state;
+    checkApiResProbMsgsForTakenUsernameOrEmail(
+      data.messages,
+      {
+        username: updatedAccountProp,
+        email: updatedAccountProp
+      },
+      {
+        usernames: unavailableUsernames,
+        emails: unavailableEmails
+      }
+    );
+    let processedProblems = {};
+    if (data.problems.updatedProps) processedProblems.updatedAccountProp = true;
+    if (data.problems.password) processedProblems.currentPassword = true;
+    data.problems = processedProblems;
     return new Promise(resolve => {
-      this.setState(
-        {
-          hasBeenSubmitted: true,
-          isLoading: true,
-          hasProblem: false,
-          showMessage: false,
-          problems: {},
-          problemMessages: []
-        },
-        resolve
-      );
+      this.setState({ unavailableEmails, unavailableUsernames }, resolve);
     });
   };
 
-  submit(event) {
-    event.preventDefault();
-    const { propToEditName, closeModal } = this.props;
-    const { updatedAccountProp, currentPassword } = this.state;
-    let { unavailableUsernames, unavailableEmails } = this.state;
-    this.setSubmissionProcessingState()
-    .then(() => {
-      const { problems, problemMessages } = this.getInputProblems();
-      if (problemMessages.length > 0) {
-        throw {
-          problems,
-          messages: problemMessages
-        };
-      }
-      return api.auth.editInfo({
-        password: currentPassword,
-        updatedProps: { [propToEditName]: updatedAccountProp }
-      });
-    })
-    .then(res => {
-      let secondsUntilRedirect = secondsToDelayRedirect;
-      this.setState({
-        hasSuccess: true,
-        isLoading: false,
-        hasProblem: false,
-        showMessage: true,
-        problems: {},
-        problemMessages: [],
-        secondsUntilRedirect
-      });
-      profileService.setUser(res.data.user);
-      const intervalId = setInterval(
-        () => {
-          secondsUntilRedirect -= stepSizeOfRedirectDelay;
-          this.setState({ secondsUntilRedirect });
-          if (secondsUntilRedirect <= 0) {
-            clearInterval(intervalId);
-            this.reset();
-            closeModal();
-          }
-        },
-        1000 * stepSizeOfRedirectDelay
-      );
-    })
-    .catch(err => {
-      console.log(err)
-      this.props.catchApiUnauthorized(err);
-      const isApiRes = !!(err && err.response);
-      const errorData = (isApiRes && err.response.data) || err || {};
-      let problemMessages = errorData.messages || ['An unknown problem has occured.'];
-      if (isApiRes) {
-        checkApiResProbMsgsForTakenUsernameOrEmail(
-          problemMessages,
-          {
-            username: updatedAccountProp,
-            email: updatedAccountProp
-          },
-          {
-            usernames: unavailableUsernames,
-            emails: unavailableEmails
-          }
-        );
-        const _probs = errorData.problems || {};
-        errorData.problems = {};
-        if (_probs.updatedProps) errorData.problems.updatedAccountProp = true;
-        if (_probs.password) errorData.problems.currentPassword = true;
-      }
-      this.setState({
-        problems: errorData.problems,
-        problemMessages,
-        hasProblem: true,
-        isLoading: false,
-        showMessage: true
-      });
-    });
-  };
-
-  reset() {
-    this.setState(getStartingState());
+  afterSuccessCountdown() {
+    this.props.closeModal();
   };
 
   componentDidUpdate(prevProps) {
@@ -226,27 +158,20 @@ class _EditAccountModal_needsData extends Component {
 
   render() {
 
-    const { props, state, changeHandlerFactory, reset, submit } = this;
-
-    const {
-      user, isActive, propToEditName, closeModal, inputRef
-    } = props;
-    const propToEditCurrentValue = user && user[propToEditName];
-    const hasCurrentValue = (propToEditCurrentValue && true) || propToEditName === 'password';
-    const capPropToEditName = capitalizeFirstLetter(propToEditName);
-
+    const { props, state, changeHandlerFactory } = this;
+    const { user, isActive, propToEditName, inputRef } = props;
     const {
       updatedAccountProp,
       verifyUpdatedPassword,
       currentPassword,
       problems,
       hasSuccess,
-      isLoading,
-      hasProblem,
-      problemMessages,
-      showMessage,
-      secondsUntilRedirect
+      isLoading
     } = state;
+
+    const propToEditCurrentValue = user && user[propToEditName];
+    const hasCurrentValue = (propToEditCurrentValue && true) || propToEditName === 'password';
+    const capPropToEditName = capitalizeFirstLetter(propToEditName);
 
     if (!isActive) {
       return <></>;
@@ -259,117 +184,74 @@ class _EditAccountModal_needsData extends Component {
     const style = getStyle();
 
     return (
-      <ModalSkeleton
+      <FormModal
+        formMgmtComponent={this}
+        isFormIncomplete={!updatedAccountProp || !currentPassword || isMissingVerifyPassword}
         {...{
-          isActive,
-          closeModal
+          formId
         }}
+        infoMessages={[`Complete the form below to update your ${propToEditName}.`]}
+        successMessages={[
+          <><strong>Success!</strong> Your {propToEditName} was updated.</>
+        ]}
+        successRedirectMessageFragment="This dialog box will close"
         title={`${hasCurrentValue ? 'Edit' : 'Add'} ${capPropToEditName}`}
-        isCloseButtonDisabled={isLoading}
-        footerContent={
-          <>
-            <Button
-              theme="light"
-              onClick={() => {
-                reset();
-                closeModal();
-              }}
-              disabled={isLoading}
-            >
-              {hasSuccess ? 'Close' : 'Cancel'}
-            </Button>
-            <Button
-              theme={hasSuccess ? 'success' : 'primary'}
-              onClick={submit}
-              disabled={
-                isLoading || hasSuccess || !updatedAccountProp || !currentPassword || isMissingVerifyPassword
-              }
-              isSubmit
-              {...{
-                formId,
-                isLoading
-              }}
-            >
-              Submit
-            </Button>
-          </>
-        }
       >
-        <form id={formId}>
-          <FormMessages
-            {...{
-              showMessage,
-              hasSuccess,
-              problemMessages,
-            }}
-            hasProblem={hasProblem}
-            infoMessages={[`Complete the form below to update your ${propToEditName}.`]}
-            successMessages={[
-              <><strong>Success!</strong> Your {propToEditName} was updated.</>
-            ]}
-            successRedirect={{
-              secondsToDelayRedirect,
-              secondsRemaining: secondsUntilRedirect,
-              messageFragment: 'This dialog box will close'
-            }}
-            closeMessage={() => this.setState({ showMessage: false })}
-          />
-          {propToEditName !== 'password' && (
-            <TagGroup align="center">
-              <Tag theme="info" size={6}>
-                {`Current ${capPropToEditName}:`}
-              </Tag>
-              <Tag theme="info light" size={6}>
-                {propToEditCurrentValue ? `"${propToEditCurrentValue}"` : 'none'}
-              </Tag>
-            </TagGroup>
-          )}
+        {propToEditName !== 'password' && (
+          <TagGroup align="center">
+            <Tag theme="info" size={6}>
+              {`Current ${capPropToEditName}:`}
+            </Tag>
+            <Tag theme="info light" size={6}>
+              {propToEditCurrentValue ? `"${propToEditCurrentValue}"` : 'none'}
+            </Tag>
+          </TagGroup>
+        )}
+        <TextInput
+          propName="updatedAccountProp"
+          value={updatedAccountProp}
+          hasProblem={problems && problems.updatedAccountProp}
+          isActive={!isLoading && !hasSuccess}
+          {...variableUpdateInputAttrs}
+          {...{
+            changeHandlerFactory,
+            formId,
+            inputRef
+          }}
+        />
+        {propToEditName === 'password' && (
           <TextInput
-            propName="updatedAccountProp"
-            value={updatedAccountProp}
-            hasProblem={problems && problems.updatedAccountProp}
-            isActive={!isLoading && !hasSuccess}
-            {...variableUpdateInputAttrs}
-            {...{
-              changeHandlerFactory,
-              formId,
-              inputRef
-            }}
-          />
-          {propToEditName === 'password' && (
-            <TextInput
-              propName="verifyUpdatedPassword"
-              value={verifyUpdatedPassword}
-              label="Confirm Your New Password"
-              placeholder="Retype your new password..."
-              hasProblem={problems && problems.verifyUpdatedPassword}
-              iconClass="fas fa-unlock"
-              isActive={!isLoading && !hasSuccess}
-              {...{
-                changeHandlerFactory,
-                formId
-              }}
-              type="newPassword"
-            />
-          )}
-          <hr style={style.hr} />
-          <TextInput
-            propName="currentPassword"
-            value={currentPassword}
-            label="Enter Your Current Password"
-            placeholder="Your password..."
-            hasProblem={problems && problems.currentPassword}
-            iconClass={hasSuccess ? 'fas fa-unlock' : 'fas fa-lock'}
-            helpText="Enter your current password to verify you identity and complete the update to your account."
+            propName="verifyUpdatedPassword"
+            value={verifyUpdatedPassword}
+            label="Confirm Your New Password"
+            placeholder="Retype your new password..."
+            hasProblem={problems && problems.verifyUpdatedPassword}
+            iconClass="fas fa-unlock"
             isActive={!isLoading && !hasSuccess}
             {...{
               changeHandlerFactory,
               formId
             }}
-            type="password"
+            type="newPassword"
           />
-        </form>
-      </ModalSkeleton>
+        )}
+        <hr style={style.hr} />
+        <TextInput
+          propName="currentPassword"
+          value={currentPassword}
+          label="Enter Your Current Password"
+          placeholder="Your password..."
+          hasProblem={problems && problems.currentPassword}
+          iconClass={hasSuccess ? 'fas fa-unlock' : 'fas fa-lock'}
+          helpText="Enter your current password to verify you identity and complete the update to your account."
+          isActive={!isLoading && !hasSuccess}
+          {...{
+            changeHandlerFactory,
+            formId
+          }}
+          type="password"
+        />
+      </FormModal>
     );
   };
 }

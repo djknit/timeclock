@@ -1,4 +1,3 @@
-import dataServiceFactory from './dataServiceFactory';
 import api from './api';
 import dates from './dates';
 import jobData from './jobData';
@@ -13,7 +12,6 @@ function isWindowWide(windowWidth) {
 };
 
 export {
-  dataServiceFactory,
   api,
   dates,
   jobData,
@@ -22,7 +20,6 @@ export {
 };
 
 export default {
-  dataServiceFactory,
   api,
   dates,
   jobData,

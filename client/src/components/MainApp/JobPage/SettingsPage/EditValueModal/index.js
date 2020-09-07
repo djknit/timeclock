@@ -2,184 +2,73 @@ import React, { Component } from 'react';
 import {
   api,
   constants,
-  changeHandlerFactoryFactory,
   convertSettingValueToFormData,
   addWageInputRefs,
   extractWageInputRefs,
   getJobSettingInputProblems,
-  processJobSettingInputValue
+  processJobSettingInputValue,
+  getSchedEntryFromId,
+  bindFormMethods
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
-import ModalSkeleton from '../../../../ModalSkeleton';
-import Button from '../../../../Button';
 import Tag, { TagGroup } from '../../../../Tag';
-import { FormMessages } from '../../../../formPieces';
 import SettingValueInput from '../SettingValueInput';
+import FormModal from '../../../../FormModal';
 import { addCollapsing } from '../../../../higherOrder';
 
-const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
+const { secondsToDelayRedirect } = constants;
 
 const formId = 'edit-job-setting-value-form';
-function getStartingState(settingName, currentValue) {
-  return {
-    hasSuccess: false,
-    hasProblem: false,
-    isLoading: false,
-    problems: {},
-    problemMessages: [],
-    showMessage: true,
-    hasBeenSubmitted: false, 
-    secondsUntilRedirect: undefined,
-    updatedValue: convertSettingValueToFormData(currentValue, settingName)
-  };
-}
 
 class _EditValueModal_needsCollapsing extends Component {
   constructor(props) {
     super(props);
-    this.afterChange = this.afterChange.bind(this);
-    this.changeHandlerFactory = changeHandlerFactoryFactory(this.afterChange).bind(this);
-    this.getInputProblems = this.getInputProblems.bind(this);
-    this.setSubmissionProcessingState = this.setSubmissionProcessingState.bind(this);
-    this.getDataProcessedToSubmit = this.getDataProcessedToSubmit.bind(this);
-    this.submit = this.submit.bind(this);
-    this.reset = this.reset.bind(this);
     addWageInputRefs(this);
-    this.state = getStartingState();
+    bindFormMethods(this);
+    this.state = this.getStartingState();
   };
 
-  // possibly mostly the same for many
-  afterChange() {
-    if (this.state.hasBeenSubmitted) {
-      this.setState(this.getInputProblems());
-    }
+  getUniqueStartingState() {
+    const { entryToEditId, settingName, valueSchedule } = this.props;
+    const { value } = getSchedEntryFromId(entryToEditId, valueSchedule) || {};
+    return { updatedValue: convertSettingValueToFormData(value, settingName) };
   };
 
-  // unique;
-    // possibly should be related to constructor or at least share some values such as propNames
-    // also tied to processing for submit
   getInputProblems() {
     const { settingName } = this.props;
     const { updatedValue } = this.state;
     let problems = {};
     let problemMessages = [];
     problems.updatedValue = getJobSettingInputProblems(settingName, updatedValue, problemMessages);
-    return { problems, problemMessages };
+    const hasProblem = problemMessages.length > 0;
+    return { problems, problemMessages, hasProblem };
   };
 
-  // exact same for most or all forms
-  setSubmissionProcessingState() {
-    return new Promise(
-      resolve => {
-        this.setState(
-          {
-            hasProblem: false,
-            isLoading: true,
-            problems: {},
-            problemMessages: [],
-            showMessage: false,
-            hasBeenSubmitted: true
-          },
-          resolve
-        );
-      }
-    );
-  };
-
-  // unique
-  getDataProcessedToSubmit() {
-    const { indexOfSchedEntryToEdit, valueSchedule, settingName, jobId } = this.props;
+  processAndSubmitData() {
+    const { entryToEditId, settingName, jobId } = this.props;
     const { updatedValue } = this.state;
     const updates = {
       edit: [{
-        id: valueSchedule[indexOfSchedEntryToEdit]._id.toString(),
+        id: entryToEditId,
         value: processJobSettingInputValue(settingName, updatedValue)
       }]
     };
-    return { jobId, updates };
+    return api.jobs.updateSetting(settingName, { jobId, updates });
   };
 
-  submit(event) {
-    event.preventDefault();
-    const { settingName } = this.props;
-    this.setSubmissionProcessingState()
-    .then(() => {
-      const { problems, problemMessages } = this.getInputProblems();
-      if (problemMessages && problemMessages.length > 0) {
-        throw { problems, messages: problemMessages };
-      }
-      const submissionData = this.getDataProcessedToSubmit();
-      return api.jobs.updateSetting(settingName, submissionData);
-    })
-    .then(res => {
-      let secondsUntilRedirect = secondsToDelayRedirect;
-      this.setState({
-        hasSuccess: true,
-        isLoading: false,
-        hasProblem: false,
-        showMessage: true,
-        problems: {},
-        problemMessages: [],
-        secondsUntilRedirect
-      });
-      currentJobService.setCurrentJob(res.data);
-      const intervalId = setInterval(
-        () => {
-          secondsUntilRedirect -= stepSizeOfRedirectDelay;
-          this.setState({ secondsUntilRedirect });
-          if (secondsUntilRedirect <= 0) {
-            clearInterval(intervalId);
-            this.props.closeModal();
-            this.reset();
-          }
-        },
-        1000 * stepSizeOfRedirectDelay
-      );
-    })
-    .catch(err => {
-      console.log(err)
-      this.props.catchApiUnauthorized(err);
-      const errorData = (err && err.response && err.response.data) || err || {};
-      let { problems, messages } = errorData;
-      if (!problems) problems = { unknown: true };
-      if (!messages) messages = ['An unknown problem has occurred.'];
-      this.setState({
-        problems,
-        problemMessages: messages,
-        hasProblem: true,
-        isLoading: false,
-        showMessage: true
-      });
-    });
+  processSuccessResponse(response) {
+    return currentJobService.setCurrentJob(response.data);
   };
 
-  reset() {
-    const { indexOfSchedEntryToEdit, valueSchedule, settingName, wageContentToggle } = this.props;
-    const currentValue = (
-      (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) &&
-      valueSchedule[indexOfSchedEntryToEdit].value
-    );
-    this.setState(getStartingState(settingName, currentValue));
-    if (wageContentToggle && wageContentToggle.reset) {
-      wageContentToggle.reset();
-    }
+  afterSuccessCountdown() {
+    this.props.closeModal();
   };
 
   componentDidUpdate(prevProps) {
     const {
-      indexOfSchedEntryToEdit, valueSchedule, isActive, windowWidth, wageContentToggle, settingName
+      entryToEditId, isActive, windowWidth, wageContentToggle, settingName
     } = this.props;
-    // checking if sched index has changed to see if form needs reset
-    const previousIndex = prevProps.indexOfSchedEntryToEdit;
-    const currentEntryId = (
-      (indexOfSchedEntryToEdit || indexOfSchedEntryToEdit === 0) &&
-      valueSchedule[indexOfSchedEntryToEdit]._id
-    );
-    const previousEntryId = (
-      (previousIndex || previousIndex === 0) &&
-      prevProps.valueSchedule[previousIndex]._id.toString()
-    );
-    if (currentEntryId !== previousEntryId) this.reset();
+    if (entryToEditId !== prevProps.entryToEditId) this.reset();
     // checking if toggle is active and needs set or cleared
     const shouldToggleBeSet = isActive && settingName === 'wage' && !!this.state.updatedValue;
     if (
@@ -194,24 +83,19 @@ class _EditValueModal_needsCollapsing extends Component {
   };
 
   render() {
-    const { reset, submit, changeHandlerFactory } = this;
+    const { changeHandlerFactory } = this;
     const {
       isActive,
-      closeModal,
       settingDisplayName,
       valueSchedule,
-      indexOfSchedEntryToEdit,
+      entryToEditId,
       settingName,
       wageContentToggle,
       inputRef
     } = this.props;
     const {
       hasSuccess,
-      hasProblem, 
       problems,
-      problemMessages,
-      showMessage,
-      secondsUntilRedirect,
       updatedValue,
       isLoading
     } = this.state;
@@ -222,101 +106,62 @@ class _EditValueModal_needsCollapsing extends Component {
 
     const {
       valueSimpleText, dateRangeText, dateRangeShortText
-    } = valueSchedule[indexOfSchedEntryToEdit];
+    } = getSchedEntryFromId(entryToEditId, valueSchedule);
 
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
     const wageInputRefs = extractWageInputRefs(this);
 
     return (
-      <ModalSkeleton
+      <FormModal
+        formMgmtComponent={this}
+        isFormIncomplete={!updatedValue && updatedValue !== 0}
         {...{
-          isActive,
-          closeModal
+          formId,
+          secondsToDelayRedirect
         }}
+        infoMessages={[
+          <>You are editing the {lowCaseSettingName} for {dateRangeText}.</>,
+          <>Enter the new value below.</>
+        ]}
+        successMessages={[
+          <>You successfully updated the {lowCaseSettingName} for {dateRangeText}.</>
+        ]}
+        successRedirectMessageFragment="This dialog box will close"
         title={`Edit ${settingDisplayName} Schedule Entry Value`}
-        isCloseButtonDisabled={isLoading}
-        footerContent={
-          <>
-            <Button
-              theme="light"
-              onClick={() => {
-                reset();
-                closeModal();
-              }}
-            >
-              {hasSuccess ? 'Close' : 'Cancel'}
-            </Button>
-            <Button
-              theme={hasSuccess ? 'success' : 'primary'}
-              onClick={submit}
-              disabled={isLoading || hasSuccess || (!updatedValue && updatedValue !== 0)}
-              isSubmit
-              {...{
-                formId,
-                isLoading
-              }}
-            >
-              Submit
-            </Button>
-          </>
-        }
       >
-        <form id={formId}>
-          <FormMessages
-            {...{
-              showMessage,
-              hasSuccess,
-              problemMessages
-            }}
-            hasProblem={hasProblem}
-            infoMessages={[
-              <>You are editing the {lowCaseSettingName} for {dateRangeText}.</>,
-              <>Enter the new value below.</>
-            ]}
-            successMessages={[
-              <>You successfully updated the {lowCaseSettingName} for {dateRangeText}.</>
-            ]}
-            successRedirect={{
-              secondsToDelayRedirect,
-              secondsRemaining: secondsUntilRedirect,
-              messageFragment: 'This dialog box will close',
-            }}
-            closeMessage={() => this.setState({ showMessage: false })}
-          />
-          <TagGroup align="center" isInline>
-            <Tag theme="info" size={6}>
-              Time Period:
-            </Tag>
-            <Tag theme="info light" size={6}>
-              {dateRangeShortText}
-            </Tag>
-          </TagGroup>
-          <TagGroup align="center" isInline>
-            <Tag theme="info" size={6}>
-              Current Value:
-            </Tag>
-            <Tag theme="info light" size={6}>
-              {valueSimpleText}
-            </Tag>
-          </TagGroup>
-          <SettingValueInput
-            propName="updatedValue"
-            value={updatedValue}
-            {...{
-              settingName,
-              changeHandlerFactory,
-              formId,
-              wageInputRefs,
-              wageContentToggle,
-              inputRef
-            }}
-            problems={problems && problems.updatedValue}
-            isActive={!isLoading && !hasSuccess}
-            label={`New ${settingDisplayName} Value:`}
-          />
-        </form>
-      </ModalSkeleton>
+        <TagGroup align="center" isInline>
+          <Tag theme="info" size={6}>
+            Time Period:
+          </Tag>
+          <Tag theme="info light" size={6}>
+            {dateRangeShortText}
+          </Tag>
+        </TagGroup>
+        <TagGroup align="center" isInline>
+          <Tag theme="info" size={6}>
+            Current Value:
+          </Tag>
+          <Tag theme="info light" size={6}>
+            {valueSimpleText}
+          </Tag>
+        </TagGroup>
+        <SettingValueInput
+          propName="updatedValue"
+          value={updatedValue}
+          {...{
+            settingName,
+            changeHandlerFactory,
+            formId,
+            wageInputRefs,
+            wageContentToggle,
+            inputRef
+          }}
+          problems={problems && problems.updatedValue}
+          isActive={!isLoading && !hasSuccess}
+          label={`New ${settingDisplayName} Value:`}
+        />
+      </FormModal>
     );
   };
 }

@@ -9,8 +9,6 @@ export * from './textFormatting';
 
 function formatMyDate(myDate, formatString, isString) {
   const stringResult = dateUtils.getMoment(myDate || {}).format(formatString || 'MMM. D, YYYY') || '';
-  console.log(stringResult)
-  console.log(myDate)
   return isString ? stringResult : convertStringToNonbreakingHtml(stringResult);
 }
 

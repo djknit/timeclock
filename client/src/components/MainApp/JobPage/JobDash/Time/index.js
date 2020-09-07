@@ -4,14 +4,14 @@ import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
 
 function TimeArea({
-  style,
+  style: styleProp,
   dsiabled
 }) {
 
-  const completeStyle = getStyle(style);
+  const style = getStyle(styleProp);
 
   return (
-    <ContentArea style={completeStyle.contentArea}>
+    <ContentArea style={style.contentArea}>
       <ContentAreaTitle>Time</ContentAreaTitle>
     </ContentArea>
   );

@@ -9,6 +9,7 @@ import WkDayCutoffsInput from './WkDayCutoffsInput';
 import ProgressBar from './ProgressBar';
 import DayCutoffInput from './DayCutoffInput';
 import FormMessages from './FormMessages';
+import FormButtons from './FormButtons';
 
 export {
   TextInput,
@@ -21,5 +22,6 @@ export {
   WkDayCutoffsInput,
   ProgressBar,
   DayCutoffInput,
-  FormMessages
+  FormMessages,
+  FormButtons
 };

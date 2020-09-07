@@ -29,6 +29,7 @@ function getValueWithDefaultsApplied(value, propName) {
 }
 
 function applyDefaultValuesToWage(wage) {
+  if (!wage) return wage;
   if (!wage.currency) {
     wage.currency = wageDefaultValues.currency;
   }
