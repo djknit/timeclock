@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { userService, areModalsOpenService } from '../../data';
-import { api } from './utilities';
+import { userService, areModalsOpenService, currentJobService } from '../../data';
+import { api, retrieveAndSetCurrentJob } from './utilities';
 import getStyle from './style';
 import Navbar from './Navbar';
 import Dashboard from './Dashboard';
@@ -84,7 +84,7 @@ class MainApp extends Component {
     }
     return false;
   };
-
+  
   componentDidMount() {
     api.auth.test()
     .then(res => {
@@ -118,7 +118,7 @@ class MainApp extends Component {
       toggleEditAccountModal,
       toggleDeleteAccountPropModal,
       deletingAccountPropInputRef,
-      editingAccountPropInputRef
+      editingAccountPropInputRef,
     } = this;
     const {
       history,
@@ -174,7 +174,10 @@ class MainApp extends Component {
           reportHeight={setNavHeight}
           {...{
             catchApiUnauthorized,
-            areAnyModalsOpen
+            areAnyModalsOpen,
+            dashboardPath,
+            getJobPagePath,
+            openNewJobModal
           }}
         />
         <div style={style.mainContentArea}>
@@ -190,7 +193,7 @@ class MainApp extends Component {
               render={renderDashboard}
             />
             <Route
-              path={buildPath('job/:jobId')}
+              path={getJobPagePath(':jobId')}
               render={props => (
                 <JobPage
                   {...{
