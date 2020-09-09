@@ -3,7 +3,7 @@ import { backgroundColor, shadow } from '../style';
 export default function getStyle() {
   return {
     dropdownContainer: {
-      backgroundColor,
+      backgroundColor
     },
     dropdownLink: {
       zIndex: 22 // must be greater than .navbar-dropdown Bulma z-idex of 20
@@ -11,6 +11,7 @@ export default function getStyle() {
     dropdown: {
       backgroundColor,
       ...shadow(7),
+      borderTop: 'none'
     }
   };
 };

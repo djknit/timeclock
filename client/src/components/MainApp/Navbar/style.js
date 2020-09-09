@@ -4,6 +4,12 @@ const textColor = '#ffffff';
 const backgroundColor = secondaryBackgroundColor;
 
 export default function getStyle(brandItemInnerHeight, totalHeight) {
+  const overflowingText = {
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis'
+  };
+
   return {
     nav: {
       backgroundColor,
@@ -31,14 +37,19 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       maxHeight: totalHeight,
       width: totalHeight
     },
-    navStart: {
-      // zIndex: 5
+    jobsDropdownItem: {
+      paddingRight: 16
     },
-    dropdownArrow: {
-      display: 'inline-block',
-      position: 'relative',
-      top: '.2em',
-      fontSize: '.8em'
+    jobLabel: {
+      maxWidth: 148,
+      ...overflowingText
+    },
+    currentJobLabel: {
+      maxWidth: 140,
+      ...overflowingText
+    },
+    settingLabel: {
+      paddingLeft: 28
     },
     burger: {
       color: textColor

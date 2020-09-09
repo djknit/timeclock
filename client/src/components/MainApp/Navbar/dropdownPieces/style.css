@@ -1,9 +1,15 @@
+/* ABOUT THIS FILE:
+  This file is for pseudo element styles only.
+  All other style goes in './style.js'.
+*/
+
+/* This is needed to prevent the dropdown from casting a shadow on top of the main portion of the navbar. */
 .navbar-dropdown::before {
   display: block;
-  width: 100%;
+  width: calc(100% + 8px);
   height: 7px; /* must be less than padding-bottom on .navbar-link above dropdown (8px) */
   background-color: inherit;
   content: " ";
-  top: -9px; /* == [- (height + dropdown border-top width)] == - (7px + 2px) */
+  top: -7px; /* == { - ([height] + [dropdown border-top width]) } == - (7px + 0) */
   position: absolute;
 }

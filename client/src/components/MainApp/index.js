@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { userService, areModalsOpenService } from '../../data';
-import { api } from './utilities';
+import { userService, areModalsOpenService, currentJobService } from '../../data';
+import { api, retrieveAndSetCurrentJob } from './utilities';
 import getStyle from './style';
 import Navbar from './Navbar';
 import Dashboard from './Dashboard';
@@ -84,7 +84,7 @@ class MainApp extends Component {
     }
     return false;
   };
-
+  
   componentDidMount() {
     api.auth.test()
     .then(res => {
@@ -118,7 +118,7 @@ class MainApp extends Component {
       toggleEditAccountModal,
       toggleDeleteAccountPropModal,
       deletingAccountPropInputRef,
-      editingAccountPropInputRef
+      editingAccountPropInputRef,
     } = this;
     const {
       history,
@@ -140,6 +140,18 @@ class MainApp extends Component {
     const getJobPagePath = jobId => buildPath(`job/${jobId}`);
     const redirectToJobPage = jobId => history.push(getJobPagePath(jobId));
     const returnToDashboard = () => history.push(match.path);
+
+    const jobPageSubpaths = {
+      timePage: 'time',
+      settingsPage: 'settings'
+    };
+    const jobSettingsPageSubpaths = {
+      dayCutoff: 'day-cutoff',
+      weekBegins: 'week-begins',
+      timezone: 'timezone',
+      wage: 'wage',
+      all: 'all'
+    };
 
     const openNewJobModal = () => toggleNewJobModal(true);
     const accountEditingModalOpenerFactory = propToEditName => {
@@ -174,7 +186,12 @@ class MainApp extends Component {
           reportHeight={setNavHeight}
           {...{
             catchApiUnauthorized,
-            areAnyModalsOpen
+            areAnyModalsOpen,
+            dashboardPath,
+            getJobPagePath,
+            openNewJobModal,
+            jobPageSubpaths,
+            jobSettingsPageSubpaths
           }}
         />
         <div style={style.mainContentArea}>
@@ -190,7 +207,7 @@ class MainApp extends Component {
               render={renderDashboard}
             />
             <Route
-              path={buildPath('job/:jobId')}
+              path={getJobPagePath(':jobId')}
               render={props => (
                 <JobPage
                   {...{
@@ -198,7 +215,9 @@ class MainApp extends Component {
                     catchApiUnauthorized,
                     areAnyModalsOpen,
                     returnToDashboard,
-                    dashboardPath
+                    dashboardPath,
+                    jobPageSubpaths,
+                    jobSettingsPageSubpaths
                   }}
                 />
               )}

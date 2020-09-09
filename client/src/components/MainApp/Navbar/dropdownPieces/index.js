@@ -12,10 +12,13 @@ function DropdownContainer({ children }) {
   );
 }
 
-function DropdownLink({ children }) {
+function DropdownLink({
+  children,
+  style: styleProp
+}) {
   const style = getStyle();
   return (
-    <NavItem isDropdownLink style={style.dropdownLink}>
+    <NavItem isDropdownLink style={{ ...style.dropdownLink, ...styleProp }}>
       {children}
     </NavItem>
   );

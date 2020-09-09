@@ -34,8 +34,8 @@ class _Jobs_needsData extends Component {
           hasProblem: true,
           problemMessages: [err && err.message || 'An unknown problem was encountered.']
         });
-      })
-      
+      });
+    
     };
   };
 
