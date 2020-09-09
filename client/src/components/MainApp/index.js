@@ -141,6 +141,18 @@ class MainApp extends Component {
     const redirectToJobPage = jobId => history.push(getJobPagePath(jobId));
     const returnToDashboard = () => history.push(match.path);
 
+    const jobPageSubpaths = {
+      timePage: 'time',
+      settingsPage: 'settings'
+    };
+    const jobSettingsPageSubpaths = {
+      dayCutoff: 'day-cutoff',
+      weekBegins: 'week-begins',
+      timezone: 'timezone',
+      wage: 'wage',
+      all: 'all'
+    };
+
     const openNewJobModal = () => toggleNewJobModal(true);
     const accountEditingModalOpenerFactory = propToEditName => {
       return () => toggleEditAccountModal(true, propToEditName);
@@ -177,7 +189,9 @@ class MainApp extends Component {
             areAnyModalsOpen,
             dashboardPath,
             getJobPagePath,
-            openNewJobModal
+            openNewJobModal,
+            jobPageSubpaths,
+            jobSettingsPageSubpaths
           }}
         />
         <div style={style.mainContentArea}>
@@ -201,7 +215,9 @@ class MainApp extends Component {
                     catchApiUnauthorized,
                     areAnyModalsOpen,
                     returnToDashboard,
-                    dashboardPath
+                    dashboardPath,
+                    jobPageSubpaths,
+                    jobSettingsPageSubpaths
                   }}
                 />
               )}

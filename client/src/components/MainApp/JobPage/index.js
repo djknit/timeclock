@@ -61,7 +61,7 @@ class _JobPage_needsData extends Component {
   };
 
   componentDidMount() {
-    const { job, match } = this.props;
+    const { job, match, addPageNavMenu } = this.props;
     const { jobId } = match.params;
     if (!job || job._id !== jobId) {
       this.setWaitingForDataState()
@@ -78,7 +78,9 @@ class _JobPage_needsData extends Component {
           problemMessages: getMessagesFromErr(err)
         });
       });
+      
     }
+
     this.setState({
       modalsRegistrationId: areModalsOpenService.getId()
     });
@@ -86,6 +88,7 @@ class _JobPage_needsData extends Component {
 
   componentWillUnmount() {
     areModalsOpenService.report(this.state.modalsRegistrationId, false);
+    currentJobService.clearCurrentJob();
   };
 
   render() {
@@ -93,7 +96,15 @@ class _JobPage_needsData extends Component {
       toggleEditJobNameModal, toggleDeleteJobModal, editJobNameInputRef, deleteJobModalInputRef
     } = this;
     const {
-      job, match, returnToDashboard, areAnyModalsOpen, catchApiUnauthorized, dashboardPath, windowWidth
+      job,
+      match,
+      returnToDashboard,
+      areAnyModalsOpen,
+      catchApiUnauthorized,
+      dashboardPath,
+      windowWidth,
+      jobPageSubpaths,
+      jobSettingsPageSubpaths
     } = this.props;
     const {
       isLoading, problemMessages, isEditJobNameModalActive, isDeleteJobModalActive
@@ -103,8 +114,8 @@ class _JobPage_needsData extends Component {
 
     const buildPath = subpath => `${match.url}/${subpath}`;
     const jobDashPath = buildPath('');
-    const jobSettingsPath = buildPath('settings');
-    const timePagePath = buildPath('time');
+    const jobSettingsPath = buildPath(jobPageSubpaths.settingsPage);
+    const timePagePath = buildPath(jobPageSubpaths.timePage);
     const buildSettingsSubPath = subPath => {
       return `${jobSettingsPath}/${subPath}`;
     };
@@ -126,7 +137,8 @@ class _JobPage_needsData extends Component {
                 <SettingsPage
                   {...{
                     ...props,
-                    ...commonRouteAttributes
+                    ...commonRouteAttributes,
+                    jobSettingsPageSubpaths
                   }}
                 />
               )}
@@ -157,7 +169,8 @@ class _JobPage_needsData extends Component {
                     jobSettingsPath,
                     timePagePath,
                     dashboardPath,
-                    windowWidth
+                    windowWidth,
+                    jobSettingsPageSubpaths
                   }}
                 />
               )}

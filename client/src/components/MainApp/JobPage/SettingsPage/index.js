@@ -12,7 +12,9 @@ class SettingsPage extends Component {
   };
 
   render() {
-    const { job, parentPath, match, catchApiUnauthorized, areAnyModalsOpen } = this.props;
+    const {
+      job, parentPath, match, catchApiUnauthorized, areAnyModalsOpen, jobSettingsPageSubpaths
+    } = this.props;
     const thisPath = match.url;
 
     const crumbChain = [
@@ -26,8 +28,9 @@ class SettingsPage extends Component {
       }
     ];
 
-    function getRouteInfoObj(pathName, pageName, settingPropName, PageComp) {
-      const routePath = `${thisPath}/${pathName}`;
+    function getRouteInfoObj(pageName, settingPropName, PageComp) {
+      const _subpath = jobSettingsPageSubpaths[settingPropName || 'all'];
+      const routePath = `${thisPath}/${_subpath}`;
       return {
         path: routePath,
         crumbChain: [
@@ -44,11 +47,11 @@ class SettingsPage extends Component {
     }
 
     const childRoutes = [
-      getRouteInfoObj('day-cutoff', 'Day Cutoff', 'dayCutoff'),
-      getRouteInfoObj('week-begins', 'Week Cutoff', 'weekBegins'),
-      getRouteInfoObj('timezone', 'Timezone', 'timezone'),
-      getRouteInfoObj('wage', 'Wage', 'wage'),
-      getRouteInfoObj('all', 'All Settings', undefined, All)
+      getRouteInfoObj('Day Cutoff', 'dayCutoff'),
+      getRouteInfoObj('Week Cutoff', 'weekBegins'),
+      getRouteInfoObj('Timezone', 'timezone'),
+      getRouteInfoObj('Wage', 'wage'),
+      getRouteInfoObj('All Settings', undefined, All)
     ];
 
     const commonRouteAttrs = { ...this.props, job, catchApiUnauthorized, areAnyModalsOpen };
