@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import getStyle from './style';
 import { addPseudoPseudoClasses } from '../../../higherOrder';
 
@@ -6,6 +7,8 @@ function _NavItem_needsPseudo({
   children,
   isActive,
   isDropdownLink,
+  destinationPath,
+  onClick,
   pseudoHandlers,
   pseudoState,
   style: styleProp
@@ -16,16 +19,29 @@ function _NavItem_needsPseudo({
 
   const style = getStyle(pseudoState, styleProp);
 
-  return (
-    <a
-      {...{ className }}
-      {...pseudoHandlers}
-      style={style.navItem}
-    >
+  const commonAttrs = {
+    className,
+    ...pseudoHandlers,
+    style: style.navItem,
+    onClick
+  };
+
+  const content = (
+    <>
       {children}
       {isDropdownLink && (
         <>&nbsp;<i className="fas fa-chevron-down" style={style.dropdownArrow} /></>
       )}
+    </>
+  );
+
+  return destinationPath ? (
+    <Link {...commonAttrs} to={destinationPath}>
+      {content}
+    </Link>
+  ) : (
+    <a {...commonAttrs}>
+      {content}
     </a>
   );
 }

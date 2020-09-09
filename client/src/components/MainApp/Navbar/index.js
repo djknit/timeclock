@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import logo from './logo192.png';
 import getStyle from './style';
-import { isLoggedInService, profileService, userService } from '../../../data';
-import { api } from '../utilities';
+import { isLoggedInService, profileService, userService, jobsService, currentJobService } from '../../../data';
+import { api, promiseToSetState, retrieveAndSetCurrentJob } from '../utilities';
 import NavItem from './NavItem';
 import { DropdownContainer, Dropdown, DropdownLink } from './dropdownPieces';
 import Button from '../../Button';
@@ -15,7 +15,6 @@ class _Navbar_needsData extends Component {
     super(props);
     this.brandText = React.createRef();
     this.brandItem = React.createRef();
-    this.setStatePromise = this.setStatePromise.bind(this);
     this.submitLogout = this.submitLogout.bind(this);
     this.state = {
       brandItemInnerHeight: undefined,
@@ -25,16 +24,10 @@ class _Navbar_needsData extends Component {
     };
   };
 
-  setStatePromise(updates) {
-    return new Promise(resolve => {
-      this.setState(updates, resolve)
-    });
-  }
-
   submitLogout() {
-    this.setStatePromise({ isLoading: true, hasProblem: false })
+    promiseToSetState(this, { isLoading: true, hasProblem: false })
     .then(api.auth.logout)
-    .then(res => this.setStatePromise({ isLoading: false, hasProblem: false }))
+    .then(res => promiseToSetState(this, { isLoading: false, hasProblem: false }))
     .then(() => {
       userService.clearUser();
       this.props.history.push('/');
@@ -56,12 +49,29 @@ class _Navbar_needsData extends Component {
   };
 
   render() {
-    const { isLoggedIn, profileData, totalHeight, areAnyModalsOpen } = this.props;
+    const {
+      isLoggedIn,
+      profileData,
+      totalHeight,
+      areAnyModalsOpen,
+      jobs,
+      getJobPagePath,
+      dashboardPath,
+      openNewJobModal,
+      jobPageSubpaths,
+      jobSettingsPageSubpaths,
+      currentJob
+    } = this.props;
     const { brandItemInnerHeight, isLoading, hasProblem, isMenuActive } = this.state;
 
     const isActiveClass = isMenuActive ? ' is-active' : '';
 
     const toggleMenu = () => this.setState({ isMenuActive: !isMenuActive });
+
+    const currentJobPath = getJobPagePath(currentJob && currentJob._id)
+    const getJobSubpagePath = subpath => `${currentJobPath}/${subpath}`;
+    const currentJobSettingsPath = getJobSubpagePath(jobPageSubpaths.settingsPage);
+    const getJobSettingPath = subpath => `${currentJobSettingsPath}/${subpath}`
 
     const style = getStyle(brandItemInnerHeight, totalHeight);
 
@@ -94,53 +104,85 @@ class _Navbar_needsData extends Component {
   
         <div id={menuId} className={`navbar-menu${isActiveClass}`}>
           <div className="navbar-start" style={style.navStart}>
-            <NavItem>
+            <NavItem destinationPath={dashboardPath}>
               Dashboard
             </NavItem>
   
-            <DropdownContainer>
-              <DropdownLink>
-                Jobs
-              </DropdownLink>
-  
-              <Dropdown>
-                <NavItem>
-                  <i className="fas fa-plus" />&nbsp;New
-                </NavItem>
-                <NavItem>
+            {isLoggedIn && (
+              <DropdownContainer>
+                <DropdownLink>
                   Jobs
-                </NavItem>
-                <NavItem>
-                  Contact
-                </NavItem>
-                <hr className="navbar-divider" />
-                <NavItem>
-                  Report an issue
-                </NavItem>
-              </Dropdown>
-            </DropdownContainer>
+                </DropdownLink>
+                <Dropdown>
+                  <NavItem onClick={openNewJobModal} style={style.jobsDropdownItem}>
+                    <i className="fas fa-plus" />&nbsp;New
+                  </NavItem>
+                  {jobs && jobs.map(
+                    ({ _id, name }) => (
+                      <NavItem
+                        destinationPath={getJobPagePath(_id)}
+                        onClick={event => {
+                          retrieveAndSetCurrentJob(_id);
+                          event.target.blur();
+                        }}
+                        key={_id}
+                        style={style.jobsDropdownItem}
+                      >
+                        <span style={style.jobLabel}>{name}</span>
+                      </NavItem>
+                    )
+                  )}
+                </Dropdown>
+              </DropdownContainer>
+            )}
 
-            <div className="navbar-item has-dropdown is-hoverable">
-              <DropdownLink>
-                Jobs
-              </DropdownLink>
-  
-              <div className="navbar-dropdown">
-                <NavItem>
-                  About
-                </NavItem>
-                <NavItem>
-                  Jobs
-                </NavItem>
-                <NavItem>
-                  Contact
-                </NavItem>
-                <hr className="navbar-divider" />
-                <NavItem>
-                  Report an issue
-                </NavItem>
-              </div>
-            </div>
+            {currentJob && (
+              <DropdownContainer>
+                <DropdownLink>
+                  <span style={style.currentJobLabel}>
+                    Job: {currentJob.name}
+                  </span>
+                </DropdownLink>
+    
+                <Dropdown>
+                  <NavItem
+                    destinationPath={currentJobPath}
+                  >
+                    Home
+                  </NavItem>
+                  <NavItem destinationPath={getJobSubpagePath(jobPageSubpaths.timePage)}>
+                    Time
+                  </NavItem>
+                  <NavItem destinationPath={jobSettingsPageSubpaths}>
+                    Settings
+                  </NavItem>
+                  <NavItem
+                    style={style.settingLabel}
+                    destinationPath={getJobSettingPath(jobSettingsPageSubpaths.timezone)}
+                  >
+                    Timezone
+                  </NavItem>
+                  <NavItem
+                    style={style.settingLabel}
+                    destinationPath={getJobSettingPath(jobSettingsPageSubpaths.wage)}
+                  >
+                    Wage
+                  </NavItem>
+                  <NavItem
+                    style={style.settingLabel}
+                    destinationPath={getJobSettingPath(jobSettingsPageSubpaths.weekBegins)}
+                  >
+                    Week Cutoff
+                  </NavItem>
+                  <NavItem
+                    style={style.settingLabel}
+                    destinationPath={getJobSettingPath(jobSettingsPageSubpaths.dayCutoff)}
+                  >
+                    Day Cutoff
+                  </NavItem>
+                </Dropdown>
+              </DropdownContainer>
+            )}
           </div>
 
           <div className="navbar-end">
@@ -175,7 +217,9 @@ class _Navbar_needsData extends Component {
   };
 }
 
-const _Navbar_stillNeedsData = addData(_Navbar_needsData, 'isLoggedIn', isLoggedInService);
-const Navbar = addData(_Navbar_stillNeedsData, 'profileData', profileService);
+const _Navbar_needsMoreData = addData(_Navbar_needsData, 'isLoggedIn', isLoggedInService);
+const _Navbar_needsMoreDataAgain = addData(_Navbar_needsMoreData, 'profileData', profileService);
+const _Navbar_needsEvenMoreData = addData(_Navbar_needsMoreDataAgain, 'jobs', jobsService);
+const Navbar = addData(_Navbar_needsEvenMoreData, 'currentJob', currentJobService);
 
 export default Navbar;

@@ -22,6 +22,7 @@ class JobDash extends Component {
       jobSettingsPath,
       timePagePath,
       dashboardPath,
+      jobSettingsPageSubpaths
     } = this.props;
 
     const style = getStyle(windowWidth);
@@ -53,7 +54,8 @@ class JobDash extends Component {
             style={style.menu}
             {...{
               job,
-              buildSettingsSubPath
+              buildSettingsSubPath,
+              jobSettingsPageSubpaths
             }}
           />
         </div>

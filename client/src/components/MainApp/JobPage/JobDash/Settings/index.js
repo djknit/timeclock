@@ -4,26 +4,26 @@ import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
 import CurrentItemValueDisplay from './CurrentItemValue';
 
-const settingsLabelsAndPropNamesAndPagePaths = [
+const settingsLabelsAndPropNames = [
   {
     label: 'Timezone',
     propName: 'timezone',
-    pagePath: 'timezone'
+    // pagePath: 'timezone'
   },
   {
     label: 'Wage',
     propName: 'wage',
-    pagePath: 'wage'
+    // pagePath: 'wage'
   },
   {
     label: 'New Weeks Begin On:',
     propName: 'weekBegins',
-    pagePath: 'week-begins'
+    // pagePath: 'week-begins'
   },
   {
     label: 'Day Cutoff',
     propName: 'dayCutoff',
-    pagePath: 'day-cutoff'
+    // pagePath: 'day-cutoff'
   }
 ];
 
@@ -31,7 +31,8 @@ function SettingsArea({
   style: styleProp,
   disabled,
   job,
-  buildSettingsSubPath
+  buildSettingsSubPath,
+  jobSettingsPageSubpaths
 }) {
 
   const style = getStyle(styleProp);
@@ -40,11 +41,11 @@ function SettingsArea({
     <ContentArea style={style.contentArea}>
       <ContentAreaTitle>Settings Summary</ContentAreaTitle>
       {
-        settingsLabelsAndPropNamesAndPagePaths.map(
-          ({ label, propName, pagePath }, index) => (
+        settingsLabelsAndPropNames.map(
+          ({ label, propName }, index) => (
             <div
               style={
-                index === settingsLabelsAndPropNamesAndPagePaths.length - 1 ?
+                index === settingsLabelsAndPropNames.length - 1 ?
                 style.lastAreaHasBtns :
                 style.areaNotLastHasBtns
               }
@@ -69,7 +70,7 @@ function SettingsArea({
                 theme="primary"
                 isLink
                 styles={style.firstBtn}
-                to={buildSettingsSubPath(pagePath)}
+                to={buildSettingsSubPath(jobSettingsPageSubpaths[propName])}
                 allowTabFocus={!disabled}
               >
                 <i className="fas fa-eye" /> <i className="fas fa-edit" />  View/Edit
