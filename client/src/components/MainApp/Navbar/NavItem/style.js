@@ -27,12 +27,6 @@ export default function getStyle(pseudoState, additionalStyle) {
       color: textColor,
       ...calculateStyleForPseudoClassState(variableStyles, pseudoState),
       ...(additionalStyle || {})
-    },
-    dropdownArrow: {
-      display: 'inline-block',
-      position: 'relative',
-      top: '.2em',
-      fontSize: '.8em'
     }
   };
 }

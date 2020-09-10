@@ -26,22 +26,13 @@ function _NavItem_needsPseudo({
     onClick
   };
 
-  const content = (
-    <>
-      {children}
-      {isDropdownLink && (
-        <>&nbsp;<i className="fas fa-chevron-down" style={style.dropdownArrow} /></>
-      )}
-    </>
-  );
-
   return destinationPath ? (
     <Link {...commonAttrs} to={destinationPath}>
-      {content}
+      {children}
     </Link>
   ) : (
     <a {...commonAttrs}>
-      {content}
+      {children}
     </a>
   );
 }

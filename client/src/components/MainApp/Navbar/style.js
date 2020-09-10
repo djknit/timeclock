@@ -15,6 +15,9 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       backgroundColor,
       ...shadow(7, {})
     },
+    menu: {
+      backgroundColor
+    },
     brandTextItem: {
       paddingLeft: 2
     },

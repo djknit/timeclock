@@ -10,18 +10,38 @@ import { addData } from '../../higherOrder';
 
 const menuId = 'navbar-menu';
 
+const getJobSettingNamesObj = (settingName, propName) => ({ settingName, propName });
+const jobSettingNamesAndPropNames = [
+  getJobSettingNamesObj('Timezone', 'timezone'),
+  getJobSettingNamesObj('Wage', 'wage'),
+  getJobSettingNamesObj('Week Cutoff', 'weekBegins'),
+  getJobSettingNamesObj('Day Cutoff', 'dayCutoff')
+];
+
 class _Navbar_needsData extends Component {
   constructor(props) {
     super(props);
     this.brandText = React.createRef();
     this.brandItem = React.createRef();
+    this.dropdownTogglerFactory = this.dropdownTogglerFactory.bind(this);
     this.submitLogout = this.submitLogout.bind(this);
     this.state = {
       brandItemInnerHeight: undefined,
       isLoading: false,
       hasProblem: false,
-      isMenuActive: false
+      isMenuActive: false,
+      isJobsDropdownActive: false,
+      isCurrentJobDropdownActive: false
     };
+  };
+
+  dropdownTogglerFactory(isActivePropName) {
+    return (isActiveAfterToggle => {
+      const isParamDefined = typeof isActiveAfterToggle === 'boolean';
+      this.setState({
+        [isActivePropName]: isParamDefined ? isActiveAfterToggle : !this.state[isActivePropName]
+      });
+    });
   };
 
   submitLogout() {
@@ -62,18 +82,23 @@ class _Navbar_needsData extends Component {
       jobSettingsPageSubpaths,
       currentJob
     } = this.props;
-    const { brandItemInnerHeight, isLoading, hasProblem, isMenuActive } = this.state;
+    const {
+      brandItemInnerHeight, isLoading, hasProblem, isMenuActive, isJobsDropdownActive, isCurrentJobDropdownActive
+    } = this.state;
 
     const isActiveClass = isMenuActive ? ' is-active' : '';
 
     const toggleMenu = () => this.setState({ isMenuActive: !isMenuActive });
+    const toggleJobsDropdown = this.dropdownTogglerFactory('isJobsDropdownActive');
+    const toggleCurrentJobDropdown = this.dropdownTogglerFactory('isCurrentJobDropdownActive');
 
     const currentJobPath = getJobPagePath(currentJob && currentJob._id)
     const getJobSubpagePath = subpath => `${currentJobPath}/${subpath}`;
     const currentJobSettingsPath = getJobSubpagePath(jobPageSubpaths.settingsPage);
-    const getJobSettingPath = subpath => `${currentJobSettingsPath}/${subpath}`
 
     const style = getStyle(brandItemInnerHeight, totalHeight);
+
+    const commonDropdownItemAttrs = { onClick: ({ target }) => target.blur() };
 
     return (
       <nav className="navbar" role="navigation" aria-label="main navigation" style={style.nav}>
@@ -102,15 +127,15 @@ class _Navbar_needsData extends Component {
           </a>
         </div>
   
-        <div id={menuId} className={`navbar-menu${isActiveClass}`}>
-          <div className="navbar-start" style={style.navStart}>
+        <div id={menuId} className={`navbar-menu${isActiveClass}`} style={style.menu}>
+          <div className="navbar-start">
             <NavItem destinationPath={dashboardPath}>
               Dashboard
             </NavItem>
   
             {isLoggedIn && (
-              <DropdownContainer>
-                <DropdownLink>
+              <DropdownContainer isDropdownActive={isJobsDropdownActive}>
+                <DropdownLink onClick={toggleJobsDropdown} isDropdownActive={isJobsDropdownActive}>
                   Jobs
                 </DropdownLink>
                 <Dropdown>
@@ -137,49 +162,36 @@ class _Navbar_needsData extends Component {
             )}
 
             {currentJob && (
-              <DropdownContainer>
-                <DropdownLink>
+              <DropdownContainer isDropdownActive={isCurrentJobDropdownActive}>
+                <DropdownLink onClick={toggleCurrentJobDropdown} isDropdownActive={isCurrentJobDropdownActive}>
                   <span style={style.currentJobLabel}>
                     Job: {currentJob.name}
                   </span>
                 </DropdownLink>
     
                 <Dropdown>
-                  <NavItem
-                    destinationPath={currentJobPath}
-                  >
+                  <NavItem destinationPath={currentJobPath} {...commonDropdownItemAttrs}>
                     Home
                   </NavItem>
-                  <NavItem destinationPath={getJobSubpagePath(jobPageSubpaths.timePage)}>
+                  <NavItem
+                    destinationPath={getJobSubpagePath(jobPageSubpaths.timePage)}
+                    {...commonDropdownItemAttrs}
+                  >
                     Time
                   </NavItem>
-                  <NavItem destinationPath={jobSettingsPageSubpaths}>
+                  <NavItem destinationPath={currentJobSettingsPath} {...commonDropdownItemAttrs}>
                     Settings
                   </NavItem>
-                  <NavItem
-                    style={style.settingLabel}
-                    destinationPath={getJobSettingPath(jobSettingsPageSubpaths.timezone)}
-                  >
-                    Timezone
-                  </NavItem>
-                  <NavItem
-                    style={style.settingLabel}
-                    destinationPath={getJobSettingPath(jobSettingsPageSubpaths.wage)}
-                  >
-                    Wage
-                  </NavItem>
-                  <NavItem
-                    style={style.settingLabel}
-                    destinationPath={getJobSettingPath(jobSettingsPageSubpaths.weekBegins)}
-                  >
-                    Week Cutoff
-                  </NavItem>
-                  <NavItem
-                    style={style.settingLabel}
-                    destinationPath={getJobSettingPath(jobSettingsPageSubpaths.dayCutoff)}
-                  >
-                    Day Cutoff
-                  </NavItem>
+                  {jobSettingNamesAndPropNames.map(({ settingName, propName }) => (
+                    <NavItem
+                      style={style.settingLabel}
+                      destinationPath={`${currentJobSettingsPath}/${jobSettingsPageSubpaths[propName]}`}
+                      {...commonDropdownItemAttrs}
+                      key={propName}
+                    >
+                      {settingName}
+                    </NavItem>
+                  ))}
                 </Dropdown>
               </DropdownContainer>
             )}
@@ -200,7 +212,6 @@ class _Navbar_needsData extends Component {
               {isLoggedIn &&
                 <Button
                   size="none"
-                  // theme="white"
                   onClick={this.submitLogout}
                   isLoading={isLoading}
                   styles={style.logoutButton}
