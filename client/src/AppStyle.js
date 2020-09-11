@@ -13,7 +13,7 @@ const footerHeight = 50;
 const bulmaFormBlue = '#3273dc';
 const bulmaFormBlack = '#363636';
 
-function shadow(blur, offsetDirection, color) {
+function shadow(blur, offsetDirection, color, isInset) {
   const _blur = `${blur || 5}px`;
   const { x, y } = offsetDirection || {};
   const getOneDimensionalOffset = dimensionOffsetDirection => (
@@ -21,9 +21,10 @@ function shadow(blur, offsetDirection, color) {
     (dimensionOffsetDirection > 0 ? _blur : `-${_blur}`) :
     '0'
   );
+  const _inset = isInset ? 'inset' : '';
   const xOffset = getOneDimensionalOffset(x);
   const yOffset = getOneDimensionalOffset(y);
-  return ({ boxShadow: `${xOffset} ${yOffset} ${_blur} ${color || '#202020'}` });
+  return ({ boxShadow: `${_inset} ${xOffset} ${yOffset} ${_blur} ${color || '#202020'}` });
 };
 
 export default function getStyle() {
