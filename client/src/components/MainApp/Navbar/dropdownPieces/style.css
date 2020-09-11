@@ -3,13 +3,17 @@
   All other style goes in './style.js'.
 */
 
-/* This is needed to prevent the dropdown from casting a shadow on top of the main portion of the navbar. */
-.navbar-dropdown::before {
-  display: block;
-  width: calc(100% + 8px);
-  height: 7px; /* must be less than padding-bottom on .navbar-link above dropdown (8px) */
-  background-color: inherit;
-  content: " ";
-  top: -7px; /* == { - ([height] + [dropdown border-top width]) } == - (7px + 0) */
-  position: absolute;
+/* Matches Bulma style for when full navbar displays */
+@media screen and (min-width: 1024px) {
+  /* This is needed to prevent the dropdown from casting a shadow on top of the main portion of the navbar. */
+  .navbar-dropdown::before {
+    display: block;
+    position: absolute;
+    width: calc(100% + 16px);
+    left: -8px;
+    height: 7px; /* must be less than padding-bottom on .navbar-link above dropdown (8px) */
+    background-color: inherit;
+    content: " ";
+    top: -7px; /* == { - ([height] + [dropdown border-top width]) } == - (7px + 0) */
+  }
 }

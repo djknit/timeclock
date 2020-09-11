@@ -1,5 +1,5 @@
 import { calculateStyleForPseudoClassState } from '../../../higherOrder';
-import { textColor } from '../style';
+import { textColor, shadow } from '../style';
 
 export default function getStyle(pseudoState, additionalStyle) {
 
@@ -18,7 +18,8 @@ export default function getStyle(pseudoState, additionalStyle) {
     },
     active: {
       color: textColor,
-      backgroundColor: 'rgba(255, 255, 255, .07)'
+      backgroundColor: 'rgba(255, 255, 255, .07)',
+      ...shadow(2, undefined, undefined, true)
     }
   };
 
@@ -27,12 +28,6 @@ export default function getStyle(pseudoState, additionalStyle) {
       color: textColor,
       ...calculateStyleForPseudoClassState(variableStyles, pseudoState),
       ...(additionalStyle || {})
-    },
-    dropdownArrow: {
-      display: 'inline-block',
-      position: 'relative',
-      top: '.2em',
-      fontSize: '.8em'
     }
   };
 }
