@@ -114,8 +114,6 @@ class _Navbar_needsData extends Component {
     const style = getStyle(brandItemInnerHeight, totalHeight);
 
     const handleLinkClick = ({ target }) => {
-      console.log('click')
-      console.log(target)
       target.blur();
       toggleJobsDropdown(false);
       toggleCurrentJobDropdown(false);

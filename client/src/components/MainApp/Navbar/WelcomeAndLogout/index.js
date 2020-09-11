@@ -17,7 +17,7 @@ function WelcomeAndLogout({
     <div className="navbar-item" style={style.navItem}>
       <span style={style.welcomeText}>
         {profileData && isLoggedIn ? (
-          <>Hi, <strong style={style.userName}>{profileData.username || profileData.email}</strong>!</>
+          <>Hi, <strong style={style.welcomeText}>{profileData.username || profileData.email}</strong>!</>
         ) : (
           <>No user found.</>
         )}
