@@ -5,7 +5,6 @@ import NavItem from '../NavItem';
 
 function DropdownContainer({ children, isDropdownActive }) {
   const style = getStyle();
-  console.log(isDropdownActive)
   let className = 'navbar-item has-dropdown is-hoverable';
   if (isDropdownActive) className += ' is-active';
   return (
@@ -28,17 +27,17 @@ function DropdownLink({
       isDropdownLink
       style={{ ...style.dropdownLink, ...styleProp }}
       {...{
-        isDropdownActive,
         onClick
       }}
+      isActive={isDropdownActive}
     >
       {children}&nbsp;<i className={arrowClassName} style={style.dropdownArrow} />
     </NavItem>
   );
 }
 
-function Dropdown({ children }) {
-  const style = getStyle();
+function Dropdown({ children, isFullNavDisplayed }) {
+  const style = getStyle(isFullNavDisplayed);
   return (
     <div className="navbar-dropdown" style={style.dropdown}>
       {children}

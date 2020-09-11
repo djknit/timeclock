@@ -44,11 +44,9 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       paddingRight: 16
     },
     jobLabel: {
-      maxWidth: 148,
       ...overflowingText
     },
     currentJobLabel: {
-      maxWidth: 140,
       ...overflowingText
     },
     settingLabel: {

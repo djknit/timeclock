@@ -1,6 +1,7 @@
 import { backgroundColor, shadow } from '../style';
 
-export default function getStyle() {
+export default function getStyle(isFullNavDisplayed) {
+
   return {
     dropdownContainer: {
       backgroundColor
@@ -16,7 +17,7 @@ export default function getStyle() {
     },
     dropdown: {
       backgroundColor,
-      ...shadow(7),
+      ...(isFullNavDisplayed ? shadow(7) : { paddingTop: 0 }),
       borderTop: 'none'
     }
   };
