@@ -12,6 +12,7 @@ import Button from '../../Button';
 import { addData } from '../../higherOrder';
 
 const menuId = 'navbar-menu';
+const minWinWidthForFullDisp = 1024; // matches Bulma
 
 const getJobSettingNamesObj = (settingName, propName) => ({ settingName, propName });
 const jobSettingNamesAndPropNames = [
@@ -38,7 +39,8 @@ class _Navbar_needsData extends Component {
       hasProblem: false,
       isMenuActive: false,
       [dropdownActivityPropNames.jobs]: false,
-      [dropdownActivityPropNames.currentJob]: false
+      [dropdownActivityPropNames.currentJob]: false,
+      useDefaultDropdownActivity: true
     };
   };
 
@@ -46,7 +48,10 @@ class _Navbar_needsData extends Component {
     return (isActiveAfterToggle => {
       const isParamDefined = typeof isActiveAfterToggle === 'boolean';
       const _updatedIsActive = isParamDefined ? isActiveAfterToggle : !this.state[isActivePropName];
-      let stateUpdates = { [isActivePropName]: _updatedIsActive };
+      let stateUpdates = {
+        [isActivePropName]: _updatedIsActive,
+        useDefaultDropdownActivity: false
+      };
       if (_updatedIsActive) {
         Object.keys(dropdownActivityPropNames)
         .filter(key => dropdownActivityPropNames[key] !== isActivePropName)
@@ -80,6 +85,23 @@ class _Navbar_needsData extends Component {
     this.props.reportHeight(this.brandItem.current.clientHeight);
   };
 
+  componentDidUpdate() {
+    if (!this.state.useDefaultDropdownActivity) return;
+    const { windowWidth, currentJob } = this.props;
+    const isFullNavDisplayed = windowWidth >= minWinWidthForFullDisp;
+    const shouldJobsDropBeActive = !isFullNavDisplayed && !currentJob;
+    const shouldCurrentJDBeActive = !isFullNavDisplayed && !!currentJob;
+    if (
+      this.state[dropdownActivityPropNames.jobs] !== shouldJobsDropBeActive ||
+      this.state[dropdownActivityPropNames.currentJob] !== shouldCurrentJDBeActive
+    ) {
+      this.setState({
+        [dropdownActivityPropNames.jobs]: shouldJobsDropBeActive,
+        [dropdownActivityPropNames.currentJob]: shouldCurrentJDBeActive
+      });
+    }
+  };
+
   render() {
     const { submitLogout } = this;
     const {
@@ -110,14 +132,14 @@ class _Navbar_needsData extends Component {
     const getJobSubpagePath = subpath => `${currentJobPath}/${subpath}`;
     const currentJobSettingsPath = getJobSubpagePath(jobPageSubpaths.settingsPage);
 
-    const isFullNavDisplayed = windowWidth >= 1024; // matches Bulma
+    const isFullNavDisplayed = windowWidth >= minWinWidthForFullDisp;
     const style = getStyle(brandItemInnerHeight, totalHeight);
 
     const handleLinkClick = ({ target }) => {
       target.blur();
-      toggleJobsDropdown(false);
-      toggleCurrentJobDropdown(false);
-      this.setState({ isMenuActive: false });
+      // toggleJobsDropdown(!isFullNavDisplayed && !currentJob);
+      // toggleCurrentJobDropdown(!isFullNavDisplayed && !!currentJob);
+      this.setState({ isMenuActive: false, useDefaultDropdownActivity: true });
     };
     const commonNavItemAttrs = { onClick: handleLinkClick };
 
@@ -162,12 +184,18 @@ class _Navbar_needsData extends Component {
             </NavItem>
   
             {isLoggedIn && (
-              <DropdownContainer isDropdownActive={isJobsDropdownActive}>
-                <DropdownLink onClick={toggleJobsDropdown} isDropdownActive={isJobsDropdownActive}>
+              <DropdownContainer isDropdownActive={isJobsDropdownActive} {...{ isFullNavDisplayed }}>
+                <DropdownLink onClick={toggleJobsDropdown} isDropdownActive={isJobsDropdownActive} {...{ isFullNavDisplayed }}>
                   Jobs
                 </DropdownLink>
-                <Dropdown {...{ isFullNavDisplayed }}>
-                  <NavItem onClick={openNewJobModal} style={style.jobsDropdownItem}>
+                <Dropdown {...{ isFullNavDisplayed }} isDropdownActive={isJobsDropdownActive}>
+                  <NavItem
+                    onClick={(event) => {
+                      openNewJobModal();
+                      handleLinkClick(event);
+                    }}
+                    style={style.jobsDropdownItem}
+                  >
                     <i className="fas fa-plus" />&nbsp;New
                   </NavItem>
                   {jobs && jobs.map(
@@ -182,7 +210,6 @@ class _Navbar_needsData extends Component {
                         style={style.jobsDropdownItem}
                       >
                         <span style={style.jobLabel}>{name}</span>
-                        {/* {name} */}
                       </NavItem>
                     )
                   )}
@@ -191,14 +218,14 @@ class _Navbar_needsData extends Component {
             )}
 
             {currentJob && (
-              <DropdownContainer isDropdownActive={isCurrentJobDropdownActive}>
-                <DropdownLink onClick={toggleCurrentJobDropdown} isDropdownActive={isCurrentJobDropdownActive}>
+              <DropdownContainer isDropdownActive={isCurrentJobDropdownActive} {...{ isFullNavDisplayed }}>
+                <DropdownLink onClick={toggleCurrentJobDropdown} isDropdownActive={isCurrentJobDropdownActive} {...{ isFullNavDisplayed }}>
                   <span style={style.currentJobLabel}>
                     Job: {currentJob.name}
                   </span>
                 </DropdownLink>
     
-                <Dropdown {...{ isFullNavDisplayed }}>
+                <Dropdown {...{ isFullNavDisplayed }} isDropdownActive={isCurrentJobDropdownActive}>
                   <NavItem destinationPath={currentJobPath} {...commonNavItemAttrs}>
                     Home
                   </NavItem>

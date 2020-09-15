@@ -1,6 +1,21 @@
-import { backgroundColor, shadow } from '../style';
+import { backgroundColor, navShadow, depressedItemShadow } from '../style';
 
-export default function getStyle(isFullNavDisplayed) {
+export default function getStyle(isFullNavDisplayed, isDropdownActive) {
+
+  let dropdown = {
+    backgroundColor,
+    borderTop: 'none'
+  };
+  
+  if (isFullNavDisplayed) {
+    Object.assign(dropdown, navShadow);
+  }
+  else if (isDropdownActive) {
+    dropdown.paddingTop = 0;
+  }
+  else {
+    dropdown.display = 'none';
+  }
 
   return {
     dropdownContainer: {
@@ -15,10 +30,6 @@ export default function getStyle(isFullNavDisplayed) {
       top: '.2em',
       fontSize: '.8em'
     },
-    dropdown: {
-      backgroundColor,
-      ...(isFullNavDisplayed ? shadow(7) : { paddingTop: 0 }),
-      borderTop: 'none'
-    }
+    dropdown
   };
 };

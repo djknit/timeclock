@@ -3,6 +3,9 @@ import { headingFontFam, shadow, secondaryBackgroundColor, mainBackgroundColor }
 const textColor = '#ffffff';
 const backgroundColor = secondaryBackgroundColor;
 
+const navShadow = shadow(7);
+const depressedItemShadow = shadow(2, undefined, undefined, true);
+
 export default function getStyle(brandItemInnerHeight, totalHeight) {
   const overflowingText = {
     overflow: 'hidden',
@@ -13,7 +16,7 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
   return {
     nav: {
       backgroundColor,
-      ...shadow(7, {})
+      ...navShadow
     },
     menu: {
       backgroundColor
@@ -44,10 +47,12 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       paddingRight: 16
     },
     jobLabel: {
-      ...overflowingText
+      ...overflowingText,
+      maxWidth: 148
     },
     currentJobLabel: {
-      ...overflowingText
+      ...overflowingText,
+      maxWidth: 140
     },
     settingLabel: {
       paddingLeft: 28
@@ -64,4 +69,4 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
   };
 };
 
-export { textColor, backgroundColor, shadow };
+export { textColor, backgroundColor, navShadow, depressedItemShadow };

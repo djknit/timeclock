@@ -1,5 +1,5 @@
 import { calculateStyleForPseudoClassState } from '../../../higherOrder';
-import { textColor, shadow } from '../style';
+import { textColor, depressedItemShadow } from '../style';
 
 export default function getStyle(pseudoState, additionalStyle) {
 
@@ -19,7 +19,7 @@ export default function getStyle(pseudoState, additionalStyle) {
     active: {
       color: textColor,
       backgroundColor: 'rgba(255, 255, 255, .07)',
-      ...shadow(2, undefined, undefined, true)
+      ...depressedItemShadow
     }
   };
 

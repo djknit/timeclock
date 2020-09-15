@@ -3,8 +3,8 @@ import './style.css';
 import getStyle from './style';
 import NavItem from '../NavItem';
 
-function DropdownContainer({ children, isDropdownActive }) {
-  const style = getStyle();
+function DropdownContainer({ children, isDropdownActive, isFullNavDisplayed }) {
+  const style = getStyle(isFullNavDisplayed, isDropdownActive);
   let className = 'navbar-item has-dropdown is-hoverable';
   if (isDropdownActive) className += ' is-active';
   return (
@@ -18,10 +18,11 @@ function DropdownLink({
   children,
   style: styleProp,
   isDropdownActive,
-  onClick
+  onClick,
+  isFullNavDisplayed
 }) {
   const arrowClassName = `fas fa-chevron-${isDropdownActive ? 'up' : 'down'}`;
-  const style = getStyle();
+  const style = getStyle(isFullNavDisplayed, isDropdownActive);
   return (
     <NavItem
       isDropdownLink
@@ -36,8 +37,8 @@ function DropdownLink({
   );
 }
 
-function Dropdown({ children, isFullNavDisplayed }) {
-  const style = getStyle(isFullNavDisplayed);
+function Dropdown({ children, isFullNavDisplayed, isDropdownActive }) {
+  const style = getStyle(isFullNavDisplayed, isDropdownActive);
   return (
     <div className="navbar-dropdown" style={style.dropdown}>
       {children}
