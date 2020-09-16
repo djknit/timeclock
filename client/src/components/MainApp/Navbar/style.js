@@ -1,4 +1,5 @@
-import { headingFontFam, shadow, secondaryBackgroundColor, mainBackgroundColor } from '../style';
+import { calculateStyleForPseudoClassState } from '../../higherOrder';
+import { headingFontFam, shadow, secondaryBackgroundColor } from '../style';
 
 const textColor = '#ffffff';
 const backgroundColor = secondaryBackgroundColor;
@@ -6,7 +7,27 @@ const backgroundColor = secondaryBackgroundColor;
 const navShadow = shadow(7);
 const depressedItemShadow = shadow(2, undefined, undefined, true);
 
-export default function getStyle(brandItemInnerHeight, totalHeight) {
+const interactiveNavElVarStyles = {
+  innate: {
+    color: textColor,
+    backgroundColor: 'transparent'
+  },
+  hover: {
+    color: '#fafafa',
+    backgroundColor: 'rgba(0, 0, 0, .07)'
+  },
+  focus: {
+    color: '#f7f7f7',
+    backgroundColor: 'rgba(0, 0, 0, .09)'
+  },
+  active: {
+    color: textColor,
+    backgroundColor: 'rgba(255, 255, 255, .07)',
+    ...depressedItemShadow
+  }
+};
+
+export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState) {
   const overflowingText = {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
@@ -58,7 +79,8 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       paddingLeft: 28
     },
     burger: {
-      color: textColor
+      color: textColor,
+      ...calculateStyleForPseudoClassState(interactiveNavElVarStyles, burgerPseudoState)
     },
     welcomeText: {
       color: textColor
@@ -69,4 +91,4 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
   };
 };
 
-export { textColor, backgroundColor, navShadow, depressedItemShadow };
+export { textColor, backgroundColor, navShadow, depressedItemShadow, interactiveNavElVarStyles };

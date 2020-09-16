@@ -24,7 +24,7 @@ export default function getStyle(isFullNavDisplayed, isDropdownActive) {
     dropdownLink: {
       zIndex: 22 // must be greater than .navbar-dropdown Bulma z-idex of 20
     },
-    dropdownArrow: {
+    ddLinkArrow: {
       display: 'inline-block',
       position: 'relative',
       top: '.2em',

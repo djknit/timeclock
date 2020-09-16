@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import getStyle from './style';
+import { keyTriggerCheckerFactory } from '../../utilities';
 import { addPseudoPseudoClasses } from '../../../higherOrder';
 
 class _NavItem_needsPseudo extends Component {
@@ -15,10 +16,12 @@ class _NavItem_needsPseudo extends Component {
       isActive,
       isDropdownLink,
       destinationPath,
-      onClick,
+      onClick: onClickProp,
       pseudoHandlers,
       pseudoState,
-      style: styleProp
+      style: styleProp,
+      tabIndex,
+      goTo
     } = this.props;
 
     let className = isDropdownLink ? 'navbar-link is-arrowless' : 'navbar-item';
@@ -28,20 +31,38 @@ class _NavItem_needsPseudo extends Component {
       styleProp
     );
 
+    const onClick = () => {
+      onClickProp({ target: this.ref.current });
+      if (this.ref.current) this.ref.current.blur();
+    };
+
     const commonAttrs = {
       className,
       ...pseudoHandlers,
       style: style.navItem,
       ref: this.ref,
-      onClick: () => onClick({ target: this.ref.current })
+      onClick,
+      tabIndex
     };
 
     return destinationPath ? (
-      <Link {...commonAttrs} to={destinationPath}>
+      <Link
+        {...commonAttrs}
+        to={destinationPath}
+        onKeyDown={
+          keyTriggerCheckerFactory(() => {
+            onClick();
+            goTo(destinationPath);
+          })
+        }
+      >
         {children}
       </Link>
     ) : (
-      <a {...commonAttrs}>
+      <a
+        {...commonAttrs}
+        onKeyDown={keyTriggerCheckerFactory(onClick)}
+      >
         {children}
       </a>
     );

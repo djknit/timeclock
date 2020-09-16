@@ -137,9 +137,10 @@ class MainApp extends Component {
 
     const buildPath = subpath => `${match.path}/${subpath}`;
 
+    const goTo = path => history.push(path);
     const getJobPagePath = jobId => buildPath(`job/${jobId}`);
-    const redirectToJobPage = jobId => history.push(getJobPagePath(jobId));
-    const returnToDashboard = () => history.push(match.path);
+    const redirectToJobPage = jobId => goTo(getJobPagePath(jobId));
+    const returnToDashboard = () => goTo(match.path);
 
     const jobPageSubpaths = {
       timePage: 'time',
@@ -191,7 +192,8 @@ class MainApp extends Component {
             getJobPagePath,
             openNewJobModal,
             jobPageSubpaths,
-            jobSettingsPageSubpaths
+            jobSettingsPageSubpaths,
+            goTo
           }}
         />
         <div style={style.mainContentArea}>
