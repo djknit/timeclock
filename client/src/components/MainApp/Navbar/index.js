@@ -4,7 +4,7 @@ import getStyle from './style';
 import {
   isLoggedInService, profileService, userService, jobsService, currentJobService, windowWidthService
 } from '../../../data';
-import { api, promiseToSetState, retrieveAndSetCurrentJob } from '../utilities';
+import { api, promiseToSetState, retrieveAndSetCurrentJob, keyTriggerCheckerFactory } from '../utilities';
 import NavItem from './NavItem';
 import Dropdown from './Dropdown';
 import WelcomeAndLogout from './WelcomeAndLogout';
@@ -176,6 +176,8 @@ class _Navbar_needsDataAndPseudo extends Component {
             style={style.burger}
             onClick={toggleMenu}
             {...pseudoHandlers}
+            tabIndex={isFullNavDisplayed ? -1 : 0}
+            onKeyDown={keyTriggerCheckerFactory(toggleMenu)}
           >
             {[...Array(3)].map((_e, _i) => (
               <span aria-hidden="true" key={_i} />

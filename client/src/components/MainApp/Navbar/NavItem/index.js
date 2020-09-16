@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import getStyle from './style';
+import './style.css';
 import { keyTriggerCheckerFactory } from '../../utilities';
 import { addPseudoPseudoClasses } from '../../../higherOrder';
 

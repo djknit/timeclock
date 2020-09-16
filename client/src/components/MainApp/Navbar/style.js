@@ -7,6 +7,10 @@ const backgroundColor = secondaryBackgroundColor;
 const navShadow = shadow(7);
 const depressedItemShadow = shadow(2, undefined, undefined, true);
 
+const _navElFocusStyle = {
+  color: '#f7f7f7',
+  backgroundColor: 'rgba(0, 0, 0, .09)'
+};
 const interactiveNavElVarStyles = {
   innate: {
     color: textColor,
@@ -16,14 +20,15 @@ const interactiveNavElVarStyles = {
     color: '#fafafa',
     backgroundColor: 'rgba(0, 0, 0, .07)'
   },
-  focus: {
-    color: '#f7f7f7',
-    backgroundColor: 'rgba(0, 0, 0, .09)'
-  },
+  focus: _navElFocusStyle,
   active: {
     color: textColor,
     backgroundColor: 'rgba(255, 255, 255, .07)',
     ...depressedItemShadow
+  },
+  tabFocus: {
+    ..._navElFocusStyle,
+    outline: `solid 1px ${_navElFocusStyle.color}`
   }
 };
 

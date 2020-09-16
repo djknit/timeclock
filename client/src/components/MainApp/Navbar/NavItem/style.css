@@ -1,0 +1,8 @@
+/* ABOUT THIS FILE:
+  This file is only for overriding Bulma pseudoclass style.
+  All other style goes in './style.js'.
+*/
+
+.navbar-item:focus, .navbar-link:focus {
+  outline: none;
+}

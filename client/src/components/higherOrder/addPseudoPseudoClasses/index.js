@@ -16,7 +16,8 @@ function addPseudoPseudoClasses(ComponentToWrap) {
       this.state = {
         isActive: false,
         isHovered: false,
-        isFocused: false
+        isFocused: false,
+        isTabFocused: false // when focused by tabbing to el
       };
     };
 
@@ -29,7 +30,11 @@ function addPseudoPseudoClasses(ComponentToWrap) {
     };
   
     setFocused(isFocused) {
-      this.setState({ isFocused });
+      this.setState({
+        isFocused,
+        // if clicked instead of tabbed, onMouseDown should have set isActive = true before onFocus
+        isTabFocused: isFocused && !this.state.isActive
+      });
     };
 
     render() {

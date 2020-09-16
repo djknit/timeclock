@@ -1,5 +1,5 @@
 import { calculateStyleForPseudoClassState } from '../../../higherOrder';
-import { textColor, depressedItemShadow, interactiveNavElVarStyles } from '../style';
+import { textColor, interactiveNavElVarStyles } from '../style';
 
 export default function getStyle(pseudoState, additionalStyle) {
 
