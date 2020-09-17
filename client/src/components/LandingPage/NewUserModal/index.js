@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import getStyle from './style';
 import {
   api,
   getUsernameProblems,
@@ -129,8 +128,6 @@ class NewUserModal extends Component {
       password,
       verifyPassword
     } = this.state;
-
-    const style = getStyle();
 
     return (
       <FormModal
