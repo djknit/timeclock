@@ -42,7 +42,9 @@ function Dropdown({
         {/* source: https://stackoverflow.com/questions/32370994/how-to-pass-props-to-this-props-children */}
         {React.Children.map(
           children,
-          child => React.cloneElement(child, childProps)
+          child => (
+            React.isValidElement(child) ? React.cloneElement(child, childProps) : child
+          )
         )}
       </div>
     </div>

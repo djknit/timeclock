@@ -8,7 +8,6 @@ import { api, promiseToSetState, retrieveAndSetCurrentJob, keyTriggerCheckerFact
 import NavItem from './NavItem';
 import Dropdown from './Dropdown';
 import WelcomeAndLogout from './WelcomeAndLogout';
-import Button from '../../Button';
 import { addData, addPseudoPseudoClasses } from '../../higherOrder';
 
 const menuId = 'navbar-menu';
