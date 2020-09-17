@@ -1,9 +1,38 @@
-import { headingFontFam, shadow, secondaryBackgroundColor, mainBackgroundColor } from '../style';
+import { calculateStyleForPseudoClassState } from '../../higherOrder';
+import { headingFontFam, shadow, secondaryBackgroundColor } from '../style';
 
 const textColor = '#ffffff';
 const backgroundColor = secondaryBackgroundColor;
 
-export default function getStyle(brandItemInnerHeight, totalHeight) {
+const navShadow = shadow(7);
+const depressedItemShadow = shadow(2, undefined, undefined, true);
+
+const _navElFocusStyle = {
+  color: '#f7f7f7',
+  backgroundColor: 'rgba(0, 0, 0, .09)'
+};
+const interactiveNavElVarStyles = {
+  innate: {
+    color: textColor,
+    backgroundColor: 'transparent'
+  },
+  hover: {
+    color: '#fafafa',
+    backgroundColor: 'rgba(0, 0, 0, .07)'
+  },
+  focus: _navElFocusStyle,
+  active: {
+    color: textColor,
+    backgroundColor: 'rgba(255, 255, 255, .07)',
+    ...depressedItemShadow
+  },
+  tabFocus: {
+    ..._navElFocusStyle,
+    outline: `solid 1px ${_navElFocusStyle.color}`
+  }
+};
+
+export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState) {
   const overflowingText = {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
@@ -13,7 +42,7 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
   return {
     nav: {
       backgroundColor,
-      ...shadow(7, {})
+      ...navShadow
     },
     menu: {
       backgroundColor
@@ -44,16 +73,19 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
       paddingRight: 16
     },
     jobLabel: {
-      ...overflowingText
+      ...overflowingText,
+      maxWidth: 148
     },
     currentJobLabel: {
-      ...overflowingText
+      ...overflowingText,
+      maxWidth: 140
     },
     settingLabel: {
       paddingLeft: 28
     },
     burger: {
-      color: textColor
+      color: textColor,
+      ...calculateStyleForPseudoClassState(interactiveNavElVarStyles, burgerPseudoState)
     },
     welcomeText: {
       color: textColor
@@ -64,4 +96,4 @@ export default function getStyle(brandItemInnerHeight, totalHeight) {
   };
 };
 
-export { textColor, backgroundColor, shadow };
+export { textColor, backgroundColor, navShadow, depressedItemShadow, interactiveNavElVarStyles };
