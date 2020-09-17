@@ -3,7 +3,6 @@
   // file w/ button & login credentials only exists on my copy (is `.gitignore`d)
 
 import React, { Component } from 'react';
-import _Login from '../_Login';
 
 class SkipLogin extends Component {
   constructor(props) {
