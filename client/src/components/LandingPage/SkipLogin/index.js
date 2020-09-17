@@ -15,17 +15,16 @@ class SkipLogin extends Component {
   
   componentDidMount() {
     try {
-      import('../_Login')
-      .then(_Login => {
-        if (!_Login || !_Login.default) return;
-        this.setState(
-          { Button: _Login.default },
-          () => this.buttonRef.current && this.buttonRef.current.focus()
-        );
-      })
-      .catch(() => { });
+      const _Login = require('../_Login');
+      if (!_Login || !_Login.default) return;
+      this.setState(
+        { Button: _Login.default },
+        () => this.buttonRef.current && this.buttonRef.current.focus()
+      );
     }
-    catch { }
+    catch (e) {
+      return;
+    }
   };
 
   render() {
