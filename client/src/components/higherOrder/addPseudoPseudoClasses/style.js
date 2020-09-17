@@ -3,7 +3,9 @@ function calculateStyleForPseudoClassState(styles, state) {
   const innateStyle = styles.innate || {};
   const activeStyle = (state.isActive && styles.active) || {};
   const hoverStyle = (state.isHovered && styles.hover) || {};
-  const focusStyle = (state.isFocused && styles.focus) || {};
+  const focusStyle = (
+    (state.isTabFocused && styles.tabFocus) || (state.isFocused && styles.focus) || {}
+  );
 
   return {
     ...innateStyle,

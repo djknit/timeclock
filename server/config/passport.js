@@ -25,7 +25,7 @@ passport.use(new LocalStrategy(
       const { _id, username, email, jobs } = user;
       return done(null, { _id, username, email, jobs });
     })
-    .catch(err => done(null, false, { message: err && err.message || 'unknown' }));
+    .catch(err => done(null, false, { message: (err && err.message) || 'unknown' }));
   }
 ));
 

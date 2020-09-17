@@ -10,7 +10,7 @@ function Summary({
 
   return (
     <ContentArea title="Summary" style={style.contentArea}>
-
+      
     </ContentArea>
   );
 }

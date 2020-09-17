@@ -4,6 +4,7 @@ import { windowWidthService, userService, areModalsOpenService } from '../../dat
 import getStyle from './style';
 import { api } from './utilities';
 import Button from '../Button';
+import SkipLogin from './SkipLogin'; // fast auto-login only for development
 import NewUserModal from './NewUserModal';
 import LoginModal from './LoginModal';
 import { addData } from '../higherOrder';
@@ -64,12 +65,13 @@ class _LandingPage_needsData extends Component {
       state, props, toggleLoginModal, toggleNewUserModal, loginInputRef, newUserInputRef
     } = this;
     const { isNewUserModalActive, isLoginModalActive } = state;
-    const { windowWidth, areAnyModalsOpen } = props;
+    const { windowWidth, areAnyModalsOpen, history } = props;
 
     const style = getStyle(windowWidth);
 
     return (
       <div className="container" style={style.container}>
+        <SkipLogin {...{ history }} />
         <h1 style={style.heading}>TIMECLOCK</h1>
         <img src={logo} style={style.logo} />
         <div style={style.buttonsArea}>

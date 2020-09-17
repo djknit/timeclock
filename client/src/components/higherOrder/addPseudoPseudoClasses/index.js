@@ -1,7 +1,8 @@
 // ABOUT THIS FILE:
-// This HOC is responsible for managing state in order to mimic basic pseudo-classes :hover, :active, and :focus
+// This HOC is responsible for managing state in order to mimic basic pseudo-classes `:hover`, `:active`, and `:focus`.
+// Additionally, I added a special pseudo-class state `isTabFocused` to mimic `:focus` but only if the element was focused with the keyboard.
 // The HOC passes 2 props to the wrapped component:
-  // 1.) `pseudoState`: an object with `isActive`, `isHovered`, and `isFocused` states
+  // 1.) `pseudoState`: an object with `isActive`, `isHovered`, `isFocused`, and `isTabFocused` states
   // 2.) `pseudoHandlers`: an object of event handlers that needs to be passed as props to the top-level element in the wrapped component.
 
 import React, { Component } from 'react';
@@ -16,7 +17,8 @@ function addPseudoPseudoClasses(ComponentToWrap) {
       this.state = {
         isActive: false,
         isHovered: false,
-        isFocused: false
+        isFocused: false,
+        isTabFocused: false // when focused by tabbing to el
       };
     };
 
@@ -29,7 +31,11 @@ function addPseudoPseudoClasses(ComponentToWrap) {
     };
   
     setFocused(isFocused) {
-      this.setState({ isFocused });
+      this.setState({
+        isFocused,
+        // if clicked instead of tabbed, onMouseDown should have set isActive = true before onFocus
+        isTabFocused: isFocused && !this.state.isActive
+      });
     };
 
     render() {
