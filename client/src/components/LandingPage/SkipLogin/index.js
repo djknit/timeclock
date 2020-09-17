@@ -12,7 +12,7 @@ class SkipLogin extends Component {
       Button: undefined
     };
   };
-  
+
   componentDidMount() {
     try {
       const _Login = require('../_Login');
@@ -22,9 +22,7 @@ class SkipLogin extends Component {
         () => this.buttonRef.current && this.buttonRef.current.focus()
       );
     }
-    catch (e) {
-      return;
-    }
+    catch { }
   };
 
   render() {
@@ -33,7 +31,7 @@ class SkipLogin extends Component {
       state: { Button },
       buttonRef
     } = this;
-    
+
     return Button ? (
       <Button {...props} {...{ buttonRef }} />
     ) : (

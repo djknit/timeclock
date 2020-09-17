@@ -1,4 +1,3 @@
-// Create express app and passport instances
 const express = require('express');
 const app = express();
 
@@ -14,7 +13,7 @@ app.use(require('morgan')('combined')); // logs http requests
 
 // Additional middleware needed for Passport
 const { middleware } = require('./passport.js');
-middleware.forEach(middleware_ => app.use(middleware_));
+middleware.forEach(_middleware => app.use(_middleware));
 
 // Error handler middleware
 app.use(require('../utilities').errorHandlerMiddleware);

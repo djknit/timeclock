@@ -93,6 +93,7 @@ class LoginModal extends Component {
       usernameOrEmail,
       password,
     } = this.state;
+
     return (
       <FormModal
         formMgmtComponent={this}
