@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
+import { convertStringToNonbreakingHtml } from './utilities';
 import PageTitle from '../../PageTitle';
 import Landing from './Landing';
 import Setting from './Setting';
@@ -36,8 +37,9 @@ class SettingsPage extends Component {
         crumbChain: [
           ...crumbChain,
           {
-            text: pageName,
-            url: routePath
+            text: convertStringToNonbreakingHtml(pageName),
+            url: routePath,
+            stringText: pageName
           }
         ],
         settingPropName,
