@@ -77,7 +77,7 @@ class LoginModal extends Component {
   };
 
   processSuccessResponse(response) {
-    return userService.setUser(response.data.user);
+    return userService.setValue(response.data.user);
   };
 
   afterSuccessCountdown() {

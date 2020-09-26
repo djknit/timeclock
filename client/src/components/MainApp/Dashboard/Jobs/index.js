@@ -24,7 +24,7 @@ class _Jobs_needsData extends Component {
       .then(() => api.jobs.get(jobId))
       .then(res => {
         if (!res || !res.data) throw new Error('Failed to retrieve for data for job.');
-        currentJobService.setCurrentJob(res.data);
+        currentJobService.setValue(res.data);
         this.props.redirectToJobPage(jobId);
       })
       .catch(err => {

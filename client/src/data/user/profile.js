@@ -9,16 +9,14 @@ const service = dataServiceFactory({
     { username, email } :
     undefined
   ),
-  methods: {
-    setUser(user) {
-      hasUser = true;
-      username = user.username;
-      email = user.email;
-    },
-    clearUser() {
-      hasUser = false;
-      username = email = undefined;
-    }
+  setFunction: user => {
+    hasUser = true;
+    username = user.username;
+    email = user.email;
+  },
+  clearFunction: () => {
+    hasUser = false;
+    username = email = undefined;
   }
 });
 

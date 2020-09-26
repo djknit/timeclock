@@ -105,8 +105,8 @@ class _NewJobModal_needsCollapsingAndData extends Component {
 
   processSuccessResponse(response) {
     const { jobs, newJob } = response.data;
-    jobsService.setJobs(jobs);
-    return currentJobService.setCurrentJob(newJob);
+    jobsService.setValue(jobs);
+    return currentJobService.setValue(newJob);
   };
 
   afterSuccessCountdown() {

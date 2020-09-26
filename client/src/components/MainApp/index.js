@@ -78,7 +78,7 @@ class MainApp extends Component {
 
   catchApiUnauthorized(err) {
     if (err && err.response && err.response.status === 401) {
-      userService.clearUser();
+      userService.clearValue();
       this.props.history.push('/');
       return true;
     }
@@ -90,14 +90,14 @@ class MainApp extends Component {
     .then(res => {
       const { match, history } = this.props
       if (!userService.getValue() && res.data.user) {
-        userService.setUser(res.data.user);
+        userService.setValue(res.data.user);
       }
       if (match.isExact) {
         history.push(`${match.path}/${dashboardPathName}`);
       }
     })
     .catch(() => {
-      userService.clearUser();
+      userService.clearValue();
       this.props.history.push('/');
     });
     this.setState({

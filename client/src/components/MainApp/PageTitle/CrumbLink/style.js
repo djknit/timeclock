@@ -12,7 +12,8 @@ export default function getStyle(pseudoState) {
   else if (isFocused) {
     stateDependentStyle = {
       fontWeight: 700,
-      color: '#2a2a2a'
+      color: '#2a2a2a',
+      textDecoration: 'underline'
     };                  
   }
   else if (isHovered) {

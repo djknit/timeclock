@@ -4,46 +4,51 @@ import profileService from './profile';
 import jobsService from './jobs';
 import currentJobService from './currentJob';
 
-let isLoggedIn = isLoggedInService.getValue();
-let profileInfo = profileService.getValue();
-let jobs = jobsService.getValue();
-let currentJob = currentJobService.getValue();
+const childDataServices = {
+  isLoggedIn: isLoggedInService,
+  profileInfo: profileService,
+  jobs: jobsService,
+  currentJob: currentJobService
+};
+const propNames = Object.keys(childDataServices);
+
+let state = {};
+
+function getValueFromChildService(propName) {
+  state[propName] = childDataServices[propName].getValue();
+}
+
+propNames.forEach(getValueFromChildService);
+
+let numSubServiceResponsesNeeded = 0; // used to keep `userService` from `_emit`ing after `setValue` is called until all values are set
 
 const userService = dataServiceFactory({
   readFunction: () => {
-    if (!isLoggedIn) return undefined;
+    if (!state.isLoggedIn) return undefined;
+    const { profileInfo, jobs, currentJob } = state;
     return { ...profileInfo, jobs, currentJob };
   },
-  methods: {
-    setUser(user) {
-      isLoggedInService.setValue(true);
-      profileService.setUser(user);
-      jobsService.setJobs(user.jobs);
-    },
-    clearUser() {
-      isLoggedInService.setValue(false);
-      profileService.clearUser();
-      jobsService.clearJobs();
-      currentJobService.clearCurrentJob();
-    }
+  setFunction: user => {
+    console.log('setting user')
+    numSubServiceResponsesNeeded = 3;
+    isLoggedInService.setValue(true);
+    profileService.setValue(user);
+    jobsService.setValue(user.jobs);
+  },
+  clearFunction: () => {
+    isLoggedInService.setValue(false);
+    profileService.clearValue();
+    jobsService.clearValue();
+    currentJobService.clearValue();
   }
 });
 
-isLoggedInService.subscribe(() => {
-  isLoggedIn = isLoggedInService.getValue();
-  userService._emit();
-});
-profileService.subscribe(() => {
-  profileInfo = profileService.getValue();
-  userService._emit();
-});
-jobsService.subscribe(() => {
-  jobs = jobsService.getValue();
-  userService._emit();
-});
-currentJobService.subscribe(() => {
-  currentJob = currentJobService.getValue();
-  userService._emit();
+propNames.forEach(propName => {
+  childDataServices[propName].subscribe(() => {
+    getValueFromChildService(propName);
+    if (numSubServiceResponsesNeeded > 0) --numSubServiceResponsesNeeded;
+    if (numSubServiceResponsesNeeded === 0) userService._emit();
+  });
 });
 
 export default userService;

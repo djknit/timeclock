@@ -1,15 +1,17 @@
 // ABOUT THIS FILE:
 // I got the general idea that I am using for these data stores from the following source.
 // https://codeutopia.net/blog/2016/02/01/react-application-data-flow-where-and-how-to-store-your-data/
-// This source also introduced me to the 'events' module and it's usage.
+// This source also introduced me to the 'events' module and its usage.
 
 const EventEmitter = require('events');
 
 export default function dataServiceFactory({
   readFunction,
-  methods,
+  methods = {},
   isAsync,
-  maxListeners
+  maxListeners,
+  setFunction,
+  clearFunction
 }) {
 
   const emitter = new EventEmitter();
@@ -29,8 +31,14 @@ export default function dataServiceFactory({
     },
     _emit() {
       emitter.emit('change');
-    }
+    },
+    // next 2 lines are only used to make VS code suggest autocomplete for when using data service
+    setValue: setFunction ? (() => { }) : undefined,
+    clearValue: clearFunction ? (() => { }) : undefined
   };
+
+  if (setFunction) methods.setValue = setFunction;
+  if (clearFunction) methods.clearValue = clearFunction;
 
   const methodKeys = Object.keys(methods);
 

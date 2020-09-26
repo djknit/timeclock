@@ -7,13 +7,13 @@ let jobs;
 
 const service = dataServiceFactory({
   readFunction: () => jobs && jobs.map(job => ({ ...job })),
+  setFunction: _jobs => {
+    jobs = _jobs.map(({ name, _id, startDate }) => ({ name, _id, startDate }));
+  },
+  clearFunction: () => {
+    jobs = undefined;
+  },
   methods: {
-    setJobs(_jobs) {
-      jobs = _jobs.map(({ name, _id, startDate }) => ({ name, _id, startDate }));
-    },
-    clearJobs() {
-      jobs = undefined;
-    },
     removeJob(jobId) {
       for (let i = 0; i < jobs.length; i++) {
         if (jobs[i]._id.toString() === jobId.toString()) {

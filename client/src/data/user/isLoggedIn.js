@@ -4,10 +4,8 @@ let isLoggedIn = false;
 
 const service = dataServiceFactory({
   readFunction: () => isLoggedIn,
-  methods: {
-    setValue(newValue) {
-      isLoggedIn = newValue;
-    }
+  setFunction: newValue => {
+    isLoggedIn = newValue;
   }
 });
 

@@ -15,7 +15,12 @@ const service = dataServiceFactory({
     )
   ),
   methods: {
-
+    setWeeks: _weeks => {
+      weeks = _weeks;
+    },
+    clearWeeks: () => {
+      weeks = undefined;
+    }
   }
 });
 
