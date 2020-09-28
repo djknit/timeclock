@@ -1,11 +1,11 @@
 import { dataServiceFactory } from '../utilities';
 
-let isLoggedIn = false;
+let state = { isLoggedIn: false };
 
 const service = dataServiceFactory({
-  readFunction: () => isLoggedIn,
+  readFunction: () => state.isLoggedIn,
   setFunction: newValue => {
-    isLoggedIn = newValue;
+    state.isLoggedIn = newValue;
   }
 });
 

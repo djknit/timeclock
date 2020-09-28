@@ -4,17 +4,18 @@
 // This source also introduced me to the 'events' module and its usage.
 
 import addMethods from './addMethods';
+import addChildServices from './addChildServices';
 
 const EventEmitter = require('events');
 
 export default function dataServiceFactory({
-  state,
+  state, // not needed if there are no child services
   readFunction,
   methods = {},
   isAsync,
   maxListeners,
-  setFunction,
-  clearFunction,
+  setFunction: setValue,
+  clearFunction: clearValue,
   childDataServices = {}
 }) {
 
@@ -27,75 +28,29 @@ export default function dataServiceFactory({
       emitter.on('change', callback);
       return () => this.unsub(callback);
     },
-    unsub(callback) {
+    unsub(callback) { 
       emitter.removeListener('change', callback);
     },
     _emit() {
       emitter.emit('change');
     },
-    setValue: setFunction,
-    clearValue: clearFunction
+    // Next 2 lines will be overwritten. Placed here so that VS Code suggests autocomplete when using service.
+    setValue,
+    clearValue
   };
 
-  const childServicePropNames = Object.keys(childDataServices);
-  function getValueFromChildService(propName) {
-    state[propName] = childDataServices[propName].getValue();
-  }
-  childServicePropNames.forEach(getValueFromChildService);
+  /* About "Special Methods":
+    Special methods are methods that invoke methods on all child services (when children exist).
+    Regular methods cause service to emit change immediately. Special methods cause service to emit change immediately only when there are no child services. When child services exist, no change should be emitted on special method invocation until every child service has emitted and the new child values have been set on the parent sevice.
+  */
+  const specialMethods = { setValue, clearValue };
 
-  let numSubServiceResponsesNeeded = 0; // used to keep service from `_emit`ing after `setValue` is called until all values are set
-
-  const numChildServices = childServicePropNames.length;
-  ['setValue', 'clearValue'].forEach(specialMethodName => {
-    const specialMethod = dataService[specialMethodName];
-    if (numChildServices > 0) {
-      dataService[specialMethodName] = specialMethod && (
-        (...args) => {
-          numSubServiceResponsesNeeded = numChildServices;
-          specialMethod(...args);
-        }
-      );
-    }
-    else {
-      methods[specialMethodName] = specialMethod;
-    }
-  });
-
-  childServicePropNames.forEach(propName => {
-    childDataServices[propName].subscribe(() => {
-      getValueFromChildService(propName);
-      if (numSubServiceResponsesNeeded > 0) --numSubServiceResponsesNeeded;
-      if (numSubServiceResponsesNeeded === 0) dataService._emit();
-    });
-  });
+  /* Treat special methods as regular methods, but will be overwritten again during `addChildServices` if child services exist. */
+  methods = { ...methods, ...specialMethods };
 
   addMethods({ methods, dataService, isAsync });
 
-  // const methodNames = Object.keys(methods);
-
-  // // copy methods to dataService so that event emitter is triggered when methods are called
-  // // methods should all be synchronous or all asynchronous but NOT a mix of both
-  // methodNames.forEach(methodName => {
-  //   dataService[methodName] = function(...args) {
-  //     if (isAsync) {
-  //       return new Promise((resolve, reject) => {
-  //         methods[methodName](...args)
-  //         .then(result => {
-  //           // emitter.emit('change');
-  //           dataService._emit();
-  //           resolve(result);
-  //         })
-  //         .catch(reject);
-  //       });
-  //     }
-  //     else {
-  //       const result = methods[methodName](...args);
-  //       // emitter.emit('change');
-  //       dataService._emit();
-  //       return result;
-  //     }
-  //   };
-  // });
+  addChildServices({ dataService, state, childDataServices, specialMethods });
 
   return dataService;
 };

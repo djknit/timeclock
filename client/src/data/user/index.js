@@ -10,17 +10,8 @@ const childDataServices = {
   jobs: jobsService,
   currentJob: currentJobService
 };
-const propNames = Object.keys(childDataServices);
 
 let state = {};
-
-function getValueFromChildService(propName) {
-  state[propName] = childDataServices[propName].getValue();
-}
-
-propNames.forEach(getValueFromChildService);
-
-let numSubServiceResponsesNeeded = 0; // used to keep `userService` from `_emit`ing after `setValue` is called until all values are set
 
 const userService = dataServiceFactory({
   readFunction: () => {
@@ -30,7 +21,7 @@ const userService = dataServiceFactory({
   },
   setFunction: user => {
     console.log('setting user')
-    numSubServiceResponsesNeeded = 3;
+    // numSubServiceResponsesNeeded = 3;
     isLoggedInService.setValue(true);
     profileService.setValue(user);
     jobsService.setValue(user.jobs);
@@ -40,15 +31,9 @@ const userService = dataServiceFactory({
     profileService.clearValue();
     jobsService.clearValue();
     currentJobService.clearValue();
-  }
-});
-
-propNames.forEach(propName => {
-  childDataServices[propName].subscribe(() => {
-    getValueFromChildService(propName);
-    if (numSubServiceResponsesNeeded > 0) --numSubServiceResponsesNeeded;
-    if (numSubServiceResponsesNeeded === 0) userService._emit();
-  });
+  },
+  state,
+  childDataServices
 });
 
 export default userService;

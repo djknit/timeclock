@@ -1,22 +1,28 @@
 import { dataServiceFactory } from '../utilities';
 
-let username, email;
-let hasUser = false;
+let state = {
+  hasUser: false,
+  username: undefined,
+  email: undefined
+};
 
 const service = dataServiceFactory({
   readFunction: () => (
-    hasUser ?
-    { username, email } :
+    state.hasUser ?
+    {
+      username: state.username,
+      email: state.email
+    } :
     undefined
   ),
   setFunction: user => {
-    hasUser = true;
-    username = user.username;
-    email = user.email;
+    state.hasUser = true;
+    state.username = user.username;
+    state.email = user.email;
   },
   clearFunction: () => {
-    hasUser = false;
-    username = email = undefined;
+    state.hasUser = false;
+    state.username = state.email = undefined;
   }
 });
 

@@ -1,37 +1,32 @@
 import { dataServiceFactory } from '../../utilities';
 
-let isCurrentJobSet = false;
-let timezone, wage, weekBegins, dayCutoff;
+let state = {
+  isCurrentJobSet: false,
+  timezone: undefined,
+  wage: undefined,
+  weekBegins: undefined,
+  dayCutoff: undefined
+}
 
 const service = dataServiceFactory({
-  readFunction: () => (
-    isCurrentJobSet ?
-    { timezone, wage, weekBegins, dayCutoff } :
-    undefined
-  ),
+  readFunction: () => {
+    const { isCurrentJobSet, timezone, wage, weekBegins, dayCutoff } = state;
+    return isCurrentJobSet ? (
+      { timezone, wage, weekBegins, dayCutoff }
+    ) : (
+      undefined
+    );
+  },
   setFunction: job => {
-    isCurrentJobSet = true;
-    timezone = job.timezone;
-    wage = job.wage;
-    weekBegins = job.weekBegins;
-    dayCutoff = job.dayCutoff;
+    state.isCurrentJobSet = true;
+    state.timezone = job.timezone;
+    state.wage = job.wage;
+    state.weekBegins = job.weekBegins;
+    state.dayCutoff = job.dayCutoff;
   },
   clearFunction: () => {
-    isCurrentJobSet = false;
-    timezone = wage = weekBegins = dayCutoff = undefined;
-  },
-  methods: {
-    setCurrentJob: (job) => {
-      isCurrentJobSet = true;
-      timezone = job.timezone;
-      wage = job.wage;
-      weekBegins = job.weekBegins;
-      dayCutoff = job.dayCutoff;
-    },
-    clearCurrentJob: () => {
-      isCurrentJobSet = false;
-      timezone = wage = weekBegins = dayCutoff = undefined;
-    }
+    state.isCurrentJobSet = false;
+    state.timezone = state.wage = state.weekBegins = state.dayCutoff = undefined;
   }
 });
 

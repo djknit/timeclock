@@ -9,21 +9,10 @@ const childDataServices = {
   weeks: timeService,
   settings: settingsService
 };
-const propNames = Object.keys(childDataServices);
 
 let state = { isCurrentJobSet: false };
 
-function getValueFromChildService(propName) {
-  state[propName] = childDataServices[propName].getValue();
-}
-
-let isCurrentJobSet = false;
-propNames.forEach(getValueFromChildService);
-
-let numSubServiceResponsesNeeded = 0; // used to keep `currentJobService` from `_emit`ing after `setValue` is called until all values are set
-
 function setCurrentJob(jobData) {
-  numSubServiceResponsesNeeded = 3;
   state.isCurrentJobSet = true;
   basicsService.setValue(jobData);
   settingsService.setValue(jobData);
@@ -33,7 +22,7 @@ function setCurrentJob(jobData) {
 const currentJobService = dataServiceFactory({
   state,
   readFunction: () => {
-    const { currentJobBasics, weeks, settings } = state;
+    const { isCurrentJobSet, currentJobBasics, weeks, settings } = state;
     return isCurrentJobSet ? (
       { ...currentJobBasics, ...settings, weeks }
     ) : (
@@ -42,7 +31,7 @@ const currentJobService = dataServiceFactory({
   },
   setFunction: setCurrentJob,
   clearFunction: () => {
-    isCurrentJobSet = false;
+    state.isCurrentJobSet = false;
     basicsService.clearValue();
     settingsService.clearValue();
     timeService.clearWeeks();
@@ -59,19 +48,12 @@ const currentJobService = dataServiceFactory({
         }
       }
     }
-  }
-});
-
-propNames.forEach(propName => {
-  childDataServices[propName].subscribe(() => {
-    getValueFromChildService(propName);
-    if (numSubServiceResponsesNeeded > 0) --numSubServiceResponsesNeeded;
-    if (numSubServiceResponsesNeeded === 0) currentJobService._emit();
-  });
+  },
+  childDataServices
 });
 
 export default currentJobService;
-
+console.log(currentJobService)
 export {
   basicsService as currentJobBasicsService,
   settingsService as currentJobSettingsService,
