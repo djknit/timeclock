@@ -21,13 +21,12 @@ export default function addChildServices({
 
   Object.keys(specialMethods).forEach(methodName => {
     const specialMethod = specialMethods[methodName];
-    // dataService[methodName] = specialMethod && (
-    //   (...args) => {
-    //     numSubServiceResponsesNeeded = numChildServices;
-    //     specialMethod(...args);
-    //   }
-    // );
-    dataService[methodName] = 'special method'
+    dataService[methodName] = specialMethod && (
+      (...args) => {
+        numSubServiceResponsesNeeded = numChildServices;
+        specialMethod(...args);
+      }
+    );
   });
 
   childServicePropNames.forEach(propName => {
