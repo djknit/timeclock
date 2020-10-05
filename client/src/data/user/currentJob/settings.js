@@ -1,4 +1,4 @@
-import { dataServiceFactory } from '../../utilities';
+import { dataServiceFactory, convertDayCutoffToMinutes } from './utilities';
 
 let state = {
   isCurrentJobSet: false,
@@ -12,7 +12,12 @@ const service = dataServiceFactory({
   readFunction: () => {
     const { isCurrentJobSet, timezone, wage, weekBegins, dayCutoff } = state;
     return isCurrentJobSet ? (
-      { timezone, wage, weekBegins, dayCutoff }
+      {
+        timezone,
+        wage,
+        weekBegins,
+        dayCutoff: dayCutoff.map(processDayCutoffSchedEntry)
+      }
     ) : (
       undefined
     );
@@ -31,3 +36,8 @@ const service = dataServiceFactory({
 });
 
 export default service;
+
+function processDayCutoffSchedEntry(schedEntry) {
+  const value = convertDayCutoffToMinutes(schedEntry.value)
+  return Object.assign({}, schedEntry, { value });
+}

@@ -34,7 +34,7 @@ export default function dataServiceFactory({
     _emit() {
       emitter.emit('change');
     },
-    // Next 2 lines will be overwritten. Placed here so that VS Code suggests autocomplete when using service.
+    // Next 2 lines will be overwritten. Placed here so that VS Code suggests autocomplete when using the service.
     setValue,
     clearValue
   };
@@ -46,7 +46,7 @@ export default function dataServiceFactory({
   const specialMethods = { setValue, clearValue };
 
   /* Treat special methods as regular methods, but will be overwritten again during `addChildServices` if child services exist. */
-  methods = { ...methods, ...specialMethods };
+  Object.assign(methods, specialMethods);
 
   addMethods({ methods, dataService, isAsync });
 

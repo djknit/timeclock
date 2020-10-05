@@ -16,7 +16,7 @@ function setCurrentJob(jobData) {
   state.isCurrentJobSet = true;
   basicsService.setValue(jobData);
   settingsService.setValue(jobData);
-  timeService.setWeeks(jobData.weeks);
+  timeService.setValue(jobData.weeks);
 }
 
 const currentJobService = dataServiceFactory({
@@ -34,7 +34,7 @@ const currentJobService = dataServiceFactory({
     state.isCurrentJobSet = false;
     basicsService.clearValue();
     settingsService.clearValue();
-    timeService.clearWeeks();
+    timeService.clearValue();
   },
   methods: {
     updateCurrentJob(updatedJob) {
@@ -53,7 +53,7 @@ const currentJobService = dataServiceFactory({
 });
 
 export default currentJobService;
-console.log(currentJobService)
+
 export {
   basicsService as currentJobBasicsService,
   settingsService as currentJobSettingsService,

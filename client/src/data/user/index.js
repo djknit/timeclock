@@ -37,7 +37,7 @@ const userService = dataServiceFactory({
 });
 
 export default userService;
-console.log(userService)
+
 export {
   isLoggedInService,
   profileService,
