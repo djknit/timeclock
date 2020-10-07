@@ -1,5 +1,5 @@
+import { getDayCutoffTime } from '../../../../utilities';
 import { convertWageToFormData } from './wage';
-import { getDayCutoffTime } from '../../elemental';
 export * from './wage';
 
 function convertSettingValueToFormData(scheduleValue, settingName) {
@@ -15,8 +15,7 @@ function convertSettingValueToFormData(scheduleValue, settingName) {
 
 export { convertSettingValueToFormData };
 
-function convertDayCutoffToFormData(scheduleValue) {
-  const valueInMinutes = Math.round(scheduleValue / (1000 * 60));
+function convertDayCutoffToFormData(valueInMinutes) {
   let result = getDayCutoffTime(valueInMinutes, true);
   // convert time to input value by adjusting time to satisfy: { abs(hour + minute) <= 12*60 }
   if (result.hour >= 12 && valueInMinutes !== 12 * 60) {

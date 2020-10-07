@@ -1,4 +1,6 @@
-import { dataServiceFactory } from '../../utilities';
+import {
+  dataServiceFactory
+} from './utilities';
 
 let _id, name, startDate;
 
@@ -16,16 +18,6 @@ const service = dataServiceFactory({
   clearFunction: () => {
     _id = name = startDate = undefined;
   },
-  // methods: {
-  //   setCurrentJob: job => {
-  //     _id = job._id.toString();
-  //     name = job.name;
-  //     startDate = job.startDate;
-  //   },
-  //   clearCurrentJob: () => {
-  //     _id = name = startDate = undefined;
-  //   }
-  // }
 });
 
 export default service;

@@ -37,6 +37,7 @@ const service = dataServiceFactory({
 
 export default service;
 
+
 function processDayCutoffSchedEntry(schedEntry) {
   const value = convertDayCutoffToMinutes(schedEntry.value)
   return Object.assign({}, schedEntry, { value });
