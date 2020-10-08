@@ -1,3 +1,5 @@
+export { jobData } from './shared';
+
 function getDayCutoffTime(cutoffValueInMinutes, is24hr) {
   const minutesPerDay = 24 * 60;
   const cutoffTimeInMinutes = (cutoffValueInMinutes + minutesPerDay) % minutesPerDay;

@@ -1,8 +1,6 @@
 import api from './api';
-// import dates from './dates';
-// import jobData from './jobData';
 export * from './jobData';
-export * from './shared';
+export * from './dates';
 export * from './data';
 
 function capitalizeFirstLetter(string) {
@@ -16,16 +14,6 @@ function isWindowWide(windowWidth) {
 
 export {
   api,
-  // dates,
-  // jobData,
   capitalizeFirstLetter,
   isWindowWide
 };
-
-// export default {
-//   api,
-//   dates,
-//   jobData,
-//   capitalizeFirstLetter,
-//   isWindowWide
-// };
