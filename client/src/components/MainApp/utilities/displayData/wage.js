@@ -1,33 +1,25 @@
 import React from 'react';
 
 import {
-  getCurrencyAmountDisplay, getCurrencyName, getCurrencyMutiplierDisplay
+  getCurrencyName, getCurrencyMutiplierDisplay
 } from '../../../utilities';
 
 function processWageValueForDisplay(wageValue) {
   if (!wageValue) return null;
   const { rate, currency, overtime } = wageValue;
   return {
-    rate: addPerHr(getCurrencyAmountDisplay(rate, currency)),
+    rate: addPerHr(rate.display.standard),
     currency: getCurrencyName(currency),
-    overtime: processOvertimeValueForDisplay(overtime, rate, currency),
-    shortRate: addPerHr(
-      getCurrencyAmountDisplay(rate, currency, true),
-      true
-    )
+    overtime: processOvertimeValueForDisplay(overtime, rate),
+    shortRate: addPerHr(rate.display.short, true)
   };
 }
 
-function processOvertimeValueForDisplay(overtimeValue, baseRate, currency) {
+function processOvertimeValueForDisplay(overtimeValue, baseRate) {
   if (!overtimeValue) return null;
   const { rate, rateMultiplier, useMultiplier, cutoff } = overtimeValue;
-  const _oTRate = useMultiplier ? baseRate * rateMultiplier : rate
-  const otRateDisplay = addPerHr(getCurrencyAmountDisplay(_oTRate, currency));
-  const baseRateDisplay = addPerHr(getCurrencyAmountDisplay(baseRate, currency));
-  const shortOTRateDisplay = addPerHr(
-    getCurrencyAmountDisplay(_oTRate, currency, true),
-    true
-  );
+  const otRateDisplay = addPerHr(rate.display.standard);
+  const baseRateDisplay = addPerHr(baseRate.display.standard);
   const cutoffDisplay = processOTCutoffValueForDisplay(cutoff);
   return {
     type: useMultiplier ? 'multiple of base rate' : 'custom',
@@ -41,16 +33,14 @@ function processOvertimeValueForDisplay(overtimeValue, baseRate, currency) {
       otRateDisplay
     ),
     shortCutoff: cutoffDisplay.short,
-    shortRate: shortOTRateDisplay
+    shortRate: addPerHr(rate.display.short, true)
   };
 }
 
 function processOTCutoffValueForDisplay(cutoffValue) {
-  const cutoffValueInMinutes = Math.floor((cutoffValue / (60 * 1000)) + .5);
-  const minutes = cutoffValueInMinutes % 60;
-  const hours = Math.floor(cutoffValueInMinutes / 60)
+  const { hours, minutes } = cutoffValue;
   let result = {
-    short: `${hours}h`,
+    short: `${cutoffValue.hours}h`,
     long: <>{hours}&nbsp;hr</>
   };
   if (minutes) {
@@ -72,9 +62,7 @@ function getWageValueSummaryText(wageValue) {
   if (!wageValue) return 'none';
   const { rate, overtime, shortRate } = processWageValueForDisplay(wageValue);
   return overtime ? (
-    <>
-      {shortRate} (>{overtime.shortCutoff}@{overtime.shortRate})
-    </>
+    <>{shortRate} (>{overtime.shortCutoff}@{overtime.shortRate})</>
   ) : (
     <>{rate}</>
   );

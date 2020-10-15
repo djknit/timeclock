@@ -1,4 +1,4 @@
-import { getDurationInfo } from "../../utilities";
+import { getDurationInfo, processWage, getCurrencyAmountInfo } from '../../utilities';
 
 export default function addEarnings(days) {
   let cumulativeMsecsWorked = 0;
@@ -71,14 +71,14 @@ function addEarningsToSegment(segment, proccessedWage, cumulativeWeeklyTime) {
 
   function _getRateInfo(rateValue, durationAtRate, isOvertime) {
     return {
-      rate: rateValue,
+      rate: getCurrencyAmountInfo(rateValue),
       duration: getDurationInfo(durationAtRate),
       isOvertime: !!isOvertime
     };
   }
 }
 
-function addEarningsToSinglePortionOfWeek(portion, portionDuration, wage, cumulativeWeeklyTime) {
+function addEarningsToPortionOfWeek(portion, portionDuration, wage, cumulativeWeeklyTime) {
   const _wage = processWageForEarningsCalc(wage);
   if (!_wage) portion.earnings = null;
   const { overtimeCutoff, overtimeRate, currency, useOvertime, rate: baseRate } = _wage;

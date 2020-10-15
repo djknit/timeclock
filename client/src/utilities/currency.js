@@ -2,6 +2,22 @@ import React from 'react';
 import cc from 'currency-codes';
 import getSymbolFromCurrency from 'currency-symbol-map';
 
+function getCurrencyAmountInfo(rawAmount, currencyCode) {
+  if (!rawAmount || !currencyCode) return null;
+  const numericDisplay = getCurrencyNumericDisplay(rawAmount, currencyCode);
+  const standardDisplay = addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode);
+  return {
+    raw: rawAmount,
+    rounded: parseFloat(numericDisplay),
+    display: {
+      numeric: numericDisplay,
+      short: addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode, true),
+      standard: standardDisplay,
+      long: <>{standardDisplay}&nbsp;{currencyCode}</>
+    }
+  };
+}
+
 function getDecimalDigits(currencyCode) {
   const currencyData = cc.code(currencyCode);
   return currencyData ? currencyData.digits : null;
@@ -14,7 +30,7 @@ function getCurrencySymbol(currencyCode) {
 function getCurrencyNumericDisplay(amount, currencyCode) {
   const numDecimalDigits = getDecimalDigits(currencyCode || '');
   return (
-    numDecimalDigits || numDecimalDigits === 0 ?
+    (numDecimalDigits || numDecimalDigits === 0) ?
     amount.toFixed(numDecimalDigits) :
     amount.toString()
   );
@@ -49,8 +65,8 @@ function getCurrencyName(currencyCode) {
 }
 
 export {
+  getCurrencyAmountInfo,
   getCurrencySymbol,
-  // getCurrencyNumericDisplay,
   getCurrencyAmountDisplay,
   getCurrencyAmountDisplayAndRounded,
   getCurrencyName,

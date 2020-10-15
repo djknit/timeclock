@@ -1,4 +1,4 @@
-import { dataServiceFactory, convertDayCutoffToMinutes } from './utilities';
+import { dataServiceFactory, convertDayCutoffToMinutes, processWage } from './utilities';
 
 let state = {
   isCurrentJobSet: false,
@@ -11,15 +11,21 @@ let state = {
 const service = dataServiceFactory({
   readFunction: () => {
     const { isCurrentJobSet, timezone, wage, weekBegins, dayCutoff } = state;
+    if (isCurrentJobSet) console.log({
+      timezone: processValueSchedule(timezone),
+      wage: processValueSchedule(wage, processWage),
+      weekBegins: processValueSchedule(weekBegins),
+      dayCutoff: processValueSchedule(dayCutoff, convertDayCutoffToMinutes)
+    })
     return isCurrentJobSet ? (
       {
-        timezone,
-        wage,
-        weekBegins,
-        dayCutoff: dayCutoff.map(processDayCutoffSchedEntry)
+        timezone: processValueSchedule(timezone),
+        wage: processValueSchedule(wage, processWage),
+        weekBegins: processValueSchedule(weekBegins),
+        dayCutoff: processValueSchedule(dayCutoff, convertDayCutoffToMinutes)
       }
     ) : (
-      undefined
+      null
     );
   },
   setFunction: job => {
@@ -37,8 +43,11 @@ const service = dataServiceFactory({
 
 export default service;
 
-
-function processDayCutoffSchedEntry(schedEntry) {
-  const value = convertDayCutoffToMinutes(schedEntry.value)
-  return Object.assign({}, schedEntry, { value });
+function processValueSchedule(schedule, valueProcessor) {
+  return schedule.map(
+    entry => ({
+      ...entry,
+      value: valueProcessor ? valueProcessor(entry.value) : entry.value
+    })
+  );
 }

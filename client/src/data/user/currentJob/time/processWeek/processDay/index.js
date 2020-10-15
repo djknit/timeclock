@@ -3,7 +3,8 @@ import {
   convertDayCutoffToMinutes,
   getDayCutoffTime,
   dates as dateUtils,
-  getDurationInfo
+  getDurationInfo,
+  processWage
 } from '../../utilities';
 import processSegments from './processSegments';
 
@@ -18,7 +19,7 @@ export default function processDay({
     date: cloneMyDate(date),
     startTime: getDayBoundary(date, startCutoff, startTimezone),
     endTime: getDayBoundary(getNextDate(date), endCutoff, timezone),
-    wage: wage && Object.assign({}, wage, { overtime: wage.overtime && { ...wage.overtime } }),
+    wage: processWage(wage),
     segments: processSegments(segments, timezone),
     totalTime: getTotalSegmentsDurationInfo(segments)
   };

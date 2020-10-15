@@ -2,6 +2,7 @@ import api from './api';
 export * from './jobData';
 export * from './dates';
 export * from './data';
+export * from './currency';
 
 function capitalizeFirstLetter(string) {
   // source: https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
