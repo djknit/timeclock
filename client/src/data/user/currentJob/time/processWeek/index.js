@@ -1,5 +1,6 @@
 import { cloneMyDate, getDurationInfo } from '../utilities';
 import processDay from './processDay';
+import { addEarningsToDays } from './earnings';
 
 export default function processWeek(weekDocument) {
   
@@ -7,9 +8,7 @@ export default function processWeek(weekDocument) {
   
   const processedDays = days.map(processDay);
 
-  // still need to calculate wages
-    // if wage changes during week:
-      // calculate amount earned at each wage then add together if currencies are the same
+  addEarningsToDays(processedDays);
 
   return {
     weekDocId: _id.toString(),
