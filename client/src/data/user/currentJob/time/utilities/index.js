@@ -1,6 +1,7 @@
 import { dates as dateUtils } from '../../utilities';
 import moment from 'moment-timezone';
 export * from '../../utilities';
+export * from './wage';
 
 const {
   convertMomentToMyDate,

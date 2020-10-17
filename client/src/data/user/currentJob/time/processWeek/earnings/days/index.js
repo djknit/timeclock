@@ -15,7 +15,7 @@ function addEarningsToDay(day, cumulativeWeeklyTime) {
     addEarningsToSegment(segment, wage, _cumulativeTime); 
     _cumulativeTime += segment.duration.durationInMsec;
   });
-  day.earnings = getWeekSectionEarnings(durationInMsec, wage, cumulativeWeeklyTime);
+  day.earnings = getWeekSectionEarnings(day.totalTime.durationInMsec, wage, cumulativeWeeklyTime);
 }
 
 function addEarningsToSegment(segment, wage, cumulativeWeeklyTime) {

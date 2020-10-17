@@ -29,11 +29,11 @@ function getWeekSectionEarnings(sectionTotalTimeInMsec, wage, cumulativeWeeklyTi
   }
   else {
     const _rate = isWholeSectionOvertime ? overtimeRate : baseRate;
-    rawAmountEarned = _rate * getHoursFromMsecs(sectionTotalTimeInHours);
+    rawAmountEarned = _rate * getHoursFromMsecs(sectionTotalTimeInMsec);
     rates = [_getRateInfo(_rate, sectionTotalTimeInMsec, isWholeSectionOvertime)]
   }
 
-  amount = getCurrencyAmountInfo(rawAmountEarned, currency);
+  const amount = getCurrencyAmountInfo(rawAmountEarned, currency);
   return { currency, amount, rates };
 }
 
@@ -55,10 +55,12 @@ function processWageForEarningsCalc(wage) {
 
 function rateInfoGetterFactory(currency) {
   return function (rawRateValue, timeAtRateInMsec, isOvertime) {
+    const rawAmountEarned = rawRateValue * getHoursFromMsecs(timeAtRateInMsec);
     return {
       rate: getCurrencyAmountInfo(rawRateValue, currency),
       duration: getDurationInfo(timeAtRateInMsec),
-      isOvertime: !!isOvertime
+      isOvertime: !!isOvertime,
+      amountEarned: getCurrencyAmountInfo(rawAmountEarned, currency)
     };
   };
 }
