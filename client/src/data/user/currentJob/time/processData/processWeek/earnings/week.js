@@ -1,4 +1,4 @@
-import { getCurrencyAmountInfo, areWagesEquivalent, getDurationInfo } from '../../../utilities';
+import { formatEarningsForCurrency, areWagesEquivalent } from '../../utilities';
 
 function getWeekEarnings(fullyProcessedDays) {
   let weekTotalEarningsByCurrency = [];
@@ -65,25 +65,4 @@ function addDayEarningsToWeekTotals(day, weekTotalsByCurrency) {
     weekTotalsForRate.durationInMsec += duration.durationInMsec;
     weekTotalsForRate.rawAmountEarned += amountEarned.raw;
   });
-}
-
-function formatEarningsForCurrency({ currency, rawAmount, totalTimeInMsec, rates }) {
-  let result = {
-    currency,
-    totalTime: getDurationInfo(totalTimeInMsec)
-  };
-  if (!currency) return result;
-  return {
-    ...result,
-    amount: getCurrencyAmountInfo(rawAmount, currency),
-    rates: rates.map(({ rate, durationInMsec, isOvertime, rawAmountEarned, wage }) => (
-      {
-        rate,
-        duration: getDurationInfo(durationInMsec),
-        isOvertime,
-        amountEarned: getCurrencyAmountInfo(rawAmountEarned, currency),
-        wage
-      }
-    ))
-  };
 }
