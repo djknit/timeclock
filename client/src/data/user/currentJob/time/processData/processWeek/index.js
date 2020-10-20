@@ -1,6 +1,6 @@
-import { cloneMyDate, getDurationInfo } from '../utilities';
+import { cloneMyDate, getDurationInfo } from '../../utilities';
 import processDay from './processDay';
-import { addEarningsToDays } from './earnings';
+import { addEarningsToDays, getWeekEarnings } from './earnings';
 
 export default function processWeek(weekDocument) {
   
@@ -10,13 +10,16 @@ export default function processWeek(weekDocument) {
 
   addEarningsToDays(processedDays);
 
+  const earnings = getWeekEarnings(processedDays);
+
   return {
     weekDocId: _id.toString(),
     firstDate: cloneMyDate(firstDate),
     lastDate: cloneMyDate(lastDate),
     weekNumber,
     days: processedDays,
-    totalTime: getTotalDurationInfo(processedDays)
+    totalTime: getTotalDurationInfo(processedDays),
+    earnings
   };
 };
 

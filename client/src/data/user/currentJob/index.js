@@ -6,7 +6,7 @@ import settingsService from './settings';
 
 const childDataServices = {
   currentJobBasics: basicsService,
-  weeks: timeService,
+  time: timeService,
   settings: settingsService
 };
 
@@ -22,12 +22,12 @@ function setCurrentJob(jobData) {
 const currentJobService = dataServiceFactory({
   state,
   readFunction: () => {
-    const { isCurrentJobSet, currentJobBasics, weeks, settings } = state;
+    const { isCurrentJobSet, currentJobBasics, time, settings } = state;
     return isCurrentJobSet ? (
-      { ...currentJobBasics, ...settings, weeks }
+      { ...currentJobBasics, ...settings, time }
     ) : (
       null
-    )
+    );
   },
   setFunction: setCurrentJob,
   clearFunction: () => {

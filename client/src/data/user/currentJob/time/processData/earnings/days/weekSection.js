@@ -1,8 +1,10 @@
-import { getDurationInfo, getCurrencyAmountInfo } from '../../../utilities';
+import { getDurationInfo, getCurrencyAmountInfo } from '../../../../utilities';
+
 
 // Calculate earrnings for a single day or segment.
   // works for any consecutive section of week in which wage doesn't change; only needed for day and segment
 function getWeekSectionEarnings(sectionTotalTimeInMsec, wage, cumulativeWeeklyTime) {
+  if (sectionTotalTimeInMsec === 0) return null;
   const _wage = processWageForEarningsCalc(wage);
   if (!_wage) return null;
   const { overtimeCutoff, overtimeRate, currency, useOvertime, baseRate } = _wage;

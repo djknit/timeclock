@@ -1,5 +1,5 @@
 import { dataServiceFactory } from './utilities';
-import processWeek from './processWeek';
+import processData from './processData';
 
 let state = {
   weeks: undefined
@@ -7,8 +7,7 @@ let state = {
 
 const service = dataServiceFactory({
   readFunction() {
-    console.log(state.weeks && state.weeks.map(processWeek))
-    return state.weeks && state.weeks.map(processWeek);
+    return processData(state.weeks);
   },
   setFunction(weeksArray) {
     state.weeks = weeksArray.map(({ document }) => document);

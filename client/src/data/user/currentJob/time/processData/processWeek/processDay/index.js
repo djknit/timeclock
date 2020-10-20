@@ -5,7 +5,7 @@ import {
   dates as dateUtils,
   getDurationInfo,
   processWage
-} from '../../utilities';
+} from '../../../utilities';
 import processSegments from './processSegments';
 
 const { getPrecedingDate, getNextDate } = dateUtils;

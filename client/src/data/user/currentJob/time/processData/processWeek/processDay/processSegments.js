@@ -1,7 +1,7 @@
 import {
   getTimeInfoFromUtcTime,
   getDurationInfo
-} from '../../utilities';
+} from '../../../utilities';
 
 export default function processSegments(segments, timezone) {
 
