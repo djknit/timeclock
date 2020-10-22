@@ -15,6 +15,7 @@ function processTimeData(rawWeeks) {
 
 export default processTimeData;
 
+
 function getTotalTime(weeks) {
   let totalTimeInMsec = 0;
   weeks.forEach(({ totalTime }) => {
@@ -22,4 +23,3 @@ function getTotalTime(weeks) {
   });
   return getDurationInfo(totalTimeInMsec);
 }
-

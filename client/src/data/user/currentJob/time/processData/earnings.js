@@ -2,16 +2,18 @@ import { areWagesEquivalent, formatEarningsForCurrency } from './utilities';
 
 function getJobEarnings(processedWeeks) {
   let totalEarningsByCurrency = [];
-  processedWeeks.forEach(week => addWeekEarningsTotals(week, totalEarningsByCurrency));
+  processedWeeks.forEach(week => {
+    addWeekEarningsTotals(week, totalEarningsByCurrency);
+  });
   return totalEarningsByCurrency.map(formatEarningsForCurrency);
 }
 
 function addWeekEarningsTotals(week, jobTotalEarningsByCurrency) {
   const { earnings } = week;
   if (!earnings) return;
-  earnings.forEach(
-    earningsForCurrency => addWeekCurrencyEarningsToJobTotals(earningsForCurrency, jobTotalEarningsByCurrency)
-  );
+  earnings.forEach(earningsForCurrency => {
+    addWeekCurrencyEarningsToJobTotals(earningsForCurrency, jobTotalEarningsByCurrency);
+  });
 }
 
 function addWeekCurrencyEarningsToJobTotals(weekEarningsForCurrency, jobTotalEarningsByCurrency) {

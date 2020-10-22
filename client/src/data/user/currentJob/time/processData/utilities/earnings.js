@@ -9,15 +9,15 @@ function formatEarningsForCurrency({ currency, rawAmount, totalTimeInMsec, rates
   return {
     ...result,
     amount: getCurrencyAmountInfo(rawAmount, currency),
-    rates: rates.map(({ rate, durationInMsec, isOvertime, rawAmountEarned, wage }) => (
-      {
+    rates: rates.map(
+      ({ rate, durationInMsec, isOvertime, rawAmountEarned, wage }) => ({
         rate,
         duration: getDurationInfo(durationInMsec),
         isOvertime,
         amountEarned: getCurrencyAmountInfo(rawAmountEarned, currency),
         wage
-      }
-    ))
+      })
+    )
   };
 }
 

@@ -32,7 +32,7 @@ function getWeekSectionEarnings(sectionTotalTimeInMsec, wage, cumulativeWeeklyTi
   else {
     const _rate = isWholeSectionOvertime ? overtimeRate : baseRate;
     rawAmountEarned = _rate * getHoursFromMsecs(sectionTotalTimeInMsec);
-    rates = [_getRateInfo(_rate, sectionTotalTimeInMsec, isWholeSectionOvertime)]
+    rates = [_getRateInfo(_rate, sectionTotalTimeInMsec, isWholeSectionOvertime)];
   }
 
   const amount = getCurrencyAmountInfo(rawAmountEarned, currency);
