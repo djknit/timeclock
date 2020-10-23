@@ -28,7 +28,6 @@ let state = {
 
 const service = dataServiceFactory({
   readFunction: () => state.areAnyModalsOpen,
-  methods: {},
   maxListeners: 40
 });
 

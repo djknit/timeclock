@@ -1,12 +1,12 @@
 import { dataServiceFactory } from './utilities';
 
-let windowWidth;
+let state = { windowWidth: undefined };
 
 const service = dataServiceFactory({
-  readFunction: () => windowWidth,
+  readFunction: () => state.windowWidth,
   methods: {
     reportChange(newWidth) {
-      windowWidth = newWidth;
+      state.windowWidth = newWidth;
     }
   },
   maxListeners: 40

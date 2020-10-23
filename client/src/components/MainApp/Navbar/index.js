@@ -65,7 +65,7 @@ class _Navbar_needsDataAndPseudo extends Component {
     .then(api.auth.logout)
     .then(res => promiseToSetState(this, { isLoading: false, hasProblem: false }))
     .then(() => {
-      userService.clearUser();
+      userService.clearValue();
       this.props.goTo('/');
     })
     .catch(err => {
@@ -124,6 +124,8 @@ class _Navbar_needsDataAndPseudo extends Component {
       brandItemInnerHeight, isLoading, hasProblem, isMenuActive, isJobsDropdownActive, isCurrentJobDropdownActive
     } = this.state;
 
+    console.log('are any modals open?\n', areAnyModalsOpen)
+
     const isActiveClass = isMenuActive ? ' is-active' : '';
 
     const toggleMenu = () => this.setState({ isMenuActive: !isMenuActive });
@@ -142,17 +144,18 @@ class _Navbar_needsDataAndPseudo extends Component {
       target.blur();
       this.setState({ isMenuActive: false, useDefaultDropdownActivity: true });
     };
+    const commonAttrs = {
+      goTo,
+      tabIndex: areAnyModalsOpen ? -1 : 0
+    };
     const commonNavItemAttrs = {
       onClick: handleLinkClick,
-      goTo,
-      tabIndex: 0
+      ...commonAttrs
     };
-
+    const commonDropdownAttrs = { isFullNavDisplayed, ...commonAttrs };
     const welcomeLogoutAttrs = {
       profileData, isLoading, isLoggedIn, areAnyModalsOpen, hasProblem, submitLogout
     };
-
-    const commonDropdownAttrs = { isFullNavDisplayed, goTo };
 
     return (
       <nav className="navbar" role="navigation" aria-label="main navigation" style={style.nav}>

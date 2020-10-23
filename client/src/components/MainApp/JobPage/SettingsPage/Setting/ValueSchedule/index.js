@@ -41,7 +41,7 @@ function ValueSchedule({
         </tr>
       </thead>
       <tbody>
-        {valueSchedule.map(
+        {valueSchedule && valueSchedule.map(
           ({ value, startDateText, _id }, index) => (
             <tr key={_id}>
               {index === 0 ? (

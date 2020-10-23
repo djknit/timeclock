@@ -10,7 +10,8 @@ function Dropdown({
   children,
   label,
   disabled,
-  goTo
+  goTo,
+  tabIndex
 }) {
 
   const style = getStyle(isFullNavDisplayed, isActive);
@@ -21,7 +22,7 @@ function Dropdown({
   const ddLinkArrowClassName = `fas fa-chevron-${isActive ? 'up' : 'down'}`;
 
   const childProps = {
-    tabIndex: (isActive && !disabled) ? 0 : -1,
+    tabIndex: (isActive && !disabled) ? tabIndex : -1,
     goTo
   };
 
@@ -34,7 +35,7 @@ function Dropdown({
         {...{
           isActive
         }}
-        tabIndex={disabled ? -1 : 0}
+        tabIndex={disabled ? -1 : tabIndex}
       >
         {label}&nbsp;<i className={ddLinkArrowClassName} style={style.ddLinkArrow} />
       </NavItem>

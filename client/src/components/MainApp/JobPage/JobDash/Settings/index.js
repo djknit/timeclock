@@ -37,7 +37,7 @@ function SettingsArea({
 
   const style = getStyle(styleProp);
 
-  return (
+  return job && (
     <ContentArea style={style.contentArea}>
       <ContentAreaTitle>Settings Summary</ContentAreaTitle>
       {

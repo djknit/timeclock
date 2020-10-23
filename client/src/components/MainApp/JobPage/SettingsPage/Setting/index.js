@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import getStyle from './style';
 import {
-  preprocessScheduleForDisplay,
-  getSchedEntryFromId
+  preprocessScheduleForDisplay
 } from '../utilities';
 import { windowWidthService, areModalsOpenService } from '../../../../../data';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
@@ -156,15 +155,17 @@ class _Setting_needsData extends Component {
             toggleDeleteValueModal={toggleDeleteUpdateModal}
           />
         </ContentArea>
-        {updateOpsInfo.map(({ ModalComponent, togglerName, inputRefName, isActiveStateProp, name }) => (
-          <ModalComponent
-            key={name}
-            {...commonModalAttrs}
-            isActive={this.state[isActiveStateProp]}
-            closeModal={() => this[togglerName](false)}
-            inputRef={this[inputRefName]}
-          />
-        ))}
+        {updateOpsInfo.map(
+          ({ ModalComponent, togglerName, inputRefName, isActiveStateProp, name }) => (
+            <ModalComponent
+              key={name}
+              {...commonModalAttrs}
+              isActive={this.state[isActiveStateProp]}
+              closeModal={() => this[togglerName](false)}
+              inputRef={this[inputRefName]}
+            />
+          )
+        )}
       </>
     );
   };

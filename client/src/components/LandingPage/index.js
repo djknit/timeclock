@@ -46,7 +46,7 @@ class _LandingPage_needsData extends Component {
     api.auth.test()
     .then(res => {
       if (!res.data.user) return console.error('Missing user.');
-      userService.setUser(res.data.user);
+      userService.setValue(res.data.user);
       this.props.history.push('/app');
     })
     .catch(() => {});

@@ -19,14 +19,14 @@ function PageTitle({
           crumbChain.map(
             (crumb, index) => (
               index !== crumbChain.length - 1 ? (
-                <React.Fragment key={crumb.text}>
+                <React.Fragment key={crumb.stringText || crumb.text}>
                   <CrumbLink to={crumb.url} allowTabFocus={!areAnyModalsOpen}>
                     {crumb.text}
                   </CrumbLink>
                   <i style={completeStyle.breadcrumbSeparator} className="fas fa-chevron-right" />
                 </React.Fragment>
               ) : (
-                <span key={crumb.text}>
+                <span key={crumb.stringText || crumb.text}>
                   {crumb.text}
                 </span>
               )

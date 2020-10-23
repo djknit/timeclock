@@ -1,14 +1,15 @@
+const defaultOvertime = {
+  useOvertime: true,
+  useMultiplier: true,
+  multiplier: 1.5,
+  rate: '',
+  cutoff: {
+    hours: 40,
+    minutes: 0
+  }
+};
+
 function convertWageToFormData(wage) {
-  const defaultOvertime = {
-    useOvertime: true,
-    useMultiplier: true,
-    multiplier: 1.5,
-    rate: '',
-    cutoff: {
-      hours: 40,
-      minutes: 0
-    }
-  };
   if (!wage) {
     return {
       useWage: false,
@@ -20,30 +21,28 @@ function convertWageToFormData(wage) {
   const {  rate, currency, overtime } = wage;
   return {
     useWage: true,
-    rate,
+    rate: rate.display.numeric,
     currency,
-    overtime: (
-      overtime ?
-      {
-        useOvertime: true,
-        useMultiplier: overtime.useMultiplier,
-        multiplier: overtime.rateMultiplier,
-        rate: (overtime.rate || overtime.rate === 0) ? overtime.rate.toString() : '',
-        cutoff: convertOTCutoffToFormData(overtime.cutoff)
-      } :
-      {
-        ...defaultOvertime,
-        useOvertime: false
-      }
-    )
+    overtime: convertOTWageToFormData(overtime)
   };
 }
-function convertOTCutoffToFormData(oTCutoff) {
-  const cutoffInMinutes = Math.round(oTCutoff / (60 * 1000));
+
+function convertOTWageToFormData(overtime) {
+  const useOvertime = !!overtime;
+  if (!useOvertime) return { ...defaultOvertime, useOvertime };
+  const { useMultiplier, rateMultiplier, rate, cutoff } = overtime;
   return {
-    hours: Math.floor(cutoffInMinutes / 60),
-    minutes: cutoffInMinutes % 60
+    useOvertime,
+    useMultiplier,
+    multiplier: rateMultiplier,
+    rate: useMultiplier ? '' : rate.display.numeric,
+    cutoff: convertOTCutoffToFormData(cutoff)
   };
+}
+
+function convertOTCutoffToFormData(cutoff) {
+  const { hours, minutes } = cutoff;
+  return { hours, minutes };
 }
 
 export { convertWageToFormData };

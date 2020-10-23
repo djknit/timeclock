@@ -4,46 +4,36 @@ import profileService from './profile';
 import jobsService from './jobs';
 import currentJobService from './currentJob';
 
-let isLoggedIn = isLoggedInService.getValue();
-let profileInfo = profileService.getValue();
-let jobs = jobsService.getValue();
-let currentJob = currentJobService.getValue();
+const childDataServices = {
+  isLoggedIn: isLoggedInService,
+  profileInfo: profileService,
+  jobs: jobsService,
+  currentJob: currentJobService
+};
+
+let state = {};
 
 const userService = dataServiceFactory({
   readFunction: () => {
-    if (!isLoggedIn) return undefined;
+    if (!state.isLoggedIn) return undefined;
+    const { profileInfo, jobs, currentJob } = state;
     return { ...profileInfo, jobs, currentJob };
   },
-  methods: {
-    setUser(user) {
-      isLoggedInService.setValue(true);
-      profileService.setUser(user);
-      jobsService.setJobs(user.jobs);
-    },
-    clearUser() {
-      isLoggedInService.setValue(false);
-      profileService.clearUser();
-      jobsService.clearJobs();
-      currentJobService.clearCurrentJob();
-    }
-  }
-});
-
-isLoggedInService.subscribe(() => {
-  isLoggedIn = isLoggedInService.getValue();
-  userService._emit();
-});
-profileService.subscribe(() => {
-  profileInfo = profileService.getValue();
-  userService._emit();
-});
-jobsService.subscribe(() => {
-  jobs = jobsService.getValue();
-  userService._emit();
-});
-currentJobService.subscribe(() => {
-  currentJob = currentJobService.getValue();
-  userService._emit();
+  setFunction: user => {
+    console.log('setting user')
+    // numSubServiceResponsesNeeded = 3;
+    isLoggedInService.setValue(true);
+    profileService.setValue(user);
+    jobsService.setValue(user.jobs);
+  },
+  clearFunction: () => {
+    isLoggedInService.setValue(false);
+    profileService.clearValue();
+    jobsService.clearValue();
+    currentJobService.clearValue();
+  },
+  state,
+  childDataServices
 });
 
 export default userService;

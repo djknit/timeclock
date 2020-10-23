@@ -121,7 +121,7 @@ class _EditAccountModal_needsData extends Component {
   };
 
   processSuccessResponse(response) {
-    profileService.setUser(response.data.user);
+    profileService.setValue(response.data.user);
   };
 
   processErrorResponse(response) {

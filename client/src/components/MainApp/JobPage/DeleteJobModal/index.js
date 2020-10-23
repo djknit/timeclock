@@ -41,7 +41,7 @@ class DeleteJobModal extends Component {
 
   afterSuccessCountdown() {
     this.props.returnToDashboard();
-    currentJobService.clearCurrentJob();
+    currentJobService.clearValue();
   };
 
   render() {
