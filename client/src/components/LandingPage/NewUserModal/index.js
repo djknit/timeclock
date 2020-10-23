@@ -94,7 +94,7 @@ class NewUserModal extends Component {
   };
 
   processSuccessResponse(response) {
-    userService.setUser(response.data.user);
+    userService.setValue(response.data.user);
   };
 
   processErrorResponse(response) {

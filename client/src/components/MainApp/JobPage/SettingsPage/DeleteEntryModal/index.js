@@ -25,7 +25,7 @@ class DeleteEntryModal extends Component {
 
   processSuccessResponse(response) {
     return this.props.setEntryToEditId(null)
-    .then(() => currentJobService.setCurrentJob(response.data));
+    .then(() => currentJobService.setValue(response.data));
   };
 
   afterSuccessCountdown() {

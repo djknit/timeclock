@@ -21,7 +21,7 @@ router.post(
     if (typeof(username) !== 'string' && typeof(email) !== 'string') {
       problems.username = true;
       problems.email = true;
-      problemMessages.push('You must create a username or provide an email address.')
+      problemMessages.push('You must create a username or provide an email address.');
     };
     if (problemMessages.length > 0) {
       return res.status(400).json({

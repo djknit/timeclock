@@ -68,7 +68,7 @@ class _JobPage_needsData extends Component {
       .then(() => api.jobs.get(jobId))
       .then(res => {
         if (!res || !res.data) throw new Error('Failed to retrieve data for job.');
-        currentJobService.setCurrentJob(res.data);
+        currentJobService.setValue(res.data);
       })
       .catch(err => {
         if (this.props.catchApiUnauthorized(err)) return;
@@ -88,7 +88,7 @@ class _JobPage_needsData extends Component {
 
   componentWillUnmount() {
     areModalsOpenService.report(this.state.modalsRegistrationId, false);
-    currentJobService.clearCurrentJob();
+    currentJobService.clearValue();
   };
 
   render() {
@@ -126,6 +126,8 @@ class _JobPage_needsData extends Component {
       catchApiUnauthorized,
       areAnyModalsOpen
     };
+
+    console.log(job)
 
     return (
       job ? (

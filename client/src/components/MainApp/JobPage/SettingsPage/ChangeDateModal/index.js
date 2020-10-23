@@ -73,7 +73,7 @@ class ChangeDateModal extends Component {
   };
 
   processSuccessResponse(response) {
-    return currentJobService.setCurrentJob(response.data);
+    return currentJobService.setValue(response.data);
   };
 
   afterSuccessCountdown() {

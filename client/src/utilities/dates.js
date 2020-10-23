@@ -1,6 +1,12 @@
 import sharedResources from '../shared';
-const sharedDateUtils = sharedResources.utilities.dates;
 
-export default {
-  ...sharedDateUtils
-};
+let dateUtils = sharedResources.utilities.dates;
+
+const { getMoment, convertMomentToMyDate } = dateUtils;
+
+function getNextDate(myDate) {
+  return convertMomentToMyDate(getMoment(myDate).add(1, 'days'));
+}
+
+
+export const dates = { ...dateUtils, getNextDate };

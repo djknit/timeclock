@@ -11,7 +11,7 @@ export * from './getUpdateWarnings';
 const { getPrecedingDate } = dateUtils;
 
 function preprocessScheduleForDisplay(schedule, settingName) {
-  return schedule.map(
+  return schedule && schedule.map(
     (entry, index) => {
       const { startDate, value } = entry;
       const endDate = (

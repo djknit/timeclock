@@ -1,7 +1,14 @@
-import sharedResources from '../shared';
+export { jobData } from './shared';
 
-const sharedJobDataUtils = sharedResources.utilities.jobData;
+function getDayCutoffTime(cutoffValueInMinutes) {
+  const minutesPerDay = 24 * 60;
+  const cutoffTimeInMinutes = (cutoffValueInMinutes + minutesPerDay) % minutesPerDay;
+  let time = {
+    hour: Math.floor(cutoffTimeInMinutes / 60),
+    minute: cutoffTimeInMinutes % 60,
+    is24hr: true
+  };
+  return time;
+}
 
-export default {
-  ...sharedJobDataUtils
-};
+export { getDayCutoffTime };

@@ -1,45 +1,61 @@
 import { dataServiceFactory } from '../../utilities';
-import timeService from './time';
 import jobsService from '../jobs';
+import basicsService from './basics';
+import timeService from './time';
+import settingsService from './settings';
 
-let weeks = timeService.getValue();
-timeService.subscribe(() => weeks = timeService.getValue());
+const childDataServices = {
+  currentJobBasics: basicsService,
+  time: timeService,
+  settings: settingsService
+};
 
-let _id, name, timezone, wage, dayCutoff, weekBegins, startDate;
+let state = { isCurrentJobSet: false };
 
-function setCurrentJob(currentJob) {
-  _id = currentJob._id.toString();
-  name = currentJob.name;
-  timezone = currentJob.timezone;
-  wage = currentJob.wage;
-  dayCutoff = currentJob.dayCutoff;
-  weekBegins = currentJob.weekBegins;
-  startDate = currentJob.startDate;
+function setCurrentJob(jobData) {
+  state.isCurrentJobSet = true;
+  basicsService.setValue(jobData);
+  settingsService.setValue(jobData);
+  timeService.setValue(jobData.weeks);
 }
 
-const service = dataServiceFactory({
-  readFunction: () => (
-    _id ?
-    { _id, name, timezone, wage, dayCutoff, weekBegins, startDate } :
-    null
-  ),
+const currentJobService = dataServiceFactory({
+  state,
+  readFunction: () => {
+    const { isCurrentJobSet, currentJobBasics, time, settings } = state;
+    return isCurrentJobSet ? (
+      { ...currentJobBasics, ...settings, time }
+    ) : (
+      null
+    );
+  },
+  setFunction: setCurrentJob,
+  clearFunction: () => {
+    state.isCurrentJobSet = false;
+    basicsService.clearValue();
+    settingsService.clearValue();
+    timeService.clearValue();
+  },
   methods: {
-    setCurrentJob,
-    clearCurrentJob() {
-      _id = name = timezone = wage = dayCutoff = weekBegins = startDate = undefined;
-    },
     updateCurrentJob(updatedJob) {
       setCurrentJob(updatedJob);
       let _jobs = jobsService.getValue();
       for (let i = 0; i < _jobs.length; i++) {
         if (_jobs[i]._id.toString() === updatedJob._id.toString()) {
           _jobs[i] = updatedJob;
-          jobsService.setJobs(_jobs);
+          jobsService.setValue(_jobs);
           return;
         }
       }
     }
-  }
+  },
+  childDataServices
 });
 
-export default service;
+export default currentJobService;
+
+export {
+  basicsService as currentJobBasicsService,
+  settingsService as currentJobSettingsService,
+  timeService as currentJobTimeService
+};
