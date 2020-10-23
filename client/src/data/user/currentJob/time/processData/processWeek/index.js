@@ -11,22 +11,32 @@ export default function processWeek(weekDocument) {
 
   addEarningsToDays(processedDays);
 
+  const { totalTime, daysWorked } = getTotalTimeAndDaysWorked(processedDays);
+
   return {
     weekDocId: _id.toString(),
     firstDate: cloneMyDate(firstDate),
     lastDate: cloneMyDate(lastDate),
     weekNumber,
     days: processedDays,
-    totalTime: getTotalDurationInfo(processedDays),
+    totalTime,
     earnings: getWeekEarnings(processedDays),
-    settings: getWeekSettings(processedDays)
+    settings: getWeekSettings(processedDays),
+    daysWorked
   };
 };
 
-function getTotalDurationInfo(days) {
+function getTotalTimeAndDaysWorked(days) {
   let totalTimeInMsec = 0;
+  let daysWorked = 0;
   days.forEach(({ totalTime }) => {
     totalTimeInMsec += totalTime.durationInMsec;
+    if (totalTimeInMsec > 0) {
+      daysWorked++;
+    }
   });
-  return getDurationInfo(totalTimeInMsec);
+  return {
+    totalTime: getDurationInfo(totalTimeInMsec),
+    daysWorked
+  };
 }

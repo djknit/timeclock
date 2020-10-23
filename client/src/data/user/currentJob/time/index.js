@@ -5,7 +5,7 @@ let state = {
   weeks: undefined
 };
 
-const service = dataServiceFactory({
+let service = dataServiceFactory({
   readFunction() {
     return processData(state.weeks);
   },
@@ -27,5 +27,9 @@ const service = dataServiceFactory({
     }
   }
 });
+
+service.getTimeInDateRange = function(firstDate, lastDate) {
+  
+};
 
 export default service;

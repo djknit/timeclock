@@ -6,20 +6,28 @@ function processTimeData(rawWeeks) {
   if (!rawWeeks) return;
   const processedWeeks = rawWeeks.map(processWeek);
 
+  const { totalTime, daysWorked } = getTotalTimeAndDaysWorked(processedWeeks);
+
   return {
     weeks: processedWeeks,
-    totalTime: getTotalTime(processedWeeks),
-    earnings: getJobEarnings(processedWeeks)
+    totalTime,
+    earnings: getJobEarnings(processedWeeks),
+    daysWorked
   };
 }
 
 export default processTimeData;
 
 
-function getTotalTime(weeks) {
+function getTotalTimeAndDaysWorked(weeks) {
   let totalTimeInMsec = 0;
-  weeks.forEach(({ totalTime }) => {
+  let totalDaysWorked = 0;
+  weeks.forEach(({ totalTime, daysWorked }) => {
     totalTimeInMsec += totalTime.durationInMsec;
+    totalDaysWorked += daysWorked;
   });
-  return getDurationInfo(totalTimeInMsec);
+  return {
+    totalTime: getDurationInfo(totalTimeInMsec),
+    daysWorked: totalDaysWorked
+  };
 }
