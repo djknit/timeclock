@@ -1,13 +1,16 @@
 import { dataServiceFactory } from './utilities';
+import settingsService from '../settings';
 import processData from './processData';
+import getDateRangeInfo from './getDateRangeInfo';
 
 let state = {
-  weeks: undefined
+  weeks: undefined,
+  settings: settingsService._getRawSchedules()
 };
 
 let service = dataServiceFactory({
   readFunction() {
-    return processData(state.weeks);
+    return processData(state.weeks, state.settings);
   },
   setFunction(weeksArray) {
     state.weeks = weeksArray.map(({ document }) => document);
@@ -28,8 +31,16 @@ let service = dataServiceFactory({
   }
 });
 
-service.getTimeInDateRange = function(firstDate, lastDate) {
-  
+settingsService.subscribe(() => {
+  state.settings = settingsService._getRawSchedules();
+  service._emit();
+});
+
+service.getInfoForDateRange = function(firstDate, lastDate) {
+  let processedWeeks = processData(state.weeks).weeks;
+  return getDateRangeInfo(firstDate, lastDate, processedWeeks);
 };
 
 export default service;
+
+export { getDateRangeInfo };

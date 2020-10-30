@@ -10,7 +10,17 @@ function Summary({
 
   return (
     <ContentArea title="Summary" style={style.contentArea}>
-      
+      <div style={style.areaNotLastHasBtns}>
+        <p style={style.areaLabel}>
+          Job Totals
+        </p>
+        <p style={style.noBtnsAreaText}>
+          Testeroonio
+        </p>
+        <p style={style.areaHasBtnsText}>
+          Numero dos
+        </p>
+      </div>
     </ContentArea>
   );
 }
