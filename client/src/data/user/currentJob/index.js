@@ -2,6 +2,7 @@ import { dataServiceFactory } from '../../utilities';
 import jobsService from '../jobs';
 import basicsService from './basics';
 import timeService from './time';
+import { getDateRangeInfo } from './time';
 import settingsService from './settings';
 
 const childDataServices = {
@@ -51,6 +52,11 @@ const currentJobService = dataServiceFactory({
   },
   childDataServices
 });
+
+currentJobService.getInfoForDateRange = function (firstDate, lastDate) {
+  const processedWeeks = state.time && state.time.weeks;
+  return getDateRangeInfo(firstDate, lastDate, processedWeeks);
+};
 
 export default currentJobService;
 

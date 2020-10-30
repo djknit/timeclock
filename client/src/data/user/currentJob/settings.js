@@ -41,6 +41,18 @@ const service = dataServiceFactory({
   }
 });
 
+service._getRawSchedules = function () {
+  return {
+    timezone: _copySched(state.timezone),
+    wage: _copySched(state.wage),
+    weekBegins: _copySched(state.weekBegins),
+    dayCutoff: _copySched(state.dayCutoff)
+  };
+  function _copySched(_sched) {
+    return _sched && _sched.map(_obj => Object.assign({}, _obj));
+  };
+};
+
 export default service;
 
 function processValueSchedule(schedule, valueProcessor) {
