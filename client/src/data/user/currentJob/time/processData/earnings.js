@@ -16,6 +16,7 @@ function addWeekEarningsTotals(week, jobTotalEarningsByCurrency) {
   });
 }
 
+/* USE NEXT FXN TO ADD TOTALS, EARNINGS */
 function addWeekCurrencyEarningsToJobTotals(weekEarningsForCurrency, jobTotalEarningsByCurrency) {
   const { currency, totalTime, amount, rates } = weekEarningsForCurrency;
 
