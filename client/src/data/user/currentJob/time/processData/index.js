@@ -24,19 +24,19 @@ function processTimeData(rawWeeks, jobSettings) {
   const processedWeeks = rawWeeks.map(processWeek);
 
   const { totalTime, daysWorked } = getTotalTimeAndDaysWorked(processedWeeks);
-  // const {
-  //   currentMonth, precedingMonth, currentWeek, precedingWeek
-  // } = getInfoForCurrentTimePeriods(processedWeeks, jobSettings);
+  const {
+    currentMonth, precedingMonth, currentWeek, precedingWeek
+  } = getInfoForCurrentTimePeriods(processedWeeks, jobSettings);
 
   return {
     weeks: processedWeeks,
     totalTime,
     earnings: getJobEarnings(processedWeeks),
     daysWorked,
-    // currentMonth,
-    // precedingMonth,
-    // currentWeek,
-    // precedingWeek
+    currentMonth,
+    precedingMonth,
+    currentWeek,
+    precedingWeek
   };
 }
 

@@ -1,4 +1,9 @@
-import { areWagesEquivalent } from '../../utilities';
+import { areWagesEquivalent } from '../../../utilities';
+
+export {
+  addWeekEarningsTotals
+};
+
 
 function addWeekEarningsTotals(week, totalEarningsByCurrency) {
   const { earnings } = week;
@@ -8,7 +13,6 @@ function addWeekEarningsTotals(week, totalEarningsByCurrency) {
   });
 }
 
-/* USE NEXT FXN TO ADD TOTALS, EARNINGS */
 function addWeekCurrencyEarningsToTotals(weekEarningsForCurrency, totalEarningsByCurrency) {
   const { currency, totalTime, amount, rates } = weekEarningsForCurrency;
 
@@ -52,7 +56,3 @@ function addWeekCurrencyEarningsToTotals(weekEarningsForCurrency, totalEarningsB
     jobTotalsForRate.rawAmountEarned += amountEarned.raw;
   });
 }
-
-export {
-  addWeekEarningsTotals
-};

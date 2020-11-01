@@ -34,3 +34,4 @@ function getDateForTime(time, job, isRoundedForward) {
   }
   throw new Error('Failed to get date for time.');
 }
+
