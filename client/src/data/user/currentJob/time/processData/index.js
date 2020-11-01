@@ -6,8 +6,9 @@ import {
   dates as dateUtils,
   findWeekWithDate
 } from '../utilities';
-import { getJobEarnings } from './earnings';
 import getDateRangeInfo from '../getDateRangeInfo';
+import { getJobEarnings } from './earnings';
+import { getInfoForCurrentTimePeriods } from './currentTimePeriods';
 
 const { getDateForTime, getFirstDayOfWeekForDate } = jobDataUtils;
 const {
@@ -23,19 +24,19 @@ function processTimeData(rawWeeks, jobSettings) {
   const processedWeeks = rawWeeks.map(processWeek);
 
   const { totalTime, daysWorked } = getTotalTimeAndDaysWorked(processedWeeks);
-  const {
-    currentMonth, precedingMonth, currentWeek, precedingWeek
-  } = getStatsForCurrentTimePeriods(processedWeeks, jobSettings);
+  // const {
+  //   currentMonth, precedingMonth, currentWeek, precedingWeek
+  // } = getInfoForCurrentTimePeriods(processedWeeks, jobSettings);
 
   return {
     weeks: processedWeeks,
     totalTime,
     earnings: getJobEarnings(processedWeeks),
     daysWorked,
-    currentMonth,
-    precedingMonth,
-    currentWeek,
-    precedingWeek
+    // currentMonth,
+    // precedingMonth,
+    // currentWeek,
+    // precedingWeek
   };
 }
 
@@ -53,75 +54,4 @@ function getTotalTimeAndDaysWorked(weeks) {
     totalTime: getDurationInfo(totalTimeInMsec),
     daysWorked: totalDaysWorked
   };
-}
-
-function getStatsForCurrentTimePeriods(processedWeeks, jobSettings) {
-  const today = getDateForTime(Date.now(), jobSettings, true);
-  return {
-    ...getStatsForMonths(processedWeeks, today),
-    ...getStatsForCurrentWeeks(processedWeeks, today, jobSettings)
-  };
-}
-
-function getStatsForMonths(processedWeeks, todayDate) {
-  const { month, year } = todayDate;
-  const currentMonthDateRange = getDateRangeOfMonth(month, year);
-  const previousMonth = (month || 12) - 1;
-  const previousMonthYear = month ? year : year - 1;
-  const previousMonthDateRange = getDateRangeOfMonth(previousMonth, previousMonthYear);
-  return {
-    currentMonth: _getInfo(currentMonthDateRange),
-    precedingMonth: _getInfo(previousMonthDateRange)
-  };
-  function _getInfo({ firstDate, lastDate }) {
-    return getDateRangeInfo(firstDate, lastDate, processedWeeks);
-  }
-}
-
-function getStatsForCurrentWeeks(processedWeeks, todayDate, jobSettings) {
-  const currentWeek = getStatsForWeekWithDate(todayDate, processedWeeks, jobSettings);
-  const lastDateOfPrecedingWeek = getPrecedingDate(currentWeek.firstDate)
-  return {
-    currentWeek,
-    precedingWeek: getStatsForWeekWithDate(lastDateOfPrecedingWeek, processedWeeks, jobSettings)
-  };
-}
-
-function getStatsForWeekWithDate(date, processedWeeks, jobSettings) {
-  const week = findWeekWithDate(date, processedWeeks);
-  if (!week) {
-    const { firstDate, lastDate } = getFirstAndLastDaysOfWeekWithDate(date, jobSettings.weekBegins);
-    return {
-      firstDate,
-      lastDate,
-      totalTime: getDurationInfo(0),
-      daysWorked: 0,
-      earnings: null
-    };
-  }
-  const { firstDate, lastDate, totalTime, daysWorked, earnings } = week;
-  return { firstDate, lastDate, totalTime, daysWorked, earnings };
-}
-
-function getFirstAndLastDaysOfWeekWithDate(date, weekBeginsValueSchedule) {
-  const firstDate = getFirstDayOfWeekForDate(date, weekBeginsValueSchedule);
-  let lastDate = firstDate;
-  for (let i = 0; i < 7; i++) {
-    const nextDate = getNextDate(lastDate);
-    const firstDateOfWeekWithNextDate = getFirstDayOfWeekForDate(nextDate, weekBeginsValueSchedule);
-    if (!areDatesEquivalent(firstDateOfWeekWithNextDate, firstDate)) {
-      return { firstDate, lastDate };
-    }
-    lastDate = nextDate;
-  }
-}
-
-function getDateRangeOfMonth(month, year) {
-  const firstDate = {
-    day: 1,
-    month,
-    year
-  };
-  const lastDate = convertMomentToMyDate(moment(firstDate).endOf('month'));
-  return { firstDate, lastDate };
 }

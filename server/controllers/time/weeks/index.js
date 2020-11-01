@@ -7,11 +7,11 @@ const daysController = require('../days');
 const { createWeekArrayEntryByDate, createNextWeek } = require('./create');
 
 const {
-  getMostRecentScheduleIndexForDate,
-  areDatesEquivalent,
-  convertMomentToMyDate,
+  // getMostRecentScheduleIndexForDate,
+  // areDatesEquivalent,
+  // convertMomentToMyDate,
   getUtcDateTime,
-  getMostRecentScheduleValueForDate
+  // getMostRecentScheduleValueForDate
 } = require('../../../utilities');
 
 module.exports = {
