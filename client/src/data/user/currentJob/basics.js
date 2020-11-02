@@ -1,23 +1,22 @@
+import { STATES } from 'mongoose';
 import {
   dataServiceFactory
 } from './utilities';
 
-let _id, name, startDate;
+let state = {};
+resetState();
 
 const service = dataServiceFactory({
-  readFunction: () => (
-    _id ?
-    { _id, name, startDate } :
-    undefined
-  ),
-  setFunction: job => {
-    _id = job._id.toString();
-    name = job.name;
-    startDate = job.startDate;
+  readFunction: () => state._id ? { ...state } : undefined,
+  setFunction: ({ _id, name, startDate }) => {
+    Object.assign(state, { name, startDate }, { _id: _id.toString() });
   },
-  clearFunction: () => {
-    _id = name = startDate = undefined;
-  },
+  clearFunction: resetState
 });
 
 export default service;
+
+
+function resetState() {
+  state._id = state.name = state.startDate = undefined;
+}

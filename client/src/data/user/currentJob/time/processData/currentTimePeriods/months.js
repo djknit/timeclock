@@ -14,12 +14,9 @@ function getCurrentMonthsInfo(processedWeeks, todayDate) {
   const previousMonthYear = month ? year : year - 1;
   const previousMonthDateRange = getDateRangeOfMonth(previousMonth, previousMonthYear);
   return {
-    currentMonth: _getInfo(currentMonthDateRange),
-    precedingMonth: _getInfo(previousMonthDateRange)
+    currentMonth: getDateRangeInfo(currentMonthDateRange, processedWeeks),
+    precedingMonth: getDateRangeInfo(previousMonthDateRange, processedWeeks)
   };
-  function _getInfo({ firstDate, lastDate }) {
-    return getDateRangeInfo(firstDate, lastDate, processedWeeks);
-  }
 }
 
 function getDateRangeOfMonth(month, year) {

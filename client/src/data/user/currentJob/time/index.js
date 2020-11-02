@@ -17,6 +17,7 @@ let service = dataServiceFactory({
   },
   clearFunction() {
     state.weeks = undefined;
+    state.settings = undefined;
   },
   methods: {
     updateWeek(updatedWeek) {
@@ -38,9 +39,7 @@ settingsService.subscribe(() => {
 
 service.getInfoForDateRange = function(firstDate, lastDate) {
   let processedWeeks = processData(state.weeks).weeks;
-  return getDateRangeInfo(firstDate, lastDate, processedWeeks);
+  return getDateRangeInfo({ firstDate, lastDate }, processedWeeks);
 };
 
 export default service;
-
-export { getDateRangeInfo };

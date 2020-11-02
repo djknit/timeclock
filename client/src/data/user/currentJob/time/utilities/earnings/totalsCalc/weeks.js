@@ -1,4 +1,7 @@
-import { areWagesEquivalent } from '../../../utilities';
+import {
+  addRateEarningsToTotals,
+  findTotalsForCurrencyInTotalsByCurrency
+} from './elemental';
 
 export {
   addWeekEarningsTotals
@@ -16,18 +19,9 @@ function addWeekEarningsTotals(week, totalEarningsByCurrency) {
 function addWeekCurrencyEarningsToTotals(weekEarningsForCurrency, totalEarningsByCurrency) {
   const { currency, totalTime, amount, rates } = weekEarningsForCurrency;
 
-  let jobTotalsForCurrency = (
-    totalEarningsByCurrency.filter(_currencyTotals => _currencyTotals.currency === currency)[0]
+  const jobTotalsForCurrency = (
+    findTotalsForCurrencyInTotalsByCurrency(currency, totalEarningsByCurrency)
   );
-  if (!jobTotalsForCurrency) {
-    jobTotalsForCurrency = {
-      currency,
-      rawAmount: 0,
-      totalTimeInMsec: 0,
-      rates: []
-    };
-    totalEarningsByCurrency.push(jobTotalsForCurrency);
-  }
 
   jobTotalsForCurrency.totalTimeInMsec += totalTime.durationInMsec;
 
@@ -36,23 +30,6 @@ function addWeekCurrencyEarningsToTotals(weekEarningsForCurrency, totalEarningsB
   jobTotalsForCurrency.rawAmount += amount.raw;
 
   rates.forEach(rateInfo => {
-    const { rate, isOvertime, wage, duration, amountEarned } = rateInfo;
-    let jobTotalsForRate = (
-      jobTotalsForCurrency.rates
-      .filter(_totals => areWagesEquivalent(_totals.wage, wage) && _totals.isOvertime === isOvertime)
-      [0]
-    );
-    if (!jobTotalsForRate) {
-      jobTotalsForRate = {
-        wage,
-        rate,
-        isOvertime,
-        durationInMsec: 0,
-        rawAmountEarned: 0
-      };
-      jobTotalsForCurrency.rates.push(jobTotalsForRate);
-    }
-    jobTotalsForRate.durationInMsec += duration.durationInMsec;
-    jobTotalsForRate.rawAmountEarned += amountEarned.raw;
+    addRateEarningsToTotals(rateInfo, jobTotalsForCurrency)
   });
 }

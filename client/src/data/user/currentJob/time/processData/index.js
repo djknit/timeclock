@@ -1,25 +1,12 @@
-import moment from 'moment';
 import processWeek from './processWeek';
 import {
-  getDurationInfo,
-  jobData as jobDataUtils,
-  dates as dateUtils,
-  findWeekWithDate
+  getDurationInfo
 } from '../utilities';
-import getDateRangeInfo from '../getDateRangeInfo';
 import { getJobEarnings } from './earnings';
 import { getInfoForCurrentTimePeriods } from './currentTimePeriods';
 
-const { getDateForTime, getFirstDayOfWeekForDate } = jobDataUtils;
-const {
-  getPrecedingDate,
-  convertMomentToMyDate,
-  getNextDate,
-  areDatesEquivalent
-} = dateUtils;
-
 function processTimeData(rawWeeks, jobSettings) {
-  if (!rawWeeks) return;
+  if (!rawWeeks || !jobSettings) return;
 
   const processedWeeks = rawWeeks.map(processWeek);
 

@@ -2,6 +2,7 @@ import { dates as dateUtils } from '../../utilities';
 import moment from 'moment-timezone';
 export * from '../../utilities';
 export * from './wage';
+export * from './dateRanges';
 export * from './earnings';
 
 const {

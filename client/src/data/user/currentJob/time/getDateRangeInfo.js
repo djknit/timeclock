@@ -3,83 +3,58 @@ import {
   addWeekEarningsTotals,
   addDayEarningsToWeekTotals,
   getDurationInfo,
-  formatEarningsForCurrency
+  formatEarningsForCurrency,
+  isPartialWeekInDateRange,
+  isWholeWeekInDateRange,
+  isDateInRange
 } from './utilities';
-
-const { getUtcDateTime } = dateUtils;
 
 export default getDateRangeInfo;
 
 
-function getDateRangeInfo(firstDate, lastDate, processedWeeks) {
-  const rangeFirstDateTime = getUtcDateTime(firstDate);
-  const rangeLastDateTime = getUtcDateTime(lastDate);
+function getDateRangeInfo(dateRange, processedWeeks) {
   let rangeTotals = {
     timeInMsec: 0,
     daysWorked: 0,
     earnings: []
   };
-
   processedWeeks.forEach(week => {
-    if (isWholeWeekInDateRange(rangeFirstDateTime, rangeLastDateTime, week)) {
-      rangeTotals.timeInMsec += week.totalTime.durationInMsec;
-      rangeTotals.daysWorked += week.daysWorked;
-      addWeekEarningsTotals(week, rangeTotals.earnings);
-    }
-    else if (isPartialWeekInDateRange(rangeFirstDateTime, rangeLastDateTime, week)) {
-      const weekTotalsInRange = getTotalsOfDaysInDateRange(rangeFirstDateTime, rangeLastDateTime, week.days);
-      rangeTotals.timeInMsec += weekTotalsInRange.timeInMsec;
-      rangeTotals.daysWorked += weekTotalsInRange.daysWorked;
-      addWeekEarningsTotals(weekTotalsInRange, rangeTotals);
-    }
+    if (!isPartialWeekInDateRange(dateRange, week)) return;
+    const weekTotalsInRange = getWeekTotalsInDateRange(dateRange, week);
+    addWeekTotalsToRangeTotals(weekTotalsInRange, rangeTotals);
   });
-
   return {
     totalTime: getDurationInfo(rangeTotals.timeInMsec),
     daysWorked: rangeTotals.daysWorked,
     earnings: rangeTotals.earnings.length > 0 ? rangeTotals.earnings.map(formatEarningsForCurrency) : null,
-    firstDate,
-    lastDate
+    ...dateRange
   };
 }
 
-function getTotalsOfDaysInDateRange(firstDateUtcTime, lastDateUtcTime, days) {
-  let totals = {
+function getWeekTotalsInDateRange(dateRange, week) {
+  if (isWholeWeekInDateRange(dateRange, week)) {
+    return {
+      ...week,
+      timeInMsec: week.totalTime.durationInMsec
+    };
+  }
+  let weekTotalsInRange = {
     timeInMsec: 0,
     daysWorked: 0,
     earnings: []
   };
-  days.forEach(day => {
-    const dayDateTime = getUtcDateTime(day.date);
+  week.days.forEach(day => {
     const dayTimeInMsec = day.totalTime.durationInMsec;
-    if (dayDateTime < firstDateUtcTime || dayDateTime > lastDateUtcTime) {
-      return; 
-    }
-    totals.timeInMsec += dayTimeInMsec;
-    if (dayTimeInMsec > 0) {
-      totals.daysWorked++;
-    }
-    addDayEarningsToWeekTotals(day, totals.earnings);
+    if (!isDateInRange(dateRange, day.date)) return;
+    weekTotalsInRange.timeInMsec += dayTimeInMsec;
+    if (dayTimeInMsec > 0) weekTotalsInRange.daysWorked++;
+    addDayEarningsToWeekTotals(day, weekTotalsInRange.earnings);
   });
-  return totals;
+  return weekTotalsInRange;
 }
 
-function isWholeWeekInDateRange(firstDateUtcTime, lastDateUtcTime, week) {
-  const weekFirstDateUtcTime = getUtcDateTime(week.firstDate);
-  const weekLastDateUtcTime = getUtcDateTime(week.lastDate);
-  return (
-    firstDateUtcTime <= weekFirstDateUtcTime && weekFirstDateUtcTime <= lastDateUtcTime &&
-    firstDateUtcTime <= weekLastDateUtcTime && weekLastDateUtcTime <= lastDateUtcTime
-  );
+function addWeekTotalsToRangeTotals(weekTotals, rangeTotals) {
+  rangeTotals.timeInMsec += weekTotals.timeInMsec;
+  rangeTotals.daysWorked += weekTotals.daysWorked;
+  addWeekEarningsTotals(weekTotals, rangeTotals.earnings);
 }
-
-function isPartialWeekInDateRange(firstDateUtcTime, lastDateUtcTime, week) {
-  const weekFirstDateUtcTime = getUtcDateTime(week.firstDate);
-  const weekLastDateUtcTime = getUtcDateTime(week.lastDate);
-  return (
-    (firstDateUtcTime <= weekFirstDateUtcTime && weekFirstDateUtcTime <= lastDateUtcTime) ||
-    (firstDateUtcTime <= weekLastDateUtcTime && weekLastDateUtcTime <= lastDateUtcTime) ||
-    (weekFirstDateUtcTime <= firstDateUtcTime && firstDateUtcTime <= weekLastDateUtcTime)
-  );
-}
-
