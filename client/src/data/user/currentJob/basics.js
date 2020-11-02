@@ -1,4 +1,3 @@
-import { STATES } from 'mongoose';
 import {
   dataServiceFactory
 } from './utilities';

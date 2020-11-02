@@ -15,8 +15,8 @@ let state = { isCurrentJobSet: false };
 function setCurrentJob(jobData) {
   state.isCurrentJobSet = true;
   basicsService.setValue(jobData);
-  settingsService.setValue(jobData);
   timeService.setValue(jobData.weeks);
+  settingsService.setValue(jobData);
 }
 
 const currentJobService = dataServiceFactory({

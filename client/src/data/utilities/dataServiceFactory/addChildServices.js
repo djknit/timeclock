@@ -1,8 +1,11 @@
+import { checkIsWaitingForSiblingResponse } from './elemental';
+
 export default function addChildServices({
   dataService,
   childDataServices,
   specialMethods,
-  state
+  state,
+  siblingListeners
 }) {
 
   const childServicePropNames = Object.keys(childDataServices);
@@ -33,7 +36,11 @@ export default function addChildServices({
     childDataServices[propName].subscribe(() => {
       getValueFromChildService(propName);
       if (numSubServiceResponsesNeeded > 0) --numSubServiceResponsesNeeded;
-      if (numSubServiceResponsesNeeded === 0) dataService._emit();
+      if (
+        numSubServiceResponsesNeeded === 0 && !checkIsWaitingForSiblingResponse(siblingListeners)
+      ) {
+        dataService._emit();
+      }
     });
   });
 };

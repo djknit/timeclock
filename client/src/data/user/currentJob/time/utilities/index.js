@@ -9,8 +9,6 @@ const {
   convertMomentToMyDate,
 } = dateUtils;
 
-// console.log(dateUtils)
-
 function getDateFromUtcDateTime(utcDateTime) {
   return convertMomentToMyDate(moment.utc(utcDateTime));
 }
