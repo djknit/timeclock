@@ -10,8 +10,8 @@ export { getCurrentMonthsInfo };
 function getCurrentMonthsInfo(processedWeeks, todayDate) {
   const { month, year } = todayDate;
   const currentMonthDateRange = getDateRangeOfMonth(month, year);
-  const previousMonth = (month || 12) - 1;
-  const previousMonthYear = month ? year : year - 1;
+  const previousMonth = (month - 1 + 12) % 12;
+  const previousMonthYear = month > 0 ? year : year - 1;
   const previousMonthDateRange = getDateRangeOfMonth(previousMonth, previousMonthYear);
   return {
     currentMonth: getDateRangeInfo(currentMonthDateRange, processedWeeks),

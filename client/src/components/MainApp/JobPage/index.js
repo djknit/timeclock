@@ -78,7 +78,6 @@ class _JobPage_needsData extends Component {
           problemMessages: getMessagesFromErr(err)
         });
       });
-      
     }
 
     this.setState({

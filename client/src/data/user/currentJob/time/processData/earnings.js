@@ -1,9 +1,9 @@
-import { formatEarningsForCurrency, addWeekEarningsTotals } from './utilities';
+import { formatEarningsForCurrency, addWeekEarningsToTotals } from './utilities';
 
 function getJobEarnings(processedWeeks) {
   let totalEarningsByCurrency = [];
   processedWeeks.forEach(week => {
-    addWeekEarningsTotals(week, totalEarningsByCurrency);
+    addWeekEarningsToTotals(week, totalEarningsByCurrency);
   });
   return totalEarningsByCurrency.map(formatEarningsForCurrency);
 }

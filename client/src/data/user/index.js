@@ -23,6 +23,7 @@ const userService = dataServiceFactory({
     isLoggedInService.setValue(true);
     profileService.setValue(user);
     jobsService.setValue(user.jobs);
+    currentJobService.clearValue();
   },
   clearFunction: () => {
     isLoggedInService.setValue(false);

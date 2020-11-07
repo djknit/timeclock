@@ -3,7 +3,6 @@ import { formatEarningsForCurrency, addDayEarningsToWeekTotals } from '../../uti
 function getWeekEarnings(fullyProcessedDays) {
   let weekTotalEarningsByCurrency = [];
   fullyProcessedDays.forEach(day => addDayEarningsToWeekTotals(day, weekTotalEarningsByCurrency));
-  // console.log(weekTotalEarningsByCurrency)
   return weekTotalEarningsByCurrency.length > 0 ? (
     weekTotalEarningsByCurrency.map(formatEarningsForCurrency)
   ) : (

@@ -1,6 +1,5 @@
 import {
-  dates as dateUtils,
-  addWeekEarningsTotals,
+  addWeekEarningsToTotals,
   addDayEarningsToWeekTotals,
   getDurationInfo,
   formatEarningsForCurrency,
@@ -56,5 +55,5 @@ function getWeekTotalsInDateRange(dateRange, week) {
 function addWeekTotalsToRangeTotals(weekTotals, rangeTotals) {
   rangeTotals.timeInMsec += weekTotals.timeInMsec;
   rangeTotals.daysWorked += weekTotals.daysWorked;
-  addWeekEarningsTotals(weekTotals, rangeTotals.earnings);
+  addWeekEarningsToTotals(weekTotals, rangeTotals.earnings);
 }

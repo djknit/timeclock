@@ -3,9 +3,12 @@ import getStyle from './style';
 import {
   getHoursAndMinutesFromMinutes,
   getMinutesFromHoursAndMinutes,
-  getTextOfHoursAndMinutes
+  getTextOfHoursAndMinutes,
+  constants
 } from '../../utilities';
 import BoxInputFrame from '../BoxInputFrame';
+
+const { minsPerHr } = constants;
 
 function DurationInput({
   propName,
@@ -111,7 +114,7 @@ function getCompleteProblems({ problems, max, min, value, hasProblem }) {
     const minTimeText = getTextOfHoursAndMinutes(getHoursAndMinutesFromMinutes(min));
     problemMessages.push(`Invalid time: can't be less than ${minTimeText}.`);
   }
-  if (value.minutes < 0 || value.minutes >= 60) {
+  if (value.minutes < 0 || value.minutes >= minsPerHr) {
     _problems.minutes = true;
     problemMessages.push('Invalid minutes: can\'t be less than 0 or greater than 59.');
   }

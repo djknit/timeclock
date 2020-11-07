@@ -9,7 +9,7 @@ let state = {
   isWaitingForSiblings: false
 };
 
-let service = dataServiceFactory({
+let timeService = dataServiceFactory({
   readFunction() {
     const { weeks, settings } = state;
     if (!weeks || !settings) return;
@@ -20,6 +20,7 @@ let service = dataServiceFactory({
     state.weeks = weeksArray.map(({ document }) => document);
   },
   clearFunction() {
+    state.isWaitingForSiblings = true;
     state.weeks = undefined;
   },
   methods: {
@@ -32,24 +33,18 @@ let service = dataServiceFactory({
         }
       }
     }
-  },
-  checkIsWaitingForSibling() {
-    return state.isWaitingForSibling;
   }
 });
 
 settingsService.subscribe(() => {
-  const updatedSchedules = settingsService._getRawSchedules();
-  state.settings = updatedSchedules;
+  state.settings = settingsService._getRawSchedules();
   state.isWaitingForSiblings = false;
-  if (updatedSchedules) {
-    service._emit();
-  }
+  timeService._emit();
 });
 
-service.getInfoForDateRange = function(firstDate, lastDate) {
+timeService.getInfoForDateRange = function(firstDate, lastDate) {
   let processedWeeks = processData(state.weeks).weeks;
   return getDateRangeInfo({ firstDate, lastDate }, processedWeeks);
 };
 
-export default service;
+export default timeService;

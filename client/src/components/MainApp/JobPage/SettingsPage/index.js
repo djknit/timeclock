@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { convertStringToNonbreakingHtml } from './utilities';
+import Notification, { NotificationText } from '../../../Notification';
+import { ProgressBar } from '../../../formPieces';
 import PageTitle from '../../PageTitle';
+import ContentArea from '../../ContentArea';
 import Landing from './Landing';
 import Setting from './Setting';
 import All from './All';
@@ -58,7 +61,7 @@ class SettingsPage extends Component {
 
     const commonRouteAttrs = { ...this.props, job, catchApiUnauthorized, areAnyModalsOpen };
 
-    return (
+    return job && job.settings ? (
       <>
         <Switch>
           {childRoutes.map(
@@ -100,6 +103,19 @@ class SettingsPage extends Component {
             )}
           />
         </Switch>
+      </>
+    ) : (
+      <>
+        <PageTitle>JOB</PageTitle>
+        <ContentArea>
+          <Notification theme="info">
+            <NotificationText>Retrieving data...</NotificationText>
+            <ProgressBar
+              theme="primary"
+              max={100}
+            />
+          </Notification>
+        </ContentArea>
       </>
     );
   };

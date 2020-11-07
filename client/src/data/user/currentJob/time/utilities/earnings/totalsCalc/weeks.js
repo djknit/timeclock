@@ -4,11 +4,11 @@ import {
 } from './elemental';
 
 export {
-  addWeekEarningsTotals
+  addWeekEarningsToTotals
 };
 
 
-function addWeekEarningsTotals(week, totalEarningsByCurrency) {
+function addWeekEarningsToTotals(week, totalEarningsByCurrency) {
   const { earnings } = week;
   if (!earnings) return;
   earnings.forEach(earningsForCurrency => {

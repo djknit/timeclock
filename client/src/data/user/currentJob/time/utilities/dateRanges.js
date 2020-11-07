@@ -1,6 +1,6 @@
 import { dates as dateUtils } from '../../utilities';
 
-const { getUtcDateTime } = dateUtils;
+const { isDateInRange } = dateUtils;
 
 export {
   isPartialWeekInDateRange,
@@ -18,12 +18,4 @@ function isPartialWeekInDateRange(dateRange, week) {
 
 function isWholeWeekInDateRange(dateRange, week) {
   return isDateInRange(dateRange, week.firstDate) && isDateInRange(dateRange, week.lastDate);
-}
-
-function isDateInRange(dateRange, date) {
-  const { firstDate, lastDate } = dateRange;
-  const firstDateUtcTime = getUtcDateTime(firstDate);
-  const lastDateUtcTime = getUtcDateTime(lastDate);
-  const dateUtcTime = getUtcDateTime(date);
-  return firstDateUtcTime <= dateUtcTime && dateUtcTime <= lastDateUtcTime;
 }

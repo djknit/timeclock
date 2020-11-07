@@ -1,4 +1,4 @@
-import { constants } from '../../constants';
+import { constants } from '../../../../utilities';
 import { genericFormStates } from '../formState.js';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;

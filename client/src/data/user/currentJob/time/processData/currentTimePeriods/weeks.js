@@ -40,7 +40,7 @@ function getInfoForWeekWithDate(date, processedWeeks, jobSettings) {
   return { firstDate, lastDate, totalTime, daysWorked, earnings };
 }
 
-function getDateRangeOfWeekWithDate(date, weekBeginsValueSchedule) {
+function getDateRangeOfWeekWithDate(date, weekBeginsValueSchedule) { // only needed when data doesn't exist yet for week
   const firstDate = getFirstDayOfWeekForDate(date, weekBeginsValueSchedule);
   let lastDate = firstDate;
   for (let i = 0; i < 7; i++) {

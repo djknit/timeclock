@@ -15,7 +15,7 @@ class TimePage extends Component {
 
     const { job, parentPath, windowWidth } = this.props;
 
-    console.log(job)
+    // console.log(job)
 
     const crumbChain = [
       {

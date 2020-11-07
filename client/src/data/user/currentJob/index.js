@@ -24,7 +24,7 @@ const currentJobService = dataServiceFactory({
   readFunction: () => {
     const { isCurrentJobSet, currentJobBasics, time, settings } = state;
     return isCurrentJobSet ? (
-      { ...currentJobBasics, ...settings, time }
+      { ...currentJobBasics, settings, time }
     ) : (
       null
     );

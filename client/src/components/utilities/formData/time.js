@@ -1,12 +1,16 @@
+import { constants } from '../../../utilities';
+
+const { minsPerHr } = constants;
+
 function getMinutesFromHoursAndMinutes({ hours, minutes }) {
-  return (hours || 0) * 60 + (minutes || 0);
+  return (hours || 0) * minsPerHr + (minutes || 0);
 }
 
 function getHoursAndMinutesFromMinutes(numMinutes) {
   const _numMinutes = numMinutes || 0;
   return {
-    hours: Math.floor(_numMinutes / 60),
-    minutes: _numMinutes % 60
+    hours: Math.floor(_numMinutes / minsPerHr),
+    minutes: _numMinutes % minsPerHr
   };
 }
 

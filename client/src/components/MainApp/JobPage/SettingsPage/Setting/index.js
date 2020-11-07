@@ -113,7 +113,7 @@ class _Setting_needsData extends Component {
     } = this.props;
     const { entryToEditId } = this.state;
 
-    const valueSchedule = preprocessScheduleForDisplay(job[settingName], settingName);
+    const valueSchedule = preprocessScheduleForDisplay(job.settings[settingName], settingName);
 
     const completeStyle = getStyle(style);
 

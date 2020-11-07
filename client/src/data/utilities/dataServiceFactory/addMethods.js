@@ -1,12 +1,9 @@
-import { checkIsWaitingForSiblingResponse } from './elemental';
-
 export default function addMethods({
   methods = {},
   dataService,
-  isAsync,
-  isWaitingForSiblings
+  isAsync
 }) {
-  
+
   const methodNames = Object.keys(methods);
 
   // copy methods to dataService so that event emitter is triggered when methods are called
@@ -17,7 +14,7 @@ export default function addMethods({
         return new Promise((resolve, reject) => {
           methods[methodName](...args)
           .then(result => {
-            if (!isWaitingForSiblings) dataService._emit();
+            dataService._emit();
             resolve(result);
           })
           .catch(reject);
@@ -25,7 +22,7 @@ export default function addMethods({
       }
       else {
         const result = methods[methodName](...args);
-        if (!isWaitingForSiblings) dataService._emit();
+        dataService._emit();
         return result;
       }
     };

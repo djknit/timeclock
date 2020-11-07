@@ -16,8 +16,7 @@ export default function dataServiceFactory({
   maxListeners,
   setFunction: setValue,
   clearFunction: clearValue,
-  childDataServices = {},
-  isWaitingForSiblings // not child, but still set at same time and must be waited on before emit
+  childDataServices = {}
 }) {
 
   const emitter = new EventEmitter();
@@ -50,9 +49,9 @@ export default function dataServiceFactory({
   /* Treat special methods as regular methods, but will be overwritten again during `addChildServices` if child services exist. */
   Object.assign(methods, specialMethods);
 
-  addMethods({ methods, dataService, isAsync, isWaitingForSiblings });
+  addMethods({ methods, dataService, isAsync });
 
-  addChildServices({ dataService, state, childDataServices, specialMethods, isWaitingForSiblings });
+  addChildServices({ dataService, state, childDataServices, specialMethods });
 
   return dataService;
 };

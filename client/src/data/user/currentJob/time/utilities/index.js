@@ -6,7 +6,7 @@ export * from './dateRanges';
 export * from './earnings';
 
 const {
-  convertMomentToMyDate,
+  convertMomentToMyDate
 } = dateUtils;
 
 function getDateFromUtcDateTime(utcDateTime) {
