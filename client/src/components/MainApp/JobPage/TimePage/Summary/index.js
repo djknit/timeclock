@@ -1,6 +1,7 @@
 import React from 'react';
 import getStyle from './style';
 import ContentArea from '../../../ContentArea';
+import PeriodTotalsArea from './PeriodTotalsArea';
 
 function Summary({
   style: styleProp
@@ -10,7 +11,7 @@ function Summary({
 
   return (
     <ContentArea title="Summary" style={style.contentArea}>
-      <div style={style.areaNotLastHasBtns}>
+      <div style={style.periodTotalsArea}>
         <p style={style.areaLabel}>
           Job Totals
         </p>
@@ -21,6 +22,9 @@ function Summary({
           Numero dos
         </p>
       </div>
+      <PeriodTotalsArea
+        label="Job Totals"
+      />
     </ContentArea>
   );
 }

@@ -1,19 +1,23 @@
-import { itemAreaStyles } from '../../JobDash/Settings/style';
 import { getInfoItemAreaStyles } from '../style';
+export * from '../style';
+
+const defaultItemAreaStyles = getInfoItemAreaStyles();
 
 export default function getStyle(additionalStyle) {
 
-  const innerAreaStyles = getInfoItemAreaStyles(undefined, undefined, '0em', undefined, 1)
-
   return {
     contentArea: {
-      ...additionalStyle
+      ...additionalStyle,
     },
-    ...itemAreaStyles,
+    periodTotalsArea: {
+      textAlign: 'left',
+      padding: `.5em ${defaultItemAreaStyles.areaNotLastHasBtns.paddingLeft}`
+    },
     areaLabel: {
-      ...itemAreaStyles.areaHasBtnsText,
+      textAlign: 'left',
       fontSize: '1.15em',
       fontWeight: 'bold'
-    }
+    },
+    
   };
 };

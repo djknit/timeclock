@@ -31,10 +31,7 @@ export default function addChildServices({
 
   childServicePropNames.forEach(propName => {
     childDataServices[propName].subscribe(() => {
-      // console.log('subscription callback\n', propName)
-      // console.log(childDataServices[propName].getValue())
       getValueFromChildService(propName);
-      console.log(numSubServiceResponsesNeeded)
       if (numSubServiceResponsesNeeded <= 0 || --numSubServiceResponsesNeeded <= 0) {
         dataService._emit();
       }
