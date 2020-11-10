@@ -31,7 +31,7 @@ class TimePage extends Component {
       <>
         <PageTitle {...{ crumbChain }} />
         <div style={style.contentAreasRow}>
-          <Summary style={style.summaryArea} {...{ job }} />
+          <Summary style={style.summaryArea} {...{ job, windowWidth }} />
           <GeneralEntry style={style.generalEntryArea} />
         </div>
         <Weeks />

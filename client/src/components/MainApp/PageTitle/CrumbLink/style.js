@@ -2,7 +2,7 @@ import { contentAreaTextLinkColors } from '../style';
 
 export default function getStyle(pseudoState) {
 
-  const { isActive, isHovered, isFocused } = pseudoState;
+  const { isActive, isHovered, isFocused, isTabFocused } = pseudoState;
 
   let stateDependentStyle;
   if (isActive) {
@@ -11,11 +11,17 @@ export default function getStyle(pseudoState) {
       color: contentAreaTextLinkColors.active
     };
   }
-  else if (isFocused) {
+  else if (isTabFocused) {
     stateDependentStyle = {
       fontWeight: 700,
       color: contentAreaTextLinkColors.focus,
       textDecoration: 'underline'
+    };
+  }
+  else if (isFocused) {
+    stateDependentStyle = {
+      fontWeight: 700,
+      color: contentAreaTextLinkColors.focus
     };                  
   }
   else if (isHovered) {

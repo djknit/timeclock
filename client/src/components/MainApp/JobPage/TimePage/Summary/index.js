@@ -4,7 +4,8 @@ import ContentArea from '../../../ContentArea';
 import PeriodTotalsArea from './PeriodTotalsArea';
 
 function Summary({
-  style: styleProp
+  style: styleProp,
+  windowWidth
 }) {
 
   const style = getStyle(styleProp);
@@ -24,6 +25,7 @@ function Summary({
       </div>
       <PeriodTotalsArea
         label="Job Totals"
+        {...{ windowWidth }}
       />
     </ContentArea>
   );

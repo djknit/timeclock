@@ -1,46 +1,48 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { keyTriggerCheckerFactory } from '../../../utilities';
+import Header from './Header';
+import Body from './Body';
+import Footer from './Footer';
+import Totals from './Totals';
 import { addCollapsing, addPseudoPseudoClasses } from '../../../../../higherOrder';
 
 class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
-  // constructor(props) {
-    
-  // };
+  constructor(props) {
+    super(props);
+    this.setCollapsingContainerHeights = this.setCollapsingContainerHeights.bind(this);
+  };
+
+  setCollapsingContainerHeights() {
+    const { mainContentToggle, earningRatesContentToggle } = this.props;
+    mainContentToggle.setHeight();
+    // earningRatesContentToggle.setHeight();
+  };
 
   componentDidMount() {
-    this.props.contentToggle.setHeight();
+    this.setCollapsingContainerHeights();
   };
 
   componentDidUpdate(prevProps) {
-    const { contentToggle, windowWidth } = this.props;
-    if (windowWidth !== prevProps.windowWidth) {
-      contentToggle.setHeight();
+    if (this.props.windowWidth !== prevProps.windowWidth) {
+      this.setCollapsingContainerHeights();
     }
   };
 
   render() {
-    const { label, contentToggle, pseudoState, pseudoHandlers } = this.props;
+    const { label, mainContentToggle, pseudoState, pseudoHandlers } = this.props;
 
-    const style = getStyle(contentToggle.styles, pseudoState);
+    const style = getStyle(mainContentToggle.styles, pseudoState);
 
     return (
       <div style={style.area}>
-        <p style={style.areaLabel}>{label}</p>
-        <hr style={style.labelHr} />
-
-        <div style={style.areaBody} ref={contentToggle.containerRef}>
-          test<br/>stuff<br/>...<br/>
-        </div>
-
-        <hr style={style.footerHr} />
-        <i
-          className="fas fa-chevron-up"
-          style={style.togglerArrow}
-          {...pseudoHandlers}
-          onClick={contentToggle.toggle}
-          tabIndex={0}
-          onKeyDown={keyTriggerCheckerFactory(contentToggle.toggle)}
+        <Header {...{ label }} />
+        <Body {...{ mainContentToggle }}>
+          <Totals />
+        </Body>
+        <Footer
+          arrowPseudoHandlers={pseudoHandlers}
+          arrowPseudoState={pseudoState}
+          {...{ mainContentToggle }}
         />
       </div>
     );
@@ -51,8 +53,12 @@ const _PeriodTotalsArea_needsCollapsing = addPseudoPseudoClasses(
   _PeriodTotalsArea_needsCollapsingAndPseudo
 );
 
+const _PeriodTotalsArea_needsMoreCollapsing = addCollapsing(
+  _PeriodTotalsArea_needsCollapsing, 'mainContentToggle', true
+);
+
 const PeriodTotalsArea = addCollapsing(
-  _PeriodTotalsArea_needsCollapsing, 'contentToggle', true
+  _PeriodTotalsArea_needsMoreCollapsing, 'earningRatesContentToggle', false
 );
 
 export default PeriodTotalsArea;
