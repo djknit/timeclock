@@ -1,18 +1,51 @@
 import React from 'react';
-import getStyle from './style';
 import ContentArea from '../../../ContentArea';
+import PeriodTotalsArea from './PeriodTotalsArea';
+import AltPeriodTotalsArea from './AltPeriodTotalsArea';
 
 function Summary({
-  style: styleProp
+  style: styleProp,
+  windowWidth,
+  timeData
 }) {
 
-  const style = getStyle(styleProp);
+  const commonAttrs = { windowWidth };
 
   return (
-    <ContentArea title="Summary" style={style.contentArea}>
-      
+    <ContentArea title="Summary" style={styleProp}>
+      <AltPeriodTotalsArea
+        label="Job Totals"
+        {...commonAttrs}
+        periodTotals={getJobTotals(timeData)}
+        isExpandedInitially
+      />
+      <PeriodTotalsArea
+        label="This Week"
+        {...{ windowWidth }}
+        periodTotals={timeData.currentWeek}
+      />
+      <PeriodTotalsArea
+        label="Last Week"
+        {...{ windowWidth }}
+        periodTotals={timeData.precedingWeek}
+      />
+      <PeriodTotalsArea
+        label="This Month"
+        {...{ windowWidth }}
+        periodTotals={timeData.currentMonth}
+      />
+      <PeriodTotalsArea
+        label="Last Month"
+        {...{ windowWidth }}
+        periodTotals={timeData.precedingMonth}
+      />
     </ContentArea>
   );
 }
 
 export default Summary;
+
+function getJobTotals(timeData) {
+  const { totalTime, earnings, daysWorked } = timeData;
+  return { totalTime, earnings, daysWorked };
+}

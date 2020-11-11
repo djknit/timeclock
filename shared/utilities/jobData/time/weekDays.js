@@ -1,6 +1,7 @@
 const {
-  convertMomentToMyDate, getMostRecentScheduleIndexForDate, getMoment
-} = require('../../../utilities');
+  convertMomentToMyDate, getMoment
+} = require('../../dates');
+const { getMostRecentScheduleIndexForDate } = require('../valueSchedules');
 
 module.exports = {
   getFirstDayOfWeekForDate,

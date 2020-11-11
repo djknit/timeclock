@@ -1,3 +1,1 @@
-const sharedUtils = require('../../shared/utilities');
-
-module.exports = sharedUtils;
+module.exports = require('../../shared').utilities;

@@ -41,7 +41,8 @@ export default function dataServiceFactory({
 
   /* About "Special Methods":
     Special methods are methods that invoke methods on all child services (when children exist).
-    Regular methods cause service to emit change immediately. Special methods cause service to emit change immediately only when there are no child services. When child services exist, no change should be emitted on special method invocation until every child service has emitted and the new child values have been set on the parent sevice.
+    Regular methods always cause service to emit change immediately after method is called,
+    where as special methods cause service to emit change immediately ONLY when there are no child services. When child services exist, no change should be emitted on special method call until every child service has emitted and the new child values have been set on the parent sevice.
   */
   const specialMethods = { setValue, clearValue };
 

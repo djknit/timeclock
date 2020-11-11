@@ -1,47 +1,53 @@
 import { dataServiceFactory, convertDayCutoffToMinutes, processWage } from './utilities';
 
-let state = {
-  isCurrentJobSet: false,
-  timezone: undefined,
-  wage: undefined,
-  weekBegins: undefined,
-  dayCutoff: undefined
-}
+const settingNames = ['timezone', 'wage', 'weekBegins', 'dayCutoff'];
+
+let state = {};
+resetState();
 
 const service = dataServiceFactory({
   readFunction: () => {
-    const { isCurrentJobSet, timezone, wage, weekBegins, dayCutoff } = state;
-    if (isCurrentJobSet) console.log({
-      timezone: processValueSchedule(timezone),
-      wage: processValueSchedule(wage, processWage),
-      weekBegins: processValueSchedule(weekBegins),
-      dayCutoff: processValueSchedule(dayCutoff, convertDayCutoffToMinutes)
-    })
-    return isCurrentJobSet ? (
-      {
-        timezone: processValueSchedule(timezone),
-        wage: processValueSchedule(wage, processWage),
-        weekBegins: processValueSchedule(weekBegins),
-        dayCutoff: processValueSchedule(dayCutoff, convertDayCutoffToMinutes)
-      }
-    ) : (
-      null
-    );
+    if (!state.isCurrentJobSet) return null;
+    const settingValueProcessors = {
+      wage: processWage,
+      dayCutoff: convertDayCutoffToMinutes
+    };
+    let processedSchedules = {};
+    settingNames.forEach(sName => {
+      processedSchedules[sName] = processValueSchedule(state[sName], settingValueProcessors[sName]);
+    });
+    return processedSchedules;
   },
   setFunction: job => {
     state.isCurrentJobSet = true;
-    state.timezone = job.timezone;
-    state.wage = job.wage;
-    state.weekBegins = job.weekBegins;
-    state.dayCutoff = job.dayCutoff;
+    settingNames.forEach(sName => {
+      state[sName] = job[sName];
+    });
   },
-  clearFunction: () => {
-    state.isCurrentJobSet = false;
-    state.timezone = state.wage = state.weekBegins = state.dayCutoff = undefined;
-  }
+  clearFunction: resetState
 });
 
+service._getRawSchedules = function () {
+  if (!state.isCurrentJobSet) return undefined;
+  let rawSchedCopies = {};
+  settingNames.forEach(sName => {
+    rawSchedCopies[sName] = (
+      state[sName] &&
+      state[sName].map(entry => ({ ...entry }))
+    );
+  });
+  return rawSchedCopies;
+};
+
 export default service;
+
+
+function resetState() {
+    state.isCurrentJobSet = false;
+    settingNames.forEach(sName => {
+    state[sName] = undefined;
+  });
+}
 
 function processValueSchedule(schedule, valueProcessor) {
   return schedule.map(

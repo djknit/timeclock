@@ -1,4 +1,6 @@
-import { processCurrencyInputValue } from '../../../../utilities';
+import { processCurrencyInputValue, constants } from '../../../../utilities';
+
+const { minsPerHr, secsPerMin } = constants;
 
 function getWageInputProblems(inputValue, problemMessages) {
   const { useWage, rate, currency, overtime } = inputValue;
@@ -77,8 +79,8 @@ function processOvertimeInput(overtimeInputValue) {
   else {
     result.rate = processCurrencyInputValue(rate).rounded;
   }
-  const cutoffInMinutes = (cutoff.hours || 0) * 60 + (cutoff.minutes || 0);
-  result.cutoff = cutoffInMinutes * 60 * 1000;
+  const cutoffInMinutes = (cutoff.hours || 0) * minsPerHr + (cutoff.minutes || 0);
+  result.cutoff = cutoffInMinutes * secsPerMin * 1000;
   return result;
 }
 

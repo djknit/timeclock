@@ -3,7 +3,7 @@ export default function addMethods({
   dataService,
   isAsync
 }) {
-  
+
   const methodNames = Object.keys(methods);
 
   // copy methods to dataService so that event emitter is triggered when methods are called
