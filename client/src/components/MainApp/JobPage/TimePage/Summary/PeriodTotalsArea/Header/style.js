@@ -5,6 +5,11 @@ export default function getStyle() {
   const labelEmFontSize = 1.15;
 
   return {
+    div: {
+      position: 'relative',
+      paddingTop: `${0.5 * 1.5 * labelEmFontSize}em`,
+      paddingBottom: `calc(${0.5 * 1.5 * labelEmFontSize}em - 1px)`
+    },
     areaLabel: {
       position: 'absolute',
       left: 0,
@@ -19,8 +24,7 @@ export default function getStyle() {
     labelHr: {
       height: 1,
       width: '100%',
-      marginTop: `${0.5 * 1.5 * labelEmFontSize}em`,
-      marginBottom: `calc(${0.5 * 1.5 * labelEmFontSize}em - 1px)`,
+      margin: 0,
       backgroundColor: contentAreaDividerColor
     }
   };

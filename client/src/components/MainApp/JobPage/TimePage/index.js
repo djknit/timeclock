@@ -15,8 +15,6 @@ class TimePage extends Component {
 
     const { job, parentPath, windowWidth } = this.props;
 
-    // console.log(job)
-
     const crumbChain = [
       {
         text: <>JOB:&nbsp;{job.name}</>,
@@ -31,7 +29,11 @@ class TimePage extends Component {
       <>
         <PageTitle {...{ crumbChain }} />
         <div style={style.contentAreasRow}>
-          <Summary style={style.summaryArea} {...{ job, windowWidth }} />
+          <Summary
+            style={style.summaryArea}
+            timeData={job.time}
+            {...{ windowWidth }}
+          />
           <GeneralEntry style={style.generalEntryArea} />
         </div>
         <Weeks />

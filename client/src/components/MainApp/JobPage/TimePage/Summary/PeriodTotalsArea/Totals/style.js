@@ -1,3 +1,7 @@
 export default function getStyle() {
-  return {};
+  return {
+    earningsDetails: {
+      paddingLeft: '0.5rem'
+    }
+  };
 };

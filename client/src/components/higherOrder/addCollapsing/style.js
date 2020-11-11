@@ -1,7 +1,10 @@
+import { constants } from './utilities';
 import './style.css'; // CSS file contains all @keyframes definitions for animations used in this file
 
+const { collapsingAnimationDurationInSecs } = constants;
+
 const universalToggleAnimationProps = {
-  animationDuration: '2s',
+  animationDuration: `${collapsingAnimationDurationInSecs}s`,
   animationFillMode: 'forwards',
   WebkitAnimationFillMode: 'forwards'
 };

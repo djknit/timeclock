@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import getStyle from './style';
 import Header from './Header';
 import Body from './Body';
 import Footer from './Footer';
@@ -13,9 +12,9 @@ class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
   };
 
   setCollapsingContainerHeights() {
-    const { mainContentToggle, earningRatesContentToggle } = this.props;
+    const { mainContentToggle, earningsContentToggle } = this.props;
     mainContentToggle.setHeight();
-    // earningRatesContentToggle.setHeight();
+    earningsContentToggle.setHeight();
   };
 
   componentDidMount() {
@@ -29,15 +28,15 @@ class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
   };
 
   render() {
-    const { label, mainContentToggle, pseudoState, pseudoHandlers } = this.props;
-
-    const style = getStyle(mainContentToggle.styles, pseudoState);
+    const {
+      label, mainContentToggle, pseudoState, pseudoHandlers, periodTotals, earningsContentToggle
+    } = this.props;
 
     return (
-      <div style={style.area}>
+      <div>
         <Header {...{ label }} />
         <Body {...{ mainContentToggle }}>
-          <Totals />
+          <Totals {...{ periodTotals, earningsContentToggle, mainContentToggle }} />
         </Body>
         <Footer
           arrowPseudoHandlers={pseudoHandlers}
@@ -54,11 +53,14 @@ const _PeriodTotalsArea_needsCollapsing = addPseudoPseudoClasses(
 );
 
 const _PeriodTotalsArea_needsMoreCollapsing = addCollapsing(
-  _PeriodTotalsArea_needsCollapsing, 'mainContentToggle', true
+  _PeriodTotalsArea_needsCollapsing, 'earningsContentToggle', false
 );
 
-const PeriodTotalsArea = addCollapsing(
-  _PeriodTotalsArea_needsMoreCollapsing, 'earningRatesContentToggle', false
-);
+function PeriodTotalsArea({ isExpandedInitially, ...otherProps }) {
+  const TotalsAreaComp = addCollapsing(
+    _PeriodTotalsArea_needsMoreCollapsing, 'mainContentToggle', isExpandedInitially
+  );
+  return <TotalsAreaComp {...otherProps} />
+}
 
 export default PeriodTotalsArea;

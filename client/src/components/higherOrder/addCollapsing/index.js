@@ -6,6 +6,9 @@
 
 import React, { Component } from 'react';
 import getStyle from './style';
+import { constants } from './utilities';
+
+const { collapsingAnimationDurationInSecs } = constants;
 
 function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleIconAnimated) {
   const _isExpandedInitially = isExpandedInitially || false;
@@ -24,6 +27,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       this.toggle = this.toggle.bind(this);
       this.setIsExpanded = this.setIsExpanded.bind(this);
       this.reset = this.reset.bind(this);
+      this.allowChildToggle = this.allowChildToggle.bind(this);
       this.containerRef = React.createRef();
       this.state = { ...initialState };
     };
@@ -43,7 +47,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
           () => this.setState({
             containerHeight: this.containerRef.current.scrollHeight
           })
-        )
+        );
       }
     };
 
@@ -75,16 +79,26 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       this.setState({ ...initialState });
     };
 
+    allowChildToggle() {
+      this.clearHeight();
+      setTimeout(
+        this.setHeight,
+        collapsingAnimationDurationInSecs * 1000
+      );
+    };
+
     render() {
 
-      const { containerRef, state, props, setHeight, clearHeight, toggle, setIsExpanded, reset } = this;
+      const {
+        containerRef, setHeight, clearHeight, toggle, setIsExpanded, reset, allowChildToggle
+      } = this;
 
-      const { containerHeight, isExpanded, isAnimationOn, hasBeenExpanded } = state;
+      const { containerHeight, isExpanded, isAnimationOn, hasBeenExpanded } = this.state;
 
       const styles = getStyle(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated);
 
       const propsToPass = {
-        ...props,
+        ...this.props,
         [propName]: {
           containerRef,
           setHeight,
@@ -95,7 +109,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
           hasBeenExpanded,
           isExpanded,
           isHeightSet: !!(containerHeight || containerHeight === 0),
-          reset
+          reset,
+          allowChildToggle
         }
       };
 

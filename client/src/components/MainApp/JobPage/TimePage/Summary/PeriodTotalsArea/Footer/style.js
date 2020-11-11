@@ -6,12 +6,18 @@ export default function getStyle(contentToggleStyles, togglerArrowPseudoState) {
   const arrowXPadding = `calc(0.15 * ${arrowFontSize})`;
 
   return {
+    div: {
+      position: 'relative',
+      paddingTop: `calc(0.6 * ${arrowFontSize} - 1px)`,
+      paddingBottom: `calc(0.4 * ${arrowFontSize})`
+    },
     footerHr: {
       height: 1,
       backgroundColor: contentAreaDividerColor,
       width: `calc(100% - 10px - ${arrowFontSize})`,
-      marginTop: `calc(0.6 * ${arrowFontSize} - 1px)`,
-      marginBottom: `calc(0.4 * ${arrowFontSize})`,
+      margin: 0
+      // marginTop: `calc(0.6 * ${arrowFontSize} - 1px)`,
+      // marginBottom: `calc(0.4 * ${arrowFontSize})`
     },
     togglerArrow: {
       ...contentToggleStyles.toggle,

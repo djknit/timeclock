@@ -11,7 +11,7 @@ function Footer({
   const style = getStyle(mainContentToggle.styles, arrowPseudoState);
   
   return (
-    <>
+    <div style={style.div}>
       <hr style={style.footerHr} />
       <i
         className="fas fa-chevron-up"
@@ -21,7 +21,7 @@ function Footer({
         tabIndex={0}
         onKeyDown={keyTriggerCheckerFactory(mainContentToggle.toggle)}
       />
-    </>
+    </div>
   );
 }
 
