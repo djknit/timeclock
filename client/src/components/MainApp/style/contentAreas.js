@@ -1,6 +1,13 @@
 import { mainAreaPadding } from './mainArea';
 
 const contentAreaPadding = 15;
+const contentAreaBgColor = '#f1f1f1';
+const contentAreaTextLinkColors = {
+  innate: '#6a6a6a',
+  active: '#8a8a8a',
+  focus: '#2a2a2a',
+  hover: '#2a2a2a'
+};
 
 const contentAreasGridStyles = {
   contentAreasRow: {
@@ -42,5 +49,7 @@ const contentAreaDividerColor = '#b3b3b3';
 export {
   contentAreaPadding,
   contentAreasGridStyles,
-  contentAreaDividerColor
+  contentAreaDividerColor,
+  contentAreaBgColor,
+  contentAreaTextLinkColors
 };

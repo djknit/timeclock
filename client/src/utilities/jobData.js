@@ -1,4 +1,7 @@
+import { dates as dateUtils } from './dates';
 export { jobData } from './shared';
+
+const { getUtcDateTime, isDateInRange } = dateUtils;
 
 function getDayCutoffTime(cutoffValueInMinutes) {
   const minutesPerDay = 24 * 60;
@@ -11,4 +14,18 @@ function getDayCutoffTime(cutoffValueInMinutes) {
   return time;
 }
 
-export { getDayCutoffTime };
+function findWeekWithDate(date, weeks) {
+  const dateTime = getUtcDateTime(date);
+  if (!weeks) return null;
+  for (let i = 0; i < weeks.length - 1; i++) {
+    if (isDateInRange(weeks[i], date)) {
+      return weeks[i];
+    }
+  }
+  return null;
+}
+
+export {
+  getDayCutoffTime,
+  findWeekWithDate
+};

@@ -1,6 +1,6 @@
 import { isWindowWide } from '../utilities';
 import { contentAreasGridStyles, mainAreaPadding } from '../style';
-export { getInfoItemAreaStyles } from '../style';
+export * from '../style';
 
 const { contentAreasRow, columnContentArea } = contentAreasGridStyles;
 

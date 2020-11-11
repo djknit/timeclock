@@ -1,31 +1,39 @@
+import { contentAreaTextLinkColors } from '../style';
+
 export default function getStyle(pseudoState) {
 
-  const { isActive, isHovered, isFocused } = pseudoState;
+  const { isActive, isHovered, isFocused, isTabFocused } = pseudoState;
 
   let stateDependentStyle;
   if (isActive) {
     stateDependentStyle = {
       fontWeight: 700,
-      color: '#8a8a8a'
+      color: contentAreaTextLinkColors.active
+    };
+  }
+  else if (isTabFocused) {
+    stateDependentStyle = {
+      fontWeight: 700,
+      color: contentAreaTextLinkColors.focus,
+      textDecoration: 'underline'
     };
   }
   else if (isFocused) {
     stateDependentStyle = {
       fontWeight: 700,
-      color: '#2a2a2a',
-      textDecoration: 'underline'
+      color: contentAreaTextLinkColors.focus
     };                  
   }
   else if (isHovered) {
     stateDependentStyle = {
       fontWeight: 700,
-      color: '#2a2a2a'
+      color: contentAreaTextLinkColors.hover
     };
   }
   else {
     stateDependentStyle = {
       fontWeight: 600,
-      color: '#6a6a6a'
+      color: contentAreaTextLinkColors.innate
     };
   }
 

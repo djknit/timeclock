@@ -1,4 +1,4 @@
-import { getCurrencyAmountInfo, getDurationInfo } from '../../utilities';
+import { getCurrencyAmountInfo, getDurationInfo } from '../../../utilities';
 
 function formatEarningsForCurrency({ currency, rawAmount, totalTimeInMsec, rates }) {
   let result = {

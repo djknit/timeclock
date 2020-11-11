@@ -20,11 +20,10 @@ const userService = dataServiceFactory({
     return { ...profileInfo, jobs, currentJob };
   },
   setFunction: user => {
-    console.log('setting user')
-    // numSubServiceResponsesNeeded = 3;
     isLoggedInService.setValue(true);
     profileService.setValue(user);
     jobsService.setValue(user.jobs);
+    currentJobService.clearValue();
   },
   clearFunction: () => {
     isLoggedInService.setValue(false);

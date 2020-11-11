@@ -1,6 +1,7 @@
 import {
   mainAreaPadding, headingFontFam
 } from '../style';
+export * from '../style';
 
 export default function getStyle(additionalStyle) {
 

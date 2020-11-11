@@ -30,14 +30,14 @@ const settingsLabelsAndPropNames = [
 function SettingsArea({
   style: styleProp,
   disabled,
-  job,
+  settings,
   buildSettingsSubPath,
   jobSettingsPageSubpaths
 }) {
 
   const style = getStyle(styleProp);
 
-  return job && (
+  return settings && (
     <ContentArea style={style.contentArea}>
       <ContentAreaTitle>Settings Summary</ContentAreaTitle>
       {
@@ -57,11 +57,11 @@ function SettingsArea({
               <CurrentItemValueDisplay
                 {...{
                   propName,
-                  job,
+                  settings,
                   disabled
                 }}
               />
-              {job[propName].length > 1 && (
+              {settings[propName].length > 1 && (
                 <p style={style.areaHasBtnsText}>
                   This value is not the same for all time periods.
                 </p>

@@ -7,12 +7,12 @@ const { getMostRecentScheduleValueForDate, getDateForTime } = jobDataUtils;
 
 function CurrentItemValueDisplay({
   propName,
-  job,
+  settings,
   disabled
 }) {
 
-  const currentDate = getDateForTime(Date.now(), job, true);
-  const currentValue = getMostRecentScheduleValueForDate(currentDate, job[propName]);
+  const currentDate = getDateForTime(Date.now(), settings, true);
+  const currentValue = getMostRecentScheduleValueForDate(currentDate, settings[propName]);
   // console.log({ propName, currentValue })
 
   const style = getStyle();

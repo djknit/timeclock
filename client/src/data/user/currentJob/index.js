@@ -2,7 +2,6 @@ import { dataServiceFactory } from '../../utilities';
 import jobsService from '../jobs';
 import basicsService from './basics';
 import timeService from './time';
-import { getDateRangeInfo } from './time';
 import settingsService from './settings';
 
 const childDataServices = {
@@ -16,8 +15,8 @@ let state = { isCurrentJobSet: false };
 function setCurrentJob(jobData) {
   state.isCurrentJobSet = true;
   basicsService.setValue(jobData);
-  settingsService.setValue(jobData);
   timeService.setValue(jobData.weeks);
+  settingsService.setValue(jobData);
 }
 
 const currentJobService = dataServiceFactory({
@@ -25,7 +24,7 @@ const currentJobService = dataServiceFactory({
   readFunction: () => {
     const { isCurrentJobSet, currentJobBasics, time, settings } = state;
     return isCurrentJobSet ? (
-      { ...currentJobBasics, ...settings, time }
+      { ...currentJobBasics, settings, time }
     ) : (
       null
     );
@@ -52,11 +51,6 @@ const currentJobService = dataServiceFactory({
   },
   childDataServices
 });
-
-currentJobService.getInfoForDateRange = function (firstDate, lastDate) {
-  const processedWeeks = state.time && state.time.weeks;
-  return getDateRangeInfo(firstDate, lastDate, processedWeeks);
-};
 
 export default currentJobService;
 

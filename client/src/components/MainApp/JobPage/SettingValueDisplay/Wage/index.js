@@ -100,7 +100,7 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
                 <p style={style.subDetailsPNotLast}>
                   <strong style={style.valueLabel}>OT Multiplier:</strong>
                   &ensp;
-                  {processedValue.overtime.rateMultiplier} x [base rate]
+                  {processedValue.overtime.rateMultiplier} &times; [base rate]
                 </p>
               )}
               <p style={style.subDetailsPNotLast}>

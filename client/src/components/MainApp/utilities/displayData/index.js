@@ -1,7 +1,8 @@
 import moment from 'moment';
 import {
   dates as dateUtils,
-  getDayCutoffTime
+  getDayCutoffTime,
+  constants
 } from '../../../utilities';
 // import { getDayCutoffTime } from '../elemental';
 import { getWageValueSummaryText } from './wage';
@@ -9,6 +10,8 @@ import { convertStringToNonbreakingHtml } from './textFormatting';
 
 export * from './wage';
 export * from './textFormatting';
+
+const { minsPerHr } = constants;
 
 function formatMyDate(myDate, formatString, isString) {
   const stringResult = dateUtils.getMoment(myDate || {}).format(formatString || 'MMM. D, YYYY') || '';
@@ -22,8 +25,8 @@ function getWeekBeginsText(weekBeginsValue) {
 function getDayCutoffText(dayCutoffValue) {
   // cutoff value is in minutes
   const isCutoffNegative = dayCutoffValue < 0;
-  const cutoffDisplayHours = Math.floor(Math.abs(dayCutoffValue) / 60);
-  const cutoffDisplayMinutes = Math.abs(dayCutoffValue) % 60;
+  const cutoffDisplayHours = Math.floor(Math.abs(dayCutoffValue) / minsPerHr);
+  const cutoffDisplayMinutes = Math.abs(dayCutoffValue) % minsPerHr;
   const cutoffTime = getDayCutoffTime(dayCutoffValue, false);
   let result = `${isCutoffNegative ? '-' : '+'} ${cutoffDisplayHours} hr`;
   if (cutoffDisplayMinutes) result += ` ${cutoffDisplayMinutes} min`;

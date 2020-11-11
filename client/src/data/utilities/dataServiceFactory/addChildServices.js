@@ -32,8 +32,9 @@ export default function addChildServices({
   childServicePropNames.forEach(propName => {
     childDataServices[propName].subscribe(() => {
       getValueFromChildService(propName);
-      if (numSubServiceResponsesNeeded > 0) --numSubServiceResponsesNeeded;
-      if (numSubServiceResponsesNeeded === 0) dataService._emit();
+      if (numSubServiceResponsesNeeded <= 0 || --numSubServiceResponsesNeeded <= 0) {
+        dataService._emit();
+      }
     });
   });
 };

@@ -5,17 +5,22 @@ import getDateRangeInfo from './getDateRangeInfo';
 
 let state = {
   weeks: undefined,
-  settings: settingsService._getRawSchedules()
+  settings: settingsService._getRawSchedules(),
+  isWaitingForSiblings: false
 };
 
-let service = dataServiceFactory({
+let timeService = dataServiceFactory({
   readFunction() {
-    return processData(state.weeks, state.settings);
+    const { weeks, settings } = state;
+    if (!weeks || !settings) return;
+    return processData(weeks, settings);
   },
   setFunction(weeksArray) {
+    state.isWaitingForSiblings = true;
     state.weeks = weeksArray.map(({ document }) => document);
   },
   clearFunction() {
+    state.isWaitingForSiblings = true;
     state.weeks = undefined;
   },
   methods: {
@@ -33,14 +38,13 @@ let service = dataServiceFactory({
 
 settingsService.subscribe(() => {
   state.settings = settingsService._getRawSchedules();
-  service._emit();
+  state.isWaitingForSiblings = false;
+  timeService._emit();
 });
 
-service.getInfoForDateRange = function(firstDate, lastDate) {
+timeService.getInfoForDateRange = function(firstDate, lastDate) {
   let processedWeeks = processData(state.weeks).weeks;
-  return getDateRangeInfo(firstDate, lastDate, processedWeeks);
+  return getDateRangeInfo({ firstDate, lastDate }, processedWeeks);
 };
 
-export default service;
-
-export { getDateRangeInfo };
+export default timeService;
