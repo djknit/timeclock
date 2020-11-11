@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import Header from './Header';
+import getStyle from './style';
+import { keyTriggerCheckerFactory } from '../../../utilities';
+// import Header from './Header';
 import Body from './Body';
-import Footer from './Footer';
+// import Footer from './Footer';
 import Totals from './Totals';
 import { addCollapsing, addPseudoPseudoClasses } from '../../../../../higherOrder';
 
@@ -13,8 +15,7 @@ class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
 
   setCollapsingContainerHeights() {
     const { mainContentToggle, earningsContentToggle } = this.props;
-    earningsContentToggle.setHeight().then(mainContentToggle.setHeight);
-    // mainContentToggle.setHeight();
+    mainContentToggle.setHeight().then(earningsContentToggle.setHeight);
     // earningsContentToggle.setHeight();
   };
 
@@ -33,16 +34,32 @@ class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
       label, mainContentToggle, pseudoState, pseudoHandlers, periodTotals, earningsContentToggle
     } = this.props;
 
+    const style = getStyle(mainContentToggle.styles, pseudoState);
+
     return (
-      <div>
-        <Header {...{ label }} />
+      <div
+        style={style.area}
+        // ref={mainContentToggle.containerRef}
+      >
+        <p style={style.areaLabel} className="time-summary-time-period-area-label">
+          {label}
+        </p>
+        {/* <Header {...{ label }} /> */}
         <Body {...{ mainContentToggle }}>
           <Totals {...{ periodTotals, earningsContentToggle, mainContentToggle }} />
         </Body>
-        <Footer
+        {/* <Footer
           arrowPseudoHandlers={pseudoHandlers}
           arrowPseudoState={pseudoState}
           {...{ mainContentToggle }}
+        /> */}
+        <i
+          className="fas fa-chevron-up"
+          style={style.togglerArrow}
+          {...pseudoHandlers}
+          onClick={mainContentToggle.toggle}
+          tabIndex={0}
+          onKeyDown={keyTriggerCheckerFactory(mainContentToggle.toggle)}
         />
       </div>
     );

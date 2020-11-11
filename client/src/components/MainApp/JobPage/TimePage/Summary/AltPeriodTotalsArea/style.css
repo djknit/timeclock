@@ -1,0 +1,11 @@
+.time-summary-time-period-area-label::after {
+  position: absolute;
+  background-color: inherit;
+  z-index: inherit;
+  height: 8px;
+  bottom: -8px;
+  width: 4px;
+  left: 0;
+  display: inline-block;
+  content: ' ';
+}

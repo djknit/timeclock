@@ -8,7 +8,7 @@ export default function getStyle(contentToggleStyles, togglerArrowPseudoState) {
   return {
     div: {
       position: 'relative',
-      paddingTop: `calc(0.6 * ${arrowFontSize} - 1px)`,
+      // paddingTop: `calc(0.6 * ${arrowFontSize} - 1px)`,
       paddingBottom: `calc(0.4 * ${arrowFontSize})`
     },
     footerHr: {

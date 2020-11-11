@@ -33,22 +33,26 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     };
 
     setHeight() {
-      if (!this.state.containerHeight) {
-        this.setState({
-          containerHeight: this.containerRef.current.scrollHeight
-        });
-      }
-      else { // if height already set, clear and then set
-        this.setState(
-          {
-            containerHeight: undefined,
-            isAnimationOn: false
-          },
-          () => this.setState({
-            containerHeight: this.containerRef.current.scrollHeight
-          })
-        );
-      }
+      return new Promise(resolve => {
+        if (!this.state.containerHeight) {
+          this.setState(
+            { containerHeight: this.containerRef.current.scrollHeight },
+            resolve
+          );
+        }
+        else { // if height already set, clear and then set
+          this.setState(
+            {
+              containerHeight: undefined,
+              isAnimationOn: false
+            },
+            () => this.setState(
+              { containerHeight: this.containerRef.current.scrollHeight },
+              resolve
+            )
+          );
+        }
+      });
     };
 
     clearHeight() {

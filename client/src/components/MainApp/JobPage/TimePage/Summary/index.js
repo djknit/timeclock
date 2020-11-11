@@ -1,6 +1,7 @@
 import React from 'react';
 import ContentArea from '../../../ContentArea';
 import PeriodTotalsArea from './PeriodTotalsArea';
+import AltPeriodTotalsArea from './AltPeriodTotalsArea';
 
 function Summary({
   style: styleProp,
@@ -12,7 +13,7 @@ function Summary({
 
   return (
     <ContentArea title="Summary" style={styleProp}>
-      <PeriodTotalsArea
+      <AltPeriodTotalsArea
         label="Job Totals"
         {...commonAttrs}
         periodTotals={getJobTotals(timeData)}
