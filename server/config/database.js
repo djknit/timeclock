@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/timeclock';
+const MONGODB_URI = getAtlasDbUri(process.env) || 'mongodb://localhost/timeclock';
 
 module.exports = new Promise(function (resolve, reject) {
 
@@ -32,4 +32,11 @@ module.exports = new Promise(function (resolve, reject) {
 // source: https://github.com/Automattic/mongoose/issues/6578#issuecomment-396789872
 function setRunValidators () {
   this.setOptions({ runValidators: true });
+}
+
+function getAtlasDbUri(dbInfo) {
+  const { DB_NAME, DB_USER, DB_PASSWORD } = dbInfo;
+  return (
+    `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.htin5.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`
+  );
 }
