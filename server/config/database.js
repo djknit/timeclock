@@ -36,6 +36,7 @@ function setRunValidators () {
 
 function getAtlasDbUri(dbInfo) {
   const { DB_NAME, DB_USER, DB_PASSWORD } = dbInfo;
+  if (!DB_USER) return;
   return (
     `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.htin5.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`
   );
