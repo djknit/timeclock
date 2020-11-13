@@ -9,14 +9,14 @@ function _Footer_needsPseudo({
   pseudoState
 }) {
 
-  const style = getStyle(mainContentToggle.styles, pseudoState);
+  const style = getStyle(pseudoState);
   
   return (
     <div style={style.div}>
       <hr style={style.footerHr} />
       <i
         className="fas fa-chevron-up"
-        style={style.togglerArrow}
+        style={{ ...mainContentToggle.styles.toggle, ...style.togglerArrow }}
         {...pseudoHandlers}
         onClick={mainContentToggle.toggle}
         tabIndex={0}

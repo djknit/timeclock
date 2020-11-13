@@ -9,7 +9,7 @@ const universalToggleAnimationProps = {
   WebkitAnimationFillMode: 'forwards'
 };
 
-function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated) {
+function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated, isMoving) {
   const _isIconAnimated = isToggleIconAnimated !== false; // (default to true when param is undefined)
   const sectionToggleAnimationProps = (
     isAnimationOn ?
@@ -32,20 +32,18 @@ function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggle
     {}
   );
 
-  const arrowFlipAndAnimateProps = (
+  let togglerStyle = (
     _isIconAnimated ?
     { ...sectionToggleAnimationProps, ...flippedArrowProps } :
     {}
   );
 
+  if (!isMoving) togglerStyle.cursor = 'pointer';
 
 
   return {
     container: getSectionContentStyle(containerHeight, isExpanded, isAnimationOn),
-    toggle: {
-      cursor: 'pointer',
-      ...arrowFlipAndAnimateProps
-    },
+    toggle: togglerStyle,
     openerText: (
       isAnimationOn ?
       {

@@ -1,6 +1,6 @@
-import { contentAreaDividerColor, contentAreaTextLinkColors } from '../style';
+import { contentAreaDividerColor, getArrowStylesForPseudoClassState } from '../style';
 
-export default function getStyle(contentToggleStyles, togglerArrowPseudoState) {
+export default function getStyle(togglerArrowPseudoState) {
 
   const arrowFontSize = '1.6rem';
   const arrowXPadding = `calc(0.15 * ${arrowFontSize})`;
@@ -18,28 +18,13 @@ export default function getStyle(contentToggleStyles, togglerArrowPseudoState) {
       margin: 0
     },
     togglerArrow: {
-      ...contentToggleStyles.toggle,
       position: 'absolute',
       padding: `0 ${arrowXPadding}`,
       right: `calc(-1 * ${arrowXPadding})`,
       bottom: 0,
       fontSize: arrowFontSize,
       lineHeight: 1,
-      ..._getArrowStylesForPseudoClassState(togglerArrowPseudoState)
+      ...getArrowStylesForPseudoClassState(togglerArrowPseudoState)
     }
   };
 };
-
-function _getArrowStylesForPseudoClassState(arrowPseudoClassState) {
-  const { isActive, isFocused, isHovered, isTabFocused } = arrowPseudoClassState;
-  return {
-    color: (
-      (isActive && contentAreaTextLinkColors.active) ||
-      ((isFocused || isTabFocused) && contentAreaTextLinkColors.focus) ||
-      (isHovered && contentAreaTextLinkColors.hover) ||
-      contentAreaTextLinkColors.innate
-    ),
-    outline: isTabFocused ? `${contentAreaTextLinkColors.focus} solid 1.5px` : 'none',
-    fontWeight: (isActive || isFocused || isHovered || isTabFocused) ? 1000 : 900
-  };
-}
