@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { keyTriggerCheckerFactory } from '../../../utilities';
-// import Header from './Header';
 import Body from './Body';
-// import Footer from './Footer';
 import Totals from './Totals';
-import { addCollapsing, addPseudoPseudoClasses } from '../../../../../higherOrder';
+import TogglerArrow from './TogglerArrow';
+import { addCollapsing } from '../../../../../higherOrder';
 
-class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
+const getClassName = (elName) => `time-summary-time-period-area-${elName}`;
+const labelClass = getClassName('label');
+const arrowClass = getClassName('arrow');
+
+class _PeriodTotalsArea_needsCollapsing extends Component {
   constructor(props) {
     super(props);
     this.setCollapsingContainerHeights = this.setCollapsingContainerHeights.bind(this);
@@ -16,7 +18,6 @@ class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
   setCollapsingContainerHeights() {
     const { mainContentToggle, earningsContentToggle } = this.props;
     mainContentToggle.setHeight().then(earningsContentToggle.setHeight);
-    // earningsContentToggle.setHeight();
   };
 
   componentDidMount() {
@@ -30,45 +31,27 @@ class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
   };
 
   render() {
-    const {
-      label, mainContentToggle, pseudoState, pseudoHandlers, periodTotals, earningsContentToggle
-    } = this.props;
+    const { label, mainContentToggle, periodTotals, earningsContentToggle } = this.props;
 
-    const style = getStyle(mainContentToggle.styles, pseudoState);
+    const style = getStyle(mainContentToggle.styles);
 
     return (
-      <div
-        style={style.area}
-        // ref={mainContentToggle.containerRef}
-      >
-        <p style={style.areaLabel} className="time-summary-time-period-area-label">
+      <div style={style.area} >
+        <h3 style={style.areaLabel} className={labelClass}>
           {label}
-        </p>
-        {/* <Header {...{ label }} /> */}
-        <Body {...{ mainContentToggle }}>
+        </h3>
+        <div style={style.areaBody} ref={mainContentToggle.containerRef}>
           <Totals {...{ periodTotals, earningsContentToggle, mainContentToggle }} />
-        </Body>
-        {/* <Footer
-          arrowPseudoHandlers={pseudoHandlers}
-          arrowPseudoState={pseudoState}
-          {...{ mainContentToggle }}
-        /> */}
-        <i
-          className="fas fa-chevron-up"
+        </div>
+        <TogglerArrow
+          contentToggle={mainContentToggle}
           style={style.togglerArrow}
-          {...pseudoHandlers}
-          onClick={mainContentToggle.toggle}
-          tabIndex={0}
-          onKeyDown={keyTriggerCheckerFactory(mainContentToggle.toggle)}
+          className={arrowClass}
         />
       </div>
     );
   };
 }
-
-const _PeriodTotalsArea_needsCollapsing = addPseudoPseudoClasses(
-  _PeriodTotalsArea_needsCollapsingAndPseudo
-);
 
 const _PeriodTotalsArea_needsMoreCollapsing = addCollapsing(
   _PeriodTotalsArea_needsCollapsing, 'earningsContentToggle', false
@@ -78,7 +61,7 @@ function PeriodTotalsArea({ isExpandedInitially, ...otherProps }) {
   const TotalsAreaComp = addCollapsing(
     _PeriodTotalsArea_needsMoreCollapsing, 'mainContentToggle', isExpandedInitially
   );
-  return <TotalsAreaComp {...otherProps} />
+  return <TotalsAreaComp {...otherProps} />;
 }
 
 export default PeriodTotalsArea;

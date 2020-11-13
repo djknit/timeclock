@@ -16,8 +16,7 @@ function _Totals_needsPseudo({
   const style = getStyle();
 
   const toggleEarningsDetails = () => {
-    earningsContentToggle.toggle();
-    mainContentToggle.allowChildToggle();
+    mainContentToggle.toggleChild(earningsContentToggle);
   };
 
   return (

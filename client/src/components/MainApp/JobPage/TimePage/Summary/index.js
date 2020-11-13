@@ -1,7 +1,6 @@
 import React from 'react';
 import ContentArea from '../../../ContentArea';
 import PeriodTotalsArea from './PeriodTotalsArea';
-import AltPeriodTotalsArea from './AltPeriodTotalsArea';
 
 function Summary({
   style: styleProp,
@@ -13,7 +12,7 @@ function Summary({
 
   return (
     <ContentArea title="Summary" style={styleProp}>
-      <AltPeriodTotalsArea
+      <PeriodTotalsArea
         label="Job Totals"
         {...commonAttrs}
         periodTotals={getJobTotals(timeData)}
@@ -21,22 +20,22 @@ function Summary({
       />
       <PeriodTotalsArea
         label="This Week"
-        {...{ windowWidth }}
+        {...commonAttrs}
         periodTotals={timeData.currentWeek}
       />
       <PeriodTotalsArea
         label="Last Week"
-        {...{ windowWidth }}
+        {...commonAttrs}
         periodTotals={timeData.precedingWeek}
       />
       <PeriodTotalsArea
         label="This Month"
-        {...{ windowWidth }}
+        {...commonAttrs}
         periodTotals={timeData.currentMonth}
       />
       <PeriodTotalsArea
         label="Last Month"
-        {...{ windowWidth }}
+        {...commonAttrs}
         periodTotals={timeData.precedingMonth}
       />
     </ContentArea>

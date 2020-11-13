@@ -22,48 +22,42 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
   return class extends Component {
     constructor(props) {
       super(props);
+      this.promiseToSetState = this.promiseToSetState.bind(this);
       this.setHeight = this.setHeight.bind(this);
       this.clearHeight = this.clearHeight.bind(this);
       this.toggle = this.toggle.bind(this);
       this.setIsExpanded = this.setIsExpanded.bind(this);
       this.reset = this.reset.bind(this);
-      this.allowChildToggle = this.allowChildToggle.bind(this);
+      this.toggleChild = this.toggleChild.bind(this);
       this.containerRef = React.createRef();
       this.state = { ...initialState };
     };
 
-    setHeight() {
+    promiseToSetState(newState) {
       return new Promise(resolve => {
-        if (!this.state.containerHeight) {
-          this.setState(
-            { containerHeight: this.containerRef.current.scrollHeight },
-            resolve
-          );
-        }
-        else { // if height already set, clear and then set
-          this.setState(
-            {
-              containerHeight: undefined,
-              isAnimationOn: false
-            },
-            () => this.setState(
-              { containerHeight: this.containerRef.current.scrollHeight },
-              resolve
-            )
-          );
-        }
+        this.setState(newState, resolve);
       });
     };
 
+    setHeight() {
+      return !this.state.containerHeight ? (
+        this.promiseToSetState(
+          { containerHeight: this.containerRef.current.scrollHeight }
+        )
+      ) : ( // if height already set, clear and then set
+        this.clearHeight().then(this.setHeight)
+      );
+    };
+
     clearHeight() {
-      this.setState({
+      return this.promiseToSetState({
         containerHeight: undefined,
         isAnimationOn: false
       });
     }
 
     toggle() {
-      this.setState({
+      return this.promiseToSetState({
         isExpanded: !this.state.isExpanded,
         isAnimationOn: true,
         hasBeenExpanded: true
@@ -83,18 +77,23 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       this.setState({ ...initialState });
     };
 
-    allowChildToggle() {
-      this.clearHeight();
-      setTimeout(
-        this.setHeight,
-        collapsingAnimationDurationInSecs * 1000
-      );
+    toggleChild(childContentToggle) {
+      return new Promise(resolve => {
+        this.clearHeight()
+        .then(childContentToggle.toggle)
+        .then(() => {
+          setTimeout(
+            () => resolve(this.setHeight()),
+            collapsingAnimationDurationInSecs * 1000
+          );
+        });
+      });
     };
 
     render() {
 
       const {
-        containerRef, setHeight, clearHeight, toggle, setIsExpanded, reset, allowChildToggle
+        containerRef, setHeight, clearHeight, toggle, setIsExpanded, reset, toggleChild
       } = this;
 
       const { containerHeight, isExpanded, isAnimationOn, hasBeenExpanded } = this.state;
@@ -114,7 +113,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
           isExpanded,
           isHeightSet: !!(containerHeight || containerHeight === 0),
           reset,
-          allowChildToggle
+          toggleChild
         }
       };
 

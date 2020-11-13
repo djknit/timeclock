@@ -16,8 +16,6 @@ export default function getStyle(contentToggleStyles, togglerArrowPseudoState) {
       backgroundColor: contentAreaDividerColor,
       width: `calc(100% - 10px - ${arrowFontSize})`,
       margin: 0
-      // marginTop: `calc(0.6 * ${arrowFontSize} - 1px)`,
-      // marginBottom: `calc(0.4 * ${arrowFontSize})`
     },
     togglerArrow: {
       ...contentToggleStyles.toggle,
@@ -27,12 +25,12 @@ export default function getStyle(contentToggleStyles, togglerArrowPseudoState) {
       bottom: 0,
       fontSize: arrowFontSize,
       lineHeight: 1,
-      ..._getArrowStylesForPseudoClass(togglerArrowPseudoState)
+      ..._getArrowStylesForPseudoClassState(togglerArrowPseudoState)
     }
   };
 };
 
-function _getArrowStylesForPseudoClass(arrowPseudoClassState) {
+function _getArrowStylesForPseudoClassState(arrowPseudoClassState) {
   const { isActive, isFocused, isHovered, isTabFocused } = arrowPseudoClassState;
   return {
     color: (

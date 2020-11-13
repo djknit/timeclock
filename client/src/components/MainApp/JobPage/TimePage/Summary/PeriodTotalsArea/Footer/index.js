@@ -1,14 +1,15 @@
 import React from 'react';
 import getStyle from './style';
 import { keyTriggerCheckerFactory } from '../../../../utilities';
+import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
 
-function Footer({
+function _Footer_needsPseudo({
   mainContentToggle,
-  arrowPseudoHandlers,
-  arrowPseudoState
+  pseudoHandlers,
+  pseudoState
 }) {
 
-  const style = getStyle(mainContentToggle.styles, arrowPseudoState);
+  const style = getStyle(mainContentToggle.styles, pseudoState);
   
   return (
     <div style={style.div}>
@@ -16,7 +17,7 @@ function Footer({
       <i
         className="fas fa-chevron-up"
         style={style.togglerArrow}
-        {...arrowPseudoHandlers}
+        {...pseudoHandlers}
         onClick={mainContentToggle.toggle}
         tabIndex={0}
         onKeyDown={keyTriggerCheckerFactory(mainContentToggle.toggle)}
@@ -24,5 +25,7 @@ function Footer({
     </div>
   );
 }
+
+const Footer = addPseudoPseudoClasses(_Footer_needsPseudo);
 
 export default Footer;
