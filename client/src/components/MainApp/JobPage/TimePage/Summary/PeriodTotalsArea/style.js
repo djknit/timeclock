@@ -1,6 +1,8 @@
 import { contentAreaTextLinkColors } from '../style';
 export * from '../style';
 
+const togglerArrowsEmXPadding = 0.15;
+
 function getArrowStylesForPseudoClassState(arrowPseudoClassState) {
   const { isActive, isFocused, isHovered, isTabFocused } = arrowPseudoClassState;
   return {
@@ -15,4 +17,7 @@ function getArrowStylesForPseudoClassState(arrowPseudoClassState) {
   };
 }
 
-export { getArrowStylesForPseudoClassState };
+export {
+  togglerArrowsEmXPadding,
+  getArrowStylesForPseudoClassState
+};

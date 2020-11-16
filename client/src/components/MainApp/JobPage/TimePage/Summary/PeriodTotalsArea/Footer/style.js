@@ -1,9 +1,11 @@
-import { contentAreaDividerColor, getArrowStylesForPseudoClassState } from '../style';
+import {
+  contentAreaDividerColor, getArrowStylesForPseudoClassState, togglerArrowsEmXPadding
+} from '../style';
 
 export default function getStyle(togglerArrowPseudoState) {
 
   const arrowFontSize = '1.6rem';
-  const arrowXPadding = `calc(0.15 * ${arrowFontSize})`;
+  const arrowXPadding = `calc(${togglerArrowsEmXPadding} * ${arrowFontSize})`;
 
   return {
     div: {

@@ -38,32 +38,38 @@ function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggle
     {}
   );
 
-  if (!isMoving) togglerStyle.cursor = 'pointer';
+  let openerTextStyle = (
+    isAnimationOn ?
+    {
+      animationName: isExpanded ? 'fade-out' : 'fade-in',
+      ...universalToggleAnimationProps
+    } :
+    {
+      opacity: isExpanded ? 0 : 1
+    }
+  );
+
+  let closerTextStyle = (
+    isAnimationOn ?
+    {
+      animationName: isExpanded ? 'fade-in' : 'fade-out',
+      ...universalToggleAnimationProps
+    } :
+    {
+      opacity: isExpanded ? 1 : 0
+    }
+  );
+
+  if (!isMoving) {
+    togglerStyle.cursor = openerTextStyle.cursor = closerTextStyle.cursor = 'pointer';
+  };
 
 
   return {
     container: getSectionContentStyle(containerHeight, isExpanded, isAnimationOn),
     toggle: togglerStyle,
-    openerText: (
-      isAnimationOn ?
-      {
-        animationName: isExpanded ? 'fade-out' : 'fade-in',
-        ...universalToggleAnimationProps
-      } :
-      {
-        opacity: isExpanded ? 0 : 1
-      }
-    ),
-    closerText: (
-      isAnimationOn ?
-      {
-        animationName: isExpanded ? 'fade-in' : 'fade-out',
-        ...universalToggleAnimationProps
-      } :
-      {
-        opacity: isExpanded ? 1 : 0
-      }
-    )
+    openerText: openerTextStyle,
+    closerText: closerTextStyle
   };
 };
 

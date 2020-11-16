@@ -2,6 +2,7 @@ import React from 'react';
 import getStyle from './style';
 import { keyTriggerCheckerFactory, roundNumToNDecimalDigits, getCurrencyAmountInfo } from '../../../../utilities';
 import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
+import EarningDetailsToggle from './EarningDetailsToggle';
 
 function _Totals_needsPseudo({
   periodTotals,
@@ -25,6 +26,10 @@ function _Totals_needsPseudo({
     <>
       <p><strong>{getTotalTimeDisplay(totalTime)}</strong> worked on {getDaysWorkedDisplay(daysWorked)}</p>
       <p>Earnings: {getEarningsSummaryDisplay(earnings)}</p>
+      <EarningDetailsToggle
+        toggle={toggleEarningsDetails}
+        toggleStyles={earningsContentToggle.styles}
+      />
       <div
         style={{ ...earningsContentToggle.styles.container, ...style.earningsDetails }}
         ref={earningsContentToggle.containerRef}
@@ -33,14 +38,15 @@ function _Totals_needsPseudo({
         <p>test</p>
         <p>test</p>
       </div>
-      <i
+      {/* <p></p> */}
+      {/* <i
         className="fas fa-chevron-up"
         style={{ ...earningsContentToggle.styles.toggle, ...style.detailsTogglerArrow }}
         {...arrowPseudoHandlers}
         onClick={toggleEarningsDetails}
         tabIndex={0}
         onKeyDown={keyTriggerCheckerFactory(toggleEarningsDetails)}
-      />
+      /> */}
     </>
   );
 }
