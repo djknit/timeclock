@@ -7,7 +7,8 @@ function _EarningDetailsToggler_needsPseudo({
   pseudoHandlers,
   pseudoState,
   toggle, // toggle function
-  toggleStyles
+  toggleStyles,
+  isVisible
 }) {
 
   const style = getStyle(pseudoState, toggleStyles);
@@ -16,14 +17,11 @@ function _EarningDetailsToggler_needsPseudo({
     <div
       {...pseudoHandlers}
       onClick={toggle}
-      tabIndex={0}
+      tabIndex={isVisible ? 0 : -1}
       onKeyDown={keyTriggerCheckerFactory(toggle)}
       style={style.togglerArea}
     >
-      <i
-        className="fas fa-chevron-up"
-        style={style.arrow}
-      />
+      <i className="fas fa-chevron-up" style={style.arrow} />
       <div style={style.textArea}>
         <span style={style.toggleOpenText}>Show Earnings Details</span>
         <span style={style.toggleClosedText}>Hide Earnings Details</span>

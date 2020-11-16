@@ -30,6 +30,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       this.setIsExpanded = this.setIsExpanded.bind(this);
       this.reset = this.reset.bind(this);
       this.toggleChild = this.toggleChild.bind(this);
+      this.toggleWithChild = this.toggleWithChild.bind(this);
       this.containerRef = React.createRef();
       this.state = { ...initialState };
     };
@@ -42,9 +43,10 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
 
     setHeight() {
       return (!this.state.containerHeight && this.containerRef.current) ? (
-        this.promiseToSetState(
-          { containerHeight: this.containerRef.current.scrollHeight }
-        )
+        this.promiseToSetState({
+          containerHeight: this.containerRef.current.scrollHeight,
+          isMoving: false
+        })
       ) : ( // if height already set, clear and then set
         this.clearHeight().then(this.setHeight)
       );
@@ -53,7 +55,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     clearHeight() {
       return this.promiseToSetState({
         containerHeight: undefined,
-        isAnimationOn: false
+        isAnimationOn: false,
+        isMoving: true
       });
     };
 
@@ -91,10 +94,19 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       );
     };
 
+    toggleWithChild(childContentToggle) {
+      if (this.state.isMoving) return;
+      return (
+        childContentToggle.clearHeight()
+        .then(this.toggle)
+        .then(childContentToggle.setHeight)
+      );
+    };
+
     render() {
 
       const {
-        containerRef, setHeight, clearHeight, toggle, setIsExpanded, reset, toggleChild
+        containerRef, setHeight, clearHeight, toggle, setIsExpanded, reset, toggleChild, toggleWithChild
       } = this;
 
       const { containerHeight, isExpanded, isAnimationOn, hasBeenExpanded, isMoving } = this.state;
@@ -115,7 +127,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
           isHeightSet: !!(containerHeight || containerHeight === 0),
           reset,
           toggleChild,
-          isMoving
+          isMoving,
+          toggleWithChild
         }
       };
 

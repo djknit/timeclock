@@ -35,7 +35,10 @@ class _PeriodTotalsArea_needsCollapsing extends Component {
         <Body {...{ mainContentToggle }}>
           <Totals {...{ periodTotals, earningsContentToggle, mainContentToggle }} />
         </Body>
-        <Footer {...{ mainContentToggle }} />
+        <Footer
+          toggle={() => mainContentToggle.toggleWithChild(earningsContentToggle)}
+          toggleStyles={mainContentToggle.styles}
+        />
       </div>
     );
   };

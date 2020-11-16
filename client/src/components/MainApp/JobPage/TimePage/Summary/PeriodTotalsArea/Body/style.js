@@ -1,8 +1,9 @@
 export default function getStyle() {
 
   return {
-    div: {
-      paddingLeft: '0.5rem',
+    innerDiv: {
+      paddingLeft: '0.7rem',
+      paddingBottom: '0.5rem',
       textAlign: 'left'
     }
   };

@@ -1,14 +1,12 @@
 import React from 'react';
 import getStyle from './style';
-import { keyTriggerCheckerFactory, roundNumToNDecimalDigits, getCurrencyAmountInfo } from '../../../../utilities';
+import { roundNumToNDecimalDigits, getCurrencyAmountInfo } from '../../../../utilities';
 import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
 import EarningDetailsToggle from './EarningDetailsToggle';
 
 function _Totals_needsPseudo({
   periodTotals,
   earningsContentToggle,
-  pseudoState: arrowPseudoState,
-  pseudoHandlers: arrowPseudoHandlers,
   mainContentToggle
 }) {
 
@@ -16,7 +14,7 @@ function _Totals_needsPseudo({
 
   const { totalTime, daysWorked, earnings, firstDate, lastDate } = periodTotals;
   
-  const style = getStyle(arrowPseudoState);
+  const style = getStyle();
 
   const toggleEarningsDetails = () => {
     mainContentToggle.toggleChild(earningsContentToggle);
@@ -29,6 +27,7 @@ function _Totals_needsPseudo({
       <EarningDetailsToggle
         toggle={toggleEarningsDetails}
         toggleStyles={earningsContentToggle.styles}
+        isVisible={mainContentToggle.isExpanded}
       />
       <div
         style={{ ...earningsContentToggle.styles.container, ...style.earningsDetails }}
@@ -38,15 +37,6 @@ function _Totals_needsPseudo({
         <p>test</p>
         <p>test</p>
       </div>
-      {/* <p></p> */}
-      {/* <i
-        className="fas fa-chevron-up"
-        style={{ ...earningsContentToggle.styles.toggle, ...style.detailsTogglerArrow }}
-        {...arrowPseudoHandlers}
-        onClick={toggleEarningsDetails}
-        tabIndex={0}
-        onKeyDown={keyTriggerCheckerFactory(toggleEarningsDetails)}
-      /> */}
     </>
   );
 }

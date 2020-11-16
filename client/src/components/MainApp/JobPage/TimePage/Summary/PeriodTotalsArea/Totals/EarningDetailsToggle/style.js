@@ -5,29 +5,30 @@ import { calculateStyleForPseudoClassState } from '../../../../../../../higherOr
 
 export default function getStyle(pseudoState, toggleStyles) {
 
-  let textStyle = getTextStyle(pseudoState);
-  const areaPaddingLeft = 10;
+  const textStyle = getTextStyle(pseudoState);
+  const areaPaddingLeft = 0;
 
   return {
     togglerArea: {
-      display: 'inline-block',
+      position: 'relative',
+      // display: 'inline-block',
       paddingLeft: areaPaddingLeft,
       outline: 'none',
-      fontSize: '1em',
+      fontSize: '1.2em',
       height: '1em',
-      marginTop: '.2em'
+      marginTop: '.2em',
+      left: '-.4em'
     },
     arrow: {
       ...toggleStyles.toggle,
       padding: `0 ${togglerArrowsEmXPadding}em`,
       ...getArrowStylesForPseudoClassState(pseudoState),
-      fontSize: '1em',
       verticalAlign: 'top'
     },
     textArea: {
-      height: '100%',
       position: 'relative',
-      display: 'inline-block'
+      display: 'inline-block',
+      height: '100%'
     },
     toggleOpenText: {
       ...toggleStyles.openerText,
@@ -37,7 +38,7 @@ export default function getStyle(pseudoState, toggleStyles) {
     toggleClosedText: {
       ...toggleStyles.closerText,
       position: 'absolute',
-      left: 0,
+      right: 0,
       ...textStyle
     }
   };
@@ -45,8 +46,6 @@ export default function getStyle(pseudoState, toggleStyles) {
 
 function getTextStyle(pseudoState) {
   const bolderStyleFactory = () => ({ fontWeight: 600 });
-
-  console.log(contentAreaTextLinkColors)
 
   let stylesForPseudoClasses = {
     hover: bolderStyleFactory(),
@@ -65,17 +64,16 @@ function getTextStyle(pseudoState) {
   };
 
   const textWidthToFontSizeRatio = 9.99; // measured, depends on content of text 
-
-  const emFontSize = 0.7;
-  const yPadding = ((1 / emFontSize) - 1) / 2;
+  const emFontSize = 0.8;
+  const yPadding = ((1 / emFontSize) - 1) / 2; // for when emFontSize <= 1
 
   return {
     ...calculateStyleForPseudoClassState(stylesForPseudoClasses, pseudoState),
-    width: `${textWidthToFontSizeRatio + .15}em`,
+    width: `${textWidthToFontSizeRatio + 0.1}em`,
     display: 'inline-block',
     textAlign: 'center',
-    lineHeight: '1',
-    fontSize: '0.7em',
+    lineHeight: 1,
+    fontSize: `${emFontSize}em`,
     padding: `${yPadding}em 0`
   };
 }

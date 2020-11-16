@@ -4,7 +4,8 @@ import { keyTriggerCheckerFactory } from '../../../../utilities';
 import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
 
 function _Footer_needsPseudo({
-  mainContentToggle,
+  toggle, // function
+  toggleStyles,
   pseudoHandlers,
   pseudoState
 }) {
@@ -16,11 +17,11 @@ function _Footer_needsPseudo({
       <hr style={style.footerHr} />
       <i
         className="fas fa-chevron-up"
-        style={{ ...mainContentToggle.styles.toggle, ...style.togglerArrow }}
+        style={{ ...toggleStyles.toggle, ...style.togglerArrow }}
         {...pseudoHandlers}
-        onClick={mainContentToggle.toggle}
+        onClick={toggle}
         tabIndex={0}
-        onKeyDown={keyTriggerCheckerFactory(mainContentToggle.toggle)}
+        onKeyDown={keyTriggerCheckerFactory(toggle)}
       />
     </div>
   );
