@@ -43,7 +43,10 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     };
 
     setHeight() {
-      return (!this.state.containerHeight && this.containerRef.current) ? (
+      if (!this.containerRef.current) {
+        return this.promiseToSetState({ isMoving: false });
+      };
+      return (!this.state.containerHeight) ? (
         this.promiseToSetState({
           containerHeight: this.containerRef.current.scrollHeight,
           isMoving: false
@@ -62,8 +65,11 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     };
 
     toggle() {
-      const { parentOrChild, isMoving } = this.state;
+      const { parentOrChild, isMoving, containerHeight } = this.state;
       if (isMoving) return;
+      if (!containerHeight) {
+        return this.setHeight().then(this.toggle);
+      }
       return parentOrChild ? (
         this.toggleWithParentOrChild(parentOrChild)
       ) : (

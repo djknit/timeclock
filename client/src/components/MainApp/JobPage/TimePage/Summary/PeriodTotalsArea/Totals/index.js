@@ -1,8 +1,9 @@
 import React from 'react';
 import getStyle from './style';
-import { roundNumToNDecimalDigits } from '../../../../utilities';
+import { roundNumToNDecimalDigits, getListSeparator, formatMyDate } from './utilities';
 import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
 import EarningDetailsToggle from './EarningDetailsToggle';
+import EarningDetails from './EarningDetails';
 
 function _Totals_needsPseudo({
   periodTotals,
@@ -16,24 +17,31 @@ function _Totals_needsPseudo({
 
   return (
     <>
+      {firstDate && (
+        <p style={style.detailsP}>
+          ({formatMyDate(firstDate)} &ndash; {formatMyDate(lastDate)})
+        </p>
+      )}
       <p style={style.basicsP}>
         <strong>{getTotalTimeDisplay(totalTime)}</strong> worked on {getDaysWorkedDisplay(daysWorked)}
       </p>
       <p style={style.basicsP}>
         Earnings: {getEarningsSummaryDisplay(earnings)}
       </p>
-      <EarningDetailsToggle
-        {...{ earningsContentToggle }}
-        isVisible={mainContentToggle.isExpanded}
-      />
-      <div
-        style={{ ...earningsContentToggle.styles.container, ...style.earningsDetails }}
-        ref={earningsContentToggle.containerRef}
-      >
-        <p style={style.basicsP}>test</p>
-        <p style={style.basicsP}>test</p>
-        <p style={style.basicsP}>test</p>
-      </div>
+      {earnings && (
+        <>
+          <EarningDetailsToggle
+            {...{ earningsContentToggle }}
+            isVisible={mainContentToggle.isExpanded}
+          />
+          <div
+            style={{ ...earningsContentToggle.styles.container, ...style.earningsDetails }}
+            ref={earningsContentToggle.containerRef}
+          >
+            <EarningDetails {...{ earnings }} />
+          </div>
+        </>
+      )}
     </>
   );
 }
@@ -62,11 +70,4 @@ function getEarningsSummaryDisplay(earnings) {
       </React.Fragment>
     )
   );
-}
-
-function getListSeparator(index, listLength) { // for separator following current element
-  if (index < listLength - 2) return ', ';
-  else if (index === 0 && listLength === 2) return ' and ';
-  else if (index === listLength - 2) return ', and ';
-  else return '';
 }
