@@ -18,6 +18,9 @@ class _PeriodTotalsArea_needsCollapsing extends Component {
 
   componentDidMount() {
     this.setCollapsingContainerHeights();
+    const { mainContentToggle, earningsContentToggle } = this.props;
+    mainContentToggle.linkParentOrChild(earningsContentToggle);
+    earningsContentToggle.linkParentOrChild(mainContentToggle);
   };
 
   componentDidUpdate(prevProps) {
@@ -35,10 +38,7 @@ class _PeriodTotalsArea_needsCollapsing extends Component {
         <Body {...{ mainContentToggle }}>
           <Totals {...{ periodTotals, earningsContentToggle, mainContentToggle }} />
         </Body>
-        <Footer
-          toggle={() => mainContentToggle.toggleWithChild(earningsContentToggle)}
-          toggleStyles={mainContentToggle.styles}
-        />
+        <Footer contentToggle={mainContentToggle} />
       </div>
     );
   };

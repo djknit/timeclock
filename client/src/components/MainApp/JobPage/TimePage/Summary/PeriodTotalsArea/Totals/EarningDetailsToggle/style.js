@@ -11,7 +11,7 @@ export default function getStyle(pseudoState, toggleStyles) {
   return {
     togglerArea: {
       position: 'relative',
-      // display: 'inline-block',
+      display: 'inline-block',
       paddingLeft: areaPaddingLeft,
       outline: 'none',
       fontSize: '1.2em',

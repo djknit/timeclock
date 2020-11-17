@@ -1,6 +1,6 @@
 import React from 'react';
 import getStyle from './style';
-import { roundNumToNDecimalDigits, getCurrencyAmountInfo } from '../../../../utilities';
+import { roundNumToNDecimalDigits } from '../../../../utilities';
 import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
 import EarningDetailsToggle from './EarningDetailsToggle';
 
@@ -10,32 +10,29 @@ function _Totals_needsPseudo({
   mainContentToggle
 }) {
 
-  // console.log(periodTotals)
-
   const { totalTime, daysWorked, earnings, firstDate, lastDate } = periodTotals;
   
   const style = getStyle();
 
-  const toggleEarningsDetails = () => {
-    mainContentToggle.toggleChild(earningsContentToggle);
-  };
-
   return (
     <>
-      <p><strong>{getTotalTimeDisplay(totalTime)}</strong> worked on {getDaysWorkedDisplay(daysWorked)}</p>
-      <p>Earnings: {getEarningsSummaryDisplay(earnings)}</p>
+      <p style={style.basicsP}>
+        <strong>{getTotalTimeDisplay(totalTime)}</strong> worked on {getDaysWorkedDisplay(daysWorked)}
+      </p>
+      <p style={style.basicsP}>
+        Earnings: {getEarningsSummaryDisplay(earnings)}
+      </p>
       <EarningDetailsToggle
-        toggle={toggleEarningsDetails}
-        toggleStyles={earningsContentToggle.styles}
+        {...{ earningsContentToggle }}
         isVisible={mainContentToggle.isExpanded}
       />
       <div
         style={{ ...earningsContentToggle.styles.container, ...style.earningsDetails }}
         ref={earningsContentToggle.containerRef}
       >
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
+        <p style={style.basicsP}>test</p>
+        <p style={style.basicsP}>test</p>
+        <p style={style.basicsP}>test</p>
       </div>
     </>
   );
@@ -58,12 +55,7 @@ function getDaysWorkedDisplay(daysWorked) {
 
 function getEarningsSummaryDisplay(earnings) {
   if (!earnings) return 'none';
-  const _earnings = earnings.map(el => el);
-  _earnings.push({
-    amount: getCurrencyAmountInfo(4.2, 'EUR'),
-    currency: 'EUR'
-  });
-  return _earnings.map(
+  return earnings.map(
     ({ amount, currency }, index, arr) => (
       <React.Fragment key={currency}>
         <><strong>{amount.display.long}</strong>{getListSeparator(index, arr.length)}</>

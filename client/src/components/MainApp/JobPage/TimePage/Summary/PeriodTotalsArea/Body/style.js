@@ -4,7 +4,8 @@ export default function getStyle() {
     innerDiv: {
       paddingLeft: '0.7rem',
       paddingBottom: '0.5rem',
-      textAlign: 'left'
+      textAlign: 'left',
+      lineHeight: 1
     }
   };
 };

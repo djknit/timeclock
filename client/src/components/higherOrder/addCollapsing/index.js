@@ -1,8 +1,7 @@
 // ABOUT THIS FILE:
 // This HOC is responsible for managing state for a collapsing containter and toggle button.
 // One prop is passed to wrapped component whose name is given as a parameter to the HOC function.
-  // The passed prop is an object with props:
-  // `containerRef`, `setHeight`, `clearHeight`, `toggle`, `styles`,`setIsExpanded`, and `hasBeenExpanded`
+  // The passed prop is an object with the needed properties and methods
 
 import React, { Component } from 'react';
 import getStyle from './style';
@@ -17,7 +16,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     isExpanded: _isExpandedInitially,
     isAnimationOn: false,
     hasBeenExpanded: _isExpandedInitially,
-    isMoving: false
+    isMoving: false,
+    parentOrChild: undefined
   };
 
   return class extends Component {
@@ -27,10 +27,11 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       this.setHeight = this.setHeight.bind(this);
       this.clearHeight = this.clearHeight.bind(this);
       this.toggle = this.toggle.bind(this);
+      this.toggleThisToggleOnly = this.toggleThisToggleOnly.bind(this);
+      this.toggleWithParentOrChild = this.toggleWithParentOrChild.bind(this);
+      this.linkParentOrChild = this.linkParentOrChild.bind(this);
       this.setIsExpanded = this.setIsExpanded.bind(this);
       this.reset = this.reset.bind(this);
-      this.toggleChild = this.toggleChild.bind(this);
-      this.toggleWithChild = this.toggleWithChild.bind(this);
       this.containerRef = React.createRef();
       this.state = { ...initialState };
     };
@@ -61,7 +62,16 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     };
 
     toggle() {
-      if (this.state.isMoving) return;
+      const { parentOrChild, isMoving } = this.state;
+      if (isMoving) return;
+      return parentOrChild ? (
+        this.toggleWithParentOrChild(parentOrChild)
+      ) : (
+        this.toggleThisToggleOnly()
+      );
+    };
+
+    toggleThisToggleOnly() {
       return new Promise(resolve => {
         this.setState({
           isExpanded: !this.state.isExpanded,
@@ -76,6 +86,18 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       });
     };
 
+    toggleWithParentOrChild(parentOrChildToggle) {
+      return (
+        parentOrChildToggle.clearHeight()
+        .then(this.toggleThisToggleOnly)
+        .then(parentOrChildToggle.setHeight)
+      );
+    };
+
+    linkParentOrChild(parentOrChild) {
+      this.setState({ parentOrChild });
+    };
+
     setIsExpanded(newIsExpandedValue) {
       if (!!newIsExpandedValue === !!this.state.isExpanded) return;
       return this.toggle();
@@ -85,28 +107,10 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       return this.promiseToSetState({ ...initialState });
     };
 
-    toggleChild(childContentToggle) {
-      if (childContentToggle.isMoving) return;
-      return (
-        this.clearHeight()
-        .then(childContentToggle.toggle)
-        .then(this.setHeight)
-      );
-    };
-
-    toggleWithChild(childContentToggle) {
-      if (this.state.isMoving) return;
-      return (
-        childContentToggle.clearHeight()
-        .then(this.toggle)
-        .then(childContentToggle.setHeight)
-      );
-    };
-
     render() {
 
       const {
-        containerRef, setHeight, clearHeight, toggle, setIsExpanded, reset, toggleChild, toggleWithChild
+        containerRef, setHeight, clearHeight, toggle, setIsExpanded, reset, linkParentOrChild
       } = this;
 
       const { containerHeight, isExpanded, isAnimationOn, hasBeenExpanded, isMoving } = this.state;
@@ -126,9 +130,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
           isExpanded,
           isHeightSet: !!(containerHeight || containerHeight === 0),
           reset,
-          toggleChild,
           isMoving,
-          toggleWithChild
+          linkParentOrChild
         }
       };
 

@@ -6,19 +6,18 @@ import { addPseudoPseudoClasses } from '../../../../../../../higherOrder';
 function _EarningDetailsToggler_needsPseudo({
   pseudoHandlers,
   pseudoState,
-  toggle, // toggle function
-  toggleStyles,
-  isVisible
+  isVisible,
+  earningsContentToggle
 }) {
 
-  const style = getStyle(pseudoState, toggleStyles);
+  const style = getStyle(pseudoState, earningsContentToggle.styles);
 
   return (
     <div
       {...pseudoHandlers}
-      onClick={toggle}
+      onClick={earningsContentToggle.toggle}
       tabIndex={isVisible ? 0 : -1}
-      onKeyDown={keyTriggerCheckerFactory(toggle)}
+      onKeyDown={keyTriggerCheckerFactory(earningsContentToggle.toggle)}
       style={style.togglerArea}
     >
       <i className="fas fa-chevron-up" style={style.arrow} />
