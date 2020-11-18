@@ -48,13 +48,14 @@ const _PeriodTotalsArea_needsMoreCollapsing = addCollapsing(
   _PeriodTotalsArea_needsCollapsing, 'earningsContentToggle', false
 );
 
-function PeriodTotalsArea({ isExpandedInitially, ...otherProps }) {
-  const TotalsAreaComp = addCollapsing(
-    _PeriodTotalsArea_needsMoreCollapsing, 'mainContentToggle', isExpandedInitially
-  );
-  return (
-    <TotalsAreaComp {...otherProps} />
-  );
-}
+const PeriodTotalsArea = addCollapsing(
+  _PeriodTotalsArea_needsMoreCollapsing, 'mainContentToggle', false
+);
+
+const PeriodTotalsAreaBeginExpanded = addCollapsing(
+  _PeriodTotalsArea_needsMoreCollapsing, 'mainContentToggle', true
+);
 
 export default PeriodTotalsArea;
+
+export { PeriodTotalsAreaBeginExpanded };

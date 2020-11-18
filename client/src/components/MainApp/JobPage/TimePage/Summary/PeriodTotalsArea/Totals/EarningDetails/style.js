@@ -1,8 +1,11 @@
-import { detailsPStyle } from '../style';
+import { pStyle } from '../style';
 
 export default function getStyle() {
 
   return {
-    detailsP: detailsPStyle
+    detailsP: {
+      ...pStyle,
+      fontSize: '0.9em'
+    }
   };
 };

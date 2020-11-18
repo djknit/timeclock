@@ -1,6 +1,6 @@
 import React from 'react';
 import ContentArea from '../../../ContentArea';
-import PeriodTotalsArea from './PeriodTotalsArea';
+import PeriodTotalsArea, { PeriodTotalsAreaBeginExpanded } from './PeriodTotalsArea';
 
 function Summary({
   style: styleProp,
@@ -12,11 +12,10 @@ function Summary({
 
   return (
     <ContentArea title="Summary" style={styleProp}>
-      <PeriodTotalsArea
+      <PeriodTotalsAreaBeginExpanded
         label="Job Totals"
         {...commonAttrs}
         periodTotals={getJobTotals(timeData)}
-        isExpandedInitially
       />
       <PeriodTotalsArea
         label="This Week"

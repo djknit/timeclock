@@ -1,13 +1,9 @@
-import { formatEarningsForCurrency, addDayEarningsToWeekTotals } from '../../utilities';
+import { formatEarnings, addDayEarningsToWeekTotals } from '../../utilities';
 
 function getWeekEarnings(fullyProcessedDays) {
   let weekTotalEarningsByCurrency = [];
   fullyProcessedDays.forEach(day => addDayEarningsToWeekTotals(day, weekTotalEarningsByCurrency));
-  return weekTotalEarningsByCurrency.length > 0 ? (
-    weekTotalEarningsByCurrency.map(formatEarningsForCurrency)
-  ) : (
-    null
-  );
+  return formatEarnings(weekTotalEarningsByCurrency);
 }
 
 export {
