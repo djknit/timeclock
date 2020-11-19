@@ -31,9 +31,10 @@ export default function processWeek(weekDocument) {
 function getTotalTimeAndDaysWorked(days) {
   let totalTimeInMsec = 0;
   let daysWorked = 0;
-  days.forEach(({ totalTime }) => {
-    totalTimeInMsec += totalTime.durationInMsec;
-    if (totalTimeInMsec > 0) {
+  days.forEach(day => {
+    const { durationInMsec } = day.totalTime;
+    totalTimeInMsec += durationInMsec;
+    if (durationInMsec > 0) {
       daysWorked++;
     }
   });
