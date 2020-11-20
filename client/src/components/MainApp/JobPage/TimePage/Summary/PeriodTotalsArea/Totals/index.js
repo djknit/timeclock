@@ -1,9 +1,10 @@
 import React from 'react';
 import getStyle from './style';
-import { roundNumToNDecimalDigits, getListSeparator, formatMyDate } from './utilities';
+import { formatMyDate, getListSeparator, getHoursDurationDisplay } from './utilities';
 import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
 import EarningDetailsToggle from './EarningDetailsToggle';
 import EarningDetails from './EarningDetails';
+import { Label, EmVal } from './smallPieces';
 
 function _Totals_needsPseudo({
   periodTotals,
@@ -11,9 +12,14 @@ function _Totals_needsPseudo({
   mainContentToggle
 }) {
 
-  const { totalTime, daysWorked, earnings, firstDate, lastDate } = periodTotals;
-  
+  const {
+    totalTime, daysWorked, earnings, firstDate, lastDate, paidTime, unpaidTime
+  } = periodTotals;
+  console.log(periodTotals)
   const style = getStyle();
+
+  const totalTimeDisp = getHoursDurationDisplay(totalTime);
+  const daysWorkedDisp = getDaysWorkedDisplay(daysWorked);
 
   return (
     <>
@@ -23,10 +29,10 @@ function _Totals_needsPseudo({
         </p>
       )}
       <p style={style.basicsP}>
-        <strong>{getTotalTimeDisplay(totalTime)}</strong> worked on {getDaysWorkedDisplay(daysWorked)}
+        <EmVal>{totalTimeDisp}</EmVal> worked on {daysWorkedDisp}
       </p>
       <p style={style.basicsP}>
-        Earnings: {getEarningsSummaryDisplay(earnings)}
+        <Label>Earnings:</Label> {getEarningsSummaryDisplay(earnings)}
       </p>
       {earnings && (
         <>
@@ -35,10 +41,10 @@ function _Totals_needsPseudo({
             isVisible={mainContentToggle.isExpanded}
           />
           <div
-            style={{ ...earningsContentToggle.styles.container, ...style.earningsDetails }}
+            style={{ ...earningsContentToggle.styles.container, ...style.earningsDetailsArea }}
             ref={earningsContentToggle.containerRef}
           >
-            <EarningDetails {...{ earnings }} />
+            <EarningDetails {...{ earnings, paidTime, unpaidTime, firstDate }} />
           </div>
         </>
       )}
@@ -49,11 +55,6 @@ function _Totals_needsPseudo({
 const Totals = addPseudoPseudoClasses(_Totals_needsPseudo);
 
 export default Totals;
-
-function getTotalTimeDisplay(totalTime) {
-  const numHrs = roundNumToNDecimalDigits(totalTime.durationInHours, 2);
-  return `${numHrs} hours`;
-}
 
 function getDaysWorkedDisplay(daysWorked) {
   let dispText = `${daysWorked} day`;
@@ -66,7 +67,7 @@ function getEarningsSummaryDisplay(earnings) {
   return earnings.map(
     ({ amount, currency }, index, arr) => (
       <React.Fragment key={currency}>
-        <><strong>{amount.display.long}</strong>{getListSeparator(index, arr.length)}</>
+        <><EmVal>{amount.display.long}</EmVal>{getListSeparator(index, arr.length)}</>
       </React.Fragment>
     )
   );

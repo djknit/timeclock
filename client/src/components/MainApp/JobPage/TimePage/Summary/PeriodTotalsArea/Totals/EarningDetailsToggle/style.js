@@ -1,6 +1,9 @@
 import {
-  getArrowStylesForPseudoClassState, togglerArrowsEmXPadding, contentAreaTextLinkColors
-} from '../../style';
+  getArrowStylesForPseudoClassState,
+  togglerArrowsEmXPadding,
+  contentAreaTextLinkColors,
+  valueLabelStyle
+} from '../style';
 import { calculateStyleForPseudoClassState } from '../../../../../../../higherOrder';
 
 export default function getStyle(pseudoState, toggleStyles) {
@@ -45,9 +48,12 @@ export default function getStyle(pseudoState, toggleStyles) {
 };
 
 function getTextStyle(pseudoState) {
-  const bolderStyleFactory = () => ({ fontWeight: 600 });
+  const bolderStyleFactory = () => ({ fontWeight: 700 });
 
   let stylesForPseudoClasses = {
+    innate: {
+      fontWeight: valueLabelStyle.fontWeight
+    },
     hover: bolderStyleFactory(),
     active: bolderStyleFactory(),
     focus: bolderStyleFactory()
@@ -63,7 +69,7 @@ function getTextStyle(pseudoState) {
     textDecoration: 'underline'
   };
 
-  const textWidthToFontSizeRatio = 9.99; // measured, depends on content of text 
+  const textWidthToFontSizeRatio = 10.47; // measured, depends on content of text 
   const emFontSize = 0.8;
   const yPadding = ((1 / emFontSize) - 1) / 2; // for when emFontSize <= 1
 

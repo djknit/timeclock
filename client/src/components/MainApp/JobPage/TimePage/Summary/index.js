@@ -44,6 +44,6 @@ function Summary({
 export default Summary;
 
 function getJobTotals(timeData) {
-  const { totalTime, earnings, daysWorked } = timeData;
-  return { totalTime, earnings, daysWorked };
+  const { totalTime, earnings, daysWorked, paidTime, unpaidTime } = timeData;
+  return { totalTime, earnings, daysWorked, paidTime, unpaidTime };
 }

@@ -1,4 +1,14 @@
-const pStyle = { lineHeight: 1.5 };
+export * from '../style';
+
+const pYPadding = '0.25em';
+const pStyle = {
+  lineHeight: 1,
+  paddingTop: pYPadding,
+  paddingBottom: pYPadding
+};
+const valueLabelStyle = {
+  fontWeight: 500
+};
 
 export default function getStyle() {
   return {
@@ -7,11 +17,16 @@ export default function getStyle() {
       ...pStyle,
       fontSize: '0.85em'
     },
-    earningsDetails: {
+    valueLabel: valueLabelStyle,
+    earningsDetailsArea: {
+      fontSize: '0.9em',
       paddingLeft: '0.5rem',
       paddingTop: '0.1em'
     }
   };
 };
 
-export { pStyle };
+export {
+  pStyle,
+  valueLabelStyle
+};
