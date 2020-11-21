@@ -1,4 +1,4 @@
-import { headingFontFam } from '../../AppStyle';
+import { headingFontFam } from '../../../AppStyle';
 
 export default function getStyle(windowWidth) {
   const buttonsAreaXPadding = windowWidth > 700 ? '25%' : '10%';

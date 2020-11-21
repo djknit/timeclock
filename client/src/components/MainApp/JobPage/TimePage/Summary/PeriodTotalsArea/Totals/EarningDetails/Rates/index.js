@@ -16,8 +16,11 @@ function Rates({
         <Label>Earnings By Pay Rate:</Label>
       </p>
       {earningsByRate.map(
-        ({ rate, amountEarned, duration, isOvertime }) => (
-          <p style={style.p} key={getRateUniqueId({ rate, isOvertime })}>
+        ({ rate, amountEarned, duration, isOvertime }, index, arr) => (
+          <p
+            style={index === arr.length - 1 ? style.lastP : style.p}
+            key={getRateUniqueId({ rate, isOvertime })}
+          >
             <Label>{rate.display.standard} / hr:</Label>
             {getHoursDurationDisplay(duration)} worked, {amountEarned.display.standard} earned
           </p>
@@ -33,4 +36,5 @@ function getRateUniqueId({ rate, isOvertime }) {
   let id = rate.display.numeric;
   if (isOvertime) id += 'ot';
   return id;
+  // potential issue: could be non-unique if 2 wages have the same rate
 }

@@ -26,6 +26,9 @@ export default function getStyle(isDoubleEmbedded) {
       paddingTop: adjustPadding(pStyle.paddingTop),
       paddingBottom: adjustPadding(pStyle.paddingBottom)
     },
-
+    lastP: {
+      ...pStyle,
+      paddingTop: adjustPadding(pStyle.paddingTop)
+    }
   };
 };

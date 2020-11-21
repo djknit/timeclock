@@ -56,7 +56,7 @@ class SettingsPage extends Component {
       getRouteInfoObj('Week Cutoff', 'weekBegins'),
       getRouteInfoObj('Timezone', 'timezone'),
       getRouteInfoObj('Wage', 'wage'),
-      getRouteInfoObj('All Settings', undefined, All)
+      // getRouteInfoObj('All Settings', undefined, All)
     ];
 
     const commonRouteAttrs = { ...this.props, job, catchApiUnauthorized, areAnyModalsOpen };

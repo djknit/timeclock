@@ -1,7 +1,7 @@
 import React from 'react';
 import getStyle from './style';
 import { getHoursDurationDisplay } from '../utilities';
-import { Label, EmVal } from '../smallPieces';
+import { Label } from '../smallPieces';
 import CurrencyEarnings from './CurrencyEarnings';
 import Rates from './Rates';
 
@@ -10,8 +10,6 @@ function EarningDetails({
   paidTime,
   unpaidTime
 }) {
-
-  console.log(earnings)
 
   const style = getStyle();
 
@@ -25,7 +23,7 @@ function EarningDetails({
         <Label>Total Unpaid Time:</Label>
         {getHoursDurationDisplay(unpaidTime)}
       </p>
-      {earnings.length > 1 ? ( // needs changed to "> 1"
+      {earnings.length > 1 ? (
         earnings.map(earningsForCurrency => (
           <CurrencyEarnings {...{ earningsForCurrency }} />
         ))

@@ -15,7 +15,7 @@ function _Totals_needsPseudo({
   const {
     totalTime, daysWorked, earnings, firstDate, lastDate, paidTime, unpaidTime
   } = periodTotals;
-  console.log(periodTotals)
+
   const style = getStyle();
 
   const totalTimeDisp = getHoursDurationDisplay(totalTime);

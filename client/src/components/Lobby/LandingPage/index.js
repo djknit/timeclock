@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import logo from '../../logo_wide.png'
-import { windowWidthService, userService, areModalsOpenService } from '../../data';
+import logo from '../../../logo_wide.png'
+import { windowWidthService, userService, areModalsOpenService } from '../../../data';
 import getStyle from './style';
 import { api } from './utilities';
-import Button from '../Button';
+import Button from '../../Button';
 import SkipLogin from './SkipLogin'; // fast auto-login only for development
 import NewUserModal from './NewUserModal';
 import LoginModal from './LoginModal';
-import { addData } from '../higherOrder';
+import { addData } from '../../higherOrder';
 
 class _LandingPage_needsData extends Component {
   constructor(props) {
@@ -43,13 +43,6 @@ class _LandingPage_needsData extends Component {
   };
 
   componentDidMount() {
-    api.auth.test()
-    .then(res => {
-      if (!res.data.user) return console.error('Missing user.');
-      userService.setValue(res.data.user);
-      this.props.history.push('/app');
-    })
-    .catch(() => {});
     this.setState({
       modalsRegistrationId: areModalsOpenService.getId()
     });

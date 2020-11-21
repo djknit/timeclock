@@ -8,4 +8,4 @@ client/build
 
 test.js
 
-client/src/components/LandingPage/_Login
+client/src/components/Lobby/LandingPage/_Login
