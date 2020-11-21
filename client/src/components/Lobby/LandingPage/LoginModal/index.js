@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { api, bindFormMethods } from '../utilities';
-import { userService } from '../../../data';
-import FormModal from '../../FormModal';
-import { TextInput } from '../../formPieces';
+import { userService } from '../../../../data';
+import FormModal from '../../../FormModal';
+import { TextInput } from '../../../formPieces';
 
 const fieldsInfo = [
   {

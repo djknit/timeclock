@@ -62,7 +62,7 @@ function getWageValueSummaryText(wageValue) {
   if (!wageValue) return 'none';
   const { rate, overtime, shortRate } = processWageValueForDisplay(wageValue);
   return overtime ? (
-    <>{shortRate} (>{overtime.shortCutoff}@{overtime.shortRate})</>
+    <>{shortRate} ({'>'}{overtime.shortCutoff}@{overtime.shortRate})</>
   ) : (
     <>{rate}</>
   );

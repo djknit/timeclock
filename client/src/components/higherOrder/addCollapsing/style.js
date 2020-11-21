@@ -9,7 +9,7 @@ const universalToggleAnimationProps = {
   WebkitAnimationFillMode: 'forwards'
 };
 
-function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated) {
+function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated, isMoving) {
   const _isIconAnimated = isToggleIconAnimated !== false; // (default to true when param is undefined)
   const sectionToggleAnimationProps = (
     isAnimationOn ?
@@ -32,40 +32,44 @@ function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggle
     {}
   );
 
-  const arrowFlipAndAnimateProps = (
+  let togglerStyle = (
     _isIconAnimated ?
     { ...sectionToggleAnimationProps, ...flippedArrowProps } :
     {}
   );
 
+  let openerTextStyle = (
+    isAnimationOn ?
+    {
+      animationName: isExpanded ? 'fade-out' : 'fade-in',
+      ...universalToggleAnimationProps
+    } :
+    {
+      opacity: isExpanded ? 0 : 1
+    }
+  );
+
+  let closerTextStyle = (
+    isAnimationOn ?
+    {
+      animationName: isExpanded ? 'fade-in' : 'fade-out',
+      ...universalToggleAnimationProps
+    } :
+    {
+      opacity: isExpanded ? 1 : 0
+    }
+  );
+
+  if (!isMoving) {
+    togglerStyle.cursor = openerTextStyle.cursor = closerTextStyle.cursor = 'pointer';
+  };
 
 
   return {
     container: getSectionContentStyle(containerHeight, isExpanded, isAnimationOn),
-    toggle: {
-      cursor: 'pointer',
-      ...arrowFlipAndAnimateProps
-    },
-    openerText: (
-      isAnimationOn ?
-      {
-        animationName: isExpanded ? 'fade-out' : 'fade-in',
-        ...universalToggleAnimationProps
-      } :
-      {
-        opacity: isExpanded ? 0 : 1
-      }
-    ),
-    closerText: (
-      isAnimationOn ?
-      {
-        animationName: isExpanded ? 'fade-in' : 'fade-out',
-        ...universalToggleAnimationProps
-      } :
-      {
-        opacity: isExpanded ? 1 : 0
-      }
-    )
+    toggle: togglerStyle,
+    openerText: openerTextStyle,
+    closerText: closerTextStyle
   };
 };
 

@@ -7,9 +7,9 @@ function Header({ label }) {
 
   return (
     <div style={style.div}>
-      <p style={style.areaLabel}>
+      <h3 style={style.areaLabel}>
         {label}
-      </p>
+      </h3>
       <hr style={style.labelHr} />
     </div>
   );

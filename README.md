@@ -67,10 +67,20 @@ This plan is not complete. Future steps will be expanded on in the plan before t
   * [x] Landing page
   * [x] Account creation & login
   * [x] 404 page
-  * [ ] _Dashboard_
-  * [ ] _Job creation_
-  * [ ] Job page: Display & controls (edit time, edit settings)
-    * [ ] (...)
+  * [x] Dashboard
+  * [x] Job creation
+  * [ ] _Job page_
+    * [ ] Job dashboard
+      * [x] Job basics display and edit
+      * [x] Settings summaries and links to settings
+      * [ ] Time summary and links
+    * [x] Settings page (display and edit settings value schedules)
+    * [ ] _Time page_
+      * [ ] _Time Summary_
+      * [ ] General time entry
+      * [ ] Time details by weeks/days and corresponding time entry
+  * [x] Navbar navigation menu
+  
 * [ ] Review code for bugs and code organization/readability
 * [ ] Work on additional features
 

@@ -7,9 +7,9 @@ import {
   bindFormMethods,
   checkApiResProbMsgsForTakenUsernameOrEmail
 } from '../utilities';
-import { userService } from '../../../data';
-import { TextInput } from '../../formPieces';
-import FormModal from '../../FormModal';
+import { userService } from '../../../../data';
+import { TextInput } from '../../../formPieces';
+import FormModal from '../../../FormModal';
 
 const fieldsInfo = [
   {

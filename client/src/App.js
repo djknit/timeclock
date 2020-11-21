@@ -5,9 +5,8 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import './App.css';
 import getStyle from './AppStyle';
 import { windowWidthService, areModalsOpenService } from './data';
-import LandingPage from './components/LandingPage';
+import Lobby from './components/Lobby';
 import MainApp from './components/MainApp';
-import NotFound from './components/NotFound';
 import Footer from './components/Footer';
 
 class App extends Component {
@@ -37,10 +36,10 @@ class App extends Component {
   };
 
   render() {
+
     const style = getStyle();
     
     const { areAnyModalsOpen } = this.state;
-    const { setAreAnyModalsOpen } = this;
 
     return (
       <Router>
@@ -49,30 +48,20 @@ class App extends Component {
             <Switch>
               <Route
                 path="/app"
-                render={
-                  props => <MainApp
-                    {...props}
+                render={props => (
+                  <MainApp
                     {...{
                       areAnyModalsOpen,
-                      setAreAnyModalsOpen
+                      ...props
                     }}
                   />
-                }
+                )}
               />
               <Route
-                exact
-                path="/"
-                render={
-                  props => <LandingPage
-                    {...props}
-                    {...{
-                      areAnyModalsOpen,
-                      // setAreAnyModalsOpen
-                    }}
-                  />
-                }
+                render={props => (
+                  <Lobby {...{ areAnyModalsOpen, ...props }} />
+                )}
               />
-              <Route component={NotFound} />
             </Switch>
           </div>
           <Footer {...{ areAnyModalsOpen }} />

@@ -2,10 +2,11 @@ import {
   addWeekEarningsToTotals,
   addDayEarningsToWeekTotals,
   getDurationInfo,
-  formatEarningsForCurrency,
+  formatEarnings,
   isPartialWeekInDateRange,
   isWholeWeekInDateRange,
-  isDateInRange
+  isDateInRange,
+  getPaidAndUnpaidTotalTime
 } from './utilities';
 
 export default getDateRangeInfo;
@@ -22,11 +23,14 @@ function getDateRangeInfo(dateRange, processedWeeks) {
     const weekTotalsInRange = getWeekTotalsInDateRange(dateRange, week);
     addWeekTotalsToRangeTotals(weekTotalsInRange, rangeTotals);
   });
+  const totalTime = getDurationInfo(rangeTotals.timeInMsec);
+  const earnings = formatEarnings(rangeTotals.earnings);
   return {
-    totalTime: getDurationInfo(rangeTotals.timeInMsec),
+    totalTime,
     daysWorked: rangeTotals.daysWorked,
-    earnings: rangeTotals.earnings.length > 0 ? rangeTotals.earnings.map(formatEarningsForCurrency) : null,
-    ...dateRange
+    earnings,
+    ...dateRange,
+    ...getPaidAndUnpaidTotalTime(earnings, totalTime)
   };
 }
 

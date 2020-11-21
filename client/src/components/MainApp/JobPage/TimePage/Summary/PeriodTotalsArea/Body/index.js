@@ -7,10 +7,12 @@ function Body({ mainContentToggle, children }) {
 
   return (
     <div
-      style={{ ...mainContentToggle.styles.container, ...style.div }}
+      style={mainContentToggle.styles.container}
       ref={mainContentToggle.containerRef}
     >
-      {children}
+      <div style={style.innerDiv}>
+        {children}
+      </div>
     </div>
   );
 }

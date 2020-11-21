@@ -1,6 +1,7 @@
 import processWeek from './processWeek';
 import {
-  getDurationInfo
+  getDurationInfo,
+  getPaidAndUnpaidTotalTime
 } from '../utilities';
 import { getJobEarnings } from './earnings';
 import { getInfoForCurrentTimePeriods } from './currentTimePeriods';
@@ -15,15 +16,18 @@ function processTimeData(rawWeeks, jobSettings) {
     currentMonth, precedingMonth, currentWeek, precedingWeek
   } = getInfoForCurrentTimePeriods(processedWeeks, jobSettings);
 
+  const earnings = getJobEarnings(processedWeeks)
+
   return {
     weeks: processedWeeks,
     totalTime,
-    earnings: getJobEarnings(processedWeeks),
+    earnings,
     daysWorked,
     currentMonth,
     precedingMonth,
     currentWeek,
-    precedingWeek
+    precedingWeek,
+    ...getPaidAndUnpaidTotalTime(earnings, totalTime)
   };
 }
 

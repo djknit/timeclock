@@ -1,4 +1,4 @@
-import { cloneMyDate, getDurationInfo } from '../../utilities';
+import { cloneMyDate, getDurationInfo, getPaidAndUnpaidTotalTime } from '../../utilities';
 import processDay from './processDay';
 import { addEarningsToDays, getWeekEarnings } from './earnings';
 import { getWeekSettings } from './settings';
@@ -12,6 +12,7 @@ export default function processWeek(weekDocument) {
   addEarningsToDays(processedDays);
 
   const { totalTime, daysWorked } = getTotalTimeAndDaysWorked(processedDays);
+  const earnings = getWeekEarnings(processedDays);
 
   return {
     weekDocId: _id.toString(),
@@ -20,18 +21,20 @@ export default function processWeek(weekDocument) {
     weekNumber,
     days: processedDays,
     totalTime,
-    earnings: getWeekEarnings(processedDays),
+    earnings,
     settings: getWeekSettings(processedDays),
-    daysWorked
+    daysWorked,
+    ...getPaidAndUnpaidTotalTime(earnings, totalTime)
   };
 };
 
 function getTotalTimeAndDaysWorked(days) {
   let totalTimeInMsec = 0;
   let daysWorked = 0;
-  days.forEach(({ totalTime }) => {
-    totalTimeInMsec += totalTime.durationInMsec;
-    if (totalTimeInMsec > 0) {
+  days.forEach(day => {
+    const { durationInMsec } = day.totalTime;
+    totalTimeInMsec += durationInMsec;
+    if (durationInMsec > 0) {
       daysWorked++;
     }
   });
