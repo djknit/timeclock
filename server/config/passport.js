@@ -42,7 +42,7 @@ const middleware = [
   require('cookie-parser')(),
   require('connect-flash')(),
   require('express-session')({
-    secret: process.env.CONNECT_SESSION_SECRET,
+    secret: process.env.CONNECT_SESSION_SECRET || 'super-secret',
     resave: false,
     saveUninitialized: false,
     maxAge: 240000
