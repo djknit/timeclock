@@ -48,5 +48,5 @@ function addProblem(propDisplayName, problems) {
     }
     parentProblemLevel[currentLevelName] = {};
     parentProblemLevel = parentProblemLevel[currentLevelName];
-  };
+  }
 }
