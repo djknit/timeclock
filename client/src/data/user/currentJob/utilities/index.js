@@ -18,7 +18,8 @@ function getDurationInfo(durationInMsec) {
     hours: Math.floor(durationInSeconds / secsPerHr),
     minutes: Math.floor(durationInSeconds / secsPerMin) % minsPerHr,
     seconds: durationInSeconds % secsPerMin,
-    durationInMsec
+    durationInMsec,
+    durationInHours: durationInSeconds / secsPerHr
   };
 }
 

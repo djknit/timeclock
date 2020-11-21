@@ -6,6 +6,7 @@ const secondaryBackgroundColor = '#6141D1';
 
 const tertiaryColor = '#A749D1';
 const quaternaryColor = '#B2D158';
+
 const headingFontFam = 'Averia Serif Libre, Alice, IM Fell English, Overlock, serif, Times';
 const sectionHeadingFontFam = 'Averia Serif Libre, IM Fell English, serif';
 const footerHeight = 50;

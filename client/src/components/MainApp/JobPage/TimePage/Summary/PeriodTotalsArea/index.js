@@ -3,9 +3,9 @@ import Header from './Header';
 import Body from './Body';
 import Footer from './Footer';
 import Totals from './Totals';
-import { addCollapsing, addPseudoPseudoClasses } from '../../../../../higherOrder';
+import { addCollapsing } from '../../../../../higherOrder';
 
-class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
+class _PeriodTotalsArea_needsCollapsing extends Component {
   constructor(props) {
     super(props);
     this.setCollapsingContainerHeights = this.setCollapsingContainerHeights.bind(this);
@@ -14,12 +14,13 @@ class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
   setCollapsingContainerHeights() {
     const { mainContentToggle, earningsContentToggle } = this.props;
     earningsContentToggle.setHeight().then(mainContentToggle.setHeight);
-    // mainContentToggle.setHeight();
-    // earningsContentToggle.setHeight();
   };
 
   componentDidMount() {
     this.setCollapsingContainerHeights();
+    const { mainContentToggle, earningsContentToggle } = this.props;
+    mainContentToggle.linkParentOrChild(earningsContentToggle);
+    earningsContentToggle.linkParentOrChild(mainContentToggle);
   };
 
   componentDidUpdate(prevProps) {
@@ -29,9 +30,7 @@ class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
   };
 
   render() {
-    const {
-      label, mainContentToggle, pseudoState, pseudoHandlers, periodTotals, earningsContentToggle
-    } = this.props;
+    const { label, mainContentToggle, periodTotals, earningsContentToggle } = this.props;
 
     return (
       <div>
@@ -39,29 +38,24 @@ class _PeriodTotalsArea_needsCollapsingAndPseudo extends Component {
         <Body {...{ mainContentToggle }}>
           <Totals {...{ periodTotals, earningsContentToggle, mainContentToggle }} />
         </Body>
-        <Footer
-          arrowPseudoHandlers={pseudoHandlers}
-          arrowPseudoState={pseudoState}
-          {...{ mainContentToggle }}
-        />
+        <Footer contentToggle={mainContentToggle} />
       </div>
     );
   };
 }
 
-const _PeriodTotalsArea_needsCollapsing = addPseudoPseudoClasses(
-  _PeriodTotalsArea_needsCollapsingAndPseudo
-);
-
 const _PeriodTotalsArea_needsMoreCollapsing = addCollapsing(
   _PeriodTotalsArea_needsCollapsing, 'earningsContentToggle', false
 );
 
-function PeriodTotalsArea({ isExpandedInitially, ...otherProps }) {
-  const TotalsAreaComp = addCollapsing(
-    _PeriodTotalsArea_needsMoreCollapsing, 'mainContentToggle', isExpandedInitially
-  );
-  return <TotalsAreaComp {...otherProps} />
-}
+const PeriodTotalsArea = addCollapsing(
+  _PeriodTotalsArea_needsMoreCollapsing, 'mainContentToggle', false
+);
+
+const PeriodTotalsAreaBeginExpanded = addCollapsing(
+  _PeriodTotalsArea_needsMoreCollapsing, 'mainContentToggle', true
+);
 
 export default PeriodTotalsArea;
+
+export { PeriodTotalsAreaBeginExpanded };

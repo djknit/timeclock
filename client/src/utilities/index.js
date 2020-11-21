@@ -12,10 +12,20 @@ function capitalizeFirstLetter(string) {
 
 function isWindowWide(windowWidth) {
   return windowWidth >= 769;
-};
+}
+
+function roundNumToNDecimalDigits(numToRound, numDecDigs /* (n) */) {
+  // source: https://www.jacklmoore.com/notes/rounding-in-javascript/
+  const roundedScaledNum = Math.round(`${numToRound}e${numDecDigs}`);
+  const negNumDecDigs = ( // add or remove "-" to get string representation of additive inverse
+    numDecDigs > 0 ? `-${numDecDigs}` : numDecDigs.toString().slice(1)
+  );
+  return Number(`${roundedScaledNum}e${negNumDecDigs}`);
+}
 
 export {
   api,
   capitalizeFirstLetter,
-  isWindowWide
+  isWindowWide,
+  roundNumToNDecimalDigits
 };

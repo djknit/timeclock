@@ -1,45 +1,53 @@
 import React from 'react';
 import getStyle from './style';
-import { keyTriggerCheckerFactory } from '../../../../utilities';
+import { formatMyDate, getListSeparator, getHoursDurationDisplay } from './utilities';
 import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
+import EarningDetailsToggle from './EarningDetailsToggle';
+import EarningDetails from './EarningDetails';
+import { Label, EmVal } from './smallPieces';
 
 function _Totals_needsPseudo({
   periodTotals,
   earningsContentToggle,
-  pseudoState: arrowPseudoState,
-  pseudoHandlers: arrowPseudoHandlers,
   mainContentToggle
 }) {
 
-  const { totalTime, daysWorked, earnings, firstDate, lastDate } = periodTotals;
-  
+  const {
+    totalTime, daysWorked, earnings, firstDate, lastDate, paidTime, unpaidTime
+  } = periodTotals;
+
   const style = getStyle();
 
-  const toggleEarningsDetails = () => {
-    earningsContentToggle.toggle();
-    mainContentToggle.allowChildToggle();
-  };
+  const totalTimeDisp = getHoursDurationDisplay(totalTime);
+  const daysWorkedDisp = getDaysWorkedDisplay(daysWorked);
 
   return (
     <>
-      <p>__test</p>
-      <p>__test</p>
-      <div
-        style={{ ...earningsContentToggle.styles.container, ...style.earningsDetails }}
-        ref={earningsContentToggle.containerRef}
-      >
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-      </div>
-      <i
-        className="fas fa-chevron-up"
-        style={earningsContentToggle.styles.toggle}
-        {...arrowPseudoHandlers}
-        onClick={toggleEarningsDetails}
-        tabIndex={0}
-        onKeyDown={keyTriggerCheckerFactory(toggleEarningsDetails)}
-      />
+      {firstDate && (
+        <p style={style.detailsP}>
+          ({formatMyDate(firstDate)} &ndash; {formatMyDate(lastDate)})
+        </p>
+      )}
+      <p style={style.basicsP}>
+        <EmVal>{totalTimeDisp}</EmVal> worked on {daysWorkedDisp}
+      </p>
+      <p style={style.basicsP}>
+        <Label>Earnings:</Label> {getEarningsSummaryDisplay(earnings)}
+      </p>
+      {earnings && (
+        <>
+          <EarningDetailsToggle
+            {...{ earningsContentToggle }}
+            isVisible={mainContentToggle.isExpanded}
+          />
+          <div
+            style={{ ...earningsContentToggle.styles.container, ...style.earningsDetailsArea }}
+            ref={earningsContentToggle.containerRef}
+          >
+            <EarningDetails {...{ earnings, paidTime, unpaidTime, firstDate }} />
+          </div>
+        </>
+      )}
     </>
   );
 }
@@ -47,3 +55,20 @@ function _Totals_needsPseudo({
 const Totals = addPseudoPseudoClasses(_Totals_needsPseudo);
 
 export default Totals;
+
+function getDaysWorkedDisplay(daysWorked) {
+  let dispText = `${daysWorked} day`;
+  if (daysWorked !== 1) dispText += 's';
+  return dispText;
+}
+
+function getEarningsSummaryDisplay(earnings) {
+  if (!earnings) return 'none';
+  return earnings.map(
+    ({ amount, currency }, index, arr) => (
+      <React.Fragment key={currency}>
+        <><EmVal>{amount.display.long}</EmVal>{getListSeparator(index, arr.length)}</>
+      </React.Fragment>
+    )
+  );
+}

@@ -1,11 +1,12 @@
-import { contentAreaDividerColor, contentAreaBgColor, contentAreaTextLinkColors } from '../style';
+import { contentAreaDividerColor, contentAreaBgColor } from '../style';
 import './style.css';
 
 export * from '../style';
 
-export default function getStyle(contentToggleStyles, arrowPseudoClassState) {
+export default function getStyle(contentToggleStyles) {
 
   const borderWidth = '1px';
+  const borderStyle = `${borderWidth} solid ${contentAreaDividerColor}`;
 
   const labelLineHeight = 1;
   const labelEmFontSize = 1.15;
@@ -17,7 +18,8 @@ export default function getStyle(contentToggleStyles, arrowPseudoClassState) {
 
   return {
     area: {
-      border: `${borderWidth} solid ${contentAreaDividerColor}`,
+      border: borderStyle,
+      // borderBottom: borderStyle,
       marginTop: labelTopOffset,
       position: 'relative',
       textAlign: 'left',
@@ -38,6 +40,11 @@ export default function getStyle(contentToggleStyles, arrowPseudoClassState) {
       fontWeight: 'bold',
       lineHeight: labelLineHeight
     },
+    areaBody: {
+      paddingLeft: '0.5rem',
+      textAlign: 'left',
+      ...contentToggleStyles.container
+    },
     togglerArrow: {
       ...contentToggleStyles.toggle,
       position: 'absolute',
@@ -47,22 +54,7 @@ export default function getStyle(contentToggleStyles, arrowPseudoClassState) {
       fontSize: arrowFontSize,
       lineHeight: 1,
       backgroundColor: contentAreaBgColor,
-      borderRadius: '50%',
-      ..._getArrowStylesForPseudoClass(arrowPseudoClassState)
+      borderRadius: '50%'
     }
   };
 };
-
-function _getArrowStylesForPseudoClass(arrowPseudoClassState) {
-  const { isActive, isFocused, isHovered, isTabFocused } = arrowPseudoClassState;
-  return {
-    color: (
-      (isActive && contentAreaTextLinkColors.active) ||
-      ((isFocused || isTabFocused) && contentAreaTextLinkColors.focus) ||
-      (isHovered && contentAreaTextLinkColors.hover) ||
-      contentAreaTextLinkColors.innate
-    ),
-    outline: isTabFocused ? `${contentAreaTextLinkColors.focus} solid 1.5px` : 'none',
-    fontWeight: (isActive || isFocused || isHovered || isTabFocused) ? 1000 : 900
-  };
-}
