@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { userService, areModalsOpenService, currentJobService } from '../../data';
-import { api, retrieveAndSetCurrentJob } from './utilities';
+import { userService, areModalsOpenService } from '../../data';
+import { api } from './utilities';
 import getStyle from './style';
 import Navbar from './Navbar';
 import Dashboard from './Dashboard';
