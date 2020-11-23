@@ -15,8 +15,7 @@ function processTimeData(rawWeeks, jobSettings) {
   const {
     currentMonth, precedingMonth, currentWeek, precedingWeek
   } = getInfoForCurrentTimePeriods(processedWeeks, jobSettings);
-
-  const earnings = getJobEarnings(processedWeeks)
+  const earnings = getJobEarnings(processedWeeks);
 
   return {
     weeks: processedWeeks,

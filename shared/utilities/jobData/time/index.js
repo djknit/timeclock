@@ -1,8 +1,6 @@
-const getDateForTime = require('./getDateForTime');
-const determineWeekNumber = require('./determineWeekNumber');
-
 module.exports = {
-  getDateForTime,
-  determineWeekNumber,
-  ...require('./weekDays')
+  getDateForTime: require('./getDateForTime'),
+  determineWeekNumber: require('./determineWeekNumber'),
+  getFirstDayOfWeekForDate: require('./getFirstDayOfWeekForDate'),
+  getDatesInWeekWithDate: require('./getDatesInWeekWithDate')
 };

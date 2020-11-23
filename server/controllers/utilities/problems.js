@@ -15,4 +15,4 @@ function checkForFailure(failCondition, failMsg, problemsObj, statusCode) {
   err.problems = problemsObj || {};
   if (statusCode) err.status = statusCode;
   throw err;
-};
+}
