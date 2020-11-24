@@ -4,13 +4,14 @@ module.exports = {
   getDateTime,
   getDate,
   getMoment,
-  convertDateToMyDate,
-  convertMomentToMyDate,
   getUtcMoment,
   getUtcDateTime,
+  convertMomentToMyDate,
+  convertDateToMyDate,
   areDatesEquivalent,
   isDateValid,
-  getPrecedingDate
+  getPrecedingDate,
+  getNextDate
 };
 
 function getDateTime(myDate) {
@@ -22,24 +23,11 @@ function getDate(myDate) {
   const { day, month, year } = myDate;
   return (new Date(year, month, day));
 }
-
-function getPrecedingDate(myDate) {
-  return convertMomentToMyDate(getMoment(myDate).subtract(1, 'days'));
-}
-
 function getMoment(myDate, timezone) {
   const momentFriendlyDate = getMomentFriendlyDate(myDate);
   return timezone ?
     moment.tz(momentFriendlyDate, timezone) :
     moment(momentFriendlyDate);
-}
-
-function getMomentFriendlyDate(myDate) {
-  return {
-    date: myDate.day,
-    year: myDate.year,
-    month: myDate.month
-  };
 }
 
 function getUtcMoment(myDate) {
@@ -84,4 +72,20 @@ function isDateValid(val) {
   if (date.getMonth() !== month) return false;
   if (date.getFullYear() !== year) return false;
   return true;
+}
+
+function getPrecedingDate(myDate) {
+  return convertMomentToMyDate(getMoment(myDate).subtract(1, 'days'));
+}
+
+function getNextDate(myDate) {
+  return convertMomentToMyDate(getMoment(myDate).add(1, 'days'));
+}
+
+function getMomentFriendlyDate(myDate) {
+  return {
+    date: myDate.day,
+    year: myDate.year,
+    month: myDate.month
+  };
 }

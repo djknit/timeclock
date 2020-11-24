@@ -5,15 +5,8 @@ import {
   findWeekWithDate
 } from '../utilities';
 
-const { getFirstDayOfWeekForDate } = jobDataUtils;
-const {
-  getPrecedingDate,
-  getNextDate,
-  areDatesEquivalent
-} = dateUtils;
-
-export { getCurrentWeeksInfo };
-
+const { getDatesInWeekWithDate } = jobDataUtils;
+const { getPrecedingDate } = dateUtils;
 
 function getCurrentWeeksInfo(processedWeeks, todayDate, jobSettings) {
   const currentWeek = getInfoForWeekWithDate(todayDate, processedWeeks, jobSettings);
@@ -24,13 +17,16 @@ function getCurrentWeeksInfo(processedWeeks, todayDate, jobSettings) {
   };
 }
 
+export { getCurrentWeeksInfo };
+
+
 function getInfoForWeekWithDate(date, processedWeeks, jobSettings) {
   const week = findWeekWithDate(date, processedWeeks);
   if (!week) {
-    const { firstDate, lastDate } = getDateRangeOfWeekWithDate(date, jobSettings.weekBegins);
+    const weekDates = getDatesInWeekWithDate(date, jobSettings.weekBegins);
     return {
-      firstDate,
-      lastDate,
+      firstDate: weekDates[0],
+      lastDate: weekDates[weekDates.length - 1],
       totalTime: getDurationInfo(0),
       daysWorked: 0,
       earnings: null
@@ -38,17 +34,4 @@ function getInfoForWeekWithDate(date, processedWeeks, jobSettings) {
   }
   const { firstDate, lastDate, totalTime, daysWorked, earnings } = week;
   return { firstDate, lastDate, totalTime, daysWorked, earnings };
-}
-
-function getDateRangeOfWeekWithDate(date, weekBeginsValueSchedule) { // only needed when data doesn't exist yet for week
-  const firstDate = getFirstDayOfWeekForDate(date, weekBeginsValueSchedule);
-  let lastDate = firstDate;
-  for (let i = 0; i < 7; i++) {
-    const nextDate = getNextDate(lastDate);
-    const firstDateOfWeekWithNextDate = getFirstDayOfWeekForDate(nextDate, weekBeginsValueSchedule);
-    if (!areDatesEquivalent(firstDateOfWeekWithNextDate, firstDate)) {
-      return { firstDate, lastDate };
-    }
-    lastDate = nextDate;
-  }
 }

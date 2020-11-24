@@ -1,9 +1,19 @@
 const { getDateTime } = require('../dates');
 
 module.exports = {
-  getMostRecentScheduleIndexForDate,
-  getMostRecentScheduleValueForDate
+  getMostRecentScheduleValueForDate,
+  getMostRecentScheduleEntryForDate
 };
+
+function getMostRecentScheduleValueForDate(date, valueSchedule) {
+  return getMostRecentScheduleEntryForDate(date, valueSchedule).value;
+}
+
+function getMostRecentScheduleEntryForDate(date, valueSchedule) {
+  const index = getMostRecentScheduleIndexForDate(date, valueSchedule);
+  if (!index && index !== 0) return null;
+  return valueSchedule[index];
+}
 
 function getMostRecentScheduleIndexForDate(date, valueSchedule) {
   if (valueSchedule.length === 0) return;
@@ -17,10 +27,4 @@ function getMostRecentScheduleIndexForDate(date, valueSchedule) {
     selectedIndex = i;
   }
   return selectedIndex;
-}
-
-function getMostRecentScheduleValueForDate(date, valueSchedule) {
-  const index = getMostRecentScheduleIndexForDate(date, valueSchedule);
-  if (!index && index !== 0) return null;
-  return valueSchedule[index].value;
 }
