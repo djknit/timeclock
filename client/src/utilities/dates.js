@@ -2,11 +2,7 @@ import sharedResources from '../shared';
 
 let dateUtils = sharedResources.utilities.dates;
 
-const { getMoment, convertMomentToMyDate, getUtcDateTime } = dateUtils;
-
-function getNextDate(myDate) {
-  return convertMomentToMyDate(getMoment(myDate).add(1, 'days'));
-}
+const { getUtcDateTime } = dateUtils;
 
 function isDateInRange(dateRange, date) {
   const { firstDate, lastDate } = dateRange;
@@ -18,6 +14,5 @@ function isDateInRange(dateRange, date) {
 
 export const dates = { 
   ...dateUtils,
-  getNextDate,
   isDateInRange
 };

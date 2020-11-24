@@ -4,7 +4,6 @@ import {
   getDayCutoffTime,
   constants
 } from '../../../utilities';
-// import { getDayCutoffTime } from '../elemental';
 import { getWageValueSummaryText } from './wage';
 import { convertStringToNonbreakingHtml } from './textFormatting';
 
