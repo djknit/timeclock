@@ -104,7 +104,7 @@ class ChangeDateModal extends Component {
       return <></>;
     }
 
-    const { dateRangeShortText, valueSimpleText, startDate } = getSchedEntryFromId(entryToEditId, valueSchedule) || {};
+    const { capDateRangeShortText, valueSimpleText, startDate } = getSchedEntryFromId(entryToEditId, valueSchedule) || {};
 
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
@@ -133,7 +133,7 @@ class ChangeDateModal extends Component {
                 Time Period:
               </Tag>
               <Tag theme="info light" size={6}>
-                {dateRangeShortText}
+                {capDateRangeShortText}
               </Tag>
             </TagGroup>
             <TagGroup align="center" isInline>

@@ -106,7 +106,7 @@ class _EditValueModal_needsCollapsing extends Component {
     }
 
     const {
-      valueSimpleText, dateRangeText, dateRangeShortText
+      valueSimpleText, dateRangeText, capDateRangeShortText
     } = getSchedEntryFromId(entryToEditId, valueSchedule);
 
     const lowCaseSettingName = settingDisplayName.toLowerCase();
@@ -136,7 +136,7 @@ class _EditValueModal_needsCollapsing extends Component {
             Time Period:
           </Tag>
           <Tag theme="info light" size={6}>
-            {dateRangeShortText}
+            {capDateRangeShortText}
           </Tag>
         </TagGroup>
         <TagGroup align="center" isInline>

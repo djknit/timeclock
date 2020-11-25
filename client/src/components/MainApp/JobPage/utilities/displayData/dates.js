@@ -1,24 +1,25 @@
 import React, { Fragment } from 'react';
 import { formatMyDate } from '../../utilities';
 
-function getDateRangeText(startDate, endDate, isShort, dateFormatString) {
-  if (isShort) return getDateRangeShortText(startDate, endDate, dateFormatString);
+function getDateRangeText(startDate, endDate, isShort, dateFormatString, isCapitalized) {
+  if (isShort) return getDateRangeShortText(startDate, endDate, dateFormatString, isCapitalized);
+  const wordAll = isCapitalized ? 'All' : 'all';
   if (!startDate && !endDate) {
-    return 'all time';
+    return `${wordAll} time`;
   }
   const _formatDate = date => formatMyDate(date, dateFormatString);
   if (!startDate) {
-    return <>all dates prior to and including {_formatDate(endDate)}</>;
+    return <>{wordAll} dates prior to and including {_formatDate(endDate)}</>;
   }
   if (!endDate) {
-    return <>All dates on or after {_formatDate(startDate)}</>;
+    return <>{wordAll} dates on or after {_formatDate(startDate)}</>;
   }
   return <>{_formatDate(startDate)} until {_formatDate(endDate)}</>;
 }
 
-function getDateRangeShortText(startDate, endDate, dateFormatString) {
+function getDateRangeShortText(startDate, endDate, dateFormatString, isCapitalized) {
   if (!startDate && !endDate) {
-    return 'all time';
+    return `${isCapitalized ? 'A' : 'a'}ll time`;
   }
   const getArrows = (
     (direction, n = 3) => {
