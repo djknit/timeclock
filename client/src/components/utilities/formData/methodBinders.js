@@ -6,11 +6,11 @@ import {
   resetFactory
 } from './methodFactories';
 
-function bindCommonFormMethods(component) {
+function bindCommonFormMethods(component, options) {
   component.changeHandlerFactory = changeHandlerFactoryFactory().bind(component);
   component.getStartingState = getStartingStateFactory().bind(component);
   component.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(component);
-  component.submit = submitFactory().bind(component);
+  component.submit = submitFactory(options && options.hasCountdown).bind(component);
   component.reset = component.reset ? component.reset.bind(component) : resetFactory().bind(component);
 }
 

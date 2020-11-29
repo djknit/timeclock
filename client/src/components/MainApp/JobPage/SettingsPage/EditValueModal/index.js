@@ -57,7 +57,6 @@ class _EditValueModal_needsCollapsing extends Component {
   };
 
   processSuccessResponse(response) {
-    console.log(response.data)
     return currentJobService.setValue(response.data);
   };
 
