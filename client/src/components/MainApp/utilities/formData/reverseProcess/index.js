@@ -19,6 +19,7 @@ export { convertSettingValueToFormData };
 
 
 function convertDayCutoffToFormData(valueInMinutes) {
+  if (!valueInMinutes && valueInMinutes !== 0) return;
   let result = getDayCutoffTime(valueInMinutes, true);
   // convert time to input value by adjusting time to satisfy: { abs(hour + minute) <= 12*minsPerHr }
   if (result.hour >= 12 && valueInMinutes !== 12 * minsPerHr) {

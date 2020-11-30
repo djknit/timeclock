@@ -18,6 +18,9 @@ function GeneralEntry({
       <EntryModal
       
       />
+      <EntryModal
+        
+      />
       <DeleteSegmentModal
       
       />
