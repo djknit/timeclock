@@ -11,14 +11,13 @@ class EntryModal extends Component {
   constructor(props) {
     super(props);
     bindFormMethods(this, { hasCountdown: false });
+    this.firstInputArea = React.createRef();
     this.state = this.getStartingState();
   };
 
   getUniqueStartingState() {
     return {
-      startDate: null,
-      endDate: null,
-      // startTime: 
+      
     };
   };
 

@@ -1,33 +1,36 @@
 import React from 'react';
 import getStyle from './style';
+import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker';
 import {
   getMinutesFromHoursAndMinutes,
-  getTextOfHoursAndMinutes,
-  getHoursAndMinutesFromMinutes
-} from '../../utilities';
+  dates as dateUtils
+} from '../utilities';
 import BoxInputFrame from '../BoxInputFrame';
+
+const { convertDateToMyDate, } = dateUtils;
 
 function getHourOptions(is24hr) {
   let options = [];
-  for (let i = -12; i <= 12; i++) {
+  for (let i = 0; i < 24; i++) {
     const hoursBase = is24hr ? 24 : 12;
-    let displayValue = (i + hoursBase) % hoursBase;
+    let displayValue = i % hoursBase;
     if (!is24hr && displayValue === 0) displayValue = 12;
     options.push({
       value: i,
       name: displayValue
     });
   }
-  return options;
-}
+};
 
-function DayCutoffInput({
+function DateAndTimeInput({
   propName,
   sectionName,
   value,
   changeHandlerFactory,
   label,
-  helpText,
+  sublabel,
+  helptText,
   hasProblem,
   problems,
   formId,
@@ -37,70 +40,58 @@ function DayCutoffInput({
   fieldToLabelRatio,
   fieldStyle,
   fieldLabelStyle,
-  labelStyle
+  labelStyle,
+  openToDate
 }) {
 
-  const inputNamePrefix = `${sectionName ? sectionName + '-' : ''}${propName}`;
-  const hoursInputId = `${inputNamePrefix}-hour-input-${formId}`;
-  const _label = label || 'Day Cutoff:';
-  const _helpText = helpText || 'Hint: You probably don\'t need a custom day cutoff unless you work late nights. If you begin in the evening and work past midnight, you can adjust the day cutoff so that your shift is not split across two days.';
-  const { hour, minute, is24hr } = value;
-  let amPm;
-  if (!is24hr) {
-    amPm = hour < 0 || hour === 12 ? 'pm' : 'am';
-  }
-  const is24hrInputsName = `${inputNamePrefix}-is24hr`;
+  const { date, hour, minute, is24hr } = value;
+  const sectionNamePortionOfId = sectionName ? `${sectionName}-` : '';
+  const inputId = `${sectionNamePortionOfId}${propName}-input-${formId}`;
+  const completeProblems = getCompleteProblems({ problems, value, hasProblem });
 
   function inputProcessorFactory(childPropName) {
-    return function (childPropValue) {
+    return function processInput(childPropValue) {
       let _value = { ...value };
-      if (childPropName === 'is24hr') {
-        _value[childPropName] = childPropValue && childPropValue !== 'false';
+      if (childPropName === 'date') {
+        _value.date = (
+          childPropValue ? convertDateToMyDate(childPropValue) : null
+        );
+      }
+      else if (childPropName === 'is24hr') {
+        _value.is24hr = childPropValue;
       }
       else if (childPropName !== 'amPm') {
-        _value[childPropName] = (
+        _value.amPm = (
           childPropValue || childPropValue === 0 ?
           parseInt(childPropValue) :
           undefined
         );
       }
-      else if (childPropValue === 'am' && hour < 0) {
-        _value.hour = hour + 12;
-      }
-      else if (childPropValue === 'am' && hour === 12) {
-        _value.hour = 0;
-      }
-      else if (childPropValue === 'pm' && hour >= 0 && hour !== 12) {
+      else if (childPropValue === 'am' && hour >= 12) {
         _value.hour = hour - 12;
+      }
+      else if (childPropValue === 'pm' && hour < 12) {
+      _value.hour = hour + 12;
       }
       return _value;
     };
   }
 
-  const completeProblemsAndMessages = getCompleteProblems({ value, problems, hasProblem });
-  const completeProblems = completeProblemsAndMessages.problems;
-  const { problemMessages } = completeProblemsAndMessages;
-
-  const style = getStyle(fieldStyle, fieldLabelStyle);
-
-  const inputFrameStyles = {
-    field: fieldStyle,
-    fieldLabel: fieldLabelStyle,
-    label: labelStyle
-  };
-
-  let cutoffDisplay = getCutoffDisplayValue(value);
+  const style = getStyle(fieldStyle, labelStyle);
 
   return (
     <BoxInputFrame
-      label={_label}
-      inputId={hoursInputId}
       {...{
+        label,
+        sublabel,
         isInline,
-        fieldToLabelRatio
+        inputId
       }}
-      styles={inputFrameStyles}
     >
+      <DatePicker
+        disabled={!isActive}
+        className={`input${completeProblems.date ? ' is-danger' : ''}`}
+      />
       <div className="select">
         <select
           id={hoursInputId}
@@ -197,7 +188,7 @@ function DayCutoffInput({
   );
 }
 
-export default DayCutoffInput;
+export default DateAndTimeInput;
 
 function getCompleteProblems({ problems, value, hasProblem }) {
   const numMinutes = getMinutesFromHoursAndMinutes({ hours: value.hour, minutes: value.minute });
@@ -207,8 +198,8 @@ function getCompleteProblems({ problems, value, hasProblem }) {
     (hasProblem ? { hour: true, minute: true } : {})
   );
   let problemMessages = [];
-  const max = 12 * 60;
-  const min = -1 * max;
+  const max = (24 * 60) - 1;
+  const min = 0;
   if (numMinutes > max) {
     completeProblems.hour = completeProblems.minute = true;
     const maxTimeText = getTextOfHoursAndMinutes(getHoursAndMinutesFromMinutes(max));
@@ -227,20 +218,4 @@ function getCompleteProblems({ problems, value, hasProblem }) {
     problems: completeProblems,
     problemMessages
   };
-}
-
-function getCutoffDisplayValue(value) {
-  const { hour, minute } = value;
-  let hourValueToDisplay, minuteValueToDisplay;
-  if (hour < 0) {
-    hourValueToDisplay = minute ? Math.abs(hour) - 1 : Math.abs(hour);
-    minuteValueToDisplay = minute ? 60 - minute : 0;
-  }
-  else {
-    hourValueToDisplay = hour;
-    minuteValueToDisplay = minute || 0;
-  }
-  const hourDisplay = hourValueToDisplay < 10 ? `0${hourValueToDisplay}` : hourValueToDisplay;
-  const minuteDisplay = minuteValueToDisplay < 10 ? `0${minuteValueToDisplay}` : minuteValueToDisplay;
-  return `(${hour < 0 ? '-' : '+'}${hourDisplay}:${minuteDisplay})`;
 }
