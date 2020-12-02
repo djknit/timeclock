@@ -14,12 +14,17 @@ function RadioInput({
   isActive,
   isInline,
   fieldToLabelRatio,
-  fieldStyle
+  fieldStyle,
+  inputRef
 }) {
+
+  function isSelected(option) {
+    return option.value === value;
+  }
 
   function getSelectedOptionRef() {
     for (let i = 0; i < options.length; i++) {
-      if (options[i].value === value) return options[i].ref;
+      if (isSelected(options[i])) return options[i].ref;
     }
   }
 
@@ -42,7 +47,7 @@ function RadioInput({
         isInline,
         fieldToLabelRatio
       }}
-      selectedRadioInput={getSelectedOptionRef()}
+      selectedRadioInput={inputRef || getSelectedOptionRef()}
       styles={{ field: fieldStyle }}
     >
       {options.map(
@@ -54,7 +59,7 @@ function RadioInput({
               value={option.value}
               checked={value === option.value}
               onChange={changeHandlerFactory(propName, true, processValue)}
-              ref={option.ref}
+              ref={(isSelected(option) && inputRef) || option.ref}
               className={hasProblem ? 'is-danger' : undefined}
               disabled={!isActive}
               style={style.input}

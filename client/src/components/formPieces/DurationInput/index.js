@@ -4,7 +4,8 @@ import {
   getHoursAndMinutesFromMinutes,
   getMinutesFromHoursAndMinutes,
   getTextOfHoursAndMinutes,
-  constants
+  constants,
+  getInputId
 } from '../../utilities';
 import BoxInputFrame from '../BoxInputFrame';
 
@@ -26,10 +27,12 @@ function DurationInput({
   formId,
   inputRef,
   isInline,
-  fieldToLabelRatio
+  fieldToLabelRatio,
+  inputId: inputIdProp
 }) {
 
-  const hoursInputId = `${sectionName ? sectionName + '-' : ''}${propName}-hours-input-${formId}`;
+  const inputNamePrefix = `${sectionName ? sectionName + '-' : ''}${propName}`;
+  const hoursInputId = inputIdProp || getInputId(formId, 'hours', inputNamePrefix);
 
   const { hours, minutes } = value;
   

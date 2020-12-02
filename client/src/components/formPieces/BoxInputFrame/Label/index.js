@@ -3,14 +3,14 @@ import getStyle from './style';
 
 function Label({
   inputId,
-  style,
+  style: styleProp,
   label,
   sublabel,
   isRadio,
   selectedRadioInput
 }) {
   
-  const completeStyle = getStyle();
+  const style = getStyle(styleProp, isRadio);
 
   return label ? (
     <TopLevelElement
@@ -20,11 +20,11 @@ function Label({
       }}
       htmlFor={inputId}
       className="label"
-      style={style}
+      style={style.label}
     >
       {label}
       {sublabel && (
-        <span style={completeStyle.normalWeight}>
+        <span style={style.sublabel}>
           &nbsp;({sublabel})
         </span>
       )}
@@ -45,10 +45,6 @@ function TopLevelElement({ children, isRadio, selectedRadioInput, ...attributes 
         onClick={() => {
           if (selectedRadioInput && selectedRadioInput.current) {
             selectedRadioInput.current.focus();
-            setTimeout(
-              () => selectedRadioInput.current.focus(),
-              250
-            );
           }
         }}
       >

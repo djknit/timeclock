@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import getStyle from './style';
 import {
   preprocessScheduleForDisplay
@@ -52,6 +53,16 @@ class _Setting_needsData extends Component {
   };
 
   modalTogglerFactory(modalIsOpenStatePropName, inputRef, hasDateInputAsPrimary) {
+    const _focusInput = () => {
+      if (!this.state[modalIsOpenStatePropName] || !inputRef) return;
+      if (inputRef.current) {
+        const methodName = hasDateInputAsPrimary ? 'setFocus' : 'focus';
+        inputRef.current[methodName]();
+      }
+      else {
+        setTimeout(_focusInput, 100);
+      }
+    };
     return (isOpenAfterToggle, entryToEditId) => {
       let stateUpdates = { [modalIsOpenStatePropName]: !!isOpenAfterToggle };
       if (entryToEditId || entryToEditId === 0) {
@@ -60,9 +71,8 @@ class _Setting_needsData extends Component {
       this.setState(
         stateUpdates,
         () => {
-          const focusMethod = hasDateInputAsPrimary ? 'setFocus' : 'focus';
-          if (isOpenAfterToggle && inputRef && inputRef.current) {
-            inputRef.current[focusMethod]();
+          if (isOpenAfterToggle) {
+            _focusInput();
           }
           this.reportModalActivity();
         }

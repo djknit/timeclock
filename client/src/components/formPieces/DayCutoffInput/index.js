@@ -3,7 +3,8 @@ import getStyle from './style';
 import {
   getMinutesFromHoursAndMinutes,
   getTextOfHoursAndMinutes,
-  getHoursAndMinutesFromMinutes
+  getHoursAndMinutesFromMinutes,
+  getInputId
 } from '../../utilities';
 import BoxInputFrame from '../BoxInputFrame';
 
@@ -37,11 +38,12 @@ function DayCutoffInput({
   fieldToLabelRatio,
   fieldStyle,
   fieldLabelStyle,
-  labelStyle
+  labelStyle,
+  inputId: inputIdProp
 }) {
 
   const inputNamePrefix = `${sectionName ? sectionName + '-' : ''}${propName}`;
-  const hoursInputId = `${inputNamePrefix}-hour-input-${formId}`;
+  const hoursInputId = inputIdProp || getInputId(formId, 'hour', inputNamePrefix);
   const _label = label || 'Day Cutoff:';
   const _helpText = helpText || 'Hint: You probably don\'t need a custom day cutoff unless you work late nights. If you begin in the evening and work past midnight, you can adjust the day cutoff so that your shift is not split across two days.';
   const { hour, minute, is24hr } = value;
@@ -49,7 +51,7 @@ function DayCutoffInput({
   if (!is24hr) {
     amPm = hour < 0 || hour === 12 ? 'pm' : 'am';
   }
-  const is24hrInputsName = `${inputNamePrefix}-is24hr`;
+  const is24hrInputsName = getInputId(formId, 'is24hr', inputNamePrefix);
 
   function inputProcessorFactory(childPropName) {
     return function (childPropValue) {

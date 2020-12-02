@@ -1,3 +1,12 @@
+/*
+
+THIS FILE IS INCOMPLETE.
+
+Also probably not needed.
+
+*/
+
+
 import React from 'react';
 import getStyle from './style';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -7,6 +16,7 @@ import {
   dates as dateUtils
 } from '../utilities';
 import BoxInputFrame from '../BoxInputFrame';
+import { getDate } from 'timeclock-shared-resources/utilities/dates';
 
 const { convertDateToMyDate, } = dateUtils;
 
@@ -30,23 +40,26 @@ function DateAndTimeInput({
   changeHandlerFactory,
   label,
   sublabel,
-  helptText,
   hasProblem,
   problems,
   formId,
   inputRef,
-  isInline,
+  // isInline,
   isActive,
-  fieldToLabelRatio,
   fieldStyle,
   fieldLabelStyle,
   labelStyle,
-  openToDate
+  openToDate,
+  fieldToLabelRatio
 }) {
 
   const { date, hour, minute, is24hr } = value;
   const sectionNamePortionOfId = sectionName ? `${sectionName}-` : '';
-  const inputId = `${sectionNamePortionOfId}${propName}-input-${formId}`;
+  const dateAndTimeInputId = `${sectionNamePortionOfId}${propName}-input-${formId}`;
+  const getInputId = name => (
+    `${dateAndTimeInputId}-${name}`
+  );
+  const dateInputId = getInputId('date');
   const completeProblems = getCompleteProblems({ problems, value, hasProblem });
 
   function inputProcessorFactory(childPropName) {
@@ -78,25 +91,37 @@ function DateAndTimeInput({
   }
 
   const style = getStyle(fieldStyle, labelStyle);
+  const inputFrameStyles = {
+    field: fieldStyle,
+    label: labelStyle,
+    fieldLabel: fieldLabelStyle
+  };
 
   return (
     <BoxInputFrame
       {...{
         label,
         sublabel,
-        isInline,
-        inputId
       }}
+      inputId={dateInputId}
+      styles={inputFrameStyles}
     >
-      <DatePicker
-        disabled={!isActive}
-        className={`input${completeProblems.date ? ' is-danger' : ''}`}
-      />
+      <BoxInputFrame
+        isInline
+        inputId={dateInputId}
+      >
+        <DatePicker
+          disabled={!isActive}
+          className={`input${completeProblems.date ? ' is-danger' : ''}`}
+          ref={inputRef}
+          id={dateInputId}
+          onChange={changeHandlerFactory(propName, false, inputProcessorFactory('date'))}
+          selected={date ? getDate(date) : null}
+        />
+      </BoxInputFrame>
       <div className="select">
         <select
-          id={hoursInputId}
           className="select"
-          ref={inputRef}
           value={hour}
           onChange={changeHandlerFactory(propName, true, inputProcessorFactory('hour'))}
           disabled={!isActive}
