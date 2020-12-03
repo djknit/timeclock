@@ -63,27 +63,26 @@ function CurrencyInput({
           value
         }}
       />
-      {currencySymbol &&
+      {currencySymbol && (
         <span className="icon is-left">
           {currencySymbol}
         </span>
-      }
+      )}
       <div style={style.amountDisplay}>
-        {
-          (processedValue.display === 'negative' && (
-            <span style={style.displayTextNegative}>
-              Negative values are not allowed
-            </span>
-          )) || (processedValue.display !== null && (
-            <span style={style.displayText}>
-              {processedValue.display} {showCurrencyCode && currency !== 'X' && ` ${currency}`}
-            </span>
-          ))
-        }
+        {(processedValue.display === 'negative' && (
+          <span style={style.displayTextNegative}>
+            Negative values are not allowed
+          </span>
+        )) ||
+        (processedValue.display !== null && (
+          <span style={style.displayText}>
+            {processedValue.display} {showCurrencyCode && currency !== 'X' && ` ${currency}`}
+          </span>
+        ))}
       </div>
-      {helpText &&
+      {helpText && (
         <p className="help">{helpText}</p>
-      }
+      )}
     </BoxInputFrame>
   );
 }
