@@ -8,7 +8,7 @@ import { currentJobTimeService } from '../../../../../../data';
 // import { FormButtons, FormMessages } from '../../../../../formPieces';
 import FormModal from '../../../../../FormModal';
 
-class EntryModal extends Component {
+class DeleteSegmentModal extends Component {
   constructor(props) {
     super(props);
     bindFormMethods(this);
@@ -64,4 +64,4 @@ class EntryModal extends Component {
   };
 }
 
-export default EntryModal;
+export default DeleteSegmentModal;

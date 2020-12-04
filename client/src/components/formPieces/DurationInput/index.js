@@ -87,7 +87,7 @@ function DurationInput({
       />
       {problemMessages && problemMessages.map(
         msg => (
-          <p className="help is-danger" key="msg">{msg}</p>
+          <p className="help is-danger" key={msg}>{msg}</p>
         )
       )}
       {helpText &&

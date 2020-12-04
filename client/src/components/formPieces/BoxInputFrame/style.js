@@ -1,7 +1,6 @@
 import { isWindowWide } from '../style';
 
 export default function(styles, windowWidth, fieldToLabelRatio = 5.8, isInline) {
-  console.log(styles)
 
   const labelStyles = (
     (!isWindowWide(windowWidth) && isInline) ?
