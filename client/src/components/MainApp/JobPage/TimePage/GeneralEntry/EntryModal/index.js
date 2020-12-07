@@ -63,11 +63,14 @@ class EntryModal extends Component {
   };
 
   processAndSubmitData() {
+    const { startDate, endDate, startTime, endTime } = this.state;
+    return api.time.addSegment({ 
 
+    });
   };
 
-  processSuccessResponse() {
-
+  processSuccessResponse(response) {
+    console.log(response);
   };
 
   resetJustAdded() {
@@ -75,7 +78,7 @@ class EntryModal extends Component {
   };
 
   render() {
-    const { reset, submit } = this;
+    const { reset, submit, resetJustAdded } = this;
     const { isActive, closeModal } = this.props;
     const {
       hasSuccess,
@@ -104,14 +107,15 @@ class EntryModal extends Component {
               onClick={() => {
                 reset();
                 closeModal();
+                resetJustAdded();
               }}
               disabled={isLoading}
             >
-              {hasSuccess ? reset : submit}
+              {hasSuccess ? 'Done' : 'Cancel'}
             </Button>
             <Button
               theme="primary"
-              onClick={hasSuccess ? 'Enter More Time' : 'Submit'}
+              onClick={hasSuccess ? reset : submit}
               disabled={isLoading || isFormIncomplete}
               isSubmit={!hasSuccess}
               formId={hasSuccess ? undefined : formId}

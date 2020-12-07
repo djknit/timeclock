@@ -1,11 +1,12 @@
 import React from 'react';
 import getStyle from './style';
 import ContentArea from '../../../ContentArea';
-import DeleteSegmentModal from './DeleteSegmentModal';
+import DeleteSegmentModal from '../DeleteSegmentModal';
 import EntryModal from './EntryModal';
 
 function GeneralEntry({
-  style: styleProp
+  style: styleProp,
+  job
 }) {
 
   const style = getStyle(styleProp);
@@ -16,14 +17,11 @@ function GeneralEntry({
         
       </ContentArea>
       <EntryModal
-      
+        {...{ job }}
       />
-      <EntryModal
+      {/* <DeleteSegmentModal
         
-      />
-      <DeleteSegmentModal
-      
-      />
+      /> */}
     </>
   );
 }

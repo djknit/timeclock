@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import getStyle from './style';
+import { areModalsOpenService } from '../../../../data';
+import { modalTogglerFactoryFactory, addReportModalActivity } from './utilities';
 import PageTitle from '../../PageTitle';
 import GeneralEntry from './GeneralEntry';
 import Summary from './Summary';
@@ -8,7 +10,18 @@ import Weeks from './Weeks';
 class TimePage extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.entryModalInputRef = React.createRef();
+    this.modalTogglerFactory = modalTogglerFactoryFactory().bind(this);
+    this.toggleEntryModal = (
+      this.modalTogglerFactory('isGeneralTimeEntryModalActive', this.entryModalInputRef).bind(this)
+    );
+    this.toggleDeleteSegmentModal = this.modalTogglerFactory('isDeleteSegmentModalActive');
+    addReportModalActivity(this, ['isGeneralTimeEntryModalActive', 'isDeleteSegmentModalActive']);
+    this.state = {
+      isGeneralTimeEntryModalActive: false,
+      isDeleteSegmentModalActive: false,
+      
+    };
   };
 
   render() {
@@ -35,7 +48,10 @@ class TimePage extends Component {
             timeData={job.time}
             {...{ windowWidth }}
           />
-          <GeneralEntry style={style.generalEntryArea} />
+          <GeneralEntry
+            style={style.generalEntryArea}
+            {...{ job }}
+          />
         </div>
         <Weeks />
       </>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { currentJobService, areModalsOpenService, windowWidthService } from '../../../data';
-import { api } from '../utilities'
+import { api, modalTogglerFactoryFactory, addReportModalActivity } from '../utilities'
 import getStyle from './style';
 import ContentArea from '../ContentArea';
 import PageTitle from '../PageTitle';
@@ -20,13 +20,14 @@ class _JobPage_needsData extends Component {
     super(props);
     this.editJobNameInputRef = React.createRef();
     this.deleteJobModalInputRef = React.createRef();
-    this.modalToggleFactory = this.modalToggleFactory.bind(this);
+    this.modalTogglerFactory = modalTogglerFactoryFactory();
     this.toggleEditJobNameModal = (
-      this.modalToggleFactory('isEditJobNameModalActive', this.editJobNameInputRef).bind(this)
+      this.modalTogglerFactory('isEditJobNameModalActive', this.editJobNameInputRef).bind(this)
     );
     this.toggleDeleteJobModal = (
-      this.modalToggleFactory('isDeleteJobModalActive', this.deleteJobModalInputRef).bind(this)
+      this.modalTogglerFactory('isDeleteJobModalActive', this.deleteJobModalInputRef).bind(this)
     );
+    addReportModalActivity(this, ['isEditJobNameModalActive', 'isDeleteJobModalActive']);
     this.setWaitingForDataState = this.setWaitingForDataState.bind(this);
     this.state = {
       isLoading: false,
@@ -35,22 +36,6 @@ class _JobPage_needsData extends Component {
       isEditJobNameModalActive: false,
       isDeleteJobModalActive: false,
       modalsRegistrationId: undefined
-    };
-  };
-
-  modalToggleFactory(modalIsActivePropName, inputRef) {
-    return function(isActiveAfterToggle) {
-      this.setState(
-        { [modalIsActivePropName]: !!isActiveAfterToggle },
-        () => {
-          if (isActiveAfterToggle) inputRef.current.focus();
-          const {
-            isDeleteJobModalActive, isEditJobNameModalActive, modalsRegistrationId
-          } = this.state;
-          const hasModalOpen = isDeleteJobModalActive || isEditJobNameModalActive;
-          areModalsOpenService.report(modalsRegistrationId, hasModalOpen);
-        }
-      );
     };
   };
 

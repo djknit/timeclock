@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import {
   api,
   bindFormMethods
-} from '../../../utilities';
-import { currentJobTimeService } from '../../../../../../data';
+} from '../utilities';
+import { currentJobTimeService } from '../../../../../data';
 
-// import { FormButtons, FormMessages } from '../../../../../formPieces';
-import FormModal from '../../../../../FormModal';
+// import { FormButtons, FormMessages } from '../../../../formPieces';
+import FormModal from '../../../../FormModal';
 
 class DeleteSegmentModal extends Component {
   constructor(props) {

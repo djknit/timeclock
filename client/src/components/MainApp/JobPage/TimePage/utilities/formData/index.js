@@ -1,6 +1,4 @@
-function getTimeInputProblems(inputValue, problemMessages) {
-  
-}
+import getTimeInputProblems from './getTimeInputProblems';
 
 
 export { getTimeInputProblems };

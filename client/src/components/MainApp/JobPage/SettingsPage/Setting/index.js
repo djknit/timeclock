@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import getStyle from './style';
 import {
-  preprocessScheduleForDisplay
+  preprocessScheduleForDisplay,
+  modalTogglerFactoryFactory,
+  addReportModalActivity
 } from '../utilities';
 import { windowWidthService, areModalsOpenService } from '../../../../../data';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
@@ -21,7 +23,8 @@ function getUpdateOperationInfoObj(upOpName, modalComponent) {
     togglerName: `toggle${capFullName}Modal`,
     inputRefName: `${fullName}InputRef`,
     isActiveStateProp: `is${capFullName}ModalActive`,
-    ModalComponent: modalComponent
+    ModalComponent: modalComponent,
+    focusMethodName: upOpName === 'changeDate' ? 'setFocus' : undefined
   };
 }
 const updateOpsInfo = [
@@ -34,57 +37,22 @@ const updateOpsInfo = [
 class _Setting_needsData extends Component {
   constructor(props) {
     super(props);
-    this.modalTogglerFactory = this.modalTogglerFactory.bind(this);
+    this.modalTogglerFactory = modalTogglerFactoryFactory().bind(this);
     let state = {};
-    updateOpsInfo.forEach(({ inputRefName, togglerName, isActiveStateProp, name }) => {
+    updateOpsInfo.forEach(({ inputRefName, togglerName, isActiveStateProp, focusMethodName }) => {
       this[inputRefName] = React.createRef();
-      const isDateChange = name === 'changeDate';
-      this[togglerName] = this.modalTogglerFactory(isActiveStateProp, this[inputRefName], isDateChange).bind(this);
+      this[togglerName] = this
+        .modalTogglerFactory(isActiveStateProp, this[inputRefName], 'entryToEditId', focusMethodName)
+        .bind(this);
       state[isActiveStateProp] = false;
     });
-    this.reportModalActivity = this.reportModalActivity.bind(this);
+    addReportModalActivity(this, updateOpsInfo.map(({ isActiveStateProp }) => isActiveStateProp));
     this.setEntryToEditId = this.setEntryToEditId.bind(this);
     this.state = {
       entryToEditId: undefined,
       ...state,
       modalsRegistrationId: undefined,
     };
-  };
-
-  modalTogglerFactory(modalIsOpenStatePropName, inputRef, hasDateInputAsPrimary) {
-    const _focusInput = () => {
-      if (!this.state[modalIsOpenStatePropName] || !inputRef) return;
-      if (inputRef.current) {
-        const methodName = hasDateInputAsPrimary ? 'setFocus' : 'focus';
-        inputRef.current[methodName]();
-      }
-      else {
-        setTimeout(_focusInput, 100);
-      }
-    };
-    return (isOpenAfterToggle, entryToEditId) => {
-      let stateUpdates = { [modalIsOpenStatePropName]: !!isOpenAfterToggle };
-      if (entryToEditId || entryToEditId === 0) {
-        Object.assign(stateUpdates, { entryToEditId });
-      }
-      this.setState(
-        stateUpdates,
-        () => {
-          if (isOpenAfterToggle) {
-            _focusInput();
-          }
-          this.reportModalActivity();
-        }
-      );
-    };
-  };
-
-  reportModalActivity() {
-    let hasModalOpen = false;
-    updateOpsInfo.forEach(({ isActiveStateProp }) => {
-      if (this.state[isActiveStateProp]) hasModalOpen = true;
-    });
-    areModalsOpenService.report(this.state.modalsRegistrationId, hasModalOpen);
   };
 
   setEntryToEditId(entryId) {
