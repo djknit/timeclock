@@ -10,7 +10,6 @@ function _BoxInputFrame_needsData({
   sublabel,
   isInline,
   inputId,
-  // sizeRatio,
   children,
   hasIcon,
   styles,
@@ -18,11 +17,10 @@ function _BoxInputFrame_needsData({
   windowWidth,
   selectedRadioInput,
   fieldToLabelRatio
-  // hasSmallMargins,
-  // isLastChild
+  // isLastChild // Will be needed if bottom margin is changed from Bulma style.
 }) {
 
-  // no need for inline when there is no label
+  // no need for inline when there is no label (probably)
   if (label === undefined) isInline = false;
 
   const style = getStyle(styles, windowWidth, fieldToLabelRatio, isInline);
@@ -40,32 +38,30 @@ function _BoxInputFrame_needsData({
   fieldAttributes.style = style.field;
   const labelAttributes = { ...labelProps, isRadio, windowWidth, selectedRadioInput };
 
-  return isInline ?
-    (
-      <div
-        className="field is-horizontal"
-        {...fieldAttributes}
-      >
-        <div className="field-label is-normal" style={style.fieldLabel}>
-          <Label {...labelAttributes} />
-        </div>
-        <div className="field-body" style={style.subSectionFieldBody}>
-          <div className="field">
-            <Control isInline {...{ isRadio, hasIcon, windowWidth }}>
-              {children}
-            </Control>
-          </div>
-        </div>
-      </div>
-    ) :
-    (
-      <div className="field" {...fieldAttributes}>
+  return isInline ? (
+    <div
+      className="field is-horizontal"
+      {...fieldAttributes}
+    >
+      <div className="field-label is-normal" style={style.fieldLabel}>
         <Label {...labelAttributes} />
-        <Control {...{ isRadio, hasIcon, windowWidth }}>
-          {children}
-        </Control>
       </div>
-    );
+      <div className="field-body" style={style.subSectionFieldBody}>
+        <div className="field">
+          <Control isInline {...{ isRadio, hasIcon, windowWidth }}>
+            {children}
+          </Control>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div className="field" {...fieldAttributes}>
+      <Label {...labelAttributes} />
+      <Control {...{ isRadio, hasIcon, windowWidth }}>
+        {children}
+      </Control>
+    </div>
+  );
 }
 
 const BoxInputFrame = addData(_BoxInputFrame_needsData, 'windowWidth', windowWidthService);

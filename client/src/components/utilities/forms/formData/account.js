@@ -1,4 +1,4 @@
-import { constants } from '../../../utilities';
+import { constants } from '../../../../utilities';
 const { emailRegEx } = constants;
 
 function getTakenUsernameDisplayMessage(username) {

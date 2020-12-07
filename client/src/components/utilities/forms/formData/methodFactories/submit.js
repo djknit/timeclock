@@ -3,7 +3,7 @@ import { genericFormStates } from '../formState.js';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
-function submitFactory() {
+function submitFactory(hasCountdown) {
 
   return function (event) {
     event.preventDefault();
@@ -36,6 +36,7 @@ function submitFactory() {
       return this.processSuccessResponse && this.processSuccessResponse(res);
     })
     .then(() => {
+      if (hasCountdown === false) return;
       const intervalId = setInterval(
         () => {
           secondsUntilRedirect -= stepSizeOfRedirectDelay;
@@ -48,7 +49,7 @@ function submitFactory() {
         },
         1000 * stepSizeOfRedirectDelay
       );
-    }) 
+    })
     .catch(err => {
       const _err = err || {};
       if (this.props.catchApiUnauthorized) this.props.catchApiUnauthorized(err);

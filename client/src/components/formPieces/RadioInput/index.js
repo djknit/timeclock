@@ -14,12 +14,17 @@ function RadioInput({
   isActive,
   isInline,
   fieldToLabelRatio,
-  fieldStyle
+  fieldStyle,
+  inputRef
 }) {
+
+  function isSelected(option) {
+    return option.value === value;
+  }
 
   function getSelectedOptionRef() {
     for (let i = 0; i < options.length; i++) {
-      if (options[i].value === value) return options[i].ref;
+      if (isSelected(options[i])) return options[i].ref;
     }
   }
 
@@ -42,43 +47,30 @@ function RadioInput({
         isInline,
         fieldToLabelRatio
       }}
-      selectedRadioInput={getSelectedOptionRef()}
+      selectedRadioInput={inputRef || getSelectedOptionRef()}
       styles={{ field: fieldStyle }}
     >
-      {options.map(
-        (option, index) => (
-          <label className="radio" disabled={!isActive} key={option.value} style={style.label}>
-            <input
-              type="radio"
-              name={propName}
-              value={option.value}
-              checked={value === option.value}
-              onChange={changeHandlerFactory(propName, true, processValue)}
-              ref={option.ref}
-              className={hasProblem ? 'is-danger' : undefined}
-              disabled={!isActive}
-              style={style.input}
-            />
-            {option.label}
-          </label>
-        )
-      )}
-      {helpText &&
+      {options.map(option => (
+        <label className="radio" disabled={!isActive} key={option.value} style={style.label}>
+          <input
+            type="radio"
+            name={propName}
+            value={option.value}
+            checked={value === option.value}
+            onChange={changeHandlerFactory(propName, true, processValue)}
+            ref={(isSelected(option) && inputRef) || option.ref}
+            className={hasProblem ? 'is-danger' : undefined}
+            disabled={!isActive}
+            style={style.input}
+          />
+          {option.label}
+        </label>
+      ))}
+      {helpText && (
         <p className="help">{helpText}</p>
-      }
+      )}
     </BoxInputFrame>
   );
 }
 
 export default RadioInput;
-
-function Wrapper({ children, label }) {
-  return (
-    label ?
-    <fieldset>
-      <legend className="label">{label}</legend>
-      {children}
-    </fieldset> :
-    <>{children}</>
-  );
-}

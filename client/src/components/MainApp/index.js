@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { userService, areModalsOpenService } from '../../data';
-import { api } from './utilities';
+import { api, addReportModalActivity, modalTogglerFactoryFactory } from './utilities';
 import getStyle from './style';
 import Navbar from './Navbar';
 import Dashboard from './Dashboard';
@@ -17,24 +17,26 @@ class MainApp extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
-    this.reportModalActivity = this.reportModalActivity.bind(this);
-    this.modalToggleFactory = this.modalToggleFactory.bind(this);
+    this.modalTogglerFactory = modalTogglerFactoryFactory().bind(this);
     this.catchApiUnauthorized = this.catchApiUnauthorized.bind(this);
     this.newJobInputRef = React.createRef();
     this.deletingAccountPropInputRef = React.createRef();
     this.editingAccountPropInputRef = React.createRef();
     this.toggleNewJobModal = (
-      this.modalToggleFactory('isNewJobModalActive', this.newJobInputRef).bind(this)
+      this.modalTogglerFactory('isNewJobModalActive', this.newJobInputRef).bind(this)
     );
     this.toggleEditAccountModal = (
       this
-      .modalToggleFactory('isEditAccountModalActive', this.editingAccountPropInputRef, true)
+      .modalTogglerFactory('isEditAccountModalActive', this.editingAccountPropInputRef, 'accountPropToEditName')
       .bind(this)
     );
     this.toggleDeleteAccountPropModal = (
       this
-      .modalToggleFactory('isDeleteAccountPropModalActive', this.deletingAccountPropInputRef, true)
+      .modalTogglerFactory('isDeleteAccountPropModalActive', this.deletingAccountPropInputRef, 'accountPropToEditName')
       .bind(this)
+    );
+    addReportModalActivity(
+      this, ['isNewJobModalActive', 'isEditAccountModalActive', 'isDeleteAccountPropModalActive']
     );
     this.state = {
       navHeight: undefined,
@@ -48,32 +50,6 @@ class MainApp extends Component {
 
   setNavHeight(navHeight) {
     this.setState({ navHeight });
-  };
-
-  reportModalActivity() {
-    const { state } = this;
-    const hasModalActive = (
-      state.isNewJobModalActive ||
-      state.isEditAccountModalActive ||
-      state.isDeleteAccountPropModalActive
-    );
-    areModalsOpenService.report(state.modalsRegistrationId, hasModalActive);
-  };
-
-  modalToggleFactory(modalIsActivePropName, inputRef, usesAccountEdit) {
-    return function(isActiveAfterToggle, propToEditName) {
-      let stateUpdates = { [modalIsActivePropName]: !!isActiveAfterToggle };
-      if (usesAccountEdit && propToEditName) {
-        stateUpdates.accountPropToEditName = propToEditName;
-      }
-      this.setState(
-        stateUpdates,
-        () => {
-          if (isActiveAfterToggle) inputRef.current.focus();
-          this.reportModalActivity();
-        }
-      );
-    };
   };
 
   catchApiUnauthorized(err) {
@@ -156,10 +132,10 @@ class MainApp extends Component {
 
     const openNewJobModal = () => toggleNewJobModal(true);
     const accountEditingModalOpenerFactory = propToEditName => {
-      return () => toggleEditAccountModal(true, propToEditName);
+      return (() => toggleEditAccountModal(true, propToEditName));
     };
     const accountPropDeletingModalOpenerFactory = propToDeleteName => {
-      return () => toggleDeleteAccountPropModal(true, propToDeleteName);
+      return (() => toggleDeleteAccountPropModal(true, propToDeleteName));
     };
 
     const renderDashboard = props => (

@@ -1,6 +1,8 @@
+import modalTogglerFactoryFactory from './modalTogglerFactoryFactory';
 export * from '../../utilities';
 export * from './currency';
-export * from './formData';
+export * from './forms';
+export { default as addReportModalActivity } from './addReportModalActivity';
 
 function promiseToSetState(component, updatedState) {
   return new Promise(resolve => component.setState(updatedState, resolve));
@@ -35,5 +37,6 @@ export {
   promiseToSetState,
   getColorClass,
   getSizeClass,
-  keyTriggerCheckerFactory
+  keyTriggerCheckerFactory,
+  modalTogglerFactoryFactory
 };

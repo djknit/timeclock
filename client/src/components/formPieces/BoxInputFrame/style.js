@@ -2,12 +2,12 @@ import { isWindowWide } from '../style';
 
 export default function(styles, windowWidth, fieldToLabelRatio = 5.8, isInline) {
 
-  const additionalLabelStyles = (styles && styles.label) || {};
   const labelStyles = (
     (!isWindowWide(windowWidth) && isInline) ?
     { textAlign: 'left' } :
     {}
   );
+  const additionalLabelStyles = styles && styles.label;
 
   return {
     normalWeight: {
@@ -21,4 +21,4 @@ export default function(styles, windowWidth, fieldToLabelRatio = 5.8, isInline) 
     ...styles,
     label: { ...labelStyles, ...additionalLabelStyles }
   };
-}
+};

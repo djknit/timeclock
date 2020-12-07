@@ -26,7 +26,8 @@ function preprocessScheduleForDisplay(schedule, settingName) {
         startDateShortText: startDate && formatMyDate(startDate, 'MMM. D'),
         dateRangeText: getDateRangeText(startDate, endDate),
         dateRangeShortText: getDateRangeText(startDate, endDate, true),
-        valueSimpleText: getSimpleJobSettingValueText(settingName, value)
+        valueSimpleText: getSimpleJobSettingValueText(settingName, value),
+        capDateRangeShortText: getDateRangeText(startDate, endDate, true, undefined, true)
       };
     }
   );

@@ -3,20 +3,29 @@ import { createAxiosInstance } from './elemental';
 const timeAxios = createAxiosInstance('time');
 
 const timeApi = {
-  addSegmentToDay() {
-
+  addSegmentToDay({
+    segment: { startTime, endTime }, // inner destructure is for autocomplete when using this method
+    dayId,
+    weekId
+  }) {
+    const segment = { startTime, endTime };
+    return timeAxios.post('/add-segment-to-day', { segment, dayId, weekId });
   },
-  addSegment() {
-
+  addSegment({
+    segment: { startTime, endTime }, // inner destructure is for autocomplete when using this method
+    jobId
+  }) {
+    const segment = { startTime, endTime };
+    return timeAxios.post('/add-segment', { segment, jobId });
   },
-  deleteSegment() {
-
+  deleteSegment({ segmentId, weekId, dayId }) {
+    return timeAxios.post('/delete-segment', { segmentId, weekId, dayId });
   },
-  deleteSegmentsForDateRange() {
-
+  deleteSegmentsForDateRange({ firstDate, lastDate, jobId }) {
+    return timeAxios.post('/delete-segments-for-date-range', { firstDate, lastDate, jobId });
   },
-  deleteSegmentsForDayIds() {
-
+  deleteSegmentsForDayIds({ ids, jobId }) {
+    return timeAxios.post('/delete-segments-for-day-ids', { ids, jobId });
   }
 };
 
