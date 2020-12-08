@@ -20,7 +20,7 @@ class TimePage extends Component {
     this.state = {
       isGeneralTimeEntryModalActive: false,
       isDeleteSegmentModalActive: false,
-      
+      modalsRegistrationId: undefined
     };
   };
 

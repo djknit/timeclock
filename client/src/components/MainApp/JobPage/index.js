@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { currentJobService, areModalsOpenService, windowWidthService } from '../../../data';
-import { api, modalTogglerFactoryFactory, addReportModalActivity } from '../utilities'
+import {
+  api,
+  addModalsStateAndMethods,
+  extractModalsResources,
+  createModalInfo
+} from '../utilities'
 import getStyle from './style';
 import ContentArea from '../ContentArea';
 import PageTitle from '../PageTitle';
@@ -15,27 +20,32 @@ import EditJobNameModal from './EditJobNameModal';
 import DeleteJobModal from './DeleteJobModal';
 import { addData } from '../../higherOrder';
 
+const modalsInfo = [
+  createModalInfo('editJobName', EditJobNameModal, true),
+  createModalInfo('deleteJob', DeleteJobModal, true)
+];
+
 class _JobPage_needsData extends Component {
   constructor(props) {
     super(props);
-    this.editJobNameInputRef = React.createRef();
-    this.deleteJobModalInputRef = React.createRef();
-    this.modalTogglerFactory = modalTogglerFactoryFactory();
-    this.toggleEditJobNameModal = (
-      this.modalTogglerFactory('isEditJobNameModalActive', this.editJobNameInputRef).bind(this)
-    );
-    this.toggleDeleteJobModal = (
-      this.modalTogglerFactory('isDeleteJobModalActive', this.deleteJobModalInputRef).bind(this)
-    );
-    addReportModalActivity(this, ['isEditJobNameModalActive', 'isDeleteJobModalActive']);
+    // this.editJobNameInputRef = React.createRef();
+    // this.deleteJobModalInputRef = React.createRef();
+    // this.modalTogglerFactory = modalTogglerFactoryFactory();
+    // this.toggleEditJobNameModal = (
+    //   this.modalTogglerFactory('isEditJobNameModalActive', this.editJobNameInputRef).bind(this)
+    // );
+    // this.toggleDeleteJobModal = (
+    //   this.modalTogglerFactory('isDeleteJobModalActive', this.deleteJobModalInputRef).bind(this)
+    // );
+    // addReportModalActivity(this, ['isEditJobNameModalActive', 'isDeleteJobModalActive']);
     this.setWaitingForDataState = this.setWaitingForDataState.bind(this);
+    let state = {};
+    addModalsStateAndMethods(this, state, modalsInfo);
     this.state = {
+      ...state,
       isLoading: false,
       hasProblem: false,
-      problemMessages: [],
-      isEditJobNameModalActive: false,
-      isDeleteJobModalActive: false,
-      modalsRegistrationId: undefined
+      problemMessages: []
     };
   };
 
@@ -65,9 +75,9 @@ class _JobPage_needsData extends Component {
       });
     }
 
-    this.setState({
-      modalsRegistrationId: areModalsOpenService.getId()
-    });
+    // this.setState({
+    //   modalsRegistrationId: areModalsOpenService.getId()
+    // });
   };
 
   componentWillUnmount() {

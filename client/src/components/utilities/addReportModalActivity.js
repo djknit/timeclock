@@ -1,8 +1,17 @@
 import { areModalsOpenService } from '../../data';
 
-function addReportModalActivity(component, isActiveStatePropNames) {
+function addReportModalActivity(component, state, isActiveStatePropNames) {
   component.reportModalActivity = modalActivityReporterFactory(isActiveStatePropNames).bind(component);
+
 }
+
+// function addModalsStateAndMethods(component, state, modalNames, ) {
+//   component.reportModalActivity = modalActivityReporterFactory(isActiveStatePropNames).bind(component);
+//   isActiveStatePropNames.forEach(isModalActivePropName => {
+//     state[isModalActivePropName] = false;
+//   });
+//   state.modalsRegistrationId = areModalsOpenService.getId();
+// }
 
 function modalActivityReporterFactory(isActiveStatePropNames) {
   return function() {

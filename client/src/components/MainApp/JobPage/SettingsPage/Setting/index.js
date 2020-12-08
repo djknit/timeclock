@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import {
   preprocessScheduleForDisplay,
-  modalTogglerFactoryFactory,
-  addReportModalActivity
+  modalManagement as modalMgmtUtils
 } from '../utilities';
-import { windowWidthService, areModalsOpenService } from '../../../../../data';
+import { windowWidthService } from '../../../../../data';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
 import EditValueModal from '../EditValueModal';
@@ -15,17 +14,16 @@ import ChangeDateModal from '../ChangeDateModal';
 import ValueSchedule from './ValueSchedule';
 import { addData } from '../../../../higherOrder';
 
+const {
+  addModalsStateAndMethods, createModalInfo, reportModalsClosedFor, extractModalsResources
+} = modalMgmtUtils;
+
 function getUpdateOperationInfoObj(upOpName, modalComponent) {
   const fullName = `${upOpName}Update`;
-  const capFullName = fullName[0].toUpperCase() + fullName.slice(1);
-  return {
-    name: upOpName,
-    togglerName: `toggle${capFullName}Modal`,
-    inputRefName: `${fullName}InputRef`,
-    isActiveStateProp: `is${capFullName}ModalActive`,
-    ModalComponent: modalComponent,
-    focusMethodName: upOpName === 'changeDate' ? 'setFocus' : undefined
-  };
+  const hasInputRef = upOpName !== 'delete';
+  const propToEditOnToggleName = upOpName !== 'add' ? 'entryToEditId' : undefined;
+  const focusMethodName = upOpName === 'changeDate' ? 'setFocus' : undefined;
+  return createModalInfo(fullName, modalComponent, hasInputRef, propToEditOnToggleName, focusMethodName);
 }
 const updateOpsInfo = [
   getUpdateOperationInfoObj('add', AddEntryModal),
@@ -37,17 +35,9 @@ const updateOpsInfo = [
 class _Setting_needsData extends Component {
   constructor(props) {
     super(props);
-    this.modalTogglerFactory = modalTogglerFactoryFactory().bind(this);
-    let state = {};
-    updateOpsInfo.forEach(({ inputRefName, togglerName, isActiveStateProp, focusMethodName }) => {
-      this[inputRefName] = React.createRef();
-      this[togglerName] = this
-        .modalTogglerFactory(isActiveStateProp, this[inputRefName], 'entryToEditId', focusMethodName)
-        .bind(this);
-      state[isActiveStateProp] = false;
-    });
-    addReportModalActivity(this, updateOpsInfo.map(({ isActiveStateProp }) => isActiveStateProp));
     this.setEntryToEditId = this.setEntryToEditId.bind(this);
+    let state = {};
+    addModalsStateAndMethods(this, state, updateOpsInfo);
     this.state = {
       entryToEditId: undefined,
       ...state,
@@ -61,23 +51,13 @@ class _Setting_needsData extends Component {
     });
   };
 
-  componentDidMount() {
-    this.setState({
-      modalsRegistrationId: areModalsOpenService.getId(),
-    });
-  };
-
   componentWillUnmount() {
-    areModalsOpenService.report(this.state.modalsRegistrationId, false);
+    reportModalsClosedFor(this);
   };
 
   render() {
     const {
       setEntryToEditId,
-      toggleAddUpdateModal,
-      toggleEditUpdateModal,
-      toggleChangeDateUpdateModal,
-      toggleDeleteUpdateModal
     } = this;
     const {
       job,
@@ -89,6 +69,13 @@ class _Setting_needsData extends Component {
       windowWidth,
     } = this.props;
     const { entryToEditId } = this.state;
+
+    const { modals, modalTogglers } = extractModalsResources(this, updateOpsInfo);
+
+    const toggleAddUpdateModal = modalTogglers.addUpdate;
+    const toggleEditUpdateModal = modalTogglers.editUpdate;
+    const toggleChangeDateUpdateModal = modalTogglers.changeDateUpdate;
+    const toggleDeleteUpdateModal = modalTogglers.deleteUpdate;
 
     const valueSchedule = preprocessScheduleForDisplay(job.settings[settingName], settingName);
 
@@ -132,14 +119,16 @@ class _Setting_needsData extends Component {
             toggleDeleteValueModal={toggleDeleteUpdateModal}
           />
         </ContentArea>
-        {updateOpsInfo.map(
-          ({ ModalComponent, togglerName, inputRefName, isActiveStateProp, name }) => (
+        {modals.map(
+          ({ ModalComponent, toggle, inputRef, isActive, name }) => (
             <ModalComponent
               key={name}
               {...commonModalAttrs}
-              isActive={this.state[isActiveStateProp]}
-              closeModal={() => this[togglerName](false)}
-              inputRef={this[inputRefName]}
+              {...{
+                inputRef,
+                isActive
+              }}
+              closeModal={() => toggle(false)}
             />
           )
         )}
