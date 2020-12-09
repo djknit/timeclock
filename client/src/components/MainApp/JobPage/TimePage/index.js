@@ -1,33 +1,48 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { areModalsOpenService } from '../../../../data';
-import { modalTogglerFactoryFactory, addReportModalActivity } from './utilities';
+import { modalManagement, guessUserTimezone } from './utilities';
 import PageTitle from '../../PageTitle';
 import GeneralEntry from './GeneralEntry';
+import GeneralEntryModal from './GeneralEntryModal';
+import DeleteSegmentModal from './DeleteSegmentModal';
 import Summary from './Summary';
 import Weeks from './Weeks';
+
+const {
+  addModalsStateAndMethods, reportModalsClosedFor, extractModalsResources, createModalInfo
+} = modalManagement;
+
+const modalsInfo = [
+  createModalInfo('generalTimeEntry', GeneralEntryModal, true, undefined, 'setFocus'),
+  createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete')
+];
 
 class TimePage extends Component {
   constructor(props) {
     super(props);
-    this.entryModalInputRef = React.createRef();
-    this.modalTogglerFactory = modalTogglerFactoryFactory().bind(this);
-    this.toggleEntryModal = (
-      this.modalTogglerFactory('isGeneralTimeEntryModalActive', this.entryModalInputRef).bind(this)
-    );
-    this.toggleDeleteSegmentModal = this.modalTogglerFactory('isDeleteSegmentModalActive');
-    addReportModalActivity(this, ['isGeneralTimeEntryModalActive', 'isDeleteSegmentModalActive']);
+    let state = {};
+    addModalsStateAndMethods(this, state, modalsInfo);
     this.state = {
-      isGeneralTimeEntryModalActive: false,
-      isDeleteSegmentModalActive: false,
-      modalsRegistrationId: undefined
+      ...state,
+      segmentToDelete: undefined,
+      displayTimezone: guessUserTimezone()
     };
+  };
+
+  componentWillUnmount() {
+    reportModalsClosedFor(this);
   };
 
   render() {
 
     const { job, parentPath, windowWidth } = this.props;
+    const { segmentToDelete, displayTimezone } = this.state;
     console.log(job)
+
+    const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
+
+    const toggleGeneralEntryModal = modalTogglers.generalTimeEntry;
+    const toggleDeleteSegmentModal = modalTogglers.deleteSegment;
 
     const crumbChain = [
       {
@@ -50,10 +65,30 @@ class TimePage extends Component {
           />
           <GeneralEntry
             style={style.generalEntryArea}
-            {...{ job }}
+            {...{
+              job,
+              toggleGeneralEntryModal,
+              toggleDeleteSegmentModal,
+              displayTimezone
+            }}
           />
         </div>
         <Weeks />
+        {modals.map(
+          ({ ModalComponent, toggle, inputRef, isActive, name }) => (
+            <ModalComponent
+              key={name}
+              {...{
+                isActive,
+                inputRef,
+                ...(name === 'deleteSegment' ? { segmentToDelete } : {}),
+                job,
+                displayTimezone
+              }}
+              closeModal={() => toggle(false)}
+            />
+          )
+        )}
       </>
     );
   };

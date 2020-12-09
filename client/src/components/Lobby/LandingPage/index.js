@@ -1,64 +1,43 @@
 import React, { Component } from 'react';
 import logo from '../../../logo_wide.png'
-import { windowWidthService, userService, areModalsOpenService } from '../../../data';
+import { windowWidthService } from '../../../data';
 import getStyle from './style';
-import { api } from './utilities';
+import { modalManagement } from './utilities';
 import Button from '../../Button';
 import SkipLogin from './SkipLogin'; // fast auto-login only for development
 import NewUserModal from './NewUserModal';
 import LoginModal from './LoginModal';
 import { addData } from '../../higherOrder';
 
+const {
+  addModalsStateAndMethods, createModalInfo, reportModalsClosedFor, extractModalsResources
+} = modalManagement;
+
+const modalsInfo = [
+  createModalInfo('newUser', NewUserModal, true),
+  createModalInfo('login', LoginModal, true)
+];
+
 class _LandingPage_needsData extends Component {
   constructor(props) {
     super(props);
-    this.modalToggleFactory = this.modalToggleFactory.bind(this);
-    this.newUserInputRef = React.createRef();
-    this.loginInputRef = React.createRef();
-    this.toggleNewUserModal = (
-      this.modalToggleFactory('isNewUserModalActive', this.newUserInputRef).bind(this)
-    );
-    this.toggleLoginModal = (
-      this.modalToggleFactory('isLoginModalActive', this.loginInputRef).bind(this)
-    );
-    this.state = {
-      isLoginModalActive: false,
-      isNewUserModalActive: false,
-      modalsRegistrationId: undefined
-    };
+    let state = {};
+    addModalsStateAndMethods(this, state, modalsInfo);
+    this.state = state;
   };
   
-  modalToggleFactory(modalIsActivePropName, inputRef) {
-    return function(isActiveAfterToggle) {
-      this.setState(
-        { [modalIsActivePropName]: !!isActiveAfterToggle },
-        () => {
-          if (isActiveAfterToggle) inputRef.current.focus();
-          const { isLoginModalActive, isNewUserModalActive, modalsRegistrationId } = this.state;
-          const areModalsOpen = isLoginModalActive || isNewUserModalActive;
-          areModalsOpenService.report(modalsRegistrationId, areModalsOpen);
-        }
-      );
-    };
-  };
-
-  componentDidMount() {
-    this.setState({
-      modalsRegistrationId: areModalsOpenService.getId()
-    });
-  };
-
   componentWillUnmount() {
-    areModalsOpenService.report(this.state.modalsRegistrationId, false);
+    reportModalsClosedFor(this);
   };
 
   render() {
 
-    const {
-      state, props, toggleLoginModal, toggleNewUserModal, loginInputRef, newUserInputRef
-    } = this;
-    const { isNewUserModalActive, isLoginModalActive } = state;
-    const { windowWidth, areAnyModalsOpen, history } = props;
+    const { windowWidth, areAnyModalsOpen, history } = this.props;
+
+    const { modalTogglers, modals } = extractModalsResources(this, modalsInfo);
+
+    const toggleLoginModal = modalTogglers.login;
+    const toggleNewUserModal = modalTogglers.newUser;
 
     const style = getStyle(windowWidth);
 
@@ -85,18 +64,19 @@ class _LandingPage_needsData extends Component {
             Log In
           </Button>
         </div>
-        <NewUserModal
-          history={props.history}
-          isActive={isNewUserModalActive}
-          closeModal={() => toggleNewUserModal(false)}
-          inputRef={newUserInputRef}
-        />
-        <LoginModal
-          history={props.history}
-          isActive={isLoginModalActive}
-          closeModal={() => toggleLoginModal(false)}
-          inputRef={loginInputRef}
-        />
+        {modals.map(
+          ({ ModalComponent, toggle, isActive, inputRef, name }) => (
+            <ModalComponent
+              key={name}
+              {...{
+                isActive,
+                inputRef,
+                history
+              }}
+              closeModal={() => toggle(false)}
+            />
+          )
+        )}
       </div>
     );
   };

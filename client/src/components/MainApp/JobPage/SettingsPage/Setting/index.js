@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import {
-  preprocessScheduleForDisplay,
-  modalManagement as modalMgmtUtils
-} from '../utilities';
+import { preprocessScheduleForDisplay, modalManagement } from '../utilities';
 import { windowWidthService } from '../../../../../data';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
@@ -16,7 +13,7 @@ import { addData } from '../../../../higherOrder';
 
 const {
   addModalsStateAndMethods, createModalInfo, reportModalsClosedFor, extractModalsResources
-} = modalMgmtUtils;
+} = modalManagement;
 
 function getUpdateOperationInfoObj(upOpName, modalComponent) {
   const fullName = `${upOpName}Update`;
@@ -56,9 +53,7 @@ class _Setting_needsData extends Component {
   };
 
   render() {
-    const {
-      setEntryToEditId,
-    } = this;
+    const { setEntryToEditId } = this;
     const {
       job,
       settingName,

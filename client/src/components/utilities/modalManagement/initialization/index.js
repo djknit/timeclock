@@ -7,7 +7,6 @@ import { modalActivityReporterFactory } from './activityReporting';
 const unmountingReporterMethodName = '_reportAllModalsClosed';
 
 function addModalsStateAndMethods(component, state, modalsInfo) {
-
   const modalsCompleteInfo = modalsInfo.map(getCompleteModalInfo);
   const _isActiveStatePropNames = modalsCompleteInfo.map(
     ({ isActiveStatePropName }) => isActiveStatePropName

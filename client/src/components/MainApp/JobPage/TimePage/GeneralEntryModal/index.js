@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
+import getStyle from './style';
 import {
   api,
   constants,
   bindFormMethods,
   getTimeInputProblems
-} from '../../utilities';
-import ModalSkeleton from '../../../../../ModalSkeleton';
-import { FormMessages } from '../../../../../formPieces';
-import Button from '../../../../../Button';
+} from '../utilities';
+import ModalSkeleton from '../../../../ModalSkeleton';
+import { FormMessages } from '../../../../formPieces';
+import Button from '../../../../Button';
 
 const formId = 'general-time-entry-add-segment-form';
 
@@ -65,7 +66,10 @@ class EntryModal extends Component {
   processAndSubmitData() {
     const { startDate, endDate, startTime, endTime } = this.state;
     return api.time.addSegment({ 
-
+      segment: {
+        startTime: 0,
+        endTime: 0
+      }
     });
   };
 
@@ -86,12 +90,13 @@ class EntryModal extends Component {
       hasWarning,
       problemMessages,
       showMessage,
-      secondsUntilRedirect,
       isLoading,
       warningMessages
     } = this.state;
 
-    const isFormIncomplete = false // needs set once inputs are added
+    const isFormIncomplete = hasBlankInput(this.state);
+
+    const style = getStyle();
 
     return (
       <ModalSkeleton
@@ -128,15 +133,37 @@ class EntryModal extends Component {
           </>
         }
       >
-        <FormMessages
+        <form id={formId}>
+          <div style={style.messagesArea}>
+            <FormMessages
+              {...{
+                showMessage,
+                hasSuccess,
+                hasProblem,
+                hasWarning,
+                problemMessages,
+                warningMessages,
+              }}
+              infoMessages={[
+                'Use the form below to record your time worked one time segment at a time.',
+                'Enter the segment start (clock-in) time and end (clock-out) time for each segment.'
+              ]}
+              successMessages={[
+                'Time segment successfully added.',
+                'Would you like to enter more time?'
+              ]}
+              closeMessage={() => this.setState({ showMessage: false })}
+            />
+          </div>
 
-        />
+        </form>
       </ModalSkeleton>
     );
   };
 }
 
 export default EntryModal;
+
 
 function getTimeInputStartingValue() {
   return {
@@ -145,4 +172,16 @@ function getTimeInputStartingValue() {
     hour: undefined,
     minute: undefined
   };
+}
+
+function hasBlankInput({ startDate, endDate, startTime, endTime }) {
+  return (
+    !startDate || !endDate ||
+    !startTime || isTimeInputPartBlank(startTime) ||
+    !endTime || isTimeInputPartBlank(endTime)
+  );
+}
+
+function isTimeInputPartBlank({ hour, minute }) {
+  return (!hour || !minute);
 }

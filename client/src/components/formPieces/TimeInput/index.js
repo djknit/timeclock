@@ -1,6 +1,10 @@
 import React from 'react';
 import getStyle from './style';
+import { constants } from '../utilities';
 import BoxInputFrame from '../BoxInputFrame';
+import time from 'timeclock-shared-resources/utilities/jobData/time';
+
+const { minsPerHr } = constants;
 
 function TimeInput({
   isInline,
@@ -24,8 +28,9 @@ function TimeInput({
   function inputProcessorFactory(childPropName) {
     return function(childPropValue) {
       let _value = { ...value };
-      if (childPropName === 'is24hr') {
-        _value[childPropName] = childPropValue;
+      if (childPropName === 'is24hr' && childPropValue !== value[childPropName]) {
+        const converter = childPropValue ? convertAmPmTimeTo24hr : convert24hrTimeToAmPm;
+        Object.assign(_value, converter(value));
       }
       else if (childPropName !== 'amPm') {
         _value[childPropName] = (
@@ -34,9 +39,14 @@ function TimeInput({
           undefined
         );
       }
+      else {
+        _value[childPropName] = childPropValue;
+      }
       return _value;
     };
   }
+
+  const { hour, minute,  } = value || {};
 
   let inputIdPrefix = sectionName || '';
   inputIdPrefix += `${propName}-input-${formId}`;
@@ -126,5 +136,91 @@ function getCompleteProblems({ problems, value, hasProblem }) {
   return {
     problems: _problems,
     problemMessages
+  };
+}
+
+function getTimeInputStore(timeParam = {}) {
+  let _time = {
+    hour: timeParam.hour,
+    minute: timeParam.minute,
+    is24hr: !!timeParam.is24hr,
+    amPm: timeParam.amPm
+  };
+
+  return {
+    get hour() {
+      return _time.hour;
+    },
+    get minute() {
+      return _time.minute;
+    },
+    get is24hr() {
+      return _time.is24hr;
+    },
+    get amPm() {
+      if (_time.is24hr) return;
+      return (_time.amPm || 'am');
+    },
+    set hour(_hour) {
+      _time.hour = parseInt(_hour) || undefined;
+    },
+    set minute(_minute) {
+      _time.minute = parseInt(_minute) || undefined;
+    },
+    set is24hr(_is24hr) {
+      if (_is24hr === _time.is24hr) return;
+      if (_is24hr) {
+        Object.assign(_time, convertAmPmTimeTo24hr(_time));
+      }
+      else {
+        Object.assign(_time, convert24hrTimeToAmPm(_time));
+      }
+    },
+    set amPm(_amPm) {
+      _time.amPm = _amPm;
+    }
+  };
+}
+
+function convertAmPmTimeTo24hr(_amPmTime) {
+  let _24hrTime = {
+    is24hr: true,
+    amPm: undefined,
+    minute: _amPmTime.minute
+  };
+  const _hour = _amPmTime.hour;
+  if (!_hour && _hour !== 0) {
+    _24hrTime.hour = undefined;
+    return _24hrTime;
+  }
+  if (_hour === 12) {
+    _hour = 0;
+  }
+  if (_amPmTime.amPm === 'pm' && _hour >= 0 && _hour < 12) {
+    _hour += 12;
+  }
+  return {
+    ..._24hrTime,
+    hour: _hour
+  };
+}
+
+function convert24hrTimeToAmPm(_24hrTime) {
+  let _amPmTime = {
+    is24hr: false,
+    minute: _24hrTime.minute
+  };
+  const _hour = _24hrTime.hour;
+  if ((!_hour && _hour !== 0) || _hour < 0 || _hour > 23) {
+    return {
+      ..._amPmTime,
+      hour: _hour,
+      amPm: 'am'
+    };
+  }
+  return {
+    ..._amPmTime,
+    amPm: _hour >= 12 ? 'pm' : 'am',
+    hour: (_hour % 12) || 12
   };
 }

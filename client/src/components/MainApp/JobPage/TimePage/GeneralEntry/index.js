@@ -1,12 +1,13 @@
 import React from 'react';
 import getStyle from './style';
+import Button from '../../../../Button';
 import ContentArea from '../../../ContentArea';
-import DeleteSegmentModal from '../DeleteSegmentModal';
-import EntryModal from './EntryModal';
 
 function GeneralEntry({
   style: styleProp,
-  job
+  job,
+  toggleGeneralEntryModal,
+  toggleDeleteSegmentModal
 }) {
 
   const style = getStyle(styleProp);
@@ -14,14 +15,13 @@ function GeneralEntry({
   return (
     <>
       <ContentArea title="Enter Time" style={style.contentArea}>
-        
+        <Button
+          theme="primary"
+          onClick={() => toggleGeneralEntryModal(true)}
+        >
+          <i className="fas fa-plus" /> Enter Time
+        </Button>
       </ContentArea>
-      <EntryModal
-        {...{ job }}
-      />
-      {/* <DeleteSegmentModal
-        
-      /> */}
     </>
   );
 }

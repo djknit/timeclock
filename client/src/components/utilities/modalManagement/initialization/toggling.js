@@ -3,7 +3,6 @@ function modalTogglerFactoryFactory(reportModalActivity) {
   return function (
     modalIsOpenStatePropName, inputRef, otherStatePropToEditName, inputFocusMethodName
   ) {
-
     const _focusInput = () => {
       if (!this.state[modalIsOpenStatePropName] || !inputRef) return;
       if (inputRef.current) {

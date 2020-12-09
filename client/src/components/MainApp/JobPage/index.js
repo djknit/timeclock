@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { currentJobService, areModalsOpenService, windowWidthService } from '../../../data';
-import {
-  api,
-  addModalsStateAndMethods,
-  extractModalsResources,
-  createModalInfo
-} from '../utilities'
+import { currentJobService, windowWidthService } from '../../../data';
+import { api, modalManagement } from '../utilities'
 import getStyle from './style';
 import ContentArea from '../ContentArea';
 import PageTitle from '../PageTitle';
@@ -20,6 +15,10 @@ import EditJobNameModal from './EditJobNameModal';
 import DeleteJobModal from './DeleteJobModal';
 import { addData } from '../../higherOrder';
 
+const {
+  createModalInfo, addModalsStateAndMethods, extractModalsResources, reportModalsClosedFor
+} = modalManagement;
+
 const modalsInfo = [
   createModalInfo('editJobName', EditJobNameModal, true),
   createModalInfo('deleteJob', DeleteJobModal, true)
@@ -28,16 +27,6 @@ const modalsInfo = [
 class _JobPage_needsData extends Component {
   constructor(props) {
     super(props);
-    // this.editJobNameInputRef = React.createRef();
-    // this.deleteJobModalInputRef = React.createRef();
-    // this.modalTogglerFactory = modalTogglerFactoryFactory();
-    // this.toggleEditJobNameModal = (
-    //   this.modalTogglerFactory('isEditJobNameModalActive', this.editJobNameInputRef).bind(this)
-    // );
-    // this.toggleDeleteJobModal = (
-    //   this.modalTogglerFactory('isDeleteJobModalActive', this.deleteJobModalInputRef).bind(this)
-    // );
-    // addReportModalActivity(this, ['isEditJobNameModalActive', 'isDeleteJobModalActive']);
     this.setWaitingForDataState = this.setWaitingForDataState.bind(this);
     let state = {};
     addModalsStateAndMethods(this, state, modalsInfo);
@@ -74,21 +63,14 @@ class _JobPage_needsData extends Component {
         });
       });
     }
-
-    // this.setState({
-    //   modalsRegistrationId: areModalsOpenService.getId()
-    // });
   };
 
   componentWillUnmount() {
-    areModalsOpenService.report(this.state.modalsRegistrationId, false);
+    reportModalsClosedFor(this);
     currentJobService.clearValue();
   };
 
   render() {
-    const {
-      toggleEditJobNameModal, toggleDeleteJobModal, editJobNameInputRef, deleteJobModalInputRef
-    } = this;
     const {
       job,
       match,
@@ -100,9 +82,12 @@ class _JobPage_needsData extends Component {
       jobPageSubpaths,
       jobSettingsPageSubpaths
     } = this.props;
-    const {
-      isLoading, problemMessages, isEditJobNameModalActive, isDeleteJobModalActive
-    } = this.state;
+    const { isLoading, problemMessages } = this.state;
+
+    const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
+
+    const toggleEditJobNameModal = modalTogglers.editJobName;
+    const toggleDeleteJobModal = modalTogglers.deleteJob;
     
     const style = getStyle();
 
@@ -171,25 +156,21 @@ class _JobPage_needsData extends Component {
             />
             <Route component={NotFound} />
           </Switch>
-          <EditJobNameModal
-            isActive={isEditJobNameModalActive}
-            {...{
-              job,
-              catchApiUnauthorized
-            }}
-            inputRef={editJobNameInputRef}
-            closeModal={() => toggleEditJobNameModal(false)}
-          />
-          <DeleteJobModal
-            isActive={isDeleteJobModalActive}
-            {...{
-              job,
-              catchApiUnauthorized,
-              returnToDashboard
-            }}
-            inputRef={deleteJobModalInputRef}
-            closeModal={() => toggleDeleteJobModal(false)}
-          />
+          {modals.map(
+            ({ ModalComponent, isActive, inputRef, toggle, name }) => (
+              <ModalComponent
+                key={name}
+                {...{
+                  isActive,
+                  inputRef,
+                  job,
+                  catchApiUnauthorized
+                }}
+                {...(name === 'deleteJob' ? { returnToDashboard } : {})}
+                closeModal={() => toggle(false)}
+              />
+            )
+          )}
         </>
       ) : (
         <>
