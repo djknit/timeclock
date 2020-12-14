@@ -9,15 +9,22 @@ import {
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
 import Button from '../../../../Button';
+import DateTimeInput from './DateTimeInput';
+
+const { datePickerPopperHeight } = constants;
 
 const formId = 'general-time-entry-add-segment-form';
+const inputFieldMarginBottom = '0.75rem'; // matches Bulma style for `.field:not(:last-child)`
+const sectionLabelMarginBottom = '0.5rem'; // matches Bulma style for `.label:not(:last-child)`, almost ("em"->"rem") 
 
 class EntryModal extends Component {
   constructor(props) {
     super(props);
-    this.resetJustAdded = this.resetJustAdded.bind(this);
     bindFormMethods(this, { hasCountdown: false });
+    this.resetJustAdded = this.resetJustAdded.bind(this);
+    this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
     this.firstInputArea = React.createRef();
+    this.firstInputAreaLabel = React.createRef();
     this.state = {
       ...this.getStartingState(),
       justAdded: []
@@ -29,7 +36,8 @@ class EntryModal extends Component {
       startDate: null,
       endDate: null,
       startTime: getTimeInputStartingValue(),
-      endTime: getTimeInputStartingValue()
+      endTime: getTimeInputStartingValue(),
+      messagesAreaMinHeight: undefined
     };
   };
 
@@ -44,6 +52,24 @@ class EntryModal extends Component {
     if (hasBeenSubmitted) {
       this.setState(this.getInputProblems());
     }
+  };
+
+  handleDatepickerPopperToggle(isActiveAfterToggle, isStartDate) {
+    // need to make space for datepicker popper above date input.
+    // if (!this.firstInputArea.current || !this.firstInputAreaLabel.current) return;
+    const sectionLabelHeight = this.firstInputAreaLabel.current.clientHeight;
+    let roomAvailableBelowMsgArea = `${sectionLabelHeight}px + ${sectionLabelMarginBottom}`;
+    if (!isStartDate) {
+      const firstSectionHeight = this.firstInputArea.current.clientHeight;
+      roomAvailableBelowMsgArea += ` + ${firstSectionHeight}px`;
+    }
+    this.setState({
+      messagesAreaMinHeight: isActiveAfterToggle ? (
+        `calc(${datePickerPopperHeight} - (${roomAvailableBelowMsgArea}))`
+      ) : (
+        undefined
+      )
+    });
   };
 
   getInputProblems() {
@@ -82,8 +108,16 @@ class EntryModal extends Component {
   };
 
   render() {
-    const { reset, submit, resetJustAdded } = this;
-    const { isActive, closeModal } = this.props;
+    const {
+      reset,
+      submit,
+      resetJustAdded,
+      changeHandlerFactory,
+      firstInputArea,
+      firstInputAreaLabel,
+      handleDatepickerPopperToggle
+    } = this;
+    const { isActive, closeModal, inputRef } = this.props;
     const {
       hasSuccess,
       hasProblem,
@@ -91,12 +125,30 @@ class EntryModal extends Component {
       problemMessages,
       showMessage,
       isLoading,
-      warningMessages
+      warningMessages,
+      problems,
+      messagesAreaMinHeight
     } = this.state;
 
     const isFormIncomplete = hasBlankInput(this.state);
 
-    const style = getStyle();
+    const getInputProps = propName => ({
+      propName,
+      problems: problems[propName],
+      hasProblem: !!problems[propName],
+      value: this.state[propName]
+    });
+
+    const commonAttrs = {
+      changeHandlerFactory,
+      formId,
+      isActive: !isLoading,
+      handleDatepickerPopperToggle,
+      inputFieldMarginBottom,
+      sectionLabelMarginBottom
+    };
+
+    const style = getStyle(messagesAreaMinHeight);
 
     return (
       <ModalSkeleton
@@ -155,7 +207,25 @@ class EntryModal extends Component {
               closeMessage={() => this.setState({ showMessage: false })}
             />
           </div>
-
+          <div ref={firstInputArea} style={style.firstInputArea}>
+            <DateTimeInput
+              sectionLabel="Time Segment Start (Clock-In)"
+              timeInputProps={getInputProps('startTime')}
+              dateInputProps={getInputProps('startDate')}
+              {...commonAttrs}
+              sectionName="segment-start"
+              {...{ inputRef }}
+              labelAreaRef={firstInputAreaLabel}
+            />
+          </div>
+          <DateTimeInput
+            sectionLabel="Time Segment End (Clock-Out)"
+            timeInputProps={getInputProps('endTime')}
+            dateInputProps={getInputProps('endDate')}
+            {...commonAttrs}
+            sectionName="segment-end"
+            isLast
+          />
         </form>
       </ModalSkeleton>
     );

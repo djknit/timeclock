@@ -1,8 +1,7 @@
 import React from 'react';
 import getStyle from './style';
-import { constants } from '../utilities';
+import { constants, convertAmPmTimeTo24hr, convert24hrTimeToAmPm } from '../utilities';
 import BoxInputFrame from '../BoxInputFrame';
-import time from 'timeclock-shared-resources/utilities/jobData/time';
 
 const { minsPerHr } = constants;
 
@@ -79,7 +78,7 @@ function TimeInput({
         disabled={!isActive}
         ref={inputRef}
         placeholder="Hr"
-        style={style.hourInput}
+        style={style.hoursInput}
       />
       <span style={style.colon}>:</span>
       <input
@@ -89,7 +88,7 @@ function TimeInput({
         onChange={changeHandlerFactory(propName, true, inputProcessorFactory('minute'))}
         disabled={!isActive}
         placeholder="min"
-        style={style.minuteInput}
+        style={style.minutesInput}
       />
       {problemMessages && problemMessages.map(
         msg => (
@@ -116,13 +115,13 @@ function getCompleteProblems({ problems, value, hasProblem }) {
   let problemMessages = [];
   const { minute, hour, is24hr } = value;
   const addInvalidNumberProbs = (isHour, minimum, max) => {
-    problems[isHour ? 'hour' : 'minute'] = true;
+    _problems[isHour ? 'hour' : 'minute'] = true;
     problemMessages.push(
       `Invalid ${isHour} value: can\'t be less than ${minimum} or greater than ${max}.`
     );
   };
   if (is24hr && (hour < 0 || hour > 23)) {
-    problems.hour = true;
+    _problems.hour = true;
     addInvalidNumberProbs('hour', 0, 23);
   }
   else if (hour < 1 || hour > 12) {
@@ -136,91 +135,5 @@ function getCompleteProblems({ problems, value, hasProblem }) {
   return {
     problems: _problems,
     problemMessages
-  };
-}
-
-function getTimeInputStore(timeParam = {}) {
-  let _time = {
-    hour: timeParam.hour,
-    minute: timeParam.minute,
-    is24hr: !!timeParam.is24hr,
-    amPm: timeParam.amPm
-  };
-
-  return {
-    get hour() {
-      return _time.hour;
-    },
-    get minute() {
-      return _time.minute;
-    },
-    get is24hr() {
-      return _time.is24hr;
-    },
-    get amPm() {
-      if (_time.is24hr) return;
-      return (_time.amPm || 'am');
-    },
-    set hour(_hour) {
-      _time.hour = parseInt(_hour) || undefined;
-    },
-    set minute(_minute) {
-      _time.minute = parseInt(_minute) || undefined;
-    },
-    set is24hr(_is24hr) {
-      if (_is24hr === _time.is24hr) return;
-      if (_is24hr) {
-        Object.assign(_time, convertAmPmTimeTo24hr(_time));
-      }
-      else {
-        Object.assign(_time, convert24hrTimeToAmPm(_time));
-      }
-    },
-    set amPm(_amPm) {
-      _time.amPm = _amPm;
-    }
-  };
-}
-
-function convertAmPmTimeTo24hr(_amPmTime) {
-  let _24hrTime = {
-    is24hr: true,
-    amPm: undefined,
-    minute: _amPmTime.minute
-  };
-  const _hour = _amPmTime.hour;
-  if (!_hour && _hour !== 0) {
-    _24hrTime.hour = undefined;
-    return _24hrTime;
-  }
-  if (_hour === 12) {
-    _hour = 0;
-  }
-  if (_amPmTime.amPm === 'pm' && _hour >= 0 && _hour < 12) {
-    _hour += 12;
-  }
-  return {
-    ..._24hrTime,
-    hour: _hour
-  };
-}
-
-function convert24hrTimeToAmPm(_24hrTime) {
-  let _amPmTime = {
-    is24hr: false,
-    minute: _24hrTime.minute
-  };
-  const _hour = _24hrTime.hour;
-  if ((!_hour && _hour !== 0) || _hour < 0 || _hour > 23) {
-    return {
-      ..._amPmTime,
-      hour: _hour,
-      amPm: 'am'
-    };
-  }
-  return {
-    ..._amPmTime,
-    amPm: _hour >= 12 ? 'pm' : 'am',
-    hour: (_hour % 12) || 12
   };
 }

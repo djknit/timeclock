@@ -11,6 +11,7 @@ import DayCutoffInput from './DayCutoffInput';
 import FormMessages from './FormMessages';
 import FormButtons from './FormButtons';
 import TimeInput from './TimeInput';
+import SectionLabel from './SectionLabel';
 
 export {
   TextInput,
@@ -25,5 +26,6 @@ export {
   DayCutoffInput,
   FormMessages,
   FormButtons,
-  TimeInput
+  TimeInput,
+  SectionLabel
 };

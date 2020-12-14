@@ -1,7 +1,8 @@
-export default function getStyle() {
+export default function getStyle(labelAreaStyle) {
   return {
     sectionLabel: {
-      position: 'relative'
+      position: 'relative',
+      ...labelAreaStyle
     },
     sectionLabelText: { // consider: match width and alignment to Bulma horizontal field-label
       position: 'absolute',

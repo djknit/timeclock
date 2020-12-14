@@ -36,10 +36,55 @@ const getWeekdayOptions = () => (
   )
 );
 
+function convertAmPmTimeTo24hr(_amPmTime) {
+  let _24hrTime = {
+    is24hr: true,
+    amPm: undefined,
+    minute: _amPmTime.minute
+  };
+  const _hour = _amPmTime.hour;
+  if (!_hour && _hour !== 0) {
+    _24hrTime.hour = undefined;
+    return _24hrTime;
+  }
+  if (_hour === 12) {
+    _hour = 0;
+  }
+  if (_amPmTime.amPm === 'pm' && _hour >= 0 && _hour < 12) {
+    _hour += 12;
+  }
+  return {
+    ..._24hrTime,
+    hour: _hour
+  };
+}
+
+function convert24hrTimeToAmPm(_24hrTime) {
+  let _amPmTime = {
+    is24hr: false,
+    minute: _24hrTime.minute
+  };
+  const _hour = _24hrTime.hour;
+  if ((!_hour && _hour !== 0) || _hour < 0 || _hour > 23) {
+    return {
+      ..._amPmTime,
+      hour: _hour,
+      amPm: 'am'
+    };
+  }
+  return {
+    ..._amPmTime,
+    amPm: _hour >= 12 ? 'pm' : 'am',
+    hour: (_hour % 12) || 12
+  };
+}
+
 export {
   getMinutesFromHoursAndMinutes,
   getHoursAndMinutesFromMinutes,
   getTextOfHoursAndMinutes,
   getWeekdays,
-  getWeekdayOptions
+  getWeekdayOptions,
+  convertAmPmTimeTo24hr,
+  convert24hrTimeToAmPm
 };
