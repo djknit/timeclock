@@ -5,6 +5,7 @@ import PageTitle from '../../PageTitle';
 import GeneralEntry from './GeneralEntry';
 import GeneralEntryModal from './GeneralEntryModal';
 import DeleteSegmentModal from './DeleteSegmentModal';
+import General from './General';
 import Summary from './Summary';
 import Weeks from './Weeks';
 
@@ -13,7 +14,7 @@ const {
 } = modalManagement;
 
 const modalsInfo = [
-  createModalInfo('generalTimeEntry', GeneralEntryModal, true, undefined, 'setFocus'),
+  createModalInfo('generalTimeEntry', GeneralEntryModal, false, undefined, 'setFocus'),
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete')
 ];
 
@@ -63,7 +64,7 @@ class TimePage extends Component {
             timeData={job.time}
             {...{ windowWidth }}
           />
-          <GeneralEntry
+          <General
             style={style.generalEntryArea}
             {...{
               job,

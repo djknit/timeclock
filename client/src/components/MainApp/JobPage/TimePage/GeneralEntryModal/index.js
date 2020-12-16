@@ -43,10 +43,10 @@ class EntryModal extends Component {
 
   afterChange(propName) {
     const { startDate, endDate, hasBeenSubmitted } = this.state;
-    if (propName === 'startDate' && !endDate) {
+    if (propName === 'startDate' && startDate && !endDate) {
       this.setState({ endDate: { ...startDate }});
     }
-    else if (propName ==='endDate' && !startDate) {
+    else if (propName ==='endDate' && endDate && !startDate) {
       this.setState({ startDate: { ...endDate }});
     }
     if (hasBeenSubmitted) {
@@ -56,12 +56,11 @@ class EntryModal extends Component {
 
   handleDatepickerPopperToggle(isActiveAfterToggle, isStartDate) {
     // need to make space for datepicker popper above date input.
-    // if (!this.firstInputArea.current || !this.firstInputAreaLabel.current) return;
     const sectionLabelHeight = this.firstInputAreaLabel.current.clientHeight;
     let roomAvailableBelowMsgArea = `${sectionLabelHeight}px + ${sectionLabelMarginBottom}`;
     if (!isStartDate) {
       const firstSectionHeight = this.firstInputArea.current.clientHeight;
-      roomAvailableBelowMsgArea += ` + ${firstSectionHeight}px`;
+      roomAvailableBelowMsgArea += ` + ${firstSectionHeight}px + ${inputFieldMarginBottom}`;
     }
     this.setState({
       messagesAreaMinHeight: isActiveAfterToggle ? (
@@ -198,7 +197,7 @@ class EntryModal extends Component {
               }}
               infoMessages={[
                 'Use the form below to record your time worked one time segment at a time.',
-                'Enter the segment start (clock-in) time and end (clock-out) time for each segment.'
+                'Enter the start (clock-in) time and end (clock-out) time for each segment.'
               ]}
               successMessages={[
                 'Time segment successfully added.',
