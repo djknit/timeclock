@@ -1,6 +1,8 @@
 import React from 'react';
 import getStyle from './style';
-import { constants, convertAmPmTimeTo24hr, convert24hrTimeToAmPm } from '../utilities';
+import {
+  constants, convertAmPmTimeTo24hr, convert24hrTimeToAmPm, getInputId
+} from '../utilities';
 import BoxInputFrame from '../BoxInputFrame';
 
 const { minsPerHr } = constants;
@@ -45,11 +47,10 @@ function TimeInput({
     };
   }
 
-  const { hour, minute,  } = value || {};
+  const { hour, minute, amPm, is24hr } = value || {};
 
-  let inputIdPrefix = sectionName || '';
-  inputIdPrefix += `${propName}-input-${formId}`;
-  const hourInputId = `${inputIdPrefix}-hour`;
+  const inputNamePrefix = sectionName ? `${sectionName}-${propName}` : propName;
+  const hourInputId = getInputId(formId, 'hour', inputNamePrefix);
 
   const { problems, problemMessages } = getCompleteProblems({
     problems: problemsProp,
@@ -57,6 +58,15 @@ function TimeInput({
     hasProblem
   });
   const style = getStyle(labelStyle, fieldStyle);
+
+  let is24hrInputsCommonAttrs = {
+    type: 'radio',
+    name: getInputId(formId, 'is24hr', inputNamePrefix),
+    onChange: changeHandlerFactory(propName, true, inputProcessorFactory('is24hr')),
+    className: (problems && problems.is24hr) ? 'is-danger' : undefined,
+    disabled: !isActive,
+    style: style.is24hrInput
+  };
 
   return (
     <BoxInputFrame
@@ -90,14 +100,44 @@ function TimeInput({
         placeholder="min"
         style={style.minutesInput}
       />
+      {!is24hr && (
+        <div className="select" style={style.amPmInput}>
+          <select
+            value={amPm}
+            onChange={changeHandlerFactory(propName, true, inputProcessorFactory('amPm'))}
+            disabled={!isActive}
+          >
+            <option value="am">AM</option>
+            <option value="pm">PM</option>
+          </select>
+        </div>
+      )}
+      <div style={style.is24hrInputGroup}>
+        <label className="radio">
+          <input
+            {...is24hrInputsCommonAttrs}
+            value={false}
+            checked={!is24hr}
+          />
+          AM/PM
+        </label>
+        <label className="radio">
+          <input
+            {...is24hrInputsCommonAttrs}
+            value={true}
+            checked={is24hr}
+          />
+          24 Hr.
+        </label>
+      </div>
       {problemMessages && problemMessages.map(
         msg => (
           <p className="help is-danger" key={msg}>{msg}</p>
         )
       )}
-      {helpText &&
+      {helpText && (
         <p className="help">{helpText}</p>
-      }
+      )}
     </BoxInputFrame>
   );
 }

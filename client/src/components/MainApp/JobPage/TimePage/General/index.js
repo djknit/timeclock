@@ -23,9 +23,6 @@ function GeneralArea({
           <p style={style.areaHasBtnsText}>
             <Bold>Your Timezone:</Bold> {getTimezoneFullName(userTimezone)}
           </p>
-          <p style={style.areaHasBtnsText}>
-            Testing testeroo
-          </p>
         </div>
         <div style={style.lastAreaHasBtns}>
           <p style={style.areaHasBtnsText}>

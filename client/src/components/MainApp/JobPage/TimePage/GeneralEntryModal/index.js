@@ -4,7 +4,8 @@ import {
   api,
   constants,
   bindFormMethods,
-  getTimeInputProblems
+  getTimeInputProblems,
+  getTimestampFromDateAndTime
 } from '../utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
@@ -89,12 +90,15 @@ class EntryModal extends Component {
   };
 
   processAndSubmitData() {
+    const { job } = this.props;
+    const timezone = job.time.sessionTimezone;
     const { startDate, endDate, startTime, endTime } = this.state;
     return api.time.addSegment({ 
       segment: {
-        startTime: 0,
-        endTime: 0
-      }
+        startTime: getTimestampFromDateAndTime(startDate, startTime, timezone),
+        endTime: getTimestampFromDateAndTime(endDate, endTime, timezone)
+      },
+      jobId: job._id
     });
   };
 

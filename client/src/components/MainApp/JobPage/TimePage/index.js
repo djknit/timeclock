@@ -25,8 +25,7 @@ class TimePage extends Component {
     addModalsStateAndMethods(this, state, modalsInfo);
     this.state = {
       ...state,
-      segmentToDelete: undefined,
-      displayTimezone: guessUserTimezone()
+      segmentToDelete: undefined
     };
   };
 
@@ -37,8 +36,7 @@ class TimePage extends Component {
   render() {
 
     const { job, parentPath, windowWidth } = this.props;
-    const { segmentToDelete, displayTimezone } = this.state;
-    console.log(job)
+    const { segmentToDelete } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
 
@@ -69,8 +67,7 @@ class TimePage extends Component {
             {...{
               job,
               toggleGeneralEntryModal,
-              toggleDeleteSegmentModal,
-              displayTimezone
+              toggleDeleteSegmentModal
             }}
           />
         </div>
@@ -83,8 +80,7 @@ class TimePage extends Component {
                 isActive,
                 inputRef,
                 ...(name === 'deleteSegment' ? { segmentToDelete } : {}),
-                job,
-                displayTimezone
+                job
               }}
               closeModal={() => toggle(false)}
             />

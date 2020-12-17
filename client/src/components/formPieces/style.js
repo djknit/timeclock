@@ -18,6 +18,9 @@ const timeInputStyles = {
   minutesInput: {
     width: '3.5em',
     textAlign: 'left'
+  },
+  amPmInput: {
+    marginLeft: '0.5rem'
   }
 };
 
