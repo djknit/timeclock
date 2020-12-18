@@ -13,40 +13,44 @@ function getTimeInputProblems(inputValue, problemMessages, displayName) {
   };
 
   if (!is24hr && is24hr !== false) {
+    hasProblem = true;
     problems.is24hr = true;
     _addProbMsg('missing "24 hr or AM/PM" input value.');
   }
 
-  if (!hour) {
-    problems.hour = true;
-    _addProbMsg('missing hour');
-  }
-
-  if (!minute) {
+  if (!minute && minute !== 0) {
+    hasProblem = true;
     problems.minute = true;
     _addProbMsg('missing minute');
   }
-
-  if (minute < 0 || minute > 59 || Math.floor(minute) !== minute) {
+  else if (minute < 0 || minute > 59 || Math.floor(minute) !== minute) {
+    hasProblem = true;
     problems.minute = true;
     _addProbMsg('invalid minute value');
   }
 
-  if (
+  if (!hour && hour !== 0) {
+    hasProblem = true;
+    problems.hour = true;
+    _addProbMsg('missing hour');
+  }
+  else if (
     hour < 0 || hour > 23 ||
     (!is24hr && (hour < 1 || hour > 12)) ||
     Math.floor(hour) !== hour
   ) {
+    hasProblem = true;
     problems.hour = true;
     _addProbMsg('invalid hour value');
   }
 
   if (!is24hr && !amPm) {
+    hasProblem = true;
     problems.amPm = true;
     _addProbMsg('missing AM/PM value')
   }
 
-  return problems;
+  return hasProblem ? problems : undefined;
 }
 
-export default getTimeInputProblems;
+export { getTimeInputProblems };

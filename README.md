@@ -76,9 +76,15 @@ This plan is not complete. Future steps will be expanded on in the plan before t
       * [ ] Time summary and links
     * [x] Settings page (display and edit settings value schedules)
     * [ ] _Time page_
-      * [ ] _Time Summary_
-      * [ ] General time entry
+      * [x] Time Summary
+      * [ ] _Basics_
+        * [ ] _General time entry_
+          * [ ] Time segment general entry
+          * [ ] Track and display segments just added
+        * [ ] Consider recently added segments similarly to just added from general entry?
+      * [ ] Allow delete time segment
       * [ ] Time details by weeks/days and corresponding time entry
+      * [ ] Management for session timezone
   * [x] Navbar navigation menu
   
 * [ ] Review code for bugs and code organization/readability

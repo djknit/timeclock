@@ -42,7 +42,7 @@ function convertAmPmTimeTo24hr(_amPmTime) {
     amPm: undefined,
     minute: _amPmTime.minute
   };
-  const _hour = _amPmTime.hour;
+  let _hour = _amPmTime.hour;
   if (!_hour && _hour !== 0) {
     _24hrTime.hour = undefined;
     return _24hrTime;
@@ -53,10 +53,8 @@ function convertAmPmTimeTo24hr(_amPmTime) {
   if (_amPmTime.amPm === 'pm' && _hour >= 0 && _hour < 12) {
     _hour += 12;
   }
-  return {
-    ..._24hrTime,
-    hour: _hour
-  };
+  _24hrTime.hour = _hour;
+  return _24hrTime;
 }
 
 function convert24hrTimeToAmPm(_24hrTime) {

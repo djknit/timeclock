@@ -4,9 +4,11 @@ import {
   api,
   constants,
   bindFormMethods,
-  getTimeInputProblems,
-  getTimestampFromDateAndTime
-} from '../utilities';
+  getTimestampFromDateAndTime,
+  inputProblemsGetterFactory,
+  getTimeInputStartingValue,
+  hasBlankInput
+} from './utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
 import Button from '../../../../Button';
@@ -21,6 +23,7 @@ const sectionLabelMarginBottom = '0.5rem'; // matches Bulma style for `.label:no
 class EntryModal extends Component {
   constructor(props) {
     super(props);
+    this.getInputProblems = inputProblemsGetterFactory().bind(this);
     bindFormMethods(this, { hasCountdown: false });
     this.resetJustAdded = this.resetJustAdded.bind(this);
     this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
@@ -44,6 +47,7 @@ class EntryModal extends Component {
 
   afterChange(propName) {
     const { startDate, endDate, hasBeenSubmitted } = this.state;
+    console.log(propName + '\n', this.state[propName])
     if (propName === 'startDate' && startDate && !endDate) {
       this.setState({ endDate: { ...startDate }});
     }
@@ -70,23 +74,6 @@ class EntryModal extends Component {
         undefined
       )
     });
-  };
-
-  getInputProblems() {
-    const { startDate, endDate, startTime, endTime } = this.state;
-    let problems = {};
-    let problemMessages = [];
-    if (!startDate) {
-      problems.startDate = true;
-      problemMessages.push('You must enter the date that the time segment begins.');
-    }
-    if (!endDate) {
-      problems.endDate = true;
-      problemMessages.push('You must enter the date that the time segment ends.');
-    }
-    problems.startTime = getTimeInputProblems(startTime, problemMessages);
-    problems.endTime = getTimeInputProblems(endTime, problemMessages);
-    return { problems, problemMessages };
   };
 
   processAndSubmitData() {
@@ -236,25 +223,3 @@ class EntryModal extends Component {
 }
 
 export default EntryModal;
-
-
-function getTimeInputStartingValue() {
-  return {
-    is24hr: false,
-    amPm: 'am',
-    hour: undefined,
-    minute: undefined
-  };
-}
-
-function hasBlankInput({ startDate, endDate, startTime, endTime }) {
-  return (
-    !startDate || !endDate ||
-    !startTime || isTimeInputPartBlank(startTime) ||
-    !endTime || isTimeInputPartBlank(endTime)
-  );
-}
-
-function isTimeInputPartBlank({ hour, minute }) {
-  return (!hour || !minute);
-}

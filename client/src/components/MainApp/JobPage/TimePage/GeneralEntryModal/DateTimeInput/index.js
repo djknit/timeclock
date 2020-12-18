@@ -47,6 +47,7 @@ function DateTimeInput({
           onCalendarClose: () => handleDatepickerPopperToggle(false, !isLast)
         }}
         fieldStyle={style.field}
+        placeholder="Type or select date..."
       />
       <TimeInput
         label="Time:"

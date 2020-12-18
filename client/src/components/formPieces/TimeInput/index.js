@@ -30,7 +30,8 @@ function TimeInput({
     return function(childPropValue) {
       let _value = { ...value };
       if (childPropName === 'is24hr' && childPropValue !== value[childPropName]) {
-        const converter = childPropValue ? convertAmPmTimeTo24hr : convert24hrTimeToAmPm;
+        const _newIs24hr = childPropValue && childPropValue !== 'false'; 
+        const converter = _newIs24hr ? convertAmPmTimeTo24hr : convert24hrTimeToAmPm;
         Object.assign(_value, converter(value));
       }
       else if (childPropName !== 'amPm') {
@@ -51,6 +52,9 @@ function TimeInput({
 
   const inputNamePrefix = sectionName ? `${sectionName}-${propName}` : propName;
   const hourInputId = getInputId(formId, 'hour', inputNamePrefix);
+  const _getFullClassName = (_className, hasProblem) => {
+    return hasProblem ? `${_className} is-danger` : _className;
+  };
 
   const { problems, problemMessages } = getCompleteProblems({
     problems: problemsProp,
@@ -81,7 +85,7 @@ function TimeInput({
     >
       <input
         id={hourInputId}
-        className={`input no-spin${problems.hour ? ' is-danger' : ''}`}
+        className={_getFullClassName('input no-spin', problems.hour)}
         type="number"
         value={hour || hour === 0 ? hour : ''}
         onChange={changeHandlerFactory(propName, true, inputProcessorFactory('hour'))}
@@ -92,7 +96,7 @@ function TimeInput({
       />
       <span style={style.colon}>:</span>
       <input
-        className={`input no-spin${problems.minute ? ' is-danger' : ''}`}
+        className={_getFullClassName('input no-spin', problems.minute)}
         type="number"
         value={minute || minute === 0 ? minute : ''}
         onChange={changeHandlerFactory(propName, true, inputProcessorFactory('minute'))}
@@ -101,7 +105,10 @@ function TimeInput({
         style={style.minutesInput}
       />
       {!is24hr && (
-        <div className="select" style={style.amPmInput}>
+        <div
+          className={_getFullClassName('select', problems.amPm)}
+          style={style.amPmInput}
+        >
           <select
             value={amPm}
             onChange={changeHandlerFactory(propName, true, inputProcessorFactory('amPm'))}
@@ -164,7 +171,7 @@ function getCompleteProblems({ problems, value, hasProblem }) {
     _problems.hour = true;
     addInvalidNumberProbs('hour', 0, 23);
   }
-  else if (hour < 1 || hour > 12) {
+  if (!is24hr && (hour < 1 || hour > 12)) {
     _problems.hour = true;
     addInvalidNumberProbs('hour', 1, 12)
   }
