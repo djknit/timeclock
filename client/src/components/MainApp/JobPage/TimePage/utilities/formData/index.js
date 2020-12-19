@@ -1,2 +1,2 @@
-export * from './inputProblems';
-export * from './inputProcessing';
+export * from './timeSegment';
+export * from './time';
