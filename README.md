@@ -79,7 +79,7 @@ This plan is not complete. Future steps will be expanded on in the plan before t
       * [x] Time Summary
       * [ ] _Basics_
         * [ ] _General time entry_
-          * [ ] Time segment general entry
+          * [ ] _Time segment general entry_
           * [ ] Track and display segments just added
         * [ ] Consider recently added segments similarly to just added from general entry?
       * [ ] Allow delete time segment

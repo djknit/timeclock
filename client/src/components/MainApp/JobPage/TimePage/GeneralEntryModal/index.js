@@ -7,7 +7,8 @@ import {
   getTimestampFromDateAndTime,
   inputProblemsGetterFactory,
   getTimeInputStartingValue,
-  hasBlankInput
+  hasBlankInput,
+  getNumDaysSpannedBySegment
 } from './utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
@@ -76,7 +77,33 @@ class EntryModal extends Component {
     });
   };
 
+  getWarnings() {
+    const { job } = this.props;
+    const timezone = job.time.sessionTimezone;
+    let warnings = {
+      hasWarning: false,
+      warningMessages: []
+    };
+    if (this.state.hasWarning) {
+      return warnings;
+    }
+    const numDaysSpanned = getNumDaysSpannedBySegment(this.state, timezone, job);
+    if (numDaysSpanned > 0) {
+      warnings.hasWarning = true;
+      warnings.warningMessages.push(
+        `This time segment spans accross ${numDaysSpanned} work days.`,
+        `It will be automatically split into ${numDaysSpanned} time segments.`,
+        'Are you sure you want to continue?'
+      );
+    }
+    return warnings;
+  };
+
   processAndSubmitData() {
+  /* TO DO:
+    Split segment if it spans multiple days.
+    Consider adding new api route for multiple segments, or submit each segment in succession or parallel while waiting on results
+  */
     const { job } = this.props;
     const timezone = job.time.sessionTimezone;
     const { startDate, endDate, startTime, endTime } = this.state;
@@ -122,6 +149,7 @@ class EntryModal extends Component {
 
     const isFormIncomplete = hasBlankInput(this.state);
 
+    const reverseWarning = () => this.setState({ hasWarning: false });
     const getInputProps = propName => ({
       propName,
       problems: problems[propName],
@@ -132,7 +160,7 @@ class EntryModal extends Component {
     const commonAttrs = {
       changeHandlerFactory,
       formId,
-      isActive: !isLoading,
+      isActive: !isLoading && !hasWarning && !hasSuccess,
       handleDatepickerPopperToggle,
       inputFieldMarginBottom,
       sectionLabelMarginBottom
@@ -160,17 +188,28 @@ class EntryModal extends Component {
             >
               {hasSuccess ? 'Done' : 'Cancel'}
             </Button>
+            {hasWarning && (
+              <Button
+                theme="info"
+                onClick={reverseWarning}
+                disabled={isLoading || hasSuccess}
+              >
+                Edit Form
+              </Button>
+            )}
             <Button
-              theme="primary"
+              theme={hasWarning ? 'warning' : 'primary'}
               onClick={hasSuccess ? reset : submit}
               disabled={isLoading || isFormIncomplete}
               isSubmit={!hasSuccess}
               formId={hasSuccess ? undefined : formId}
-              {...{
-                isLoading
-              }}
+              {...{ isLoading }}
             >
-              {hasSuccess ? 'Enter More Time' : 'Submit'}
+              {
+                (hasWarning && 'Yes, Add Segments') ||
+                (hasSuccess && 'Enter More Time') ||
+                'Submit'
+              }
             </Button>
           </>
         }

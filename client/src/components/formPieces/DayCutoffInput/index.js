@@ -1,26 +1,13 @@
 import React from 'react';
 import getStyle from './style';
 import {
-  getMinutesFromHoursAndMinutes,
-  getTextOfHoursAndMinutes,
-  getHoursAndMinutesFromMinutes,
-  getInputId
-} from '../../utilities';
+  getInputId,
+  getHourOptions,
+  inputProcessorFactoryFactory,
+  getCompleteProblems,
+  getCutoffDisplayValue
+} from './utilities';
 import BoxInputFrame from '../BoxInputFrame';
-
-function getHourOptions(is24hr) {
-  let options = [];
-  for (let i = -12; i <= 12; i++) {
-    const hoursBase = is24hr ? 24 : 12;
-    let displayValue = (i + hoursBase) % hoursBase;
-    if (!is24hr && displayValue === 0) displayValue = 12;
-    options.push({
-      value: i,
-      name: displayValue
-    });
-  }
-  return options;
-}
 
 function DayCutoffInput({
   propName,
@@ -44,54 +31,27 @@ function DayCutoffInput({
 
   const inputNamePrefix = `${sectionName ? sectionName + '-' : ''}${propName}`;
   const hoursInputId = inputIdProp || getInputId(formId, 'hour', inputNamePrefix);
-  const _label = label || 'Day Cutoff:';
-  const _helpText = helpText || 'Hint: You probably don\'t need a custom day cutoff unless you work late nights. If you begin in the evening and work past midnight, you can adjust the day cutoff so that your shift is not split across two days.';
-  const { hour, minute, is24hr } = value;
-  let amPm;
-  if (!is24hr) {
-    amPm = hour < 0 || hour === 12 ? 'pm' : 'am';
-  }
   const is24hrInputsName = getInputId(formId, 'is24hr', inputNamePrefix);
 
-  function inputProcessorFactory(childPropName) {
-    return function (childPropValue) {
-      let _value = { ...value };
-      if (childPropName === 'is24hr') {
-        _value[childPropName] = childPropValue && childPropValue !== 'false';
-      }
-      else if (childPropName !== 'amPm') {
-        _value[childPropName] = (
-          childPropValue || childPropValue === 0 ?
-          parseInt(childPropValue) :
-          undefined
-        );
-      }
-      else if (childPropValue === 'am' && hour < 0) {
-        _value.hour = hour + 12;
-      }
-      else if (childPropValue === 'am' && hour === 12) {
-        _value.hour = 0;
-      }
-      else if (childPropValue === 'pm' && hour >= 0 && hour !== 12) {
-        _value.hour = hour - 12;
-      }
-      return _value;
-    };
-  }
+  const _label = label || 'Day Cutoff:';
+  const _helpText = helpText || 'Hint: You probably don\'t need a custom day cutoff unless you work late nights. If you begin in the evening and work past midnight, you can adjust the day cutoff so that your shift is not split across two days.';
+  let cutoffDisplay = getCutoffDisplayValue(value);
+  const {
+    problems: completeProblems,
+    problemMessages
+  } = getCompleteProblems({ value, problems, hasProblem });
 
-  const completeProblemsAndMessages = getCompleteProblems({ value, problems, hasProblem });
-  const completeProblems = completeProblemsAndMessages.problems;
-  const { problemMessages } = completeProblemsAndMessages;
+  const { hour, minute, is24hr } = value;
+  let amPm;
+  if (!is24hr) amPm = (hour < 0 || hour === 12) ? 'pm' : 'am';
+  const inputProcessorFactory = inputProcessorFactoryFactory(value);
 
   const style = getStyle(fieldStyle, fieldLabelStyle);
-
   const inputFrameStyles = {
     field: fieldStyle,
     fieldLabel: fieldLabelStyle,
     label: labelStyle
   };
-
-  let cutoffDisplay = getCutoffDisplayValue(value);
 
   return (
     <BoxInputFrame
@@ -200,49 +160,3 @@ function DayCutoffInput({
 }
 
 export default DayCutoffInput;
-
-function getCompleteProblems({ problems, value, hasProblem }) {
-  const numMinutes = getMinutesFromHoursAndMinutes({ hours: value.hour, minutes: value.minute });
-  let completeProblems = (
-    problems ?
-    { ...problems } :
-    (hasProblem ? { hour: true, minute: true } : {})
-  );
-  let problemMessages = [];
-  const max = 12 * 60;
-  const min = -1 * max;
-  if (numMinutes > max) {
-    completeProblems.hour = completeProblems.minute = true;
-    const maxTimeText = getTextOfHoursAndMinutes(getHoursAndMinutesFromMinutes(max));
-    problemMessages.push(`Invalid time: can't be greater than ${maxTimeText}.`);
-  }
-  else if (numMinutes < min) {
-    completeProblems.hour = completeProblems.minute = true;
-    const minTimeText = getTextOfHoursAndMinutes(getHoursAndMinutesFromMinutes(0));
-    problemMessages.push(`Invalid time: can't be less than ${minTimeText}.`);
-  }
-  if (value.minute < 0 || value.minute >= 60) {
-    completeProblems.minute = true;
-    problemMessages.push('Invalid minutes: can\'t be less than 0 or greater than 59.');
-  }
-  return {
-    problems: completeProblems,
-    problemMessages
-  };
-}
-
-function getCutoffDisplayValue(value) {
-  const { hour, minute } = value;
-  let hourValueToDisplay, minuteValueToDisplay;
-  if (hour < 0) {
-    hourValueToDisplay = minute ? Math.abs(hour) - 1 : Math.abs(hour);
-    minuteValueToDisplay = minute ? 60 - minute : 0;
-  }
-  else {
-    hourValueToDisplay = hour;
-    minuteValueToDisplay = minute || 0;
-  }
-  const hourDisplay = hourValueToDisplay < 10 ? `0${hourValueToDisplay}` : hourValueToDisplay;
-  const minuteDisplay = minuteValueToDisplay < 10 ? `0${minuteValueToDisplay}` : minuteValueToDisplay;
-  return `(${hour < 0 ? '-' : '+'}${hourDisplay}:${minuteDisplay})`;
-}
