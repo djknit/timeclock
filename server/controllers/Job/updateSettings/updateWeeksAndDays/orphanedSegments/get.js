@@ -1,4 +1,4 @@
-const daysController = require('../../../../time/days');
+const { days: daysController } = require('../../../../time');
 
 module.exports = getOrphanedSegments;
 

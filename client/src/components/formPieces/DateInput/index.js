@@ -17,7 +17,7 @@ function DateInput({
   value,
   label,
   sublabel,
-  placeholder,
+  placeholder = 'Type or select date...',
   hasProblem,
   helpText,
   changeHandlerFactory,

@@ -2,9 +2,9 @@ const { Schema } = require('mongoose');
 
 const Week = require('../../Week');
 
-const intSubdocFactory = require('../integer');
+const { intSubdocFactory } = require('../../pieces');
 
-const { getDateTime, getMoment, getUtcDateTime } = require('../../../utilities');
+const { getMoment, getUtcDateTime } = require('../../../utilities');
 
 const weekSchema = new Schema({
   document: {

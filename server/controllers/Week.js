@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 
-const Week = require('../models/Week');
-const Job = require('../models/Job');
-
-// const { getUtcDateTime } = require('../utilities');
+const { Week, Job } = require('../models')
 
 module.exports = {
   create,
@@ -102,8 +99,7 @@ function removeAllSegments(weekId, userId) {
       },
       { new: true }
     )
-    .then(resolve)
-    .catch(reject);
+    .then(resolve);
   });
 }
 
@@ -132,8 +128,7 @@ function removeSegmentsFromDaysWithIds(dateIds, weekId, userId) {
         new: true
       }
     )
-    .then(resolve)
-    .catch(reject);
+    .then(resolve);
   });
 }
 
@@ -143,8 +138,7 @@ function deleteWeeks(weekIds, userId) {
       _id: { $in: weekIds },
       user: userId
     })
-    .then(resolve)
-    .catch(reject);
+    .then(resolve);
   });
 }
 

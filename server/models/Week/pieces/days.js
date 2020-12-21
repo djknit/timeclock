@@ -4,11 +4,13 @@ const {
   getDateTime, getMoment
 } = require('../../../utilities');
 
-const dayCutoffSubdocFactory = require('../dayCutoff');
+const {
+  dayCutoffSubdocFactory,
+  timezoneSubdocFactory,
+  wageSubdocFactory,
+  dateSubdocFactory
+} = require('../../pieces');
 const segmentsSubdocFactory = require('./segments');
-const timezoneSubdocFactory = require('../timezone');
-const wageSubdocFactory = require('../wage');
-const dateSubdocFactory = require('../date');
 
 const daySchema = new Schema({
   startCutoff: dayCutoffSubdocFactory(false),

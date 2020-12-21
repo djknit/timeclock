@@ -4,7 +4,9 @@ import { addProblemsObjToExisting } from './merging';
 
 function inputProblemsGetterFactory() {
   return function() {
+    const { job } = this.props;
     const { startDate, endDate, startTime, endTime } = this.state;
+    const timezone = job.time.sessionTimezone;
     let problems = {};
     let problemMessages = [];
     if (!startDate) {
@@ -18,7 +20,7 @@ function inputProblemsGetterFactory() {
     problems.startTime = getTimeInputProblems(startTime, problemMessages, 'start');
     problems.endTime = getTimeInputProblems(endTime, problemMessages, 'end');
     if (problemMessages.length === 0) {
-      const _wholeSegProbs = getWholeSegmentProblems(this.state, problemMessages);
+      const _wholeSegProbs = getWholeSegmentProblems(this.state, problemMessages, timezone, job);
       addProblemsObjToExisting(problems, _wholeSegProbs);
     }
     return { problems, problemMessages };

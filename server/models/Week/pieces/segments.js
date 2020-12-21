@@ -1,11 +1,4 @@
-const { Schema } = require('mongoose');
-
-const intSubdocFactory = require('../integer');
-
-const segmentSchema = new Schema({
-  startTime: intSubdocFactory({ required: true }),
-  endTime: intSubdocFactory({ required: true })
-});
+const { segmentSchema } = require('../../pieces');
 
 const segmentsSubdocFactory = () => ({
   type: [segmentSchema],

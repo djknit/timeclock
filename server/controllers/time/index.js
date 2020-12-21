@@ -12,6 +12,7 @@ module.exports = {
   weeks: weeksController,
   addSegmentToDay,
   addSegment,
+  addMultipleSegments,
   deleteSegmentsInDateRange,
   deleteSegmentsForDates,
   deleteSegmentsForDayIds
@@ -62,6 +63,26 @@ function addSegment(segment, jobId, userId) {
       .catch(reject);
     }
   );
+}
+
+function addMultipleSegments(segments, jobId, userId) {
+  let index = 0;
+  return _addNextSeg();
+
+  function _addNextSeg() {
+    return new Promise(
+      (resolve, reject) => {
+        addSegment(segments[index], jobId, userId)
+        .then(_job => {
+          if (index === segments.length) {
+            return resolve(_job);
+          }
+          index++;
+          resolve(_addNextSeg());
+        });
+      }
+    );
+  }
 }
 
 function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {

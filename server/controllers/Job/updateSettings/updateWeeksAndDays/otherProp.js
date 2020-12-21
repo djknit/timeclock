@@ -1,6 +1,7 @@
-const weeksController = require('../../../time/weeks');
-const daysController = require('../../../time/days');
-
+const {
+  weeks: weeksController,
+  days: daysController
+} = require('../../../time');
 const { getOrphanedSegments, placeOrphanedSegmentsWithAdoptiveDays } = require('./orphanedSegments');
 
 const { getMostRecentScheduleValueForDate, getPrecedingDate, saveModifiedWeeks } = require('../utilities');

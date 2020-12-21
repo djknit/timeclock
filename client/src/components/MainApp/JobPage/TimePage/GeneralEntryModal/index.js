@@ -8,7 +8,8 @@ import {
   inputProblemsGetterFactory,
   getTimeInputStartingValue,
   hasBlankInput,
-  getNumDaysSpannedBySegment
+  getNumDaysSpannedBySegment,
+  processTimeSegmentInput
 } from './utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
@@ -106,13 +107,12 @@ class EntryModal extends Component {
   */
     const { job } = this.props;
     const timezone = job.time.sessionTimezone;
-    const { startDate, endDate, startTime, endTime } = this.state;
-    return api.time.addSegment({ 
-      segment: {
-        startTime: getTimestampFromDateAndTime(startDate, startTime, timezone),
-        endTime: getTimestampFromDateAndTime(endDate, endTime, timezone)
-      },
-      jobId: job._id
+    const processedInput = processTimeSegmentInput(this.state, timezone, job);
+    const namesSuffix = processedInput.isSplit ? 's' : '';
+    const segDataPropName = `segment${namesSuffix}`;
+    return api.time[`addSegment${namesSuffix}`]({
+      jobId: job._id,
+      [segDataPropName]: processedInput[segDataPropName]
     });
   };
 

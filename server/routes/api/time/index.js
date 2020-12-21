@@ -1,8 +1,10 @@
 const router = require('express').Router();
 
-const WeekController = require('../../../controllers/Week');
-const JobController = require('../../../controllers/Job');
-const timeController = require('../../../controllers/time');
+const {
+  Week: WeekController,
+  Job: JobController,
+  time: timeController
+} = require('../../../controllers');
 
 const { routeErrorHandlerFactory, checkRequiredProps, cleanJob } = require('../utilities');
 
@@ -29,6 +31,18 @@ router.post(
     checkRequiredProps(req.body, ['segment.startTime', 'segment.endTime'], res);
     const { segment, jobId } = req.body;
     timeController.addSegment(segment, jobId, req.user._id)
+    .then(result => res.json({ job: result }))
+    .catch(routeErrorHandlerFactory(res));
+  }
+);
+
+router.post(
+  '/add-segments',
+  verifyLogin,
+  (req, res) => {
+    checkRequiredProps(req.body, ['segments', 'jobId']);
+    const { segments, jobId } = req.body;
+    timeController.addMultipleSegments(segments, jobId, req.user._id)
     .then(result => res.json({ job: result }))
     .catch(routeErrorHandlerFactory(res));
   }

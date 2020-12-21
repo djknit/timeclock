@@ -1,9 +1,9 @@
-const weeksController = require('../../../../time/weeks');
-const daysController = require('../../../../time/days');
-const segmentsController = require('../../../../time/segments');
-const JobController = require('../../../');
-
-const { getDayEndTimeForDate } = require('../../utilities');
+const {
+  weeks: weeksController,
+  days: daysController
+} = require('../../../../time');
+const { createAndAddWeekWithDate } = require('../../../addWeek');
+const { getDayEndTimeForDate, getDateForTime } = require('../../utilities');
 
 module.exports = placeOrphanedSegmentsWithAdoptiveDays;
 
@@ -35,7 +35,7 @@ function ensureSegmentsSpanOnlyOneDayEach(segments, job) {
 
 function placeSingleSegmentWithAdoptiveDay(segment, job, modifiedWeekDocIds) {
   return new Promise((resolve, reject) => {
-    const date = segmentsController.getDateForTime(segment.startTime, job, true);
+    const date = getDateForTime(segment.startTime, job, true);
     getWeekDocWithDate(date, job)
     .then(weekDoc => {
       modifiedWeekDocIds.push(weekDoc._id.toString());
@@ -51,18 +51,17 @@ function getWeekDocWithDate(date, job) {
   return new Promise((resolve, reject) => {
     const weekDoc = weeksController.findWeekWithDate(date, job.weeks);
     if (weekDoc) return resolve(weekDoc);
-    JobController.createAndAddWeekWithDate(date, job)
+    createAndAddWeekWithDate(date, job)
     .then(newWeekArrayEntry => {
       placeNewWeekInWeeksArray(job.weeks, newWeekArrayEntry);
       return resolve(weeksController.findWeekWithDate(date, job.weeks));
-    })
-    .catch(reject);
+    });
   });
 }
 
 function ensureSegmentSpansOnlyOneDay(segment, job, stillOrphanedSegments) {
-  const startTimeDate = segmentsController.getDateForTime(segment.startTime, job, true);
-  const endTimeDate = segmentsController.getDateForTime(segment.endTime, job, false);
+  const startTimeDate = getDateForTime(segment.startTime, job, true);
+  const endTimeDate = getDateForTime(segment.endTime, job, false);
   if (startTimeDate.day !== endTimeDate.day) {
     const startTimeDateEndTime = getDayEndTimeForDate(startTimeDate, job);
     stillOrphanedSegments.push({

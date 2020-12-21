@@ -37,14 +37,15 @@ function processTimeSegmentInput(
 function splitByDays(processedSegment, job) {
   const { startTime, endTime } = processedSegment;
   const { settings } = job;
-  const firstDayDate = getDateForTime(startTime, settings, true);
+  const segFirstDayDate = getDateForTime(startTime, settings, true);
 
   let resultSegments = [];
-  _splitOffNextSeg(firstDayDate, startTime);
+  _splitOffNextSeg(segFirstDayDate, startTime);
+  return resultSegments;
 
   function _splitOffNextSeg(_segDate, _segStartTime) {
     const _dayEnd = getBoundariesOfDayWithDate(_segDate, settings).endTime;
-    const _doesSegEndToday = _dayEnd <= endTime;
+    const _doesSegEndToday = endTime <= _dayEnd;
     resultSegments.push({
       startTime: _segStartTime,
       endTime: _doesSegEndToday ? endTime : _dayEnd

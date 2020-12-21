@@ -1,6 +1,6 @@
 const {
   wageDefaultValues, dayCutoffDefaultValue, weekBeginsDefaultValue
-} = require('../../utilities').constants;
+} = require('../utilities').constants;
 
 module.exports = applyDefaultValuesToUpdates;
 

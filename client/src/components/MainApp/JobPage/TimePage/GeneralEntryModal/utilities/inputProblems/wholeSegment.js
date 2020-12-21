@@ -1,6 +1,7 @@
 import {
   dates as dateUtils,
-  getTimestampFromDateAndTime
+  getTimestampFromDateAndTime,
+  getSegmentBoundaryDayDates
 } from '../../../utilities';
 
 const { getDateTime } = dateUtils;
@@ -30,6 +31,12 @@ function createTimeProbs(time) {
     minute: true,
     amPm: !(time && time.is24hr) || undefined
   };
+}
+
+
+// need to check if segment overlaps existing segments
+function doesSegmentOverlapExistingSegs(inputValues, problemMessages, timezone, job) {
+  const segBoundaryDayDates = getSegmentBoundaryDayDates(inputValues, timezone, job);
 }
 
 export { getWholeSegmentProblems };
