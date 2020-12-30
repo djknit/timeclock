@@ -2,7 +2,7 @@ const { Job } = require('../../models');
 
 const { jobNotFoundCheckerFactory } = require('./utilities');
 
-const { weeks: weeksController } = require('../time');
+const { weeks: weeksController } = require('../timePieces');
 
 module.exports = {
   addWeek,

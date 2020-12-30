@@ -1,7 +1,7 @@
 const {
   weeks: weeksController,
   days: daysController
-} = require('../../../../time');
+} = require('../../../../timePieces');
 const { createAndAddWeekWithDate } = require('../../../addWeek');
 const { getDayEndTimeForDate, getDateForTime } = require('../../utilities');
 
@@ -60,13 +60,24 @@ function getWeekDocWithDate(date, job) {
 }
 
 function ensureSegmentSpansOnlyOneDay(segment, job, stillOrphanedSegments) {
-  const startTimeDate = getDateForTime(segment.startTime, job, true);
-  const endTimeDate = getDateForTime(segment.endTime, job, false);
+  const { startTime, endTime } = segment;
+  const startTimeDate = getDateForTime(startTime, job, true);
+  const endTimeDate = getDateForTime(endTime, job, false);
   if (startTimeDate.day !== endTimeDate.day) {
+    segment.modifiedAt.push({
+      time: Date.now(),
+      previousValue: { startTime, endTime }
+    });
     const startTimeDateEndTime = getDayEndTimeForDate(startTimeDate, job);
     stillOrphanedSegments.push({
+      ...segment,
       startTime: startTimeDateEndTime,
-      endTime: segment.endTime
+      modifiedAt: segment.modifiedAt.map(
+        ({ time, previousValue }) => ({
+          time,
+          previousValue: { ...previousValue }
+        })
+      )
     });
     segment.endTime = startTimeDateEndTime;
   }

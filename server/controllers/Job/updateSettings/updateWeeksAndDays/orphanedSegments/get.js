@@ -1,4 +1,4 @@
-const { days: daysController } = require('../../../../time');
+const { days: daysController } = require('../../../../timePieces');
 
 module.exports = getOrphanedSegments;
 
@@ -8,30 +8,42 @@ function getOrphanedSegments(day) {
   let indexesOfSegmentsToRemove = [];
   const dayStartTime = daysController.getDayStartTime(day);
   const dayEndTime = daysController.getDayEndTime(day);
+
   day.segments.forEach((segment, index) => {
-    const { startTime, endTime } = segment;
+    const { startTime, endTime, createdAt } = segment;
+    const commonOrphanedSegProps = {
+      createdAt,
+      modifiedAt: {
+        time: Date.now(),
+        previousValue: { startTime, endTime }
+      }
+    };
     if (
       (startTime < dayStartTime && endTime <= dayStartTime) ||
       (startTime >= dayEndTime && endTime > dayEndTime)
     ) {
       orphanedSegments.push(segment);
       indexesOfSegmentsToRemove.push(index);
+      return;
     }
-    else if (startTime < dayStartTime) {
+    if (startTime < dayStartTime) {
       orphanedSegments.push({
         startTime: startTime,
-        endTime: dayStartTime
+        endTime: dayStartTime,
+        ...commonOrphanedSegProps
       });
       segment.startTime = dayStartTime;
     }
-    else if (endTime > dayEndTime) {
+    if (endTime > dayEndTime) {
       orphanedSegments.push({
         startTime: dayEndTime,
-        endTime: endTime
+        endTime: endTime,
+        ...commonOrphanedSegProps
       });
       segment.endTime = dayEndTime;
     }
   });
+
   day.segments = day.segments.filter((seg, index) => indexesOfSegmentsToRemove.indexOf(index) === -1);
   return orphanedSegments;
 }

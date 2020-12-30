@@ -1,7 +1,7 @@
 const {
   weeks: weeksController,
   days: daysController
-} = require('../../../time');
+} = require('../../../timePieces');
 const { getOrphanedSegments, placeOrphanedSegmentsWithAdoptiveDays } = require('./orphanedSegments');
 
 const { getMostRecentScheduleValueForDate, getPrecedingDate, saveModifiedWeeks } = require('../utilities');

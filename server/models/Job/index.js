@@ -6,7 +6,8 @@ const {
   timezoneSubdocFactory,
   wageSubdocFactory,
   dayCutoffSubdocFactory,
-  dateSubdocFactory
+  dateSubdocFactory,
+  segmentSchema
 } = require('../pieces');
 const { weeksSubdocFactory } = require('./pieces');
 
@@ -49,7 +50,14 @@ const JobSchema = new Schema(
     punchClock: {
       timeIn: intSubdocFactory(),
       timeOut: intSubdocFactory()
-    }
+    },
+    deletedSegments: [{
+      segment: {
+        type: segmentSchema,
+        required: true
+      },
+      deletedAt: intSubdocFactory({ required: true })
+    }]
   }
 );
 

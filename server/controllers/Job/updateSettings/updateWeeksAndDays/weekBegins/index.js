@@ -1,7 +1,7 @@
 const {
   weeks: weeksController,
   days: daysController
-} = require('../../../../time');
+} = require('../../../../timePieces');
 const WeekController = require('../../../../Week');
 
 const {

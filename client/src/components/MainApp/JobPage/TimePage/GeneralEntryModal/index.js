@@ -89,7 +89,7 @@ class EntryModal extends Component {
       return warnings;
     }
     const numDaysSpanned = getNumDaysSpannedBySegment(this.state, timezone, job);
-    if (numDaysSpanned > 0) {
+    if (numDaysSpanned > 1) {
       warnings.hasWarning = true;
       warnings.warningMessages.push(
         `This time segment spans accross ${numDaysSpanned} work days.`,

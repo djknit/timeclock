@@ -1,6 +1,6 @@
 const { Job } = require('../../models');
 
-const { weeks: weeksController } = require('../time');
+const { weeks: weeksController } = require('../timePieces');
 
 const { addWeek } = require('./addWeek');
 

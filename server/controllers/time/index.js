@@ -1,15 +1,14 @@
 const WeekController = require('../Week');
 const JobController = require('../Job');
-const segmentsController = require('./segments');
-const daysController = require('./days');
-const weeksController = require('./weeks');
+const {
+  segments: segmentsController,
+  days: daysController,
+  weeks: weeksController
+} = require('../timePieces');
 
 const { getUtcDateTime, checkForFailure } = require('../utilities');
 
 module.exports = {
-  days: daysController,
-  segments: segmentsController,
-  weeks: weeksController,
   addSegmentToDay,
   addSegment,
   addMultipleSegments,

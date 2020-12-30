@@ -7,8 +7,12 @@ const requiredInt = () => intSubdocFactory({ required: true });
 const segmentSchema = new Schema({
   startTime: requiredInt(),
   endTime: requiredInt(),
-  created: requiredInt(),
-  modified: [{
+  createdAt: intSubdocFactory({
+    default: function() {
+      return Date.now();
+    }
+  }),
+  modifiedAt: [{
     time: requiredInt(),
     previousValue: {
       startTime: requiredInt(),
