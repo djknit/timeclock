@@ -11,7 +11,7 @@ module.exports = {
 function getDateForNewSegment(segment, job) {
   const { startTime, endTime } = segment;
   const startTimeDate = getDateForTime(startTime, job, true);
-  const endTimeDate = getDateForTime(endTime, job);
+  const endTimeDate = getDateForTime(endTime, job, false);
   if (!areDatesEquivalent(startTimeDate, endTimeDate)) {
     let err = new Error('Segment `startTime` and `endTime` do not fall on same date.');
     err.problems = {

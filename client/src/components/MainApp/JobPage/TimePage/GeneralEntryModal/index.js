@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import getStyle from './style';
+import { currentJobTimeService } from '../../../../../data';
 import {
   api,
   constants,
   bindFormMethods,
-  getTimestampFromDateAndTime,
   inputProblemsGetterFactory,
   getTimeInputStartingValue,
   hasBlankInput,
@@ -116,8 +116,9 @@ class EntryModal extends Component {
     });
   };
 
-  processSuccessResponse(response) {
-    console.log(response);
+  processSuccessResponse({ data: { job: updatedJob} }) {
+    console.log(updatedJob);
+    currentJobTimeService.setValue(updatedJob && updatedJob.weeks);
   };
 
   resetJustAdded() {

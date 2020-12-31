@@ -106,6 +106,8 @@ class _JobPage_needsData extends Component {
       areAnyModalsOpen
     };
 
+    console.log('job\n', job)
+
     return (
       job ? (
         <>

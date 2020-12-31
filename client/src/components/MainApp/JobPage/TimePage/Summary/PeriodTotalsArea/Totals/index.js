@@ -64,7 +64,9 @@ function getDaysWorkedDisplay(daysWorked) {
 
 function getEarningsSummaryDisplay(earnings) {
   if (!earnings) return 'none';
-  return earnings.map(
+  return earnings.filter(
+    ({ currency }) => !!currency
+  ).map(
     ({ amount, currency }, index, arr) => (
       <React.Fragment key={currency}>
         <><EmVal>{amount.display.long}</EmVal>{getListSeparator(index, arr.length)}</>
