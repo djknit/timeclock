@@ -148,4 +148,4 @@ function determineCreateWeekError(err) {
 
 function determineAddSegmentToDayError(err) {
   return err; 
-;}
+}

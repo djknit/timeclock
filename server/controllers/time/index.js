@@ -1,3 +1,10 @@
+/*
+ABOUT THIS FILE/FOLDER:
+  These are the general methods invoked by the `/time/` api routes.
+  This controller doesn't correspond to a specific model. The methods affect multiple models.
+  This controller invokes other controllers rather than referencing the models directly.
+*/
+
 const WeekController = require('../Week');
 const JobController = require('../Job');
 const {
@@ -21,6 +28,7 @@ function addSegmentToDay(segment, dayId, weekId, userId) {
   return new Promise(
     (resolve, reject) => {
       ensureSegmentIsValid(segment);
+      segment.created = { method: 'specific-day' };
       WeekController.getById(weekId, userId)
       .then(weekDoc => ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc))
       .then(() => WeekController.addSegmentToDay(segment, dayId, weekId, userId))
@@ -34,6 +42,7 @@ function addSegment(segment, jobId, userId) {
   return new Promise(
     (resolve, reject) => {
       ensureSegmentIsValid(segment);
+      segment.created = { method: 'general' };
       let date, weekDoc, job;
       JobController.getJobById(jobId, userId)
       .then(_job => {
@@ -70,7 +79,7 @@ function addMultipleSegments(segments, jobId, userId) {
 
   function _addNextSeg() {
     return new Promise(
-      (resolve, reject) => {
+      (resolve) => {
         addSegment(segments[index], jobId, userId)
         .then(_job => {
           if (index === segments.length) {
@@ -138,7 +147,7 @@ function ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc) {
   ensureNewSegDoesntOverlap(segment, day);
 }
 
-function ensureNewSegDoesntOverlap(segment, day) {2
+function ensureNewSegDoesntOverlap(segment, day) {
   const doesNewSegOverlapExistingSegs = segmentsController.doesNewSegOverlapExistingSegs(day.segments, segment);
   const segOverlapMsg = 'Segment could not be added because it overlaps with one or more existing segment(s).';
   const segOverlapProblemsObj = {

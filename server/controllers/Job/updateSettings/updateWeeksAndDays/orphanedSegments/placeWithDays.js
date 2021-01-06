@@ -7,10 +7,10 @@ const { getDayEndTimeForDate, getDateForTime } = require('../../utilities');
 
 module.exports = placeOrphanedSegmentsWithAdoptiveDays;
 
-function placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWeekDocIds) {
+function placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWeekDocIds, segModMethodName) {
   return new Promise((resolve, reject) => {
     if (orphanedSegments.length === 0) return resolve();
-    ensureSegmentsSpanOnlyOneDayEach(orphanedSegments, job);
+    ensureSegmentsSpanOnlyOneDayEach(orphanedSegments, job, segModMethodName);
     let numCompleted = 0;
     orphanedSegments.forEach(segment => {
       placeSingleSegmentWithAdoptiveDay(segment, job, modifiedWeekDocIds)
@@ -24,12 +24,14 @@ function placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWe
   });
 }
 
-function ensureSegmentsSpanOnlyOneDayEach(segments, job) {
+function ensureSegmentsSpanOnlyOneDayEach(segments, job, segModMethodName) {
   let stillOrphanedSegments = [];
-  segments.forEach(segment => ensureSegmentSpansOnlyOneDay(segment, job, stillOrphanedSegments));
+  segments.forEach(segment => {
+    ensureSegmentSpansOnlyOneDay(segment, job, stillOrphanedSegments, segModMethodName);
+  });
   if (stillOrphanedSegments.length > 0) {
     segments.push(...stillOrphanedSegments);
-    ensureSegmentsSpanOnlyOneDayEach(segments, job);
+    ensureSegmentsSpanOnlyOneDayEach(segments, job, segModMethodName);
   }
 }
 
@@ -59,25 +61,20 @@ function getWeekDocWithDate(date, job) {
   });
 }
 
-function ensureSegmentSpansOnlyOneDay(segment, job, stillOrphanedSegments) {
+function ensureSegmentSpansOnlyOneDay(segment, job, stillOrphanedSegments, segModMethodName) {
   const { startTime, endTime } = segment;
   const startTimeDate = getDateForTime(startTime, job, true);
   const endTimeDate = getDateForTime(endTime, job, false);
   if (startTimeDate.day !== endTimeDate.day) {
-    segment.modifiedAt.push({
+    segment.modified.push({
       time: Date.now(),
-      previousValue: { startTime, endTime }
+      previousValue: { startTime, endTime },
+      method: segModMethodName
     });
     const startTimeDateEndTime = getDayEndTimeForDate(startTimeDate, job);
     stillOrphanedSegments.push({
       ...segment,
-      startTime: startTimeDateEndTime,
-      modifiedAt: segment.modifiedAt.map(
-        ({ time, previousValue }) => ({
-          time,
-          previousValue: { ...previousValue }
-        })
-      )
+      startTime: startTimeDateEndTime
     });
     segment.endTime = startTimeDateEndTime;
   }
