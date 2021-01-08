@@ -22,19 +22,7 @@ const segmentSchema = new Schema({
       endTime: requiredInt()
     },
     method: String
-  }],
-  // createdAt: intSubdocFactory({
-  //   default: function() {
-  //     return Date.now();
-  //   }
-  // }),
-  // modifiedAt: [{
-  //   time: requiredInt(),
-  //   previousValue: {
-  //     startTime: requiredInt(),
-  //     endTime: requiredInt()
-  //   }
-  // }]
+  }]
 });
 
 module.exports =  segmentSchema;

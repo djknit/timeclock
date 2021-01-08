@@ -27,7 +27,8 @@ function getTimeInfoFromUtcTime(utcTime, timezone) {
       is24hr: true
     },
     date: convertMomentToMyDate(timeMoment),
-    timezone
+    timezone,
+    utcTime
   };
 }
 

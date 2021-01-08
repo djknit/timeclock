@@ -116,9 +116,14 @@ class EntryModal extends Component {
     });
   };
 
-  processSuccessResponse({ data: { job: updatedJob} }) {
-    console.log(updatedJob);
-    currentJobTimeService.setValue(updatedJob && updatedJob.weeks);
+  processSuccessResponse(response) {
+    console.log(response)
+    const { data: { job, newSegmentInfo } } = response;
+    console.log(job);
+    currentJobTimeService.setValue(job && job.weeks);
+    this.setState(prevState => ({
+      justAdded: [ newSegmentInfo, ...prevState.justAdded ]
+    }));
   };
 
   resetJustAdded() {

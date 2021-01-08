@@ -28,11 +28,19 @@ function addSegmentToDay(segment, dayId, weekId, userId) {
   return new Promise(
     (resolve, reject) => {
       ensureSegmentIsValid(segment);
-      segment.created = { method: 'specific-day' };
+      segment.created = {
+        method: 'specific-day',
+        time: Date.now()
+      };
       WeekController.getById(weekId, userId)
       .then(weekDoc => ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc))
       .then(() => WeekController.addSegmentToDay(segment, dayId, weekId, userId))
-      .then(resolve)
+      .then(updatedWeekDoc => {
+        resolve({
+          weekDoc: updatedWeekDoc,
+          newSegmentInfo: { created: segment.created }
+        });
+      })
       .catch(reject);
     }
   );
@@ -42,8 +50,11 @@ function addSegment(segment, jobId, userId) {
   return new Promise(
     (resolve, reject) => {
       ensureSegmentIsValid(segment);
-      segment.created = { method: 'general' };
-      let date, weekDoc, job;
+      segment.created = {
+        method: 'general',
+        time: Date.now()
+      };
+      let date, weekDoc, job, dayId;
       JobController.getJobById(jobId, userId)
       .then(_job => {
         date = segmentsController.getDateForNewSegment(segment, _job);
@@ -55,7 +66,8 @@ function addSegment(segment, jobId, userId) {
         if (!weekDoc) weekDoc = weeksController.findWeekWithDate(date, job.weeks);
         day = daysController.findDayForDate(date, weekDoc.days);
         ensureNewSegDoesntOverlap(segment, day);
-        return WeekController.addSegmentToDay(segment, day._id, weekDoc._id, userId);
+        dayId = day._id;
+        return WeekController.addSegmentToDay(segment, dayId, weekDoc._id, userId);
       })
       .then(updatedWeekDoc => {
         const weeks = job.weeks;
@@ -63,7 +75,16 @@ function addSegment(segment, jobId, userId) {
           let week = weeks[i];
           if (updatedWeekDoc._id.toString() === week.document._id.toString()) {
             week.document = updatedWeekDoc;
-            return resolve(job);
+            return resolve({
+              job,
+              newSegmentInfo: {
+                weekId: weekDoc._id,
+                dayId,
+                created: segment.created,
+                startTime: segment.startTime,
+                endTime: segment.endTime
+              }
+            });
           }
         }
         throw new Error('Unexpected error. Week document not found in weeks array for job.');
