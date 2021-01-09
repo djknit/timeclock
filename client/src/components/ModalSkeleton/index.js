@@ -7,7 +7,9 @@ function ModalSkeleton({
   closeModal,
   children,
   footerContent,
-  isCloseButtonDisabled
+  isCloseButtonDisabled,
+  extraPrecedingSectionContent,
+  extraFollowingSectionContent
 }) {
 
   const style = getStyle();
@@ -27,14 +29,30 @@ function ModalSkeleton({
             disabled={isCloseButtonDisabled}
           ></button>
         </header>
-        <section className="modal-card-body" style={style.body}>
+        {/* {extraPrecedingSectionContent && (
+          <ModalCardBody children={extraPrecedingSectionContent} />
+        )} */}
+        <ModalCardBody {...{ children }} />
+        {/* <section className="modal-card-body" style={style.body}>
           {children}
-        </section>
+        </section> */}
+        {/* {extraFollowingSectionContent && (
+          <ModalCardBody children={extraFollowingSectionContent} />
+        )} */}
         <footer className="modal-card-foot" style={style.footer}>
           {footerContent}
         </footer>
       </div>
     </div>
+  );
+}
+
+function ModalCardBody({ children }) {
+  const style = getStyle();
+  return (
+    <section className="modal-card-body" style={style.body}>
+      {children}
+    </section>
   );
 }
 

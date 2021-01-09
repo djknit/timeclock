@@ -31,7 +31,7 @@ router.post(
     checkRequiredProps(req.body, ['segment.startTime', 'segment.endTime'], res);
     const { segment, jobId } = req.body;
     timeController.addSegment(segment, jobId, req.user._id)
-    .then(result => res.json({ job: result }))
+    .then(result => res.json(result))
     .catch(routeErrorHandlerFactory(res));
   }
 );

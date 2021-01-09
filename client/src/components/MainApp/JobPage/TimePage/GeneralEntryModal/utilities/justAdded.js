@@ -24,7 +24,7 @@ function findSegmentOnDay(daySegments, segmentInfo) {
 
 function doesSegmentMatchInfo(segment, segmentInfo) {
   return (
-    segment.created.time === segmentInfo.created.time &&
+    segment.created.time.utcTime === segmentInfo.created.time &&
     segment.created.method === segmentInfo.created.method &&
     (
       (

@@ -4,7 +4,7 @@ export * from './displayData';
 
 const constants = {
   ...importedConstants,
-  datePickerPopperHeight: '256.8px'
+  datePickerPopperHeight: '289px' // <- for 5 wks. month; '256.8px' for 4 wks. month
 };
 
 export { constants };

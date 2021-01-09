@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import { modalManagement, guessUserTimezone } from './utilities';
 import PageTitle from '../../PageTitle';
-import GeneralEntry from './GeneralEntry';
 import GeneralEntryModal from './GeneralEntryModal';
 import DeleteSegmentModal from './DeleteSegmentModal';
 import General from './General';
@@ -79,9 +78,13 @@ class TimePage extends Component {
               {...{
                 isActive,
                 inputRef,
-                ...(name === 'deleteSegment' ? { segmentToDelete } : {}),
                 job
               }}
+              {...(
+                name === 'deleteSegment' ?
+                { segmentToDelete } :
+                { toggleDeleteSegmentModal }
+              )}
               closeModal={() => toggle(false)}
             />
           )

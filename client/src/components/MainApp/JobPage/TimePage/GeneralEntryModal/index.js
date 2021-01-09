@@ -9,12 +9,14 @@ import {
   getTimeInputStartingValue,
   hasBlankInput,
   getNumDaysSpannedBySegment,
-  processTimeSegmentInput
+  processTimeSegmentInput,
+  findSegmentsFromSegmentInfo
 } from './utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
 import Button from '../../../../Button';
 import DateTimeInput from './DateTimeInput';
+import JustAdded from './JustAdded';
 
 const { datePickerPopperHeight } = constants;
 
@@ -33,7 +35,7 @@ class EntryModal extends Component {
     this.firstInputAreaLabel = React.createRef();
     this.state = {
       ...this.getStartingState(),
-      justAdded: []
+      justAddedSegmentsInfo: []
     };
   };
 
@@ -64,10 +66,14 @@ class EntryModal extends Component {
   handleDatepickerPopperToggle(isActiveAfterToggle, isStartDate) {
     // need to make space for datepicker popper above date input.
     const sectionLabelHeight = this.firstInputAreaLabel.current.clientHeight;
+    console.log('sectionLabelHeight\n', sectionLabelHeight);
     let roomAvailableBelowMsgArea = `${sectionLabelHeight}px + ${sectionLabelMarginBottom}`;
+    console.log('roomAvailableBelowMsgArea\n', roomAvailableBelowMsgArea);
     if (!isStartDate) {
       const firstSectionHeight = this.firstInputArea.current.clientHeight;
+      console.log('firstSectionHeight\n', firstSectionHeight)
       roomAvailableBelowMsgArea += ` + ${firstSectionHeight}px + ${inputFieldMarginBottom}`;
+      console.log('roomAvailableBelowMsgArea\n', roomAvailableBelowMsgArea)
     }
     this.setState({
       messagesAreaMinHeight: isActiveAfterToggle ? (
@@ -119,15 +125,14 @@ class EntryModal extends Component {
   processSuccessResponse(response) {
     console.log(response)
     const { data: { job, newSegmentInfo } } = response;
-    console.log(job);
     currentJobTimeService.setValue(job && job.weeks);
-    this.setState(prevState => ({
-      justAdded: [ newSegmentInfo, ...prevState.justAdded ]
-    }));
+    this.setState({
+      justAddedSegmentsInfo: [ newSegmentInfo, ...this.state.justAddedSegmentsInfo ]
+    });
   };
 
   resetJustAdded() {
-    this.setState({ justAdded: [] });
+    this.setState({ justAddedSegmentsInfo: [] });
   };
 
   render() {
@@ -140,7 +145,9 @@ class EntryModal extends Component {
       firstInputAreaLabel,
       handleDatepickerPopperToggle
     } = this;
-    const { isActive, closeModal, inputRef } = this.props;
+    const {
+      isActive, closeModal, inputRef, job, toggleDeleteSegmentModal
+    } = this.props;
     const {
       hasSuccess,
       hasProblem,
@@ -150,10 +157,14 @@ class EntryModal extends Component {
       isLoading,
       warningMessages,
       problems,
-      messagesAreaMinHeight
+      messagesAreaMinHeight,
+      justAddedSegmentsInfo
     } = this.state;
 
+    const justAdded = findSegmentsFromSegmentInfo(justAddedSegmentsInfo, job.time.weeks);
     const isFormIncomplete = hasBlankInput(this.state);
+
+    console.log(justAdded)
 
     const reverseWarning = () => this.setState({ hasWarning: false });
     const getInputProps = propName => ({
@@ -182,6 +193,14 @@ class EntryModal extends Component {
         }}
         title="Enter Time"
         isCloseButtonDisabled={isLoading}
+        // extraPrecedingSectionContent={justAdded && justAdded.length > 0 && (
+        //   <JustAdded
+        //     {...{
+        //       justAdded,
+        //       toggleDeleteSegmentModal
+        //     }}
+        //   />
+        // )}
         footerContent={
           <>
             <Button
