@@ -1,8 +1,8 @@
-const Job = require('../../models/Job');
+const { Job } = require('../../models');
 
 const { jobNotFoundCheckerFactory } = require('./utilities');
 
-const weeksController = require('../time/weeks');
+const { weeks: weeksController } = require('../timePieces');
 
 module.exports = {
   addWeek,

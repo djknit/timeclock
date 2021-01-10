@@ -1,3 +1,4 @@
+import moment from 'moment-timezone';
 import api from './api';
 export * from './jobData';
 export * from './dates';
@@ -23,9 +24,14 @@ function roundNumToNDecimalDigits(numToRound, numDecDigs /* (n) */) {
   return Number(`${roundedScaledNum}e${negNumDecDigs}`);
 }
 
+function guessUserTimezone() {
+  return moment.tz.guess();
+}
+
 export {
   api,
   capitalizeFirstLetter,
   isWindowWide,
-  roundNumToNDecimalDigits
+  roundNumToNDecimalDigits,
+  guessUserTimezone
 };

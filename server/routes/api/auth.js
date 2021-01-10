@@ -2,7 +2,7 @@ const { passport } = require('../../config/passport');
 
 const router = require('express').Router();
 
-const UserController = require('../../controllers/User');
+const { User: UserController } = require('../../controllers');
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
 

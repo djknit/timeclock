@@ -1,6 +1,7 @@
-const weeksController = require('../../../time/weeks');
-const daysController = require('../../../time/days');
-
+const {
+  weeks: weeksController,
+  days: daysController
+} = require('../../../timePieces');
 const { getOrphanedSegments, placeOrphanedSegmentsWithAdoptiveDays } = require('./orphanedSegments');
 
 const { getMostRecentScheduleValueForDate, getPrecedingDate, saveModifiedWeeks } = require('../utilities');
@@ -19,7 +20,7 @@ function updateOtherPropForWeeksAndDays(job, allAffectedTimespans, propName) {
         updateDaysInWeek(week.document, job, allAffectedTimespans, propName, orphanedSegments);
       }
     });
-    placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWeekDocIds)
+    placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWeekDocIds, propName)
     .then(() => saveModifiedWeeks(job.weeks, modifiedWeekDocIds))
     .then(() => resolve(job))
     .catch(reject);
@@ -39,7 +40,7 @@ function updateDaysInWeek(weekDoc, job, allAffectedTimespans, propName, orphaned
     day[fieldNames.main] = getMostRecentScheduleValueForDate(day.date, job[propName]);
     if (isDayBoundaryAffected) {
       day[fieldNames.start] = getMostRecentScheduleValueForDate(getPrecedingDate(day.date), job[propName]);
-      orphanedSegments.push(...getOrphanedSegments(day));
+      orphanedSegments.push(...getOrphanedSegments(day, propName));
     }
   });
 }

@@ -1,17 +1,10 @@
-const moment = require('moment-timezone');
-
-const JobController = require('../../Job');
 const WeekController = require('../../Week');
 const daysController = require('../days');
 
 const { createWeekArrayEntryByDate, createNextWeek } = require('./create');
 
 const {
-  // getMostRecentScheduleIndexForDate,
-  // areDatesEquivalent,
-  // convertMomentToMyDate,
-  getUtcDateTime,
-  // getMostRecentScheduleValueForDate
+  getUtcDateTime
 } = require('../../../utilities');
 
 module.exports = {

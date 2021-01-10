@@ -53,6 +53,7 @@ function getWeekTotalsInDateRange(dateRange, week) {
     if (dayTimeInMsec > 0) weekTotalsInRange.daysWorked++;
     addDayEarningsToWeekTotals(day, weekTotalsInRange.earnings);
   });
+  weekTotalsInRange.earnings = formatEarnings(weekTotalsInRange.earnings);
   return weekTotalsInRange;
 }
 

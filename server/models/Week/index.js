@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const intSubdocFactory = require('./pieces/integer');
-const dateSubdocFactory = require('./pieces/date');
-const daysSubdocFactory = require('./pieces/time/days');
+const {
+  intSubdocFactory,
+  dateSubdocFactory,
+} = require('../pieces');
+const {
+  daysSubdocFactory
+} = require('./pieces');
 
 const WeekSchema = new Schema({
   days: daysSubdocFactory(),

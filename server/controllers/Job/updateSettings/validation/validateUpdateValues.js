@@ -1,6 +1,5 @@
 const moment = require('moment-timezone');
-
-const { validateWages } = require('./utilities');
+const { WageTest } = require('../../../../models');
 
 module.exports = validateUpdateValues;
 
@@ -39,4 +38,25 @@ function validateWeekBeginsValue(weekBeginsValue) {
 function validateInteger(val) {
   if (typeof(val) !== 'number') throw new Error('Failed integer validation: value is not a number.');
   if (val !== Math.floor(val)) throw new Error('Failed integer validation: value is a non-integer number.');
+}
+
+function validateWages(values) {
+  return new Promise((resolve, reject) => {
+    if (values.length === 0) return resolve();
+    let numCompleted = 0;
+    for (let i = 0; i < values.length; i++) {
+      validateWage(values[i])
+      .then(result => {
+        if (++numCompleted === values.length) resolve();
+      });
+    }
+  });
+}
+
+function validateWage(value) {
+  return (
+    WageTest
+    .create({ wage: value })
+    .then(testDoc => WageTest.findByIdAndDelete(testDoc._id))
+  );
 }

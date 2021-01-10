@@ -18,6 +18,9 @@ const timeApi = {
     const segment = { startTime, endTime };
     return timeAxios.post('/add-segment', { segment, jobId });
   },
+  addSegments({ segments, jobId }) {
+    return timeAxios.post('/add-segments', { segments, jobId });
+  },
   deleteSegment({ segmentId, weekId, dayId }) {
     return timeAxios.post('/delete-segment', { segmentId, weekId, dayId });
   },

@@ -1,12 +1,15 @@
 const mongoose = require('mongoose');
 
-const valueScheduleSubdocFactory = require('./pieces/valueSchedule');
-const intSubdocFactory = require('./pieces/integer');
-const timezoneSubdocFactory = require('./pieces/timezone');
-const wageSubdocFactory = require('./pieces/wage');
-const dayCutoffSubdocFactory = require('./pieces/dayCutoff');
-const dateSubdocFactory = require('./pieces/date');
-const weeksSubdocFactory = require('./pieces/time/weeks');
+const {
+  valueScheduleSubdocFactory,
+  intSubdocFactory,
+  timezoneSubdocFactory,
+  wageSubdocFactory,
+  dayCutoffSubdocFactory,
+  dateSubdocFactory,
+  segmentSchema
+} = require('../pieces');
+const { weeksSubdocFactory } = require('./pieces');
 
 const Schema = mongoose.Schema;
 
@@ -47,7 +50,14 @@ const JobSchema = new Schema(
     punchClock: {
       timeIn: intSubdocFactory(),
       timeOut: intSubdocFactory()
-    }
+    },
+    deletedSegments: [{
+      segment: {
+        type: segmentSchema,
+        required: true
+      },
+      deletedAt: intSubdocFactory({ required: true })
+    }]
   }
 );
 

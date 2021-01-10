@@ -1,4 +1,4 @@
-import { guessUserTimezone } from '../elemental';
+import { guessUserTimezone } from '../../../utilities';
 
 function getSettingInputInitialValues() {
   return {

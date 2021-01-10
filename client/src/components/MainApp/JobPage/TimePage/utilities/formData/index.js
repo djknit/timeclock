@@ -1,4 +1,2 @@
-import getTimeInputProblems from './getTimeInputProblems';
-
-
-export { getTimeInputProblems };
+export * from './timeSegment';
+export * from './time';

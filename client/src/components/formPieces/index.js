@@ -10,7 +10,8 @@ import ProgressBar from './ProgressBar';
 import DayCutoffInput from './DayCutoffInput';
 import FormMessages from './FormMessages';
 import FormButtons from './FormButtons';
-// import {} from './utilities';
+import TimeInput from './TimeInput';
+import SectionLabel from './SectionLabel';
 
 export {
   TextInput,
@@ -24,5 +25,7 @@ export {
   ProgressBar,
   DayCutoffInput,
   FormMessages,
-  FormButtons
+  FormButtons,
+  TimeInput,
+  SectionLabel
 };

@@ -1,4 +1,4 @@
-import { timeInputStyles } from '../WkDayCutoffsInput/style';
+import { timeInputStyles } from '../style';
 
 export default function getStyle(fieldStyle, fieldLabelStyle) {
 
@@ -15,9 +15,6 @@ export default function getStyle(fieldStyle, fieldLabelStyle) {
       ...fieldLabelStyle
     },
     ...timeInputStyles,
-    amPmInput: {
-      marginLeft: '.5rem'
-    },
     cutoffDisplay: {
       display: 'inline-block',
       fontWeight: 400,

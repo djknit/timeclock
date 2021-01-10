@@ -22,7 +22,8 @@ function bindFormSpecificMethods(component) {
     'processAndSubmitData',
     'processSuccessResponse',
     'processErrorResponse',
-    'afterSuccessCountdown'
+    'afterSuccessCountdown',
+    'getWarnings'
   ];
   methodNames.forEach(methodName => {
     if (component[methodName]) {
@@ -31,8 +32,8 @@ function bindFormSpecificMethods(component) {
   });
 }
 
-function bindFormMethods(component) {
-  bindCommonFormMethods(component);
+function bindFormMethods(component, options) {
+  bindCommonFormMethods(component, options);
   bindFormSpecificMethods(component);
 }
 
