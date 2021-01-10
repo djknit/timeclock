@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import {
-  preprocessScheduleForDisplay
-} from '../utilities';
-import { windowWidthService, areModalsOpenService } from '../../../../../data';
+import { preprocessScheduleForDisplay, modalManagement } from '../utilities';
+import { windowWidthService } from '../../../../../data';
 import ContentArea, { ContentAreaTitle } from '../../../ContentArea';
 import Button from '../../../../Button';
 import EditValueModal from '../EditValueModal';
@@ -13,16 +11,16 @@ import ChangeDateModal from '../ChangeDateModal';
 import ValueSchedule from './ValueSchedule';
 import { addData } from '../../../../higherOrder';
 
+const {
+  addModalsStateAndMethods, createModalInfo, reportModalsClosedFor, extractModalsResources
+} = modalManagement;
+
 function getUpdateOperationInfoObj(upOpName, modalComponent) {
   const fullName = `${upOpName}Update`;
-  const capFullName = fullName[0].toUpperCase() + fullName.slice(1);
-  return {
-    name: upOpName,
-    togglerName: `toggle${capFullName}Modal`,
-    inputRefName: `${fullName}InputRef`,
-    isActiveStateProp: `is${capFullName}ModalActive`,
-    ModalComponent: modalComponent
-  };
+  const hasInputRef = upOpName !== 'delete';
+  const propToEditOnToggleName = upOpName !== 'add' ? 'entryToEditId' : undefined;
+  const focusMethodName = upOpName === 'changeDate' ? 'setFocus' : undefined;
+  return createModalInfo(fullName, modalComponent, hasInputRef, propToEditOnToggleName, focusMethodName);
 }
 const updateOpsInfo = [
   getUpdateOperationInfoObj('add', AddEntryModal),
@@ -34,48 +32,14 @@ const updateOpsInfo = [
 class _Setting_needsData extends Component {
   constructor(props) {
     super(props);
-    this.modalTogglerFactory = this.modalTogglerFactory.bind(this);
-    let state = {};
-    updateOpsInfo.forEach(({ inputRefName, togglerName, isActiveStateProp, name }) => {
-      this[inputRefName] = React.createRef();
-      const isDateChange = name === 'changeDate';
-      this[togglerName] = this.modalTogglerFactory(isActiveStateProp, this[inputRefName], isDateChange).bind(this);
-      state[isActiveStateProp] = false;
-    });
-    this.reportModalActivity = this.reportModalActivity.bind(this);
     this.setEntryToEditId = this.setEntryToEditId.bind(this);
+    let state = {};
+    addModalsStateAndMethods(this, state, updateOpsInfo);
     this.state = {
       entryToEditId: undefined,
       ...state,
       modalsRegistrationId: undefined,
     };
-  };
-
-  modalTogglerFactory(modalIsOpenStatePropName, inputRef, hasDateInputAsPrimary) {
-    return (isOpenAfterToggle, entryToEditId) => {
-      let stateUpdates = { [modalIsOpenStatePropName]: !!isOpenAfterToggle };
-      if (entryToEditId || entryToEditId === 0) {
-        Object.assign(stateUpdates, { entryToEditId });
-      }
-      this.setState(
-        stateUpdates,
-        () => {
-          const focusMethod = hasDateInputAsPrimary ? 'setFocus' : 'focus';
-          if (isOpenAfterToggle && inputRef && inputRef.current) {
-            inputRef.current[focusMethod]();
-          }
-          this.reportModalActivity();
-        }
-      );
-    };
-  };
-
-  reportModalActivity() {
-    let hasModalOpen = false;
-    updateOpsInfo.forEach(({ isActiveStateProp }) => {
-      if (this.state[isActiveStateProp]) hasModalOpen = true;
-    });
-    areModalsOpenService.report(this.state.modalsRegistrationId, hasModalOpen);
   };
 
   setEntryToEditId(entryId) {
@@ -84,24 +48,12 @@ class _Setting_needsData extends Component {
     });
   };
 
-  componentDidMount() {
-    this.setState({
-      modalsRegistrationId: areModalsOpenService.getId(),
-    });
-  };
-
   componentWillUnmount() {
-    areModalsOpenService.report(this.state.modalsRegistrationId, false);
+    reportModalsClosedFor(this);
   };
 
   render() {
-    const {
-      setEntryToEditId,
-      toggleAddUpdateModal,
-      toggleEditUpdateModal,
-      toggleChangeDateUpdateModal,
-      toggleDeleteUpdateModal
-    } = this;
+    const { setEntryToEditId } = this;
     const {
       job,
       settingName,
@@ -112,6 +64,13 @@ class _Setting_needsData extends Component {
       windowWidth,
     } = this.props;
     const { entryToEditId } = this.state;
+
+    const { modals, modalTogglers } = extractModalsResources(this, updateOpsInfo);
+
+    const toggleAddUpdateModal = modalTogglers.addUpdate;
+    const toggleEditUpdateModal = modalTogglers.editUpdate;
+    const toggleChangeDateUpdateModal = modalTogglers.changeDateUpdate;
+    const toggleDeleteUpdateModal = modalTogglers.deleteUpdate;
 
     const valueSchedule = preprocessScheduleForDisplay(job.settings[settingName], settingName);
 
@@ -155,14 +114,16 @@ class _Setting_needsData extends Component {
             toggleDeleteValueModal={toggleDeleteUpdateModal}
           />
         </ContentArea>
-        {updateOpsInfo.map(
-          ({ ModalComponent, togglerName, inputRefName, isActiveStateProp, name }) => (
+        {modals.map(
+          ({ ModalComponent, toggle, inputRef, isActive, name }) => (
             <ModalComponent
               key={name}
               {...commonModalAttrs}
-              isActive={this.state[isActiveStateProp]}
-              closeModal={() => this[togglerName](false)}
-              inputRef={this[inputRefName]}
+              {...{
+                inputRef,
+                isActive
+              }}
+              closeModal={() => toggle(false)}
             />
           )
         )}

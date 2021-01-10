@@ -1,4 +1,4 @@
-import { dataServiceFactory } from './utilities';
+import { dataServiceFactory, guessUserTimezone } from './utilities';
 import settingsService from '../settings';
 import processData from './processData';
 import getDateRangeInfo from './getDateRangeInfo';
@@ -6,22 +6,25 @@ import getDateRangeInfo from './getDateRangeInfo';
 let state = {
   weeks: undefined,
   settings: settingsService._getRawSchedules(),
-  isWaitingForSiblings: false
+  sessionTimezone: undefined
 };
+
+function setWeeks(rawWeeksArray) {
+  state.weeks = rawWeeksArray.map(({ document }) => document);
+}
 
 let timeService = dataServiceFactory({
   readFunction() {
-    const { weeks, settings } = state;
+    const { weeks, settings, sessionTimezone } = state;
     if (!weeks || !settings) return;
-    return processData(weeks, settings);
+    return processData(weeks, settings, sessionTimezone);
   },
   setFunction(weeksArray) {
-    state.isWaitingForSiblings = true;
-    state.weeks = weeksArray.map(({ document }) => document);
+    setWeeks(weeksArray);
   },
   clearFunction() {
-    state.isWaitingForSiblings = true;
     state.weeks = undefined;
+    state.sessionTimezone = undefined;
   },
   methods: {
     updateWeek(updatedWeek) {
@@ -32,19 +35,27 @@ let timeService = dataServiceFactory({
           return;
         }
       }
+    },
+    setSessionTimezone(newTimezone) {
+      state.sessionTimezone = newTimezone;
     }
   }
-});
+}); 
 
 settingsService.subscribe(() => {
   state.settings = settingsService._getRawSchedules();
-  state.isWaitingForSiblings = false;
   timeService._emit();
 });
 
 timeService.getInfoForDateRange = function(firstDate, lastDate) {
   let processedWeeks = processData(state.weeks).weeks;
   return getDateRangeInfo({ firstDate, lastDate }, processedWeeks);
+};
+
+// special alternative to normal set function to wait for new settings value before emitting (for when setting whole job and not just time)
+timeService.setJobSetTime = function(weeksArray) {
+  setWeeks(weeksArray);
+  state.sessionTimezone = guessUserTimezone();
 };
 
 export default timeService;

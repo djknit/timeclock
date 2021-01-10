@@ -29,38 +29,34 @@ class QuickNav extends Component {
 
     const style = getStyle(buttonHeight, styleProp);
 
+    const commonAttrs = {
+      allowTabFocus: !disabled,
+      styles: style.button,
+      isLink: true
+    };
+
     return (
       <ContentArea style={style.contentArea}>
         <ContentAreaTitle style={style.title}>Quick Links:</ContentAreaTitle>
         <Button
           theme="info"
-          isLink
           to={dashboardPath}
-          styles={style.button}
-          {...{
-            buttonRef,
-            disabled
-          }}
+          {...{ buttonRef }}
+          {...commonAttrs}
         >
           <i className="far fa-arrow-alt-circle-left" /> Back to Dashboard
         </Button>
         <Button
           theme="primary"
-          // onClick={goToTimePage}
-          isLink
           to={timePagePath}
-          styles={style.button}
-          {...{ disabled }}
+          {...commonAttrs}
         >
           <i className="far fa-clock" /> Time Page
         </Button>
         <Button
           theme="primary"
-          // onClick={goToJobSettings}
-          isLink
           to={jobSettingsPath}
-          styles={style.button}
-          {...{ disabled }}
+          {...commonAttrs}
         >
           <i className="fas fa-cog" /> Job Settings
         </Button>

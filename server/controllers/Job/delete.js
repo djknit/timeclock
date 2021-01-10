@@ -1,11 +1,9 @@
-const Job = require('../../models/Job');
+const { Job } = require('../../models');
 
 const WeekController = require('../Week');
 const UserController = require('../User');
 
-const { jobNotFoundCheckerFactory } = require('./utilities');
-const { getJobById, getJobBasicsById } = require('./find');
-
+const { getJobBasicsById } = require('./find');
 
 module.exports = {
   deleteJob
@@ -28,8 +26,7 @@ function deleteJob(jobId, userId) {
           user: userId
         });
       })
-      .then(result => resolve(userData))
-      .catch(reject);
+      .then(result => resolve(userData));
     }
   );
 }

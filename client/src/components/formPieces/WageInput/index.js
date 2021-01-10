@@ -26,18 +26,11 @@ const currencyOptions = [
 function WageInput({
   propName,
   value,
-  hasProblem,
   problems,
   changeHandlerFactory,
   isActive,
   formId,
   refs,
-  // radioUseWageTrueRef,
-  // radioUseWageFalseRef,
-  // radioUseOvertimeTrueRef,
-  // radioUseOvertimeFalseRef,
-  // radioUseMultiplierTrueRef,
-  // radioUseMultiplierFalseRef,
   topLevelFieldLabelRatio,
   secondLevelFieldLabelRatio,
   contentToggle,
@@ -89,7 +82,10 @@ function WageInput({
           isInline
           hasProblem={problems && problems.useWage}
           fieldToLabelRatio={_topLevelFieldLabelRatio}
-          {...{ isActive }}
+          {...{
+            isActive,
+            inputRef
+          }}
           fieldStyle={style.useWageInputField}
         />
       }
@@ -121,8 +117,7 @@ function WageInput({
         changeHandlerFactory={changeHandlerFactoryForChildren}
         {...{
           formId,
-          currency,
-          inputRef
+          currency
         }}
         isInline
         isActive={areInsideInputsActive}

@@ -53,7 +53,7 @@ class DeleteEntryModal extends Component {
     }
 
     const {
-      valueSimpleText, dateRangeText, dateRangeShortText, startDateShortText
+      valueSimpleText, dateRangeText, capDateRangeShortText, startDateShortText
     } = getSchedEntryFromId(entryToEditId, valueSchedule) || {};
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
@@ -78,7 +78,7 @@ class DeleteEntryModal extends Component {
                 Time Period:
               </Tag>
               <Tag theme="info light" size={6}>
-                {dateRangeShortText}
+                {capDateRangeShortText}
               </Tag>
             </TagGroup>
             <TagGroup align="center" isInline>

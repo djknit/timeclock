@@ -4,6 +4,8 @@ import profileService from './profile';
 import jobsService from './jobs';
 import currentJobService from './currentJob';
 
+export * from './currentJob';
+
 const childDataServices = {
   isLoggedIn: isLoggedInService,
   profileInfo: profileService,

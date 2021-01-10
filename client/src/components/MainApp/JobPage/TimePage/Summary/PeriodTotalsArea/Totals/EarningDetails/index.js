@@ -13,6 +13,8 @@ function EarningDetails({
 
   const style = getStyle();
 
+  const _paidEarnings = earnings.filter(({ currency }) => !!currency);
+
   return (
     <>
       <p style={style.firstTotalsP}>
@@ -23,12 +25,12 @@ function EarningDetails({
         <Label>Total Unpaid Time:</Label>
         {getHoursDurationDisplay(unpaidTime)}
       </p>
-      {earnings.length > 1 ? (
-        earnings.map(earningsForCurrency => (
+      {_paidEarnings.length > 1 ? (
+        _paidEarnings.map(earningsForCurrency => (
           <CurrencyEarnings {...{ earningsForCurrency }} />
         ))
       ) : (
-        <Rates earningsByRate={earnings[0].rates} />
+        <Rates earningsByRate={_paidEarnings[0].rates} />
       )}
     </>
   );

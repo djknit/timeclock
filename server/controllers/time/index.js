@@ -1,17 +1,24 @@
+/*
+ABOUT THIS FILE/FOLDER:
+  These are the general methods invoked by the `/time/` api routes.
+  This controller doesn't correspond to a specific model. The methods affect multiple models.
+  This controller invokes other controllers rather than referencing the models directly.
+*/
+
 const WeekController = require('../Week');
 const JobController = require('../Job');
-const segmentsController = require('./segments');
-const daysController = require('./days');
-const weeksController = require('./weeks');
+const {
+  segments: segmentsController,
+  days: daysController,
+  weeks: weeksController
+} = require('../timePieces');
 
 const { getUtcDateTime, checkForFailure } = require('../utilities');
 
 module.exports = {
-  days: daysController,
-  segments: segmentsController,
-  weeks: weeksController,
   addSegmentToDay,
   addSegment,
+  addMultipleSegments,
   deleteSegmentsInDateRange,
   deleteSegmentsForDates,
   deleteSegmentsForDayIds
@@ -21,10 +28,19 @@ function addSegmentToDay(segment, dayId, weekId, userId) {
   return new Promise(
     (resolve, reject) => {
       ensureSegmentIsValid(segment);
+      segment.created = {
+        method: 'specific-day',
+        time: Date.now()
+      };
       WeekController.getById(weekId, userId)
       .then(weekDoc => ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc))
       .then(() => WeekController.addSegmentToDay(segment, dayId, weekId, userId))
-      .then(resolve)
+      .then(updatedWeekDoc => {
+        resolve({
+          weekDoc: updatedWeekDoc,
+          newSegmentInfo: { created: segment.created }
+        });
+      })
       .catch(reject);
     }
   );
@@ -34,7 +50,11 @@ function addSegment(segment, jobId, userId) {
   return new Promise(
     (resolve, reject) => {
       ensureSegmentIsValid(segment);
-      let date, weekDoc, job;
+      segment.created = {
+        method: 'general',
+        time: Date.now()
+      };
+      let date, weekDoc, job, dayId;
       JobController.getJobById(jobId, userId)
       .then(_job => {
         date = segmentsController.getDateForNewSegment(segment, _job);
@@ -46,7 +66,8 @@ function addSegment(segment, jobId, userId) {
         if (!weekDoc) weekDoc = weeksController.findWeekWithDate(date, job.weeks);
         day = daysController.findDayForDate(date, weekDoc.days);
         ensureNewSegDoesntOverlap(segment, day);
-        return WeekController.addSegmentToDay(segment, day._id, weekDoc._id, userId);
+        dayId = day._id;
+        return WeekController.addSegmentToDay(segment, dayId, weekDoc._id, userId);
       })
       .then(updatedWeekDoc => {
         const weeks = job.weeks;
@@ -54,7 +75,16 @@ function addSegment(segment, jobId, userId) {
           let week = weeks[i];
           if (updatedWeekDoc._id.toString() === week.document._id.toString()) {
             week.document = updatedWeekDoc;
-            return resolve(job);
+            return resolve({
+              job,
+              newSegmentInfo: {
+                weekId: weekDoc._id,
+                dayId,
+                created: segment.created,
+                startTime: segment.startTime,
+                endTime: segment.endTime
+              }
+            });
           }
         }
         throw new Error('Unexpected error. Week document not found in weeks array for job.');
@@ -62,6 +92,26 @@ function addSegment(segment, jobId, userId) {
       .catch(reject);
     }
   );
+}
+
+function addMultipleSegments(segments, jobId, userId) {
+  let index = 0;
+  return _addNextSeg();
+
+  function _addNextSeg() {
+    return new Promise(
+      (resolve) => {
+        addSegment(segments[index], jobId, userId)
+        .then(_job => {
+          if (index === segments.length) {
+            return resolve(_job);
+          }
+          index++;
+          resolve(_addNextSeg());
+        });
+      }
+    );
+  }
 }
 
 function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {
@@ -118,7 +168,7 @@ function ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc) {
   ensureNewSegDoesntOverlap(segment, day);
 }
 
-function ensureNewSegDoesntOverlap(segment, day) {2
+function ensureNewSegDoesntOverlap(segment, day) {
   const doesNewSegOverlapExistingSegs = segmentsController.doesNewSegOverlapExistingSegs(day.segments, segment);
   const segOverlapMsg = 'Segment could not be added because it overlaps with one or more existing segment(s).';
   const segOverlapProblemsObj = {

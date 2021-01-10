@@ -1,12 +1,16 @@
+import modalTogglerFactoryFactory from './modalTogglerFactoryFactory';
+import addReportModalActivity from './addReportModalActivity';
 export * from '../../utilities';
 export * from './currency';
-export * from './formData';
+export * from './forms';
+export * from './modalManagement';
 
 function promiseToSetState(component, updatedState) {
   return new Promise(resolve => component.setState(updatedState, resolve));
 }
 
 function getColorClass(theme) {
+  if (!theme) return '';
   const words = theme.split(' ');
   let className = '';
   words.forEach((word, index) => {
@@ -35,5 +39,7 @@ export {
   promiseToSetState,
   getColorClass,
   getSizeClass,
-  keyTriggerCheckerFactory
+  keyTriggerCheckerFactory,
+  modalTogglerFactoryFactory,
+  addReportModalActivity
 };

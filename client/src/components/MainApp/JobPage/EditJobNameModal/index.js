@@ -96,7 +96,7 @@ class EditJobNameModal extends Component {
             Current Name:
           </Tag>
           <Tag theme="info light" size={6}>
-            {job.name}
+            "{job.name}"
           </Tag>
         </TagGroup>
         <TextInput

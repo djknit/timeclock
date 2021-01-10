@@ -1,37 +1,49 @@
-const daysController = require('../../../../time/days');
+const { days: daysController } = require('../../../../timePieces');
 
 module.exports = getOrphanedSegments;
 
-function getOrphanedSegments(day) {
+function getOrphanedSegments(day, segModificationMethodName) {
   // Since changing `dayCutoff` or `timezone` changes day start and end times, this function checks to see if part or all of any segment(s) no longer fall within the day they are assigned to
   let orphanedSegments = [];
   let indexesOfSegmentsToRemove = [];
   const dayStartTime = daysController.getDayStartTime(day);
   const dayEndTime = daysController.getDayEndTime(day);
+
   day.segments.forEach((segment, index) => {
     const { startTime, endTime } = segment;
+    const _markSegModified = () => {
+      segment.modified.push({
+        time: Date.now(),
+        previousValue: { startTime, endTime },
+        method: segModificationMethodName
+      });
+    };
     if (
       (startTime < dayStartTime && endTime <= dayStartTime) ||
       (startTime >= dayEndTime && endTime > dayEndTime)
     ) {
       orphanedSegments.push(segment);
       indexesOfSegmentsToRemove.push(index);
+      return;
     }
-    else if (startTime < dayStartTime) {
+    if (startTime < dayStartTime) {
+      _markSegModified();
       orphanedSegments.push({
-        startTime: startTime,
+        ...segment,
         endTime: dayStartTime
       });
       segment.startTime = dayStartTime;
     }
-    else if (endTime > dayEndTime) {
+    if (endTime > dayEndTime) {
+      _markSegModified();
       orphanedSegments.push({
-        startTime: dayEndTime,
-        endTime: endTime
+        ...segment,
+        startTime: dayEndTime
       });
       segment.endTime = dayEndTime;
     }
   });
+
   day.segments = day.segments.filter((seg, index) => indexesOfSegmentsToRemove.indexOf(index) === -1);
   return orphanedSegments;
 }

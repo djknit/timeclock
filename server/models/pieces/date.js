@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const intTypeFactory = require('./integer');
 
-const { isDateValid } = require('../../utilities');
+const { isDateValid } = require('../../utilities/dates');
 
 const dateSchema = new mongoose.Schema({
   year: intTypeFactory(),

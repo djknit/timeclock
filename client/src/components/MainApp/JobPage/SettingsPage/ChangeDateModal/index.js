@@ -3,13 +3,16 @@ import {
   api, 
   getDateChangeUpdateWarnings,
   getSchedEntryFromId,
-  bindFormMethods
+  bindFormMethods,
+  constants
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
 import Tag, { TagGroup } from '../../../../Tag';
 import { DateInput } from '../../../../formPieces';
 import FormModal from '../../../../FormModal';
+
+const { datePickerPopperHeight } = constants;
 
 const formId = 'change-job-setting-date-form';
 
@@ -29,9 +32,12 @@ class ChangeDateModal extends Component {
   };
 
   handleDatepickerPopperToggle(isActiveAfterToggle) {
-    // Make room for popper in above input. Needs 289.3px height. Input label w/ margin is 2rem.
+    // Make room for popper in above input. Needs 289.3px (datePickerPopperHeight) height.
+    // Input label w/ margin is 2rem.
     this.setState({
-      messagesAreaMinHeight: isActiveAfterToggle ? `calc(289.3px - 2rem)` : undefined
+      messagesAreaMinHeight: (
+        isActiveAfterToggle ? `calc(${datePickerPopperHeight} - 2rem)` : undefined
+      )
     });
   };
 
@@ -104,7 +110,7 @@ class ChangeDateModal extends Component {
       return <></>;
     }
 
-    const { dateRangeShortText, valueSimpleText, startDate } = getSchedEntryFromId(entryToEditId, valueSchedule) || {};
+    const { capDateRangeShortText, valueSimpleText, startDate } = getSchedEntryFromId(entryToEditId, valueSchedule) || {};
 
     const lowCaseSettingName = settingDisplayName.toLowerCase();
 
@@ -133,7 +139,7 @@ class ChangeDateModal extends Component {
                 Time Period:
               </Tag>
               <Tag theme="info light" size={6}>
-                {dateRangeShortText}
+                {capDateRangeShortText}
               </Tag>
             </TagGroup>
             <TagGroup align="center" isInline>

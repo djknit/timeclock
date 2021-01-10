@@ -24,7 +24,7 @@ let state = {
       this._pagesWithModalsOpen.filter(el => el !== registrationId)
     );
   }
-}
+};
 
 const service = dataServiceFactory({
   readFunction: () => state.areAnyModalsOpen,

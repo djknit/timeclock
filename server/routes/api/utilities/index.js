@@ -22,7 +22,7 @@ function checkRequiredProps(props, requiredPropNames, res) {
   }
 }
 
-function checkRequiredProp(props, propName, problems, problemMessages, propDisplayName) {
+function checkRequiredProp(props = {}, propName, problems, problemMessages, propDisplayName) {
   const dotIndex = propName.indexOf('.');
   if (dotIndex > -1) {
     const parentPropName = propName.slice(0, dotIndex);

@@ -7,7 +7,8 @@ import {
   getSettingInputInitialValues,
   processJobSettingInputValue,
   getAddUpdateWarnings,
-  bindFormMethods
+  bindFormMethods,
+  constants
 } from '../utilities';
 import { currentJobService } from '../../../../../data';
 import getStyle from './style';
@@ -15,6 +16,8 @@ import { DateInput } from '../../../../formPieces';
 import SettingValueInput from '../SettingValueInput';
 import { addCollapsing } from '../../../../higherOrder';
 import FormModal from '../../../../FormModal';
+
+const { datePickerPopperHeight } = constants;
 
 const formId = 'add-job-setting-schedule-entry';
 
@@ -39,15 +42,15 @@ class _AddEntryModal_needsCollapsing extends Component {
 
   handleDatepickerPopperToggle(isActiveAfterToggle) {
     // need to make space for datepicker popper above date input.
-    // popper w/ margin extends 289.3px above top of date input.
+    // popper w/ margin extends (popperHeight) above top of date input.
     // area above date input consists of dateInput label, first input field, and messages area
     // date input label w/ margin is 2rem
-    // NEED: 2rem + (1stInputAreaHeight) + (msgAreaHeight) >= 289.3px
-    // therefore: (msgAreaHeight) >= 289.3px - 2rem - (1stInputAreaHeight)
+    // NEED: 2rem + (1stInputAreaHeight) + (msgAreaHeight) >= (popperHeight)
+    // therefore: (msgAreaHeight) >= (popperHeight) - 2rem - (1stInputAreaHeight)
     const firstInputHeight = this.firstInputArea.current.clientHeight;
     this.setState({
       messagesAreaMinHeight: isActiveAfterToggle ? (
-        `calc(289.3px - 2rem - ${firstInputHeight}px)`
+        `calc(${datePickerPopperHeight} - 2rem - ${firstInputHeight}px)`
       ) : (
         undefined
       )

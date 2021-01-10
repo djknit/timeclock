@@ -2,8 +2,9 @@ import { getCurrencyAmountInfo, getDurationInfo } from '../../../utilities';
 
 // final processing of earnings before output
 function formatEarnings(earningsByCurrency) {
-  if (earningsByCurrency.length === 0) return null;
-  return earningsByCurrency.map(formatEarningsForCurrency);
+  const _paidEarnings = earningsByCurrency.filter(({ currency }) => !!currency);
+  if (_paidEarnings.length === 0) return null;
+  return _paidEarnings.map(formatEarningsForCurrency);
 }
 
 function formatEarningsForCurrency({ currency, rawAmount, totalTimeInMsec, rates }) {

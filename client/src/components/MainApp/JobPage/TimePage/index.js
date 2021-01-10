@@ -1,20 +1,46 @@
 import React, { Component } from 'react';
 import getStyle from './style';
+import { modalManagement, guessUserTimezone } from './utilities';
 import PageTitle from '../../PageTitle';
-import GeneralEntry from './GeneralEntry';
+import GeneralEntryModal from './GeneralEntryModal';
+import DeleteSegmentModal from './DeleteSegmentModal';
+import General from './General';
 import Summary from './Summary';
 import Weeks from './Weeks';
+
+const {
+  addModalsStateAndMethods, reportModalsClosedFor, extractModalsResources, createModalInfo
+} = modalManagement;
+
+const modalsInfo = [
+  createModalInfo('generalTimeEntry', GeneralEntryModal, false, undefined, 'setFocus'),
+  createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete')
+];
 
 class TimePage extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    let state = {};
+    addModalsStateAndMethods(this, state, modalsInfo);
+    this.state = {
+      ...state,
+      segmentToDelete: undefined
+    };
+  };
+
+  componentWillUnmount() {
+    reportModalsClosedFor(this);
   };
 
   render() {
 
     const { job, parentPath, windowWidth } = this.props;
-    console.log(job)
+    const { segmentToDelete } = this.state;
+
+    const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
+
+    const toggleGeneralEntryModal = modalTogglers.generalTimeEntry;
+    const toggleDeleteSegmentModal = modalTogglers.deleteSegment;
 
     const crumbChain = [
       {
@@ -35,9 +61,34 @@ class TimePage extends Component {
             timeData={job.time}
             {...{ windowWidth }}
           />
-          <GeneralEntry style={style.generalEntryArea} />
+          <General
+            style={style.generalEntryArea}
+            {...{
+              job,
+              toggleGeneralEntryModal,
+              toggleDeleteSegmentModal
+            }}
+          />
         </div>
         <Weeks />
+        {modals.map(
+          ({ ModalComponent, toggle, inputRef, isActive, name }) => (
+            <ModalComponent
+              key={name}
+              {...{
+                isActive,
+                inputRef,
+                job
+              }}
+              {...(
+                name === 'deleteSegment' ?
+                { segmentToDelete } :
+                { toggleDeleteSegmentModal }
+              )}
+              closeModal={() => toggle(false)}
+            />
+          )
+        )}
       </>
     );
   };

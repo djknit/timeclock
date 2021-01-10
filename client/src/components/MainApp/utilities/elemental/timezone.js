@@ -7,21 +7,21 @@ function getValidTimezones() {
 function getTimezoneOptions() {
   return getValidTimezones().map(
     tzName => {
-      const abbreviation = getTimezoneAbbreviation(tzName);
       return {
-        name: `${tzName} (${abbreviation})`,
+        name: getTimezoneFullName(tzName),
         value: tzName
       };
     }
   );
 }
 
+function getTimezoneFullName(tzName) {
+  const abbreviation = getTimezoneAbbreviation(tzName);
+  return `${tzName} (${abbreviation})`;
+}
+
 function getTimezoneAbbreviation(zoneName) {
   return moment.tz(zoneName).format('z');
 }
 
-function guessUserTimezone() {
-  return moment.tz.guess();
-}
-
-export { getValidTimezones, getTimezoneAbbreviation, guessUserTimezone, getTimezoneOptions };
+export { getValidTimezones, getTimezoneOptions, getTimezoneFullName };

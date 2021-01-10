@@ -1,30 +1,37 @@
-import { dataServiceFactory } from '../../utilities';
+import { dataServiceFactory, guessUserTimezone } from './utilities';
 import jobsService from '../jobs';
 import basicsService from './basics';
 import timeService from './time';
 import settingsService from './settings';
 
 const childDataServices = {
-  currentJobBasics: basicsService,
+  basics: basicsService,
   time: timeService,
-  settings: settingsService
+  settings: settingsService,
 };
 
 let state = { isCurrentJobSet: false };
 
 function setCurrentJob(jobData) {
   state.isCurrentJobSet = true;
+  setTime(jobData);
   basicsService.setValue(jobData);
-  timeService.setValue(jobData.weeks);
   settingsService.setValue(jobData);
+}
+
+function setTime(jobData) {
+  const oldId = state.basics && state.basics._id;
+  const isSameJob = jobData._id.toString() === oldId;
+  const timeSetterName = isSameJob ? 'setValue' : 'setJobSetTime';
+  timeService[timeSetterName](jobData.weeks);
 }
 
 const currentJobService = dataServiceFactory({
   state,
   readFunction: () => {
-    const { isCurrentJobSet, currentJobBasics, time, settings } = state;
+    const { isCurrentJobSet, basics, time, settings } = state;
     return isCurrentJobSet ? (
-      { ...currentJobBasics, settings, time }
+      { ...basics, settings, time }
     ) : (
       null
     );

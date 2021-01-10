@@ -1,16 +1,16 @@
-const weeksController = require('../../../../time/weeks');
-const daysController = require('../../../../time/days');
-const segmentsController = require('../../../../time/segments');
-const JobController = require('../../../');
-
-const { getDayEndTimeForDate } = require('../../utilities');
+const {
+  weeks: weeksController,
+  days: daysController
+} = require('../../../../timePieces');
+const { createAndAddWeekWithDate } = require('../../../addWeek');
+const { getDayEndTimeForDate, getDateForTime } = require('../../utilities');
 
 module.exports = placeOrphanedSegmentsWithAdoptiveDays;
 
-function placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWeekDocIds) {
+function placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWeekDocIds, segModMethodName) {
   return new Promise((resolve, reject) => {
     if (orphanedSegments.length === 0) return resolve();
-    ensureSegmentsSpanOnlyOneDayEach(orphanedSegments, job);
+    ensureSegmentsSpanOnlyOneDayEach(orphanedSegments, job, segModMethodName);
     let numCompleted = 0;
     orphanedSegments.forEach(segment => {
       placeSingleSegmentWithAdoptiveDay(segment, job, modifiedWeekDocIds)
@@ -24,18 +24,20 @@ function placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWe
   });
 }
 
-function ensureSegmentsSpanOnlyOneDayEach(segments, job) {
+function ensureSegmentsSpanOnlyOneDayEach(segments, job, segModMethodName) {
   let stillOrphanedSegments = [];
-  segments.forEach(segment => ensureSegmentSpansOnlyOneDay(segment, job, stillOrphanedSegments));
+  segments.forEach(segment => {
+    ensureSegmentSpansOnlyOneDay(segment, job, stillOrphanedSegments, segModMethodName);
+  });
   if (stillOrphanedSegments.length > 0) {
     segments.push(...stillOrphanedSegments);
-    ensureSegmentsSpanOnlyOneDayEach(segments, job);
+    ensureSegmentsSpanOnlyOneDayEach(segments, job, segModMethodName);
   }
 }
 
 function placeSingleSegmentWithAdoptiveDay(segment, job, modifiedWeekDocIds) {
   return new Promise((resolve, reject) => {
-    const date = segmentsController.getDateForTime(segment.startTime, job, true);
+    const date = getDateForTime(segment.startTime, job, true);
     getWeekDocWithDate(date, job)
     .then(weekDoc => {
       modifiedWeekDocIds.push(weekDoc._id.toString());
@@ -51,23 +53,28 @@ function getWeekDocWithDate(date, job) {
   return new Promise((resolve, reject) => {
     const weekDoc = weeksController.findWeekWithDate(date, job.weeks);
     if (weekDoc) return resolve(weekDoc);
-    JobController.createAndAddWeekWithDate(date, job)
+    createAndAddWeekWithDate(date, job)
     .then(newWeekArrayEntry => {
       placeNewWeekInWeeksArray(job.weeks, newWeekArrayEntry);
       return resolve(weeksController.findWeekWithDate(date, job.weeks));
-    })
-    .catch(reject);
+    });
   });
 }
 
-function ensureSegmentSpansOnlyOneDay(segment, job, stillOrphanedSegments) {
-  const startTimeDate = segmentsController.getDateForTime(segment.startTime, job, true);
-  const endTimeDate = segmentsController.getDateForTime(segment.endTime, job, false);
+function ensureSegmentSpansOnlyOneDay(segment, job, stillOrphanedSegments, segModMethodName) {
+  const { startTime, endTime } = segment;
+  const startTimeDate = getDateForTime(startTime, job, true);
+  const endTimeDate = getDateForTime(endTime, job, false);
   if (startTimeDate.day !== endTimeDate.day) {
+    segment.modified.push({
+      time: Date.now(),
+      previousValue: { startTime, endTime },
+      method: segModMethodName
+    });
     const startTimeDateEndTime = getDayEndTimeForDate(startTimeDate, job);
     stillOrphanedSegments.push({
-      startTime: startTimeDateEndTime,
-      endTime: segment.endTime
+      ...segment,
+      startTime: startTimeDateEndTime
     });
     segment.endTime = startTimeDateEndTime;
   }

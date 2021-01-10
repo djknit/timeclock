@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import getStyle from './style';
 import BoxInputFrame from '../BoxInputFrame';
-import { processCurrencyInputValue, processCurrencyMultiplierInputValue, getCurrencySymbol } from '../../utilities';
+import {
+  processCurrencyInputValue, processCurrencyMultiplierInputValue, getCurrencySymbol, getInputId
+} from '../../utilities';
 
 function CurrencyInput({
   propName,
@@ -21,10 +23,11 @@ function CurrencyInput({
   showCurrencyCode,
   isMultiplier,
   wageToMultiply,
-  fieldToLabelRatio
+  fieldToLabelRatio,
+  inputId: inputIdProp
 }) {
 
-  const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
+  const inputId = inputIdProp || getInputId(formId, propName, sectionName);
 
   const style = getStyle();
 
@@ -60,27 +63,26 @@ function CurrencyInput({
           value
         }}
       />
-      {currencySymbol &&
+      {currencySymbol && (
         <span className="icon is-left">
           {currencySymbol}
         </span>
-      }
+      )}
       <div style={style.amountDisplay}>
-        {
-          (processedValue.display === 'negative' && (
-            <span style={style.displayTextNegative}>
-              Negative values are not allowed
-            </span>
-          )) || (processedValue.display !== null && (
-            <span style={style.displayText}>
-              {processedValue.display} {showCurrencyCode && currency !== 'X' && ` ${currency}`}
-            </span>
-          ))
-        }
+        {(processedValue.display === 'negative' && (
+          <span style={style.displayTextNegative}>
+            Negative values are not allowed
+          </span>
+        )) ||
+        (processedValue.display !== null && (
+          <span style={style.displayText}>
+            {processedValue.display} {showCurrencyCode && currency !== 'X' && ` ${currency}`}
+          </span>
+        ))}
       </div>
-      {helpText &&
+      {helpText && (
         <p className="help">{helpText}</p>
-      }
+      )}
     </BoxInputFrame>
   );
 }

@@ -1,5 +1,8 @@
 import React from 'react';
-import { dates as dateUtilities } from '../../utilities';
+import {
+  dates as dateUtilities,
+  getInputId
+} from '../../utilities';
 import 'react-datepicker/dist/react-datepicker.css';
 import './style.css'; // for setting popper z-index
 import DatePicker from 'react-datepicker';
@@ -14,7 +17,7 @@ function DateInput({
   value,
   label,
   sublabel,
-  placeholder,
+  placeholder = 'Type or select date...',
   hasProblem,
   helpText,
   changeHandlerFactory,
@@ -26,14 +29,15 @@ function DateInput({
   labelStyle,
   datePickerProps,
   fieldStyle,
-  openToDate
+  openToDate,
+  inputId: inputIdProp
 }) {
 
   function processInput(inputDate) {
     return inputDate ? convertDateToMyDate(inputDate) : null;
   }
 
-  const inputId = `${sectionName ? sectionName + '-' : ''}${propName}-input-${formId}`;
+  const inputId = inputIdProp || getInputId(formId, propName, sectionName);
   let inputClassName = 'input';
   if (hasProblem) inputClassName += ' is-danger';
 

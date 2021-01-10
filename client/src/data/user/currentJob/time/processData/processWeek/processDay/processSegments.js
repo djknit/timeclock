@@ -5,12 +5,23 @@ import {
 
 export default function processSegments(segments, timezone) {
 
-  function _processSegment({ _id, startTime, endTime }) {
+  function _processSegment({ _id, startTime, endTime, created, modified }) {
     return {
       _id: _id.toString(),
       startTime: getTimeInfoFromUtcTime(startTime, timezone),
       endTime: getTimeInfoFromUtcTime(endTime, timezone),
-      duration: getDurationInfo(endTime - startTime)
+      duration: getDurationInfo(endTime - startTime),
+      created: {
+        time: created.time && getTimeInfoFromUtcTime(created.time),
+        method: created.method
+      },
+      modified: modified && modified.map(
+        modInfo => ({
+          time: getTimeInfoFromUtcTime(modInfo.time),
+          method: modInfo.method,
+          previousValue: { ...modInfo.previousValue }
+        })
+      )
     };
   }
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { currentJobService, areModalsOpenService, windowWidthService } from '../../../data';
-import { api } from '../utilities'
+import { currentJobService, windowWidthService } from '../../../data';
+import { api, modalManagement } from '../utilities'
 import getStyle from './style';
 import ContentArea from '../ContentArea';
 import PageTitle from '../PageTitle';
@@ -15,42 +15,26 @@ import EditJobNameModal from './EditJobNameModal';
 import DeleteJobModal from './DeleteJobModal';
 import { addData } from '../../higherOrder';
 
+const {
+  createModalInfo, addModalsStateAndMethods, extractModalsResources, reportModalsClosedFor
+} = modalManagement;
+
+const modalsInfo = [
+  createModalInfo('editJobName', EditJobNameModal, true),
+  createModalInfo('deleteJob', DeleteJobModal, true)
+];
+
 class _JobPage_needsData extends Component {
   constructor(props) {
     super(props);
-    this.editJobNameInputRef = React.createRef();
-    this.deleteJobModalInputRef = React.createRef();
-    this.modalToggleFactory = this.modalToggleFactory.bind(this);
-    this.toggleEditJobNameModal = (
-      this.modalToggleFactory('isEditJobNameModalActive', this.editJobNameInputRef).bind(this)
-    );
-    this.toggleDeleteJobModal = (
-      this.modalToggleFactory('isDeleteJobModalActive', this.deleteJobModalInputRef).bind(this)
-    );
     this.setWaitingForDataState = this.setWaitingForDataState.bind(this);
+    let state = {};
+    addModalsStateAndMethods(this, state, modalsInfo);
     this.state = {
+      ...state,
       isLoading: false,
       hasProblem: false,
-      problemMessages: [],
-      isEditJobNameModalActive: false,
-      isDeleteJobModalActive: false,
-      modalsRegistrationId: undefined
-    };
-  };
-
-  modalToggleFactory(modalIsActivePropName, inputRef) {
-    return function(isActiveAfterToggle) {
-      this.setState(
-        { [modalIsActivePropName]: !!isActiveAfterToggle },
-        () => {
-          if (isActiveAfterToggle) inputRef.current.focus();
-          const {
-            isDeleteJobModalActive, isEditJobNameModalActive, modalsRegistrationId
-          } = this.state;
-          const hasModalOpen = isDeleteJobModalActive || isEditJobNameModalActive;
-          areModalsOpenService.report(modalsRegistrationId, hasModalOpen);
-        }
-      );
+      problemMessages: []
     };
   };
 
@@ -79,21 +63,14 @@ class _JobPage_needsData extends Component {
         });
       });
     }
-
-    this.setState({
-      modalsRegistrationId: areModalsOpenService.getId()
-    });
   };
 
   componentWillUnmount() {
-    areModalsOpenService.report(this.state.modalsRegistrationId, false);
+    reportModalsClosedFor(this);
     currentJobService.clearValue();
   };
 
   render() {
-    const {
-      toggleEditJobNameModal, toggleDeleteJobModal, editJobNameInputRef, deleteJobModalInputRef
-    } = this;
     const {
       job,
       match,
@@ -105,9 +82,12 @@ class _JobPage_needsData extends Component {
       jobPageSubpaths,
       jobSettingsPageSubpaths
     } = this.props;
-    const {
-      isLoading, problemMessages, isEditJobNameModalActive, isDeleteJobModalActive
-    } = this.state;
+    const { isLoading, problemMessages } = this.state;
+
+    const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
+
+    const toggleEditJobNameModal = modalTogglers.editJobName;
+    const toggleDeleteJobModal = modalTogglers.deleteJob;
     
     const style = getStyle();
 
@@ -125,6 +105,8 @@ class _JobPage_needsData extends Component {
       catchApiUnauthorized,
       areAnyModalsOpen
     };
+
+    console.log('job\n', job);
 
     return (
       job ? (
@@ -176,25 +158,21 @@ class _JobPage_needsData extends Component {
             />
             <Route component={NotFound} />
           </Switch>
-          <EditJobNameModal
-            isActive={isEditJobNameModalActive}
-            {...{
-              job,
-              catchApiUnauthorized
-            }}
-            inputRef={editJobNameInputRef}
-            closeModal={() => toggleEditJobNameModal(false)}
-          />
-          <DeleteJobModal
-            isActive={isDeleteJobModalActive}
-            {...{
-              job,
-              catchApiUnauthorized,
-              returnToDashboard
-            }}
-            inputRef={deleteJobModalInputRef}
-            closeModal={() => toggleDeleteJobModal(false)}
-          />
+          {modals.map(
+            ({ ModalComponent, isActive, inputRef, toggle, name }) => (
+              <ModalComponent
+                key={name}
+                {...{
+                  isActive,
+                  inputRef,
+                  job,
+                  catchApiUnauthorized
+                }}
+                {...(name === 'deleteJob' ? { returnToDashboard } : {})}
+                closeModal={() => toggle(false)}
+              />
+            )
+          )}
         </>
       ) : (
         <>

@@ -2,8 +2,10 @@ const router = require('express').Router();
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
 
-const JobController = require('../../../controllers/Job');
-const UserController = require('../../../controllers/User');
+const {
+  Job: JobController,
+  User: UserController
+} = require('../../../controllers');
 
 const { routeErrorHandlerFactory, checkRequiredProps, cleanJob, cleanJobsExtra } = require('../utilities');
 
