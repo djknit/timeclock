@@ -1,3 +1,4 @@
+import { currentJobSettingsService } from '../../../../../../../data';
 import { jobData as jobDataUtils } from '../../../../utilities';
 import { getTimestampFromDateAndTime } from '../time';
 
@@ -13,7 +14,8 @@ function getSegmentBoundaryDayDates(
 
   function _getWorkDayDate(_date, _time, _isRoundedForward) {
     const _timestamp = getTimestampFromDateAndTime(_date, _time, timezone);
-    return getDateForTime(_timestamp, job.settings, _isRoundedForward);
+    const _jobSettings = currentJobSettingsService._getRawSchedules();
+    return getDateForTime(_timestamp, _jobSettings, _isRoundedForward);
   }
 }
 

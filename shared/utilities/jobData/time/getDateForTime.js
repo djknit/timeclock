@@ -5,6 +5,7 @@ const getBoundariesOfDayWithDate = require('./getBoundariesOfDayWithDate');
 module.exports = getDateForTime;
 
 function getDateForTime(time, jobSettings, isRoundedForward) {
+  // Expects job settings to have values in the form used in database. Will not work on front end with settings already processed for display!
   let guessMoment;
   let guessDate;
   const guessDayOffsets = [0, 1, -1, 2, -2];

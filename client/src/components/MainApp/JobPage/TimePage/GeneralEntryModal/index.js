@@ -193,14 +193,14 @@ class EntryModal extends Component {
         }}
         title="Enter Time"
         isCloseButtonDisabled={isLoading}
-        // extraPrecedingSectionContent={justAdded && justAdded.length > 0 && (
-        //   <JustAdded
-        //     {...{
-        //       justAdded,
-        //       toggleDeleteSegmentModal
-        //     }}
-        //   />
-        // )}
+        extraPrecedingSectionContent={justAdded && justAdded.length > -1 && (
+          <JustAdded
+            {...{
+              justAdded,
+              toggleDeleteSegmentModal
+            }}
+          />
+        )}
         footerContent={
           <>
             <Button
@@ -219,7 +219,7 @@ class EntryModal extends Component {
                 onClick={reverseWarning}
                 disabled={isLoading || hasSuccess}
               >
-                Edit Form
+                Edit Form:
               </Button>
             )}
             <Button
@@ -241,6 +241,11 @@ class EntryModal extends Component {
       >
         <form id={formId}>
           <div style={style.messagesArea}>
+            {justAdded && justAdded.length > 0 && !(justAdded.length === 1 && hasSuccess) && (
+              <h3 className="subtitle" style={style.title}>
+                Add Time:
+              </h3>
+            )}
             <FormMessages
               {...{
                 showMessage,

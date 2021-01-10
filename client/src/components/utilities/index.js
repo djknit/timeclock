@@ -10,6 +10,7 @@ function promiseToSetState(component, updatedState) {
 }
 
 function getColorClass(theme) {
+  if (!theme) return '';
   const words = theme.split(' ');
   let className = '';
   words.forEach((word, index) => {

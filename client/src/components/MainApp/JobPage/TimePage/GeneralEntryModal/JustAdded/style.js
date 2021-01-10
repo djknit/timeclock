@@ -1,5 +1,8 @@
 export default function getStyle() {
   return {
+    title: {
+      fontWeight: 500
+    },
     message: {
       marginBottom: 0
     },
