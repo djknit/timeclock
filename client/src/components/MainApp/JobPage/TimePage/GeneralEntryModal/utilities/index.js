@@ -1,6 +1,7 @@
 export * from '../../utilities';
 export { inputProblemsGetterFactory } from './inputProblems';
 export * from './justAdded';
+export * from './formatting';
 
 function getTimeInputStartingValue() {
   return {

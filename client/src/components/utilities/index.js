@@ -15,7 +15,7 @@ function getColorClass(theme) {
   let className = '';
   words.forEach((word, index) => {
     if (index !== 0) className += ' ';
-    className += `is-${word}`;
+    className += word.includes('is-') ? word : `is-${word}`;
   });
   return className;
 }

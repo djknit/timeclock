@@ -1,8 +1,14 @@
 function findSegmentsFromSegmentInfo(segmentsInfo, weeks) {
   return segmentsInfo.map(segmentInfo => {
+    const { dayId, weekId } = segmentInfo;
     const weekWithSeg = findItemWithId(segmentInfo.weekId, weeks, 'weekDocId');
     const dayWithSeg = findItemWithId(segmentInfo.dayId, weekWithSeg.days);
-    return findSegmentOnDay(dayWithSeg.segments, segmentInfo);
+    return {
+      ...findSegmentOnDay(dayWithSeg.segments, segmentInfo),
+      dayId,
+      weekId,
+      date: dayWithSeg.date
+    };
   });
 }
 

@@ -83,7 +83,7 @@ class TimePage extends Component {
               {...(
                 name === 'deleteSegment' ?
                 { segmentToDelete } :
-                { toggleDeleteSegmentModal }
+                { toggleDeleteSegmentModal, windowWidth }
               )}
               closeModal={() => toggle(false)}
             />

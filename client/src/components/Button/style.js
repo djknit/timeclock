@@ -1,4 +1,4 @@
-import { shadow } from '../../AppStyle';
+import { shadow, dangerBgColors } from '../../AppStyle';
 import { calculateStyleForPseudoClassState } from '../higherOrder';
 
 export default function getStyle(additionalStyles, pseudoClassState, colorTheme) {
@@ -9,7 +9,7 @@ export default function getStyle(additionalStyles, pseudoClassState, colorTheme)
 
   return {
     button: {
-      ...shadow(shadowBlur, undefined, '#000000'),
+      ...shadow(shadowBlur, undefined, '#000000',),
       display: 'inline-block',
       ...calculateStyleForPseudoClassState(backgroundColorStyles, pseudoClassState),
       ...calculateStyleForPseudoClassState(additionalStyles, pseudoClassState)
@@ -30,7 +30,7 @@ function getBackgroundColorStyles(colorTheme) {
     case 'primary':
       return getResult('#00b19a', '#00debd');
     case 'danger':
-      return getResult('#df415b', '#ff4a6e');
+      return getResult(dangerBgColors.focus, dangerBgColors.active);
     case 'info':
       return getResult('#2e8cca', '#35a1e9');
     case 'success':

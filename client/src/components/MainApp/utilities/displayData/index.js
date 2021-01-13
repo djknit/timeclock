@@ -13,7 +13,8 @@ export * from './textFormatting';
 const { minsPerHr } = constants;
 
 function formatMyDate(myDate, formatString, isString) {
-  const stringResult = dateUtils.getMoment(myDate || {}).format(formatString || 'MMM. D, YYYY') || '';
+  if (!myDate) return;
+  const stringResult = dateUtils.getMoment(myDate).format(formatString || 'MMM. D, YYYY') || '';
   return isString ? stringResult : convertStringToNonbreakingHtml(stringResult);
 }
 

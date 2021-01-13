@@ -20,7 +20,7 @@ function getDayCutoffTime(cutoffValueInMinutes, is24hr) {
 
 function findWeekWithDate(date, weeks) {
   if (!weeks) return null;
-  for (let i = 0; i < weeks.length - 1; i++) {
+  for (let i = 0; i < weeks.length; i++) {
     if (isDateInRange(weeks[i], date)) {
       return weeks[i];
     }

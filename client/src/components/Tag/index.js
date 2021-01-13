@@ -6,14 +6,20 @@ export { default as TagGroup } from './TagGroup';
 function Tag({
   children,
   theme,
-  size
+  size,
+  style: styleProp,
+  ...attrs
 }) {
 
   const colorClass = getColorClass(theme);
   const sizeClass = getSizeClass(size);
 
   return (
-    <span className={`tag ${colorClass} ${sizeClass}`}>
+    <span
+      className={`tag ${colorClass} ${sizeClass}`}
+      style={styleProp}
+      {...attrs}
+    >
       {children}
     </span>
   );

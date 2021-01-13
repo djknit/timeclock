@@ -17,6 +17,7 @@ import { FormMessages } from '../../../../formPieces';
 import Button from '../../../../Button';
 import DateTimeInput from './DateTimeInput';
 import JustAdded from './JustAdded';
+import ModalSectionTitle from './ModalSectionTitle';
 
 const { datePickerPopperHeight } = constants;
 
@@ -146,7 +147,7 @@ class EntryModal extends Component {
       handleDatepickerPopperToggle
     } = this;
     const {
-      isActive, closeModal, inputRef, job, toggleDeleteSegmentModal
+      isActive, closeModal, inputRef, job, toggleDeleteSegmentModal, windowWidth
     } = this.props;
     const {
       hasSuccess,
@@ -163,8 +164,7 @@ class EntryModal extends Component {
 
     const justAdded = findSegmentsFromSegmentInfo(justAddedSegmentsInfo, job.time.weeks);
     const isFormIncomplete = hasBlankInput(this.state);
-
-    console.log(justAdded)
+    const hasJustAdded = !!(justAdded && justAdded.length);
 
     const reverseWarning = () => this.setState({ hasWarning: false });
     const getInputProps = propName => ({
@@ -174,10 +174,11 @@ class EntryModal extends Component {
       value: this.state[propName]
     });
 
+    const isUserActionAllowed = !isLoading && !hasWarning && !hasSuccess;
     const commonAttrs = {
       changeHandlerFactory,
       formId,
-      isActive: !isLoading && !hasWarning && !hasSuccess,
+      isActive: isUserActionAllowed,
       handleDatepickerPopperToggle,
       inputFieldMarginBottom,
       sectionLabelMarginBottom
@@ -191,13 +192,14 @@ class EntryModal extends Component {
           isActive,
           closeModal
         }}
-        title="Enter Time"
+        title="General Time Entry"
         isCloseButtonDisabled={isLoading}
-        extraPrecedingSectionContent={justAdded && justAdded.length > -1 && (
+        extraPrecedingSectionContent={hasJustAdded && (
           <JustAdded
             {...{
               justAdded,
-              toggleDeleteSegmentModal
+              toggleDeleteSegmentModal,
+              windowWidth
             }}
           />
         )}
@@ -241,20 +243,20 @@ class EntryModal extends Component {
       >
         <form id={formId}>
           <div style={style.messagesArea}>
-            {justAdded && justAdded.length > 0 && !(justAdded.length === 1 && hasSuccess) && (
-              <h3 className="subtitle" style={style.title}>
-                Add Time:
-              </h3>
+            {hasJustAdded && !(justAdded.length === 1 && hasSuccess) && (
+              <ModalSectionTitle>
+                Add Time Segment
+              </ModalSectionTitle>
             )}
             <FormMessages
               {...{
-                showMessage,
                 hasSuccess,
                 hasProblem,
                 hasWarning,
                 problemMessages,
                 warningMessages,
               }}
+              showMessage={showMessage && (!hasJustAdded || hasSuccess || hasProblem || hasWarning)}
               infoMessages={[
                 'Use the form below to record your time worked one time segment at a time.',
                 'Enter the start (clock-in) time and end (clock-out) time for each segment.'

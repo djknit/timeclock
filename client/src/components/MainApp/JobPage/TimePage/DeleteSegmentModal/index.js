@@ -31,11 +31,8 @@ class DeleteSegmentModal extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { segmentToDelete } = this.props;
-    if (
-      segmentToDelete &&
-      segmentToDelete._id.toString() !== prevProps.segmentToDelete._id.toString()
-    ) {
+    const _getSegId = _props => _props.segmentToDelete && _props.segmentToDelete._id.toString();
+    if (_getSegId(this.props) !== _getSegId(prevProps)) {
       this.reset();
     }
   };
