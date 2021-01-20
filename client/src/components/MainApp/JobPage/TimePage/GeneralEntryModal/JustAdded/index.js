@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import getStyle from './style';
+import { keyTriggerCheckerFactory } from '../utilities';
 import ModalSectionTitle from '../ModalSectionTitle';
 import Segment from './Segment';
-import { addCollapsing } from '../../../../../higherOrder';
+import { addCollapsing, addPseudoPseudoClasses } from '../../../../../higherOrder';
 
-class _JustAdded_needsCollapsing extends Component {
+class _JustAdded_needsCollapsingAndPseudo extends Component {
   componentDidMount() {
     this.props.sectionToggle.setHeight();
   };
@@ -24,21 +25,21 @@ class _JustAdded_needsCollapsing extends Component {
       justAdded,
       toggleDeleteSegmentModal,
       disabled,
-      sectionToggle
+      sectionToggle,
+      pseudoState,
+      pseudoHandlers
     } = this.props;
-
-    console.log(justAdded)
 
     if (!justAdded || justAdded.length === 0) {
       return <></>;
     }
 
-    const style = getStyle(sectionToggle.styles);
+    const style = getStyle(sectionToggle.styles, pseudoState);
 
     return (
       <>
         <div ref={sectionToggle.containerRef} style={style.container} >
-          <ModalSectionTitle>
+          <ModalSectionTitle style={style.sectionTitle}>
             Just Added
           </ModalSectionTitle>
           {justAdded.map(segment => (
@@ -52,12 +53,25 @@ class _JustAdded_needsCollapsing extends Component {
             />
           ))}
         </div>
-        <span>toggler goes here...</span>
+        <div
+          style={style.togglerDiv}
+          {...pseudoHandlers}
+          tabIndex={disabled ? -1 : 0}
+          onClick={sectionToggle.toggle}
+          onKeyDown={keyTriggerCheckerFactory(sectionToggle.toggle)}
+        >
+          <p style={style.togglerP}>
+            <span style={style.toggleOpenText}>Show Just Added </span>
+            <span style={style.toggleClosedText}>Hide Just Added </span>
+          </p>
+          <i className="fas fa-chevron-up" style={style.togglerArrow} />
+        </div>
       </>
     );
   };
 }
 
-const JustAdded = addCollapsing(_JustAdded_needsCollapsing, 'sectionToggle', true, true);
+const _JustAdded_needsPseudo = addCollapsing(_JustAdded_needsCollapsingAndPseudo, 'sectionToggle', true, true);
+const JustAdded = addPseudoPseudoClasses(_JustAdded_needsPseudo);
 
 export default JustAdded;

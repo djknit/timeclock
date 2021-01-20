@@ -12,11 +12,7 @@ function _Segment_needsPseudo({
   disabled
 }) {
 
-
-  console.log(pseudoHandlers)
   const style = getStyle(pseudoState, disabled);
-
-  console.log('pseudoState\n', pseudoState);
 
   let deleteTheme = 'danger';
   if (!pseudoState.isHovered && !pseudoState.isFocused && !pseudoState.isActive) {
@@ -24,11 +20,11 @@ function _Segment_needsPseudo({
   }
 
   return (
-    <TagGroup size="medium">
-      <Tag theme="info">
+    <TagGroup size="medium" align="center">
+      <Tag theme="info light">
         {formatMyDate(segment.date)}
       </Tag>
-      <Tag theme="info light">
+      <Tag theme="info">
         {formatSegmentTimes(segment)}
       </Tag>
       <Tag>
