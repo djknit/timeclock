@@ -1,5 +1,4 @@
 export default function getStyle(styleProp) {
-  console.log('style prop m title\n', styleProp)
   return {
     title: {
       fontWeight: 500,

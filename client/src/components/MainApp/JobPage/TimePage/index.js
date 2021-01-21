@@ -4,6 +4,7 @@ import { modalManagement, guessUserTimezone } from './utilities';
 import PageTitle from '../../PageTitle';
 import GeneralEntryModal from './GeneralEntryModal';
 import DeleteSegmentModal from './DeleteSegmentModal';
+import EditSegmentModal from './EditSegmentModal';
 import General from './General';
 import Summary from './Summary';
 import Weeks from './Weeks';
@@ -14,7 +15,8 @@ const {
 
 const modalsInfo = [
   createModalInfo('generalTimeEntry', GeneralEntryModal, false, undefined, 'setFocus'),
-  createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete')
+  createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
+  // createModalInfo('editSegment', EditSegmentModal, true, 'segmentToEdit')
 ];
 
 class TimePage extends Component {
@@ -24,7 +26,8 @@ class TimePage extends Component {
     addModalsStateAndMethods(this, state, modalsInfo);
     this.state = {
       ...state,
-      segmentToDelete: undefined
+      segmentToDelete: undefined,
+      segmentToEdit: undefined
     };
   };
 
@@ -35,12 +38,13 @@ class TimePage extends Component {
   render() {
 
     const { job, parentPath, windowWidth } = this.props;
-    const { segmentToDelete } = this.state;
+    const { segmentToDelete, segmentToEdit } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
 
     const toggleGeneralEntryModal = modalTogglers.generalTimeEntry;
     const toggleDeleteSegmentModal = modalTogglers.deleteSegment;
+    const toggleEditSegmentModal = modalTogglers.editSegment;
 
     const crumbChain = [
       {
@@ -51,7 +55,6 @@ class TimePage extends Component {
     ];
 
     const style = getStyle(windowWidth);
-
     return (
       <>
         <PageTitle {...{ crumbChain }} />
@@ -81,9 +84,9 @@ class TimePage extends Component {
                 job
               }}
               {...(
-                name === 'deleteSegment' ?
-                { segmentToDelete } :
-                { toggleDeleteSegmentModal, windowWidth }
+                name === 'generalTimeEntry' ?
+                { toggleDeleteSegmentModal, toggleEditSegmentModal, windowWidth } :
+                { segmentToDelete, segmentToEdit }
               )}
               closeModal={() => toggle(false)}
             />

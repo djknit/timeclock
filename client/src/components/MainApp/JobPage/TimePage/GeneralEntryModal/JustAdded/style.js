@@ -2,11 +2,9 @@ import { calculateStyleForPseudoClassState } from '../../../../../higherOrder';
 import { contentAreaTextLinkColors } from '../style';
 
 export default function getStyle(sectionToggleStyles, togglerPseudoState) {
-  console.log(togglerPseudoState)
-  
+
   const pseudoStateStyles = getPseudoStateStyles();
-  console.log(pseudoStateStyles)
-  
+
   const _calcTogPseudoStateStyle = _styles => {
     return calculateStyleForPseudoClassState(_styles, togglerPseudoState);
   };

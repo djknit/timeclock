@@ -14,11 +14,28 @@ const footerHeight = 50;
 const bulmaFormBlue = '#3273dc';
 const bulmaFormBlack = '#363636';
 
+const dynamicBgColors = {
+  danger: {
+    innate: '#f14668', // matches Bulma
+    hover: '#f03a5f', // matches Bulma
+    focus: '#df415b',
+    active: '#ff4a6e'
+  },
+  primary: {
+    innate: '#f14668', // matches Bulma
+    hover: '#00c4a7', // matches Bulma
+    focus: '#00b19a',
+    active: '#00debd'
+  }
+};
 const dangerBgColors = {
   innate: '#f14668', // matches Bulma
   hover: '#f03a5f', // matches Bulma
   focus: '#df415b',
   active: '#ff4a6e'
+};
+const bulmaPrimaryBgColors = {
+
 };
 
 function shadow(blur, offsetDirection, color, isInset) {
@@ -61,6 +78,7 @@ export {
   footerHeight,
   bulmaFormBlue,
   bulmaFormBlack,
+  dynamicBgColors,
   dangerBgColors,
   shadow,
   isWindowWide

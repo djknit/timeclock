@@ -2,22 +2,21 @@ import React from 'react';
 import getStyle from './style';
 import { formatMyDate, formatSegmentTimes, formatDuration } from '../../utilities';
 import Tag, { TagGroup } from '../../../../../../Tag';
-import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
+import ButtonTag from './ButtonTag';
 
-function _Segment_needsPseudo({
+function Segment({
   segment,
-  pseudoState,
-  pseudoHandlers,
   toggleDeleteSegmentModal,
+  toggleEditSegmentModal,
   disabled
 }) {
 
-  const style = getStyle(pseudoState, disabled);
+  const style = getStyle();
 
-  let deleteTheme = 'danger';
-  if (!pseudoState.isHovered && !pseudoState.isFocused && !pseudoState.isActive) {
-    deleteTheme += ' light';
-  }
+  const _getCommonBtnProps = _toggleModal => ({
+    disabled,
+    handleClick: () => _toggleModal(true, segment)
+  });
 
   return (
     <TagGroup size="medium" align="center">
@@ -30,21 +29,18 @@ function _Segment_needsPseudo({
       <Tag>
         {formatDuration(segment.duration)}
       </Tag>
-      <Tag
-        theme={deleteTheme}
-        style={style.deleteTag}
-        {...pseudoHandlers}
-        onClick={!disabled && (
-          () => toggleDeleteSegmentModal(true, segment)
-        )}
-        tabIndex={disabled ? -1 : 0}
-      >
-        <i className="fas fa-trash-alt" />
-      </Tag>
+      {/* <ButtonTag
+        theme="primary"
+        iconName="edit"
+        {..._getCommonBtnProps(toggleEditSegmentModal)}
+      /> */}
+      <ButtonTag
+        theme="danger"
+        iconName="trash-alt"
+        {..._getCommonBtnProps(toggleDeleteSegmentModal)}
+      />
     </TagGroup>
   );
 }
-
-const Segment = addPseudoPseudoClasses(_Segment_needsPseudo);
 
 export default Segment;

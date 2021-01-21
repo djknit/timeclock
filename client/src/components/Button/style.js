@@ -1,5 +1,13 @@
-import { shadow, dangerBgColors } from '../../AppStyle';
+import {
+  shadow,
+  dynamicBgColors
+} from '../../AppStyle';
 import { calculateStyleForPseudoClassState } from '../higherOrder';
+
+const {
+  daner: dangerBgColors,
+
+} = dynamicBgColors;
 
 export default function getStyle(additionalStyles, pseudoClassState, colorTheme) {
   const { isActive, isFocused } = pseudoClassState || {};
@@ -20,25 +28,27 @@ export default function getStyle(additionalStyles, pseudoClassState, colorTheme)
 export * from '../../AppStyle';
 
 function getBackgroundColorStyles(colorTheme) {
-  const getResult = (
-    (focusBgColor, activeBgColor) => ({
-      focus: { backgroundColor: focusBgColor },
-      active: { backgroundColor: activeBgColor }
+  const _getResult = (
+    (_focusBgColor, _activeBgColor) => ({
+      focus: { backgroundColor: _focusBgColor },
+      active: { backgroundColor: _activeBgColor }
     })
+  );
+  const _getResultFromDynamicBgColors = (
+    _theme => _getResult(dynamicBgColors[_theme].focus, dynamicBgColors[_theme].active)
   );
   switch (colorTheme) {
     case 'primary':
-      return getResult('#00b19a', '#00debd');
     case 'danger':
-      return getResult(dangerBgColors.focus, dangerBgColors.active);
+      return _getResultFromDynamicBgColors(colorTheme);
     case 'info':
-      return getResult('#2e8cca', '#35a1e9');
+      return _getResult('#2e8cca', '#35a1e9');
     case 'success':
-      return getResult('#42b76b', '#4cd37b');
+      return _getResult('#42b76b', '#4cd37b');
     case 'warning':
-      return getResult('#e5c74e', '#ffea5c');
+      return _getResult('#e5c74e', '#ffea5c');
     default: // = 'light'
-      return getResult('#e7e7e7', '#f8f8f8');
+      return _getResult('#e7e7e7', '#f8f8f8');
   }
 /*
   COLORS:
