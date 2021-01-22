@@ -10,7 +10,8 @@ import {
   hasBlankInput,
   getNumDaysSpannedBySegment,
   processTimeSegmentInput,
-  findSegmentsFromSegmentInfo
+  findSegmentsFromSegmentInfo,
+  performAutoChangesAfterInputChange
 } from './utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
@@ -50,16 +51,9 @@ class EntryModal extends Component {
     };
   };
 
-  afterChange(propName) {
-    const { startDate, endDate, hasBeenSubmitted } = this.state;
-    console.log(propName + '\n', this.state[propName])
-    if (propName === 'startDate' && startDate && !endDate) {
-      this.setState({ endDate: { ...startDate }});
-    }
-    else if (propName ==='endDate' && endDate && !startDate) {
-      this.setState({ startDate: { ...endDate }});
-    }
-    if (hasBeenSubmitted) {
+  afterChange(propName, childPropName) {
+    performAutoChangesAfterInputChange(propName, childPropName, this);
+    if (this.state.hasBeenSubmitted) {
       this.setState(this.getInputProblems());
     }
   };
@@ -67,22 +61,13 @@ class EntryModal extends Component {
   handleDatepickerPopperToggle(isActiveAfterToggle, isStartDate) {
     // need to make space for datepicker popper above date input.
     const sectionLabelHeight = this.firstInputAreaLabel.current.clientHeight;
-    console.log('sectionLabelHeight\n', sectionLabelHeight);
     let roomAvailableBelowMsgArea = `${sectionLabelHeight}px + ${sectionLabelMarginBottom}`;
-    console.log('roomAvailableBelowMsgArea\n', roomAvailableBelowMsgArea);
     if (!isStartDate) {
       const firstSectionHeight = this.firstInputArea.current.clientHeight;
-      console.log('firstSectionHeight\n', firstSectionHeight)
       roomAvailableBelowMsgArea += ` + ${firstSectionHeight}px + ${inputFieldMarginBottom}`;
-      console.log('roomAvailableBelowMsgArea\n', roomAvailableBelowMsgArea)
     }
-    this.setState({
-      messagesAreaMinHeight: isActiveAfterToggle ? (
-        `calc(${datePickerPopperHeight} - (${roomAvailableBelowMsgArea}))`
-      ) : (
-        undefined
-      )
-    });
+    const msgAreaMinH = `calc(${datePickerPopperHeight} - (${roomAvailableBelowMsgArea}))`;
+    this.setState({ messagesAreaMinHeight: isActiveAfterToggle ? msgAreaMinH : undefined });
   };
 
   getWarnings() {

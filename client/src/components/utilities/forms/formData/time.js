@@ -36,44 +36,37 @@ const getWeekdayOptions = () => (
   )
 );
 
-function convertAmPmTimeTo24hr(_amPmTime) {
-  let _24hrTime = {
-    is24hr: true,
-    amPm: undefined,
-    minute: _amPmTime.minute
-  };
-  let _hour = _amPmTime.hour;
-  if (!_hour && _hour !== 0) {
-    _24hrTime.hour = undefined;
-    return _24hrTime;
-  }
-  if (_hour === 12) {
-    _hour = 0;
-  }
-  if (_amPmTime.amPm === 'pm' && _hour >= 0 && _hour < 12) {
-    _hour += 12;
-  }
-  _24hrTime.hour = _hour;
-  return _24hrTime;
-}
-
-function convert24hrTimeToAmPm(_24hrTime) {
-  let _amPmTime = {
-    is24hr: false,
-    minute: _24hrTime.minute
-  };
-  const _hour = _24hrTime.hour;
-  if ((!_hour && _hour !== 0) || _hour < 0 || _hour > 23) {
+function convertAmPmTimeTo24hr(timeToConvert) {
+  // Note: now keeping `amPm` value when time is changed to 24hr so it can be used when switching back to AM/PM if amPm value is not determined by 24hr hour input value
+  const { is24hr, amPm, hour } = timeToConvert;
+  if (is24hr) return timeToConvert;
+  if (isNaN(parseInt(hour)) || hour <= 0 || hour > 12) {
     return {
-      ..._amPmTime,
-      hour: _hour,
-      amPm: 'am'
+      ...timeToConvert,
+      is24hr: true
     };
   }
   return {
-    ..._amPmTime,
-    amPm: _hour >= 12 ? 'pm' : 'am',
-    hour: (_hour % 12) || 12
+    ...timeToConvert,
+    is24hr: true,
+    hour: (hour % 12) + (amPm === 'pm' ? 12 : 0)
+  };
+}
+
+function convert24hrTimeToAmPm(timeToConvert) {
+  const { hour, is24hr } = timeToConvert
+  if (!is24hr) return timeToConvert;
+  if (isNaN(parseInt(hour)) || hour < 0 || hour >= 24) {
+    return {
+      ...timeToConvert,
+      is24hr: false
+    };
+  }
+  return {
+    ...timeToConvert,
+    is24hr: false,
+    amPm: hour >= 12 ? 'pm' : 'am',
+    hour: (hour % 12) || 12
   };
 }
 
