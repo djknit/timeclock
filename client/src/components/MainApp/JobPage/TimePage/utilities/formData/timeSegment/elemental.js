@@ -1,6 +1,6 @@
 import { currentJobSettingsService } from '../../../../../../../data';
 import { jobData as jobDataUtils } from '../../../../utilities';
-import { getTimestampFromDateAndTime } from '../time';
+import { getTimestampFromDateAndTime } from '../dateTime';
 
 const { getDateForTime } = jobDataUtils;
 

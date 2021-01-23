@@ -1,9 +1,10 @@
 export * from '../../utilities';
-export { inputProblemsGetterFactory } from './inputProblems';
+// export { inputProblemsGetterFactory } from './inputProblems';
 export * from './justAdded';
-export * from './formatting';
-export * from './inputAutoChanges';
+// export * from './formatting';
+// export * from './inputAutoChanges';
 
+// keep here maybe? ?
 function getTimeInputStartingValue() {
   return {
     is24hr: false,
@@ -14,22 +15,7 @@ function getTimeInputStartingValue() {
   };
 }
 
-function hasBlankInput({ startDate, endDate, startTime, endTime }) {
-  return (
-    !startDate || !endDate ||
-    !startTime || isTimeInputPartBlank(startTime) ||
-    !endTime || isTimeInputPartBlank(endTime)
-  );
-}
-
-function isTimeInputPartBlank({ hour, minute }) {
-  return (
-    !(hour || hour === 0) ||
-    !(minute || minute === 0)
-  );
-}
 
 export {
-  getTimeInputStartingValue,
-  hasBlankInput
+  getTimeInputStartingValue
 };

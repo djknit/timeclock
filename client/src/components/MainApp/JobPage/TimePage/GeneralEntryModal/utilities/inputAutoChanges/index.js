@@ -1,20 +1,22 @@
-import { afterTimeInputChange } from './times';
+// // THIS FOLDER: MOVE UP A LEVEL (to '[...]/TimePage/utilities/')
 
-function performAutoChangesAfterInputChange(propName, childPropName, comp) {
-  if (propName === 'startDate' || propName === 'endDate') {
-    afterDateInputChange(propName, comp);
-  }
-  else {
-    afterTimeInputChange(propName, childPropName, comp);
-  }
-}
+// import { afterTimeInputChange } from './times';
 
-function afterDateInputChange(propName, comp) {
-  const otherPropName = propName === 'startDate' ? 'endDate' : 'startDate';
-  const { state } = comp;
-  if (state[propName] && !state[otherPropName]) {
-    comp.setState({ [otherPropName]: { ...state[propName] } });
-  }
-}
+// function performAutoChangesAfterInputChange(propName, childPropName, comp) {
+//   if (propName === 'startDate' || propName === 'endDate') {
+//     afterDateInputChange(propName, comp);
+//   }
+//   else {
+//     afterTimeInputChange(propName, childPropName, comp);
+//   }
+// }
 
-export { performAutoChangesAfterInputChange };
+// function afterDateInputChange(propName, comp) {
+//   const otherPropName = propName === 'startDate' ? 'endDate' : 'startDate';
+//   const { state } = comp;
+//   if (state[propName] && !state[otherPropName]) {
+//     comp.setState({ [otherPropName]: { ...state[propName] } });
+//   }
+// }
+
+// export { performAutoChangesAfterInputChange };

@@ -7,7 +7,7 @@ import {
   bindFormMethods,
   inputProblemsGetterFactory,
   getTimeInputStartingValue,
-  hasBlankInput,
+  isTimeSegmentInputIncomplete,
   getNumDaysSpannedBySegment,
   processTimeSegmentInput,
   findSegmentsFromSegmentInfo,
@@ -97,6 +97,7 @@ class EntryModal extends Component {
     Split segment if it spans multiple days.
     Consider adding new api route for multiple segments, or submit each segment in succession or parallel while waiting on results
   */
+    console.log('this.processAndSubmitData')
     const { job } = this.props;
     const timezone = job.time.sessionTimezone;
     const processedInput = processTimeSegmentInput(this.state, timezone, job);
@@ -148,7 +149,7 @@ class EntryModal extends Component {
     } = this.state;
 
     const justAdded = findSegmentsFromSegmentInfo(justAddedSegmentsInfo, job.time.weeks);
-    const isFormIncomplete = hasBlankInput(this.state);
+    const isFormIncomplete = isTimeSegmentInputIncomplete(this.state);
     const hasJustAdded = !!(justAdded && justAdded.length);
 
     const reverseWarning = () => this.setState({ hasWarning: false });
