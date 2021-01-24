@@ -2,7 +2,7 @@ import {
   dates as dateUtils,
   jobData as jobDataUtils
 } from '../../../../utilities';
-import { getTimestampFromDateAndTime } from '../dateTime';
+import { getTimestampFromDateAndTime } from '../time';
 import { getSegmentBoundaryDayDates } from './elemental';
 
 const { areDatesEquivalent, getNextDate } = dateUtils;

@@ -71,8 +71,7 @@ class EntryModal extends Component {
   };
 
   getWarnings() {
-    const { job } = this.props;
-    const timezone = job.time.sessionTimezone;
+    const timezone = this.props.job.time.sessionTimezone;
     let warnings = {
       hasWarning: false,
       warningMessages: []
@@ -80,7 +79,7 @@ class EntryModal extends Component {
     if (this.state.hasWarning) {
       return warnings;
     }
-    const numDaysSpanned = getNumDaysSpannedBySegment(this.state, timezone, job);
+    const numDaysSpanned = getNumDaysSpannedBySegment(this.state, timezone);
     if (numDaysSpanned > 1) {
       warnings.hasWarning = true;
       warnings.warningMessages.push(

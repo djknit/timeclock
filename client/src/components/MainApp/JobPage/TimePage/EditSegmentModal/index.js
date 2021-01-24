@@ -10,7 +10,13 @@ class EditSegmentModal extends Component {
   };
 
   getUniqueStartingState() {
-
+    return {
+      startDate: null,
+      endDate: null,
+      // startTime: getTimeInputStartingValue(),
+      // endTime: getTimeInputStartingValue(),
+      messagesAreaMinHeight: undefined
+    };
   };
 
   processAndSubmitData() {

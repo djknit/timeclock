@@ -1,10 +1,6 @@
 export * from '../../utilities';
-// export { inputProblemsGetterFactory } from './inputProblems';
 export * from './justAdded';
-// export * from './formatting';
-// export * from './inputAutoChanges';
 
-// keep here maybe? ?
 function getTimeInputStartingValue() {
   return {
     is24hr: false,

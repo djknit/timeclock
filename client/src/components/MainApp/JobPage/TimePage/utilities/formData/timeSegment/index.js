@@ -6,8 +6,8 @@ export * from './inputProblems';
 
 const { getMoment } = dateUtils;
 
-function getNumDaysSpannedBySegment(segInputVals, timezone, job) {
-  const boundaryDayDates = getSegmentBoundaryDayDates(segInputVals, timezone, job);
+function getNumDaysSpannedBySegment(segInputVals, timezone) {
+  const boundaryDayDates = getSegmentBoundaryDayDates(segInputVals, timezone);
   const startDayMoment = getMoment(boundaryDayDates.firstDay);
   const endDayMoment = getMoment(boundaryDayDates.lastDay);
   return endDayMoment.diff(startDayMoment, 'days') + 1;

@@ -1,12 +1,14 @@
 import { currentJobSettingsService } from '../../../../../../../data';
 import { jobData as jobDataUtils } from '../../../../utilities';
-import { getTimestampFromDateAndTime } from '../dateTime';
+import { getTimestampFromDateAndTime } from '../time';
 
 const { getDateForTime } = jobDataUtils;
 
 function getSegmentBoundaryDayDates(
-  { startDate, endDate, startTime, endTime}, timezone, job
+  { startDate, endDate, startTime, endTime },
+  timezone
 ) {
+  
   return {
     firstDay: _getWorkDayDate(startDate, startTime, true),
     lastDay: _getWorkDayDate(endDate, endTime, false)

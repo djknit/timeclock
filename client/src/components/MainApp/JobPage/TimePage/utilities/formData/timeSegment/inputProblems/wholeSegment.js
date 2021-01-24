@@ -6,7 +6,7 @@ import { getTimestampFromDateAndTime } from '../../time';
 
 const { getDateTime } = dateUtils;
 
-function getWholeSegmentProblems(inputValues, problemMessages) {
+function getWholeSegmentProblems(inputValues, problemMessages, timezone) {
   const { startDate, endDate, startTime, endTime } = inputValues;
   const _probMsg = 'The segment end time must occur after the start time.';
   if (getDateTime(endDate) < getDateTime(startDate)) {
@@ -16,7 +16,8 @@ function getWholeSegmentProblems(inputValues, problemMessages) {
       endDate: true
     };
   }
-  if (getTimestampFromDateAndTime(endDate, endTime) <= getTimestampFromDateAndTime(startDate, startTime)) {
+  const _getTimestamp = (_date, _time) => getTimestampFromDateAndTime(_date, _time, timezone);
+  if (_getTimestamp(endDate, endTime) <= _getTimestamp(startDate, startTime)) {
     problemMessages.push(_probMsg);
     return {
       startTime: createTimeProbsObj(startTime),
