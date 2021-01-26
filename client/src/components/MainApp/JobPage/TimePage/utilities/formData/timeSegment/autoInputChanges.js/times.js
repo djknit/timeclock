@@ -1,18 +1,21 @@
 function afterTimeInputChange(propName, childPropName, comp) {
-  const { state } = comp;
-  if (!isTimeBlank(state[getOtherTimeInputPropName(propName)])) { // no autochange unless other input is empty
-    return;
-  }
-  let additionalChanges;
-  if (childPropName === 'is24hr') {
-    additionalChanges = getCompleteChangesAfterIs24HrChange(propName, state);
-  }
-  else if (didChangeAffectAmPm(propName, childPropName, state)) {
-    additionalChanges = getCompleteChangesAfterAmPmChange(propName, state);
-  }
-  if (additionalChanges) {
-    comp.setState(additionalChanges);
-  }
+  return new Promise(resolve => {
+    const { state } = comp;
+    if (!isTimeBlank(state[getOtherTimeInputPropName(propName)])) { // no autochange unless other input is empty
+      return resolve(false);
+    }
+    let additionalChanges;
+    if (childPropName === 'is24hr') {
+      additionalChanges = getCompleteChangesAfterIs24HrChange(propName, state);
+    }
+    else if (didChangeAffectAmPm(propName, childPropName, state)) {
+      additionalChanges = getCompleteChangesAfterAmPmChange(propName, state);
+    }
+    if (additionalChanges) {
+      return comp.setState(additionalChanges, () => resolve(true));
+    }
+    resolve(false);
+  });
 }
 
 function isTimeBlank(timeInputVal) {

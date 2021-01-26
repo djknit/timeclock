@@ -2,49 +2,41 @@ import {
   dates as dateUtils,
   jobData as jobDataUtils
 } from '../../../../utilities';
-import { getTimestampFromDateAndTime } from '../time';
-import { getSegmentBoundaryDayDates } from './elemental';
+import { getSegmentBoundaryDayDatesAndTimestamps, currentJobSettingsService } from './elemental';
 
 const { areDatesEquivalent, getNextDate } = dateUtils;
-const { getDateForTime, getBoundariesOfDayWithDate } = jobDataUtils;
+const { getBoundariesOfDayWithDate } = jobDataUtils;
 
 function processTimeSegmentInput(
-  { startDate, endDate, startTime, endTime }, timezone, job
+  inputvalues, timezone
 ) {
-
-  const processedSegment = {
-    startTime: getTimestampFromDateAndTime(startDate, startTime, timezone),
-    endTime: getTimestampFromDateAndTime(endDate, endTime, timezone)
-  };
-
-  const boundaryDays = getSegmentBoundaryDayDates(
-    { startDate, endDate, startTime, endTime }, timezone, job
-  );
-
-  if (areDatesEquivalent(boundaryDays.firstDay, boundaryDays.lastDay)) {
+  const {
+    startUtcTime: startTime,
+    endUtcTime: endTime,
+    firstDay: firstDayDate,
+    lastDay: lastDayDate
+  } = getSegmentBoundaryDayDatesAndTimestamps(inputvalues, timezone);
+  const processedSegment = { startTime, endTime };
+  if (areDatesEquivalent(firstDayDate, lastDayDate)) {
     return {
       isSplit: false,
       segment: processedSegment
     };
   }
-
   return {
     isSplit: true,
-    segments: splitByDays(processedSegment, job)
+    segments: splitByDays(processedSegment, firstDayDate)
   };
 }
 
-function splitByDays(processedSegment, job) {
+function splitByDays(processedSegment, firstDayDate) {
   const { startTime, endTime } = processedSegment;
-  const { settings } = job;
-  const segFirstDayDate = getDateForTime(startTime, settings, true);
-
+  const rawSettings = currentJobSettingsService._getRawSchedules();
   let resultSegments = [];
-  _splitOffNextSeg(segFirstDayDate, startTime);
+  _splitOffNextSeg(firstDayDate, startTime);
   return resultSegments;
-
   function _splitOffNextSeg(_segDate, _segStartTime) {
-    const _dayEnd = getBoundariesOfDayWithDate(_segDate, settings).endTime;
+    const _dayEnd = getBoundariesOfDayWithDate(_segDate, rawSettings).endTime;
     const _doesSegEndToday = endTime <= _dayEnd;
     resultSegments.push({
       startTime: _segStartTime,

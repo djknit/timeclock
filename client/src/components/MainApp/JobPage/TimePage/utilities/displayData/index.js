@@ -8,16 +8,18 @@ import {
 
 const { areDatesEquivalent } = dateUtils;
 
-function formatSegmentTimes({ startTime, endTime, date }) {
-  const includeDates = !(
-    areDatesEquivalent(startTime.date, date) && areDatesEquivalent(endTime.date, date)
+function formatSegmentTimes({ startTime, endTime, date }, includeDates) {
+  const _includeDates = (
+    includeDates ||
+    !areDatesEquivalent(startTime.date, date) ||
+    !areDatesEquivalent(endTime.date, date)
   );
   return (
-    <>{_formatTime(startTime)} &ndash; {_formatTime(endTime)}</>
+    <>{_formatTime(startTime)}&ensp;&ndash;&ensp;{_formatTime(endTime)}</>
   );
   function _formatTime(_startOrEndTime) {
     const _timePart = formatTime(convert24hrTimeToAmPm(_startOrEndTime.time));
-    return includeDates ? (
+    return _includeDates ? (
       <>{_timePart}&nbsp;{formatMyDate(_startOrEndTime.date, 'MMM. D')}</>
     ) : (
       _timePart

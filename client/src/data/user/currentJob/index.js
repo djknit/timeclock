@@ -22,7 +22,7 @@ function setCurrentJob(jobData) {
 function setTime(jobData) {
   const oldId = state.basics && state.basics._id;
   const isSameJob = jobData._id.toString() === oldId;
-  const timeSetterName = isSameJob ? 'setValue' : 'setJobSetTime';
+  const timeSetterName = isSameJob ? 'setValue' : '_setJobSetTime';
   timeService[timeSetterName](jobData.weeks);
 }
 

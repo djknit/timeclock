@@ -1,15 +1,20 @@
 function findSegmentsFromSegmentInfo(segmentsInfo, weeks) {
-  return segmentsInfo.map(segmentInfo => {
-    const { dayId, weekId } = segmentInfo;
-    const weekWithSeg = findItemWithId(segmentInfo.weekId, weeks, 'weekDocId');
-    const dayWithSeg = findItemWithId(segmentInfo.dayId, weekWithSeg.days);
-    return {
-      ...findSegmentOnDay(dayWithSeg.segments, segmentInfo),
-      dayId,
-      weekId,
-      date: dayWithSeg.date
-    };
-  });
+  return (
+    segmentsInfo
+    .map(segmentInfo => {
+      const { dayId, weekId } = segmentInfo;
+      const weekWithSeg = findItemWithId(segmentInfo.weekId, weeks, 'weekDocId');
+      const dayWithSeg = findItemWithId(segmentInfo.dayId, weekWithSeg.days);
+      const segment = findSegmentOnDay(dayWithSeg.segments, segmentInfo);
+      return segment && {
+        ...segment,
+        dayId,
+        weekId,
+        date: dayWithSeg.date
+      };
+    })
+    .filter(segment => !!segment)
+  );
 }
 
 function findItemWithId(id, array, idPropName = '_id') {

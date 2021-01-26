@@ -28,7 +28,21 @@ function findWeekWithDate(date, weeks) {
   return null;
 }
 
+function isPartialWeekInDateRange(dateRange, week) {
+  return (
+    isDateInRange(dateRange, week.firstDate) ||
+    isDateInRange(dateRange, week.lastDate) ||
+    isDateInRange(week, dateRange.firstDate)
+  );
+}
+
+function isWholeWeekInDateRange(dateRange, week) {
+  return isDateInRange(dateRange, week.firstDate) && isDateInRange(dateRange, week.lastDate);
+}
+
 export {
   getDayCutoffTime,
-  findWeekWithDate
+  isPartialWeekInDateRange,
+  findWeekWithDate,
+  isWholeWeekInDateRange
 };

@@ -95,23 +95,22 @@ function addSegment(segment, jobId, userId) {
 }
 
 function addMultipleSegments(segments, jobId, userId) {
-  let index = 0;
-  return _addNextSeg();
-
-  function _addNextSeg() {
-    return new Promise(
-      (resolve) => {
-        addSegment(segments[index], jobId, userId)
-        .then(_job => {
-          if (index === segments.length) {
-            return resolve(_job);
-          }
-          index++;
-          resolve(_addNextSeg());
-        });
-      }
-    );
-  }
+  return new Promise(resolve => {
+    let index = 0;
+    let newSegmentsInfo = [];
+    _addNextSeg();
+  
+    function _addNextSeg() {
+      addSegment(segments[index], jobId, userId)
+      .then(({ job, newSegmentInfo }) => {
+        newSegmentsInfo.push(newSegmentInfo);
+        if (++index === segments.length) {
+          return resolve({ job, newSegmentsInfo });
+        }
+        _addNextSeg();
+      });
+    }
+  });
 }
 
 function deleteSegmentsInDateRange(firstDate, lastDate, jobId, userId) {

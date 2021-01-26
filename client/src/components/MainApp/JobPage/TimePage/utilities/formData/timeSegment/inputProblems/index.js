@@ -2,13 +2,13 @@ import { getTimeInputProblems } from '../../time';
 import { getWholeSegmentProblems } from './wholeSegment';
 import { addProblemsObjToExisting } from './merging';
 
-function inputProblemsGetterFactory() {
+function timeSegInputProblemsGetterFactory() {
   return function () {
-    const { state, props: { job } } = this;
-    const timezone = job.time.sessionTimezone;
-    let { problems, problemMessages } = getIndividualInputProblems(state);
+    console.log('input problems')
+    let { problems, problemMessages } = getIndividualInputProblems(this.state);
+    console.log('individual probs:\n', problems, problemMessages)
     if (problemMessages.length === 0) {
-      const _wholeSegProbs = getWholeSegmentProblems(state, problemMessages, timezone);
+      const _wholeSegProbs = getWholeSegmentProblems(this.state, problemMessages, this.props.job);
       addProblemsObjToExisting(problems, _wholeSegProbs);
     }
     return { problems, problemMessages };
@@ -32,4 +32,4 @@ function getIndividualInputProblems(inputValues) {
   return { problems, problemMessages };
 }
 
-export { inputProblemsGetterFactory };
+export { timeSegInputProblemsGetterFactory };

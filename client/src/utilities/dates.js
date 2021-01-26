@@ -1,6 +1,4 @@
-import sharedResources from '../shared';
-
-let dateUtils = sharedResources.utilities.dates;
+import { dates as dateUtils } from './shared';
 
 const { getUtcDateTime } = dateUtils;
 

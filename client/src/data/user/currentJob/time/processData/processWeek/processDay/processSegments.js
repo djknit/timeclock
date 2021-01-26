@@ -17,7 +17,7 @@ export default function processSegments(segments, timezone) {
       },
       modified: modified && modified.map(
         modInfo => ({
-          time: getTimeInfoFromUtcTime(modInfo.time),
+          time: getTimeInfoFromUtcTime(modInfo.time, timezone),
           method: modInfo.method,
           previousValue: { ...modInfo.previousValue }
         })

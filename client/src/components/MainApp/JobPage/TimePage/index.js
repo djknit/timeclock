@@ -24,6 +24,7 @@ class TimePage extends Component {
     super(props);
     let state = {};
     addModalsStateAndMethods(this, state, modalsInfo);
+    this.setSegmentToDelete = this.setSegmentToDelete.bind(this);
     this.state = {
       ...state,
       segmentToDelete: undefined,
@@ -31,12 +32,16 @@ class TimePage extends Component {
     };
   };
 
+  setSegmentToDelete(segmentToDelete) {
+    return new Promise(resolve => this.setState({ segmentToDelete }, resolve));
+  };
+
   componentWillUnmount() {
     reportModalsClosedFor(this);
   };
 
   render() {
-
+    const { setSegmentToDelete } = this;
     const { job, parentPath, windowWidth } = this.props;
     const { segmentToDelete, segmentToEdit } = this.state;
 
@@ -45,6 +50,12 @@ class TimePage extends Component {
     const toggleGeneralEntryModal = modalTogglers.generalTimeEntry;
     const toggleDeleteSegmentModal = modalTogglers.deleteSegment;
     const toggleEditSegmentModal = modalTogglers.editSegment;
+
+    const variableModalAttrs = {
+      generalTimeEntry: { toggleDeleteSegmentModal, toggleEditSegmentModal, windowWidth },
+      deleteSegment: { segmentToDelete, setSegmentToDelete },
+      editSegment: { segmentToEdit }
+    };
 
     const crumbChain = [
       {
@@ -83,11 +94,7 @@ class TimePage extends Component {
                 inputRef,
                 job
               }}
-              {...(
-                name === 'generalTimeEntry' ?
-                { toggleDeleteSegmentModal, toggleEditSegmentModal, windowWidth } :
-                { segmentToDelete, segmentToEdit }
-              )}
+              {...variableModalAttrs[name]}
               closeModal={() => toggle(false)}
             />
           )

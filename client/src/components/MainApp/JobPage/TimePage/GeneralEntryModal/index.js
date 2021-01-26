@@ -5,7 +5,7 @@ import {
   api,
   constants,
   bindFormMethods,
-  inputProblemsGetterFactory,
+  timeSegInputProblemsGetterFactory,
   getTimeInputStartingValue,
   isTimeSegmentInputIncomplete,
   getNumDaysSpannedBySegment,
@@ -29,7 +29,7 @@ const sectionLabelMarginBottom = '0.5rem'; // matches Bulma style for `.label:no
 class EntryModal extends Component {
   constructor(props) {
     super(props);
-    this.getInputProblems = inputProblemsGetterFactory().bind(this);
+    this.getInputProblems = timeSegInputProblemsGetterFactory().bind(this);
     bindFormMethods(this, { hasCountdown: false });
     this.resetJustAdded = this.resetJustAdded.bind(this);
     this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
@@ -52,10 +52,12 @@ class EntryModal extends Component {
   };
 
   afterChange(propName, childPropName) {
-    performAutoChangesAfterInputChange(propName, childPropName, this);
-    if (this.state.hasBeenSubmitted) {
-      this.setState(this.getInputProblems());
-    }
+    performAutoChangesAfterInputChange(propName, childPropName, this)
+    .then(wasAutoChanged => {
+      if (this.state.hasBeenSubmitted) {
+        this.setState(this.getInputProblems());
+      }
+    });
   };
 
   handleDatepickerPopperToggle(isActiveAfterToggle, isStartDate) {
@@ -92,11 +94,6 @@ class EntryModal extends Component {
   };
 
   processAndSubmitData() {
-  /* TO DO:
-    Split segment if it spans multiple days.
-    Consider adding new api route for multiple segments, or submit each segment in succession or parallel while waiting on results
-  */
-    console.log('this.processAndSubmitData')
     const { job } = this.props;
     const timezone = job.time.sessionTimezone;
     const processedInput = processTimeSegmentInput(this.state, timezone, job);
@@ -109,11 +106,13 @@ class EntryModal extends Component {
   };
 
   processSuccessResponse(response) {
-    console.log(response)
-    const { data: { job, newSegmentInfo } } = response;
-    currentJobTimeService.setValue(job && job.weeks);
+    const { weeks, newSegmentInfo, newSegmentsInfo } = response.data;
+    currentJobTimeService.setValue(weeks);
     this.setState({
-      justAddedSegmentsInfo: [ newSegmentInfo, ...this.state.justAddedSegmentsInfo ]
+      justAddedSegmentsInfo: [
+        ...(newSegmentsInfo || [newSegmentInfo]),
+        ...this.state.justAddedSegmentsInfo
+      ]
     });
   };
 

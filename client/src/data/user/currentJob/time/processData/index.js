@@ -9,7 +9,7 @@ import { getInfoForCurrentTimePeriods } from './currentTimePeriods';
 function processTimeData(rawWeeks, jobSettings, sessionTimezone) {
   if (!rawWeeks || !jobSettings) return;
 
-  const processedWeeks = rawWeeks.map(processWeek);
+  const processedWeeks = rawWeeks.map(wk => processWeek(wk, sessionTimezone));
 
   const { totalTime, daysWorked } = getTotalTimeAndDaysWorked(processedWeeks);
   const {

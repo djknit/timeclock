@@ -4,15 +4,21 @@ import {
   getDayCutoffTime,
   dates as dateUtils,
   getDurationInfo,
-  processWage
+  processWage,
+  getTimestampFromDateAndTime,
+  getTimeInfoFromUtcTime
 } from '../../../utilities';
 import processSegments from './processSegments';
 
 const { getPrecedingDate, getNextDate } = dateUtils;
 
-export default function processDay({
-  date, startCutoff, endCutoff, startTimezone, timezone, wage, _id, segments
-}) {
+export default function processDay(
+  { date, startCutoff, endCutoff, startTimezone, timezone, wage, _id, segments },
+  sessionTimezone
+) {
+  const startTime = getDayBoundary(date, startCutoff, startTimezone);
+  const endTime = getDayBoundary(getNextDate(date), endCutoff, timezone);
+
   return {
     _id: _id.toString(),
     date: cloneMyDate(date),
@@ -23,21 +29,18 @@ export default function processDay({
       timezone,
       wage: processWage(wage)
     },
-    segments: processSegments(segments, timezone),
+    segments: processSegments(segments, sessionTimezone),
     totalTime: getTotalSegmentsDurationInfo(segments)
   };
 };
 
 
-function getDayBoundary(date, rawCutoffValue, timezone) {
+function getDayBoundary(date, rawCutoffValue, timezone, sessionTimezone) {
   const cutoff = convertDayCutoffToMinutes(rawCutoffValue);
   const dayBoundaryTime = getDayCutoffTime(cutoff);
   const dayBoundaryDate = (cutoff >= 0) ? date : getPrecedingDate(date);
-  return {
-    time: dayBoundaryTime,
-    date: dayBoundaryDate,
-    timezone
-  };
+  const boundaryUtcTime = getTimestampFromDateAndTime(dayBoundaryDate, dayBoundaryTime, timezone);
+  return getTimeInfoFromUtcTime(boundaryUtcTime, sessionTimezone);
 }
 
 function getTotalSegmentsDurationInfo(segments) {
