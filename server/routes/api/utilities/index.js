@@ -1,10 +1,13 @@
 const utilities = require('../../../utilities');
 const resCleaners = require('./resCleaners');
 
+const { cleanWeeks } = resCleaners;
+
 module.exports = {
   ...utilities,
   ...resCleaners,
-  checkRequiredProps
+  checkRequiredProps,
+  weeksSenderFactory
 };
 
 function checkRequiredProps(props, requiredPropNames, res) {
@@ -49,4 +52,10 @@ function addProblem(propDisplayName, problems) {
     parentProblemLevel[currentLevelName] = {};
     parentProblemLevel = parentProblemLevel[currentLevelName];
   }
+}
+
+function weeksSenderFactory(res) {
+  return (({ weeks }) => {
+    res.json({ weeks: weeks && cleanWeeks(weeks) });
+  });
 }

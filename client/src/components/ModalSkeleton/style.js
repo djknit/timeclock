@@ -1,7 +1,7 @@
-export default function getStyle() {
+export default function getStyle(sectionStyles) {
   const extraBodyBorder = 'solid 2px #dbdbdb';
 
-  return {
+  let style = {
     body: {
       padding: '10px 20px'
     },
@@ -16,4 +16,13 @@ export default function getStyle() {
       display: 'block'
     }
   };
+
+  if (!sectionStyles) return style;
+
+  Object.keys(sectionStyles).forEach(elName => {
+    if (!style[elName]) style[elName] = { ...sectionStyles[elName] };
+    else Object.assign(style[elName], sectionStyles[elName]);
+  });
+
+  return style;
 };

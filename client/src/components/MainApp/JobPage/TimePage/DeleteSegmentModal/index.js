@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import {
   api,
-  bindFormMethods
+  bindFormMethods,
+  formatDuration,
+  formatSegmentTimes,
+  formatMyDate
 } from '../utilities';
 import { currentJobTimeService } from '../../../../../data';
-
+import Tag, { TagGroup } from '../../../../Tag';
 // import { FormButtons, FormMessages } from '../../../../formPieces';
 import FormModal from '../../../../FormModal';
 
@@ -16,33 +19,27 @@ class DeleteSegmentModal extends Component {
   };
 
   processAndSubmitData() {
-    const { segmentToDelete, weekId, dayId } = this.props;
-    const segmentId = segmentToDelete._id;
-    api.time.deleteSegment({ segmentId, weekId, dayId });
+    const { _id: segmentId, dayId, weekId } = this.props.segmentToDelete;
+    return api.time.deleteSegment({ segmentId, weekId, dayId });
   };
 
   processSuccessResponse(response) {
+    console.log(response)
     return this.props.setSegmentToDelete(null)
-    .then(() => currentJobTimeService.updateWeek(response.data.week));
+    .then(() => {
+      console.log('pass set segToDel')
+      currentJobTimeService.updateWeek(response.data.week)
+    });
   };
 
   afterSuccessCountdown() {
+    this.reset();
     this.props.closeModal();
-  };
-
-  componentDidUpdate(prevProps) {
-    const { segmentToDelete } = this.props;
-    if (
-      segmentToDelete &&
-      segmentToDelete._id.toString() !== prevProps.segmentToDelete._id.toString()
-    ) {
-      this.reset();
-    }
   };
 
   render() {
     const { isActive, segmentToDelete } = this.props;
-    const { hasSuccess, hasProblem } = this.state;
+    const { hasSuccess } = this.state;
 
     if (!isActive) {
       return <></>;
@@ -51,13 +48,41 @@ class DeleteSegmentModal extends Component {
     return (
       <FormModal
         formMgmtComponent={this}
-        infoMessages={[]}
-        successMessages={[]}
+        infoMessages={[
+          <>You are <strong>permanently</strong> deleting the time segment defined below.</>,
+          <>Press "Submit" to proceed.</>
+        ]}
+        successMessages={['The time segment was successfully deleted.']}
         successRedirectMessageFragment="This dialog box will close"
         title="Delete Time Segment"
       >
-        {!hasSuccess && (
-          <></>
+        {!hasSuccess && segmentToDelete && (
+          <>
+            <TagGroup align="center" isInline>
+              <Tag theme="info" size={6}>
+                Schedule Date:
+              </Tag>
+              <Tag theme="info light" size={6}>
+                {formatMyDate(segmentToDelete.date)}
+              </Tag>
+            </TagGroup>
+            <TagGroup align="center" isInline>
+              <Tag theme="info" size={6}>
+                Start/End:
+              </Tag>
+              <Tag theme="info light" size={6}>
+                {formatSegmentTimes(segmentToDelete)}
+              </Tag>
+            </TagGroup>
+            <TagGroup align="center" isInline>
+              <Tag theme="info" size={6}>
+                Time Worked:
+              </Tag>
+              <Tag theme="info light" size={6}>
+                {formatDuration(segmentToDelete.duration)}
+              </Tag>
+            </TagGroup>
+          </>
         )}
       </FormModal>
     );

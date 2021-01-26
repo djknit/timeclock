@@ -10,7 +10,7 @@ let state = {
 };
 
 function setWeeks(rawWeeksArray) {
-  state.weeks = rawWeeksArray.map(({ document }) => document);
+  state.weeks = [ ...rawWeeksArray ];
 }
 
 let timeService = dataServiceFactory({
@@ -53,7 +53,7 @@ timeService.getInfoForDateRange = function(firstDate, lastDate) {
 };
 
 // special alternative to normal set function to wait for new settings value before emitting (for when setting whole job and not just time)
-timeService.setJobSetTime = function(weeksArray) {
+timeService._setJobSetTime = function (weeksArray) {
   setWeeks(weeksArray);
   state.sessionTimezone = guessUserTimezone();
 };

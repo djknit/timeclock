@@ -3,8 +3,8 @@ module.exports = {
   cleanJob,
   cleanJobsExtra,
   cleanWeeks,
-  cleanDays,
-  cleanSegments
+  // cleanWeek,
+  cleanWeekDoc
 };
 
 function cleanUser(user) {
@@ -22,9 +22,10 @@ function cleanJobs(jobs) {
 }
 
 function cleanJob(job) {
-  let { _id, name, timezone, wage, dayCutoff, weekBegins, startDate, weeks } = job;
-  // weeks = cleanWeeks(weeks);
-  return { _id, name, timezone, wage, dayCutoff, weekBegins, startDate, weeks };
+  let cleanedJob = { weeks: cleanWeeks(job.weeks) };
+  const propsToKeep = ['_id', 'name', 'timezone', 'wage', 'dayCutoff', 'weekBegins', 'startDate'];
+  propsToKeep.forEach(propName => cleanedJob[propName] = job[propName]);
+  return cleanedJob;
 }
 
 function cleanJobsExtra(jobs) {
@@ -36,32 +37,17 @@ function cleanJobExtra(job) {
   return { name, startDate, _id };
 }
 
-// Probably don't need to clean weeks & days; _ids are necessary for some things. Maybe look at removing unused props, but it's not necessary.
 function cleanWeeks(weeks) {
-  let cleanedWeeks = [];
-  weeks.forEach(week => {
-    let { days, firstDate, lastDate, weekNumber } = week.document.data;
-    days = cleanDays(days);
-    cleanedWeeks.push({ days, firstDate, lastDate, weekNumber });
-  });
-  return cleanedWeeks;
+  return weeks.map(({ document }) => cleanWeekDoc(document));
 }
 
-function cleanDays(days) {
-  let cleanedDays = [];
-  days.forEach(day => {
-    let { date, startCutoff, endCutoff, segments, timezone, wage } = day;
-    segments = cleanSegments(segments);
-    cleanedDays.push({ date, startCutoff, endCutoff, segments, timezone, wage });
-  });
-  return cleanedDays;
-}
+// function cleanWeek(rawWkArrayEntry) { // also moves `document` props to top level
+//   return cleanWeekDoc(rawWkArrayEntry.document);
+// }
 
-function cleanSegments(segments) {
-  let cleanedSegments = [];
-  segments.forEach(segment => {
-    const { startTime, endTime } = segment;
-    cleanedSegments.push({ startTime, endTime });
-  });
-  return cleanedSegments;
+function cleanWeekDoc(rawWkDoc) {
+  const propsToKeep = ['days', 'firstDate', 'lastDate', 'weekNumber', '_id'];
+  let cleanedWk = {};
+  propsToKeep.forEach(propName => cleanedWk[propName] = rawWkDoc[propName]);
+  return cleanedWk;
 }

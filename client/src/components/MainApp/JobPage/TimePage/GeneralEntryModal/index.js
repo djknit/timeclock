@@ -5,18 +5,20 @@ import {
   api,
   constants,
   bindFormMethods,
-  inputProblemsGetterFactory,
+  timeSegInputProblemsGetterFactory,
   getTimeInputStartingValue,
-  hasBlankInput,
+  isTimeSegmentInputIncomplete,
   getNumDaysSpannedBySegment,
   processTimeSegmentInput,
-  findSegmentsFromSegmentInfo
+  findSegmentsFromSegmentInfo,
+  performAutoChangesAfterInputChange
 } from './utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
 import Button from '../../../../Button';
 import DateTimeInput from './DateTimeInput';
 import JustAdded from './JustAdded';
+import ModalSectionTitle from './ModalSectionTitle';
 
 const { datePickerPopperHeight } = constants;
 
@@ -27,7 +29,7 @@ const sectionLabelMarginBottom = '0.5rem'; // matches Bulma style for `.label:no
 class EntryModal extends Component {
   constructor(props) {
     super(props);
-    this.getInputProblems = inputProblemsGetterFactory().bind(this);
+    this.getInputProblems = timeSegInputProblemsGetterFactory().bind(this);
     bindFormMethods(this, { hasCountdown: false });
     this.resetJustAdded = this.resetJustAdded.bind(this);
     this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
@@ -49,44 +51,29 @@ class EntryModal extends Component {
     };
   };
 
-  afterChange(propName) {
-    const { startDate, endDate, hasBeenSubmitted } = this.state;
-    console.log(propName + '\n', this.state[propName])
-    if (propName === 'startDate' && startDate && !endDate) {
-      this.setState({ endDate: { ...startDate }});
-    }
-    else if (propName ==='endDate' && endDate && !startDate) {
-      this.setState({ startDate: { ...endDate }});
-    }
-    if (hasBeenSubmitted) {
-      this.setState(this.getInputProblems());
-    }
+  afterChange(propName, childPropName) {
+    performAutoChangesAfterInputChange(propName, childPropName, this)
+    .then(wasAutoChanged => {
+      if (this.state.hasBeenSubmitted) {
+        this.setState(this.getInputProblems());
+      }
+    });
   };
 
   handleDatepickerPopperToggle(isActiveAfterToggle, isStartDate) {
     // need to make space for datepicker popper above date input.
     const sectionLabelHeight = this.firstInputAreaLabel.current.clientHeight;
-    console.log('sectionLabelHeight\n', sectionLabelHeight);
     let roomAvailableBelowMsgArea = `${sectionLabelHeight}px + ${sectionLabelMarginBottom}`;
-    console.log('roomAvailableBelowMsgArea\n', roomAvailableBelowMsgArea);
     if (!isStartDate) {
       const firstSectionHeight = this.firstInputArea.current.clientHeight;
-      console.log('firstSectionHeight\n', firstSectionHeight)
       roomAvailableBelowMsgArea += ` + ${firstSectionHeight}px + ${inputFieldMarginBottom}`;
-      console.log('roomAvailableBelowMsgArea\n', roomAvailableBelowMsgArea)
     }
-    this.setState({
-      messagesAreaMinHeight: isActiveAfterToggle ? (
-        `calc(${datePickerPopperHeight} - (${roomAvailableBelowMsgArea}))`
-      ) : (
-        undefined
-      )
-    });
+    const msgAreaMinH = `calc(${datePickerPopperHeight} - (${roomAvailableBelowMsgArea}))`;
+    this.setState({ messagesAreaMinHeight: isActiveAfterToggle ? msgAreaMinH : undefined });
   };
 
   getWarnings() {
-    const { job } = this.props;
-    const timezone = job.time.sessionTimezone;
+    const timezone = this.props.job.time.sessionTimezone;
     let warnings = {
       hasWarning: false,
       warningMessages: []
@@ -94,7 +81,7 @@ class EntryModal extends Component {
     if (this.state.hasWarning) {
       return warnings;
     }
-    const numDaysSpanned = getNumDaysSpannedBySegment(this.state, timezone, job);
+    const numDaysSpanned = getNumDaysSpannedBySegment(this.state, timezone);
     if (numDaysSpanned > 1) {
       warnings.hasWarning = true;
       warnings.warningMessages.push(
@@ -107,10 +94,6 @@ class EntryModal extends Component {
   };
 
   processAndSubmitData() {
-  /* TO DO:
-    Split segment if it spans multiple days.
-    Consider adding new api route for multiple segments, or submit each segment in succession or parallel while waiting on results
-  */
     const { job } = this.props;
     const timezone = job.time.sessionTimezone;
     const processedInput = processTimeSegmentInput(this.state, timezone, job);
@@ -123,11 +106,13 @@ class EntryModal extends Component {
   };
 
   processSuccessResponse(response) {
-    console.log(response)
-    const { data: { job, newSegmentInfo } } = response;
-    currentJobTimeService.setValue(job && job.weeks);
+    const { weeks, newSegmentInfo, newSegmentsInfo } = response.data;
+    currentJobTimeService.setValue(weeks);
     this.setState({
-      justAddedSegmentsInfo: [ newSegmentInfo, ...this.state.justAddedSegmentsInfo ]
+      justAddedSegmentsInfo: [
+        ...(newSegmentsInfo || [newSegmentInfo]),
+        ...this.state.justAddedSegmentsInfo
+      ]
     });
   };
 
@@ -146,7 +131,7 @@ class EntryModal extends Component {
       handleDatepickerPopperToggle
     } = this;
     const {
-      isActive, closeModal, inputRef, job, toggleDeleteSegmentModal
+      isActive, closeModal, inputRef, job, toggleDeleteSegmentModal, windowWidth
     } = this.props;
     const {
       hasSuccess,
@@ -162,9 +147,8 @@ class EntryModal extends Component {
     } = this.state;
 
     const justAdded = findSegmentsFromSegmentInfo(justAddedSegmentsInfo, job.time.weeks);
-    const isFormIncomplete = hasBlankInput(this.state);
-
-    console.log(justAdded)
+    const isFormIncomplete = isTimeSegmentInputIncomplete(this.state);
+    const hasJustAdded = !!(justAdded && justAdded.length);
 
     const reverseWarning = () => this.setState({ hasWarning: false });
     const getInputProps = propName => ({
@@ -174,10 +158,11 @@ class EntryModal extends Component {
       value: this.state[propName]
     });
 
+    const isUserActionAllowed = !isLoading && !hasWarning && !hasSuccess;
     const commonAttrs = {
       changeHandlerFactory,
       formId,
-      isActive: !isLoading && !hasWarning && !hasSuccess,
+      isActive: isUserActionAllowed,
       handleDatepickerPopperToggle,
       inputFieldMarginBottom,
       sectionLabelMarginBottom
@@ -191,16 +176,18 @@ class EntryModal extends Component {
           isActive,
           closeModal
         }}
-        title="Enter Time"
+        title="General Time Entry"
         isCloseButtonDisabled={isLoading}
-        extraPrecedingSectionContent={justAdded && justAdded.length > -1 && (
+        extraPrecedingBodyContent={hasJustAdded && (
           <JustAdded
             {...{
               justAdded,
-              toggleDeleteSegmentModal
+              toggleDeleteSegmentModal,
+              windowWidth
             }}
           />
         )}
+        sectionStyles={{ precedingBody: style.extraPrecedingBody }}
         footerContent={
           <>
             <Button
@@ -241,20 +228,20 @@ class EntryModal extends Component {
       >
         <form id={formId}>
           <div style={style.messagesArea}>
-            {justAdded && justAdded.length > 0 && !(justAdded.length === 1 && hasSuccess) && (
-              <h3 className="subtitle" style={style.title}>
-                Add Time:
-              </h3>
+            {hasJustAdded && !(justAdded.length === 1 && hasSuccess) && (
+              <ModalSectionTitle>
+                Add Time Segment
+              </ModalSectionTitle>
             )}
             <FormMessages
               {...{
-                showMessage,
                 hasSuccess,
                 hasProblem,
                 hasWarning,
                 problemMessages,
                 warningMessages,
               }}
+              showMessage={showMessage && (!hasJustAdded || hasSuccess || hasProblem || hasWarning)}
               infoMessages={[
                 'Use the form below to record your time worked one time segment at a time.',
                 'Enter the start (clock-in) time and end (clock-out) time for each segment.'

@@ -1,4 +1,5 @@
 module.exports = {
   dates: require('./dates'),
-  jobData: require('./jobData')
+  jobData: require('./jobData'),
+  time: require('./time')
 };

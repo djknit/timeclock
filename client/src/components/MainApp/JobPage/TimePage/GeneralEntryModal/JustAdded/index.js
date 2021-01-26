@@ -1,30 +1,77 @@
-import React from 'react';
+import React, { Component } from 'react';
 import getStyle from './style';
-import Tag, { TagGroup } from '../../../../../Tag';
+import { keyTriggerCheckerFactory } from '../utilities';
+import ModalSectionTitle from '../ModalSectionTitle';
+import Segment from './Segment';
+import { addCollapsing, addPseudoPseudoClasses } from '../../../../../higherOrder';
 
-function JustAdded({
-  justAdded,
-  toggleDeleteSegmentModal
-}) {
+class _JustAdded_needsCollapsingAndPseudo extends Component {
+  componentDidMount() {
+    this.props.sectionToggle.setHeight();
+  };
 
-  const style = getStyle();
+  componentDidUpdate(prevProps) {
+    const { windowWidth, sectionToggle, justAdded } = this.props;
+    if (
+      windowWidth !== prevProps.windowWidth ||
+      (justAdded && justAdded.length) !== (prevProps.justAdded && prevProps.justAdded.length)
+    ) {
+      sectionToggle.setHeight();
+    }
+  };
 
-  return (true || (justAdded && justAdded.length > 0)) ? (
-    <>
-      <h3 className="subtitle" style={style.title}>
-        Just Added
-      </h3>
-      {justAdded.map(segment => (
-        <TagGroup>
-          <Tag>
-            {segment.date}afwefjio
-          </Tag>
-        </TagGroup>
-      ))}
-    </>
-  ) : (
-    <></>
-  );
+  render() {
+    const {
+      justAdded,
+      toggleDeleteSegmentModal,
+      disabled,
+      sectionToggle,
+      pseudoState,
+      pseudoHandlers
+    } = this.props;
+
+    if (!justAdded || justAdded.length === 0) {
+      return <></>;
+    }
+
+    const style = getStyle(sectionToggle.styles, pseudoState);
+
+    return (
+      <>
+        <div ref={sectionToggle.containerRef} style={style.container} >
+          <ModalSectionTitle style={style.sectionTitle}>
+            Just Added
+          </ModalSectionTitle>
+          {justAdded.map(segment => (
+            <Segment
+              {...{
+                segment,
+                toggleDeleteSegmentModal,
+                disabled
+              }}
+              key={segment._id}
+            />
+          ))}
+        </div>
+        <div
+          style={style.togglerDiv}
+          {...pseudoHandlers}
+          tabIndex={disabled ? -1 : 0}
+          onClick={sectionToggle.toggle}
+          onKeyDown={keyTriggerCheckerFactory(sectionToggle.toggle)}
+        >
+          <p style={style.togglerP}>
+            <span style={style.toggleOpenText}>Show Just Added </span>
+            <span style={style.toggleClosedText}>Hide Just Added </span>
+          </p>
+          <i className="fas fa-chevron-up" style={style.togglerArrow} />
+        </div>
+      </>
+    );
+  };
 }
+
+const _JustAdded_needsPseudo = addCollapsing(_JustAdded_needsCollapsingAndPseudo, 'sectionToggle', true, true);
+const JustAdded = addPseudoPseudoClasses(_JustAdded_needsPseudo);
 
 export default JustAdded;

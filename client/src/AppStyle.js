@@ -14,7 +14,34 @@ const footerHeight = 50;
 const bulmaFormBlue = '#3273dc';
 const bulmaFormBlack = '#363636';
 
+const dynamicBgColors = {
+  danger: {
+    innate: '#f14668', // matches Bulma
+    hover: '#f03a5f', // matches Bulma
+    focus: '#df415b',
+    active: '#ff4a6e'
+  },
+  primary: {
+    innate: '#f14668', // matches Bulma
+    hover: '#00c4a7', // matches Bulma
+    focus: '#00b19a',
+    active: '#00debd'
+  }
+};
+const dangerBgColors = {
+  innate: '#f14668', // matches Bulma
+  hover: '#f03a5f', // matches Bulma
+  focus: '#df415b',
+  active: '#ff4a6e'
+};
+const bulmaPrimaryBgColors = {
+
+};
+
 function shadow(blur, offsetDirection, color, isInset) {
+  if (blur === 0 || blur === null) {
+    return { boxShadow: undefined };
+  }
   const _blur = `${blur || 5}px`;
   const { x, y } = offsetDirection || {};
   const getOneDimensionalOffset = dimensionOffsetDirection => (
@@ -25,7 +52,7 @@ function shadow(blur, offsetDirection, color, isInset) {
   const _inset = isInset ? 'inset' : '';
   const xOffset = getOneDimensionalOffset(x);
   const yOffset = getOneDimensionalOffset(y);
-  return ({ boxShadow: `${_inset} ${xOffset} ${yOffset} ${_blur} ${color || '#202020'}` });
+  return { boxShadow: `${_inset} ${xOffset} ${yOffset} ${_blur} ${color || '#202020'}` };
 };
 
 export default function getStyle() {
@@ -51,6 +78,8 @@ export {
   footerHeight,
   bulmaFormBlue,
   bulmaFormBlack,
+  dynamicBgColors,
+  dangerBgColors,
   shadow,
   isWindowWide
 };

@@ -10,6 +10,9 @@ function getOrphanedSegments(day, segModificationMethodName) {
   const dayEndTime = daysController.getDayEndTime(day);
 
   day.segments.forEach((segment, index) => {
+    console.log(orphanedSegments)
+    console.log(index)
+    console.log(segment)
     const { startTime, endTime } = segment;
     const _markSegModified = () => {
       segment.modified.push({
@@ -22,14 +25,14 @@ function getOrphanedSegments(day, segModificationMethodName) {
       (startTime < dayStartTime && endTime <= dayStartTime) ||
       (startTime >= dayEndTime && endTime > dayEndTime)
     ) {
-      orphanedSegments.push(segment);
+      orphanedSegments.push(segment._doc);
       indexesOfSegmentsToRemove.push(index);
       return;
     }
     if (startTime < dayStartTime) {
       _markSegModified();
       orphanedSegments.push({
-        ...segment,
+        ...segment._doc,
         endTime: dayStartTime
       });
       segment.startTime = dayStartTime;
@@ -37,7 +40,7 @@ function getOrphanedSegments(day, segModificationMethodName) {
     if (endTime > dayEndTime) {
       _markSegModified();
       orphanedSegments.push({
-        ...segment,
+        ...segment._doc,
         startTime: dayEndTime
       });
       segment.endTime = dayEndTime;

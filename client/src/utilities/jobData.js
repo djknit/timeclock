@@ -20,7 +20,7 @@ function getDayCutoffTime(cutoffValueInMinutes, is24hr) {
 
 function findWeekWithDate(date, weeks) {
   if (!weeks) return null;
-  for (let i = 0; i < weeks.length - 1; i++) {
+  for (let i = 0; i < weeks.length; i++) {
     if (isDateInRange(weeks[i], date)) {
       return weeks[i];
     }
@@ -28,7 +28,21 @@ function findWeekWithDate(date, weeks) {
   return null;
 }
 
+function isPartialWeekInDateRange(dateRange, week) {
+  return (
+    isDateInRange(dateRange, week.firstDate) ||
+    isDateInRange(dateRange, week.lastDate) ||
+    isDateInRange(week, dateRange.firstDate)
+  );
+}
+
+function isWholeWeekInDateRange(dateRange, week) {
+  return isDateInRange(dateRange, week.firstDate) && isDateInRange(dateRange, week.lastDate);
+}
+
 export {
   getDayCutoffTime,
-  findWeekWithDate
+  isPartialWeekInDateRange,
+  findWeekWithDate,
+  isWholeWeekInDateRange
 };

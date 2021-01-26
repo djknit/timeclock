@@ -3,11 +3,11 @@ import processDay from './processDay';
 import { addEarningsToDays, getWeekEarnings } from './earnings';
 import { getWeekSettings } from './settings';
 
-export default function processWeek(weekDocument) {
+export default function processWeek(weekDocument, sessionTimezone) {
   
   const { _id, days, firstDate, lastDate, weekNumber } = weekDocument;
   
-  const processedDays = days.map(processDay);
+  const processedDays = days.map(day => processDay(day, sessionTimezone));
 
   addEarningsToDays(processedDays);
 

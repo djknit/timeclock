@@ -4,25 +4,32 @@ import getStyle from './style';
 function TagGroup({
   children,
   align,
-  isInline
+  isInline,
+  size
 }) {
 
-  let hasAlign, alignmentClass;
+  let className = 'tags has-addons';
+
+  let hasAlign;
   if (align === 'center') {
     hasAlign = true;
-    alignmentClass = 'has-text-centered';
+    className += ' has-text-centered';
   }
-  else alignmentClass = '';
+
+  if (size) {
+    className += ` are-${size}`;
+  }
 
   const style = getStyle(hasAlign, isInline);
 
   return (
     <div
-      className={`tags has-addons ${alignmentClass}`}
-      {...{ style }}
-    >
-      {children}
-    </div>
+      {...{
+        style,
+        className,
+        children
+      }}
+    />
   );
 }
 

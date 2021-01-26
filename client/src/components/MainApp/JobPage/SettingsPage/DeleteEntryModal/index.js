@@ -63,7 +63,7 @@ class DeleteEntryModal extends Component {
         infoMessages={[
           <>You are deleting the {lowCaseSettingName} value for {dateRangeText}.</>,
           <>The {lowCaseSettingName} will no longer change on {startDateShortText}.</>,
-          <>Press "Submit" to procede.</>
+          <>Press "Submit" to proceed.</>
         ]}
         successMessages={[
           `The ${lowCaseSettingName} value schedule entry was successfully removed.`,

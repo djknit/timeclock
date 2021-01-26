@@ -29,9 +29,15 @@ function getInfoForWeekWithDate(date, processedWeeks, jobSettings) {
       lastDate: weekDates[weekDates.length - 1],
       totalTime: getDurationInfo(0),
       daysWorked: 0,
-      earnings: null
+      earnings: null,
+      paidTime: getDurationInfo(0),
+      unpaidTime: getDurationInfo(0)
     };
   }
-  const { firstDate, lastDate, totalTime, daysWorked, earnings } = week;
-  return { firstDate, lastDate, totalTime, daysWorked, earnings };
+  const {
+    firstDate, lastDate, totalTime, daysWorked, earnings, paidTime, unpaidTime
+  } = week;
+  return {
+    firstDate, lastDate, totalTime, daysWorked, earnings, paidTime, unpaidTime
+  };
 }
