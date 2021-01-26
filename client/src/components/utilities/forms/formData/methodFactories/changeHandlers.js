@@ -8,8 +8,8 @@ The factory fxn returned by the outer factory fxn should be attached as a method
 Children then call the inner factory function to generate the change handler function for that input component.
 */
 function changeHandlerFactoryFactory() {
-  return function changeHandlerFactory(propName, isEvent, processValue) {
-    const genericAfterChange = () => {
+  return function changeHandlerFactory(propName, isEvent, processValue, dataForNextStep) {
+    const _genericAfterChange = () => {
       if (this.state.hasBeenSubmitted && this.getInputProblems) {
         this.setState(this.getInputProblems());
       }
@@ -19,12 +19,7 @@ function changeHandlerFactoryFactory() {
       if (processValue) value = processValue(value);
       this.setState(
         { [propName]: value },
-        () => {
-          if (this.afterChange) this.afterChange(propName);
-          else if (this.state.hasBeenSubmitted && this.getInputProblems) {
-            this.setState(this.getInputProblems());
-          }
-        }
+        this.afterChange ? (() => this.afterChange(propName, dataForNextStep)) : _genericAfterChange
       );
     };
   };

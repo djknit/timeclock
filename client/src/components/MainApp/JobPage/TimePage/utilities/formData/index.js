@@ -1,2 +1,2 @@
-export * from './timeSegment';
 export * from './time';
+export * from './timeSegment';

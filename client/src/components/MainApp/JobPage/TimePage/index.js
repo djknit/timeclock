@@ -4,6 +4,7 @@ import { modalManagement, guessUserTimezone } from './utilities';
 import PageTitle from '../../PageTitle';
 import GeneralEntryModal from './GeneralEntryModal';
 import DeleteSegmentModal from './DeleteSegmentModal';
+import EditSegmentModal from './EditSegmentModal';
 import General from './General';
 import Summary from './Summary';
 import Weeks from './Weeks';
@@ -14,7 +15,8 @@ const {
 
 const modalsInfo = [
   createModalInfo('generalTimeEntry', GeneralEntryModal, false, undefined, 'setFocus'),
-  createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete')
+  createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
+  // createModalInfo('editSegment', EditSegmentModal, true, 'segmentToEdit')
 ];
 
 class TimePage extends Component {
@@ -22,10 +24,16 @@ class TimePage extends Component {
     super(props);
     let state = {};
     addModalsStateAndMethods(this, state, modalsInfo);
+    this.setSegmentToDelete = this.setSegmentToDelete.bind(this);
     this.state = {
       ...state,
-      segmentToDelete: undefined
+      segmentToDelete: undefined,
+      segmentToEdit: undefined
     };
+  };
+
+  setSegmentToDelete(segmentToDelete) {
+    return new Promise(resolve => this.setState({ segmentToDelete }, resolve));
   };
 
   componentWillUnmount() {
@@ -33,14 +41,21 @@ class TimePage extends Component {
   };
 
   render() {
-
+    const { setSegmentToDelete } = this;
     const { job, parentPath, windowWidth } = this.props;
-    const { segmentToDelete } = this.state;
+    const { segmentToDelete, segmentToEdit } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
 
     const toggleGeneralEntryModal = modalTogglers.generalTimeEntry;
     const toggleDeleteSegmentModal = modalTogglers.deleteSegment;
+    const toggleEditSegmentModal = modalTogglers.editSegment;
+
+    const variableModalAttrs = {
+      generalTimeEntry: { toggleDeleteSegmentModal, toggleEditSegmentModal, windowWidth },
+      deleteSegment: { segmentToDelete, setSegmentToDelete },
+      editSegment: { segmentToEdit }
+    };
 
     const crumbChain = [
       {
@@ -51,7 +66,6 @@ class TimePage extends Component {
     ];
 
     const style = getStyle(windowWidth);
-
     return (
       <>
         <PageTitle {...{ crumbChain }} />
@@ -80,11 +94,7 @@ class TimePage extends Component {
                 inputRef,
                 job
               }}
-              {...(
-                name === 'deleteSegment' ?
-                { segmentToDelete } :
-                { toggleDeleteSegmentModal }
-              )}
+              {...variableModalAttrs[name]}
               closeModal={() => toggle(false)}
             />
           )

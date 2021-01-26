@@ -1,5 +1,5 @@
 const {
-  areDatesEquivalent, getDateForTime
+  areDatesEquivalent, getDateForTime, doTimeSegmentsOverlap
 } = require('../../utilities');
 
 module.exports = {
@@ -32,15 +32,8 @@ function isSegmentValid(segment) {
 }
 
 function doesNewSegOverlapExistingSegs(segments, newSegment) {
-  const newSegStartTime = newSegment.startTime;
-  const newSegEndTime = newSegment.endTime;
   for (let i = 0; i < segments.length; i++) {
-    const { startTime, endTime } = segments[i];
-    if (
-      (startTime <= newSegStartTime && newSegStartTime < endTime) ||
-      (startTime < newSegEndTime && newSegEndTime <= endTime) ||
-      (newSegStartTime <= startTime && startTime < newSegEndTime)
-    ) {
+    if (doTimeSegmentsOverlap(newSegment, segments[i])) {
       return {
         startTime: true,
         endTime: true
