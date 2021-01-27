@@ -67,7 +67,8 @@ This plan is not complete. Future steps will be expanded on in the plan before t
   * [x] Landing page
   * [x] Account creation & login
   * [x] 404 page
-  * [x] Dashboard
+  * [ ] _Dashboard_
+    * [ ] _Add welcome message to display instead of jobs table when user has no jobs_
   * [x] Job creation
   * [ ] _Job page_
     * [ ] Job dashboard
@@ -78,17 +79,28 @@ This plan is not complete. Future steps will be expanded on in the plan before t
     * [ ] _Time page_
       * [x] Time Summary
       * [ ] _Basics_
-        * [ ] _General time entry_
-          * [ ] _Time segment general entry_
-          * [ ] Track and display segments just added
+        * [x] General time entry
+          * [x] Time segment general entry
+          * [x] Track and display segments just added
         * [ ] Consider recently added segments similarly to just added from general entry?
-      * [ ] Allow delete time segment
+      * [x] Allow delete time segment
+      * [ ] _Allow edit time segment_
       * [ ] Time details by weeks/days and corresponding time entry
       * [ ] Management for session timezone
+      * [ ] Full report of time data
+        * [ ] All time
+        * [ ] Arbitrary (user defined) time period
   * [x] Navbar navigation menu
   
 * [ ] Review code for bugs and code organization/readability
 * [ ] Work on additional features
+  * [ ] Punchclock
+  * [ ] Add notes field to time segments & maybe also days and/or weeks
+  
+* Icebox:
+  * [ ] Pay periods (should be optional)
+  * [ ] Mark time as finalized and/or paid, and maybe allow finalized time to be locked so it can't be changed
+  * [ ] Add manager/supervisor account with priviledges to define job; link to employee account for employee self-reporting of hours; require manager to finalize.
 
 ## Project Features
 (Coming soon...)

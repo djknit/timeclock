@@ -6,7 +6,9 @@ let state = {};
 resetState();
 
 const service = dataServiceFactory({
-  readFunction: () => state._id ? { ...state } : undefined,
+  readFunction: () => {
+    return state._id ? { ...state } : undefined
+  },
   setFunction: ({ _id, name, startDate }) => {
     Object.assign(state, { name, startDate }, { _id: _id.toString() });
   },

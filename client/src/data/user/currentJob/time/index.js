@@ -17,7 +17,8 @@ let timeService = dataServiceFactory({
   readFunction() {
     const { weeks, settings, sessionTimezone } = state;
     if (!weeks || !settings) return;
-    return processData(weeks, settings, sessionTimezone);
+    const timezone = sessionTimezone || guessUserTimezone();
+    return processData(weeks, settings, timezone);
   },
   setFunction(weeksArray) {
     setWeeks(weeksArray);

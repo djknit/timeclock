@@ -24,10 +24,8 @@ class DeleteSegmentModal extends Component {
   };
 
   processSuccessResponse(response) {
-    console.log(response)
     return this.props.setSegmentToDelete(null)
     .then(() => {
-      console.log('pass set segToDel')
       currentJobTimeService.updateWeek(response.data.week)
     });
   };

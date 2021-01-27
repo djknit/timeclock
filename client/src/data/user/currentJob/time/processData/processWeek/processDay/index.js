@@ -16,14 +16,14 @@ export default function processDay(
   { date, startCutoff, endCutoff, startTimezone, timezone, wage, _id, segments },
   sessionTimezone
 ) {
-  const startTime = getDayBoundary(date, startCutoff, startTimezone);
-  const endTime = getDayBoundary(getNextDate(date), endCutoff, timezone);
+  // const startTime = getDayBoundary(date, startCutoff, startTimezone);
+  // const endTime = getDayBoundary(getNextDate(date), endCutoff, timezone);
 
   return {
     _id: _id.toString(),
     date: cloneMyDate(date),
-    startTime: getDayBoundary(date, startCutoff, startTimezone),
-    endTime: getDayBoundary(getNextDate(date), endCutoff, timezone),
+    startTime: getDayBoundary(date, startCutoff, startTimezone, sessionTimezone),
+    endTime: getDayBoundary(getNextDate(date), endCutoff, timezone, sessionTimezone),
     settings: {
       dayCutoff: convertDayCutoffToMinutes(endCutoff),
       timezone,
