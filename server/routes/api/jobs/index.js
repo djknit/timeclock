@@ -25,7 +25,7 @@ router.post(
     .then(user => {
       return res.json({
         jobs: cleanJobsExtra(user.jobs),
-        newJob
+        newJob: cleanJob(newJob)
       });
     })
     .catch(routeErrorHandlerFactory(res));

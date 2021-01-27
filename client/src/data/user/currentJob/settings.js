@@ -5,7 +5,7 @@ const settingNames = ['timezone', 'wage', 'weekBegins', 'dayCutoff'];
 let state = {};
 resetState();
 
-const service = dataServiceFactory({
+let service = dataServiceFactory({
   readFunction: () => {
     if (!state.isCurrentJobSet) return null;
     const settingValueProcessors = {
