@@ -14,16 +14,9 @@ let state = { isCurrentJobSet: false };
 
 function setCurrentJob(jobData) {
   state.isCurrentJobSet = true;
-  setTime(jobData);
+  timeService._setJobSetTime(jobData.weeks);
   basicsService.setValue(jobData);
   settingsService.setValue(jobData);
-}
-
-function setTime(jobData) {
-  const oldId = state.basics && state.basics._id;
-  const isSameJob = jobData._id.toString() === oldId;
-  const timeSetterName = isSameJob ? 'setValue' : '_setJobSetTime';
-  timeService[timeSetterName](jobData.weeks);
 }
 
 const currentJobService = dataServiceFactory({

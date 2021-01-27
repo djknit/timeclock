@@ -9,7 +9,6 @@ module.exports = placeOrphanedSegmentsWithAdoptiveDays;
 
 function placeOrphanedSegmentsWithAdoptiveDays(orphanedSegments, job, modifiedWeekDocIds, segModMethodName) {
   return new Promise((resolve, reject) => {
-    console.log('orphaned segments\n', orphanedSegments)
     if (orphanedSegments.length === 0) return resolve();
     ensureSegmentsSpanOnlyOneDayEach(orphanedSegments, job, segModMethodName);
     let numCompleted = 0;
@@ -37,11 +36,8 @@ function ensureSegmentsSpanOnlyOneDayEach(segments, job, segModMethodName) {
 }
 
 function placeSingleSegmentWithAdoptiveDay(segment, job, modifiedWeekDocIds) {
-  console.log('placeSingleSegmentWithAdoptiveDay')
-  console.log('segment\n', segment)
   return new Promise((resolve, reject) => {
     const date = getDateForTime(segment.startTime, job, true);
-    console.log('date\n', date)
     getWeekDocWithDate(date, job)
     .then(weekDoc => {
       modifiedWeekDocIds.push(weekDoc._id.toString());

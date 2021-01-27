@@ -243,7 +243,7 @@ class _EditAccountModal_needsData extends Component {
           placeholder="Your password..."
           hasProblem={problems && problems.currentPassword}
           iconClass={hasSuccess ? 'fas fa-unlock' : 'fas fa-lock'}
-          helpText="Enter your current password to verify you identity and complete the update to your account."
+          helpText="Enter your current password to verify your identity and complete the update to your account."
           isActive={!isLoading && !hasSuccess}
           {...{
             changeHandlerFactory,

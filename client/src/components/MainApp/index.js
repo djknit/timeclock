@@ -189,7 +189,7 @@ class MainApp extends Component {
                 inputRef,
                 catchApiUnauthorized,
                 ...(
-                  (name === 'newJob' && redirectToJobPage) ||
+                  (name === 'newJob' && { redirectToJobPage }) ||
                   (name === 'editAccount' && { propToEditName: accountPropToEditName }) ||
                   { propToDeleteName: accountPropToEditName }
                 )

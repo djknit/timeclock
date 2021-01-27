@@ -10,9 +10,6 @@ function getOrphanedSegments(day, segModificationMethodName) {
   const dayEndTime = daysController.getDayEndTime(day);
 
   day.segments.forEach((segment, index) => {
-    console.log(orphanedSegments)
-    console.log(index)
-    console.log(segment)
     const { startTime, endTime } = segment;
     const _markSegModified = () => {
       segment.modified.push({
