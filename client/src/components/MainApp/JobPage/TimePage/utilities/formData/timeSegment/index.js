@@ -3,6 +3,7 @@ import { getSegmentBoundaryDayDatesAndTimestamps } from './elemental';
 export * from './inputProcessing';
 export * from './autoInputChanges.js';
 export * from './inputProblems';
+export * from './reverseProcessing';
 
 const { getMoment } = dateUtils;
 

@@ -5,7 +5,7 @@ import { getColorClass } from '../../utilities';
 function ProgressBar({
   theme,
   value,
-  max,
+  max = 100,
   remaining
 }) {
 

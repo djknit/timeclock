@@ -29,11 +29,11 @@ function Segment({
       <Tag>
         {formatDuration(segment.duration)}
       </Tag>
-      {/* <ButtonTag
+      <ButtonTag
         theme="primary"
         iconName="edit"
         {..._getCommonBtnProps(toggleEditSegmentModal)}
-      /> */}
+      />
       <ButtonTag
         theme="danger"
         iconName="trash-alt"

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import FormModal from '../../../../FormModal';
-import { bindFormMethods, api } from '../utilities';
+import {
+  bindFormMethods, api, convertSegmentToInputValues,
+} from '../utilities';
 
 class EditSegmentModal extends Component {
   constructor(props) {
@@ -11,10 +13,7 @@ class EditSegmentModal extends Component {
 
   getUniqueStartingState() {
     return {
-      startDate: null,
-      endDate: null,
-      // startTime: getTimeInputStartingValue(),
-      // endTime: getTimeInputStartingValue(),
+      ...convertSegmentToInputValues(this.props.segmentToEdit),
       messagesAreaMinHeight: undefined
     };
   };
