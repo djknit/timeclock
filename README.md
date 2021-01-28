@@ -67,8 +67,8 @@ This plan is not complete. Future steps will be expanded on in the plan before t
   * [x] Landing page
   * [x] Account creation & login
   * [x] 404 page
-  * [ ] _Dashboard_
-    * [ ] _Add welcome message to display instead of jobs table when user has no jobs_
+  * [x] Dashboard
+    * [x] Add welcome message to display instead of jobs table when user has no jobs
   * [x] Job creation
   * [ ] _Job page_
     * [ ] Job dashboard

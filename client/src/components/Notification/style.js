@@ -1,13 +1,11 @@
-export default function getStyle() {
+export default function getStyle(isNotificationLastChild) {
   const allPs = {
     textAlign: 'center',
     lineHeight: 1.2
   };
 
-  return {
-    notification: {
-      marginBottom: 10
-    },
+  let style = {
+    notification: {},
     p: {
       ...allPs,
       marginBottom: 10
@@ -17,4 +15,10 @@ export default function getStyle() {
       marginBottom: 0
     }
   };
-}
+
+  if (!isNotificationLastChild) {
+    style.notification.marginBottom = 10;
+  }
+
+  return style;
+};

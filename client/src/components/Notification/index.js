@@ -6,10 +6,11 @@ function Notification({
   children,
   theme,
   close,
-  messages
+  messages,
+  isLastChild
 }) {
 
-  const style = getStyle();
+  const style = getStyle(isLastChild);
 
   let className = 'notification';
   if (theme) className += ` ${getColorClass(theme)}`;
@@ -45,13 +46,14 @@ export default Notification;
 
 function NotificationText({
   isLast,
-  children
+  children,
+  style: styleProp
 }) {
 
-  const style = getStyle();
+  const pStyle = getStyle()[isLast ? 'lastP' : 'p'];
   
   return (
-    <p style={isLast ? style.lastP : style.p}>
+    <p style={{ ...pStyle, ...styleProp }}>
       {children}
     </p>
   );

@@ -16,7 +16,7 @@ const {
 const modalsInfo = [
   createModalInfo('generalTimeEntry', GeneralEntryModal, false, undefined, 'setFocus'),
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
-  // createModalInfo('editSegment', EditSegmentModal, true, 'segmentToEdit')
+  createModalInfo('editSegment', EditSegmentModal, true, 'segmentToEdit')
 ];
 
 class TimePage extends Component {

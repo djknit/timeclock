@@ -131,7 +131,7 @@ class EntryModal extends Component {
       handleDatepickerPopperToggle
     } = this;
     const {
-      isActive, closeModal, inputRef, job, toggleDeleteSegmentModal, windowWidth
+      isActive, closeModal, inputRef, job, toggleDeleteSegmentModal, windowWidth, toggleEditSegmentModal
     } = this.props;
     const {
       hasSuccess,
@@ -183,7 +183,8 @@ class EntryModal extends Component {
             {...{
               justAdded,
               toggleDeleteSegmentModal,
-              windowWidth
+              windowWidth,
+              toggleEditSegmentModal
             }}
           />
         )}

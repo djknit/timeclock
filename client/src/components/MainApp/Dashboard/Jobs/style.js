@@ -35,6 +35,10 @@ export default function getStyle(additionalStyle) {
     },
     addJobButton: {
       innate: btnInnateStyle,
+    },
+    noJobNotificationTitle: {
+      fontSize: '1.5em',
+      fontWeight: 600
     }
   };
-}
+};
