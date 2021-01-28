@@ -24,6 +24,7 @@ class _JustAdded_needsCollapsingAndPseudo extends Component {
     const {
       justAdded,
       toggleDeleteSegmentModal,
+      toggleEditSegmentModal,
       disabled,
       sectionToggle,
       pseudoState,
@@ -47,7 +48,8 @@ class _JustAdded_needsCollapsingAndPseudo extends Component {
               {...{
                 segment,
                 toggleDeleteSegmentModal,
-                disabled
+                disabled,
+                toggleEditSegmentModal
               }}
               key={segment._id}
             />
