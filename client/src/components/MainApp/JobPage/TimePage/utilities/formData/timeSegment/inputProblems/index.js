@@ -2,13 +2,15 @@ import { getTimeInputProblems } from '../../time';
 import { getWholeSegmentProblems } from './wholeSegment';
 import { addProblemsObjToExisting } from './merging';
 
-function timeSegInputProblemsGetterFactory() {
+function timeSegInputProblemsGetterFactory(isEditSegForm) {
   return function () {
-    console.log('input problems')
+    const { segmentToEdit } = this.props;
+    const segId = isEditSegForm && segmentToEdit && segmentToEdit._id.toString();
     let { problems, problemMessages } = getIndividualInputProblems(this.state);
-    console.log('individual probs:\n', problems, problemMessages)
     if (problemMessages.length === 0) {
-      const _wholeSegProbs = getWholeSegmentProblems(this.state, problemMessages, this.props.job);
+      const _wholeSegProbs = getWholeSegmentProblems(
+        this.state, problemMessages, this.props.job, isEditSegForm, segId
+      );
       addProblemsObjToExisting(problems, _wholeSegProbs);
     }
     return { problems, problemMessages };

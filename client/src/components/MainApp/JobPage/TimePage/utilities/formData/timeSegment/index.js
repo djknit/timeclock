@@ -1,18 +1,7 @@
-import { dates as dateUtils } from '../../../utilities';
-import { getSegmentBoundaryDayDatesAndTimestamps } from './elemental';
 export * from './inputProcessing';
-export * from './autoInputChanges.js';
-export * from './inputProblems';
 export * from './reverseProcessing';
-
-const { getMoment } = dateUtils;
-
-function getNumDaysSpannedBySegment(segInputVals, timezone) {
-  const boundaryDayDates = getSegmentBoundaryDayDatesAndTimestamps(segInputVals, timezone);
-  const startDayMoment = getMoment(boundaryDayDates.firstDay);
-  const endDayMoment = getMoment(boundaryDayDates.lastDay);
-  return endDayMoment.diff(startDayMoment, 'days') + 1;
-}
+export * from './bindMethods';
+export * from './inputProps';
 
 function isTimeSegmentInputIncomplete({ startDate, endDate, startTime, endTime }) {
   function _isIncomplete(_timeInput) {
@@ -24,6 +13,5 @@ function isTimeSegmentInputIncomplete({ startDate, endDate, startTime, endTime }
 }
 
 export {
-  getNumDaysSpannedBySegment,
   isTimeSegmentInputIncomplete
 };

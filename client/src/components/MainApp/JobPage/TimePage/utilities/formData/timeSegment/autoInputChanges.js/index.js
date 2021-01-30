@@ -1,5 +1,16 @@
 import { afterTimeInputChange } from './times';
 
+function timeSegmentFormAfterChangeFactory() {
+  return function afterChange(propName, childPropName) {
+    performAutoChangesAfterInputChange(propName, childPropName, this)
+    .then(wasAutoChanged => {
+      if (this.state.hasBeenSubmitted) {
+        this.setState(this.getInputProblems());
+      }
+    });
+  };
+}
+
 function performAutoChangesAfterInputChange(propName, childPropName, comp) {
   if (propName === 'startDate' || propName === 'endDate') {
     return afterDateInputChange(propName, comp);
@@ -29,4 +40,6 @@ function afterDateInputChange(propName, comp) {
   });
 }
 
-export { performAutoChangesAfterInputChange };
+export {
+  timeSegmentFormAfterChangeFactory
+};

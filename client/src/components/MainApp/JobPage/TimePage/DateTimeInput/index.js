@@ -1,6 +1,6 @@
 import React from 'react';
 import getStyle from './style';
-import { DateInput, TimeInput, SectionLabel } from '../../../../../formPieces';
+import { DateInput, TimeInput, SectionLabel } from '../../../../formPieces';
 
 function DateTimeInput({
   sectionLabel,

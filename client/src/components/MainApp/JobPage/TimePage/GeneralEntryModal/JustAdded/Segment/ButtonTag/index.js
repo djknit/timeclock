@@ -19,7 +19,7 @@ function _ButtonTag_needsPseudo({
     theme += ' light';
   }
 
-  const handleClick = !disabled && clickHandlerProp;
+  const handleClick = !disabled ? clickHandlerProp : undefined;
 
   const style = getStyle(themeProp, pseudoState);
 

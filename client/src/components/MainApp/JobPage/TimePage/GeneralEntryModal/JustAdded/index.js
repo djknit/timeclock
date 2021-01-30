@@ -51,6 +51,7 @@ class _JustAdded_needsCollapsingAndPseudo extends Component {
                 disabled,
                 toggleEditSegmentModal
               }}
+              disabled={disabled || !sectionToggle.isExpanded}
               key={segment._id}
             />
           ))}

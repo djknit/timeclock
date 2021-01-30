@@ -14,9 +14,9 @@ const {
 } = modalManagement;
 
 const modalsInfo = [
-  createModalInfo('generalTimeEntry', GeneralEntryModal, false, undefined, 'setFocus'),
+  createModalInfo('generalTimeEntry', GeneralEntryModal, false),
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
-  createModalInfo('editSegment', EditSegmentModal, true, 'segmentToEdit')
+  createModalInfo('editSegment', EditSegmentModal, false, 'segmentToEdit')
 ];
 
 class TimePage extends Component {

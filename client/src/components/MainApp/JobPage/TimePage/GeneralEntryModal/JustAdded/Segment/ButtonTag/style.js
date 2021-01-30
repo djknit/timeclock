@@ -2,10 +2,16 @@ import { dynamicBgColors, calculateStyleForPseudoClassState, shadow } from '../s
 
 export default function getStyle(theme, pseudoState) {
 
+  const _tagNonInnateStyle = _shadowBlur => ({
+    position: 'relative',
+    zIndex: 1,
+    ...shadow(_shadowBlur)
+  });
+
   let pseudoClassStyles = {
-    hover: shadow(3),
-    focus: shadow(3),
-    active: shadow(null)
+    hover: _tagNonInnateStyle(3),
+    focus: _tagNonInnateStyle(3),
+    active: _tagNonInnateStyle(null)
   };
 
   Object.keys(pseudoClassStyles).forEach(_pseudoClass => {
