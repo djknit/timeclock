@@ -32,6 +32,7 @@ class EditSegmentModal extends Component {
     const { job } = this.props;
     const timezone = job.time.sessionTimezone;
     const processedInput = processTimeSegmentInput(this.state, timezone);
+    // return api.time.
   };
 
   processSuccessResponse(response) {

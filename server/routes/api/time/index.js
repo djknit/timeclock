@@ -11,13 +11,14 @@ const {
 } = require('../utilities');
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
+const segPropNames = (segName = 'segment') => ([`${segName}.startTime`, `${segName}.endTime`]);
 
 router.post(
   '/add-segment-to-day',
   verifyLogin,
   (req, res) => {
     checkRequiredProps(req.body, ['segment', 'dayId', 'weekId'], res);
-    checkRequiredProps(req.body, ['segment.startTime', 'segment.endTime'], res);
+    checkRequiredProps(req.body, segPropNames(), res);
     const { segment, dayId, weekId } = req.body;
     timeController.addSegmentToDay(segment, dayId, weekId, req.user._id)
     .then(({ weekDoc, newSegmentInfo }) => {
@@ -35,7 +36,7 @@ router.post(
   verifyLogin,
   (req, res) => {
     checkRequiredProps(req.body, ['segment', 'jobId'], res);
-    checkRequiredProps(req.body, ['segment.startTime', 'segment.endTime'], res);
+    checkRequiredProps(req.body, segPropNames(), res);
     const { segment, jobId } = req.body;
     timeController.addSegment(segment, jobId, req.user._id)
     .then(({ job, newSegmentInfo }) => {
@@ -54,12 +55,12 @@ router.post(
   (req, res) => {
     checkRequiredProps(req.body, ['segments', 'jobId']);
     const { segments, jobId } = req.body;
-    console.log(segments)
     timeController.addMultipleSegments(segments, jobId, req.user._id)
-    .then(({ job, newSegmentsInfo }) => {
-      res.json({
+    .then(({ job, newSegmentsInfo, error }) => {
+      res.status(error ? 207 : 200).json({
         weeks: cleanWeeks(job.weeks),
-        newSegmentsInfo
+        newSegmentsInfo,
+        ...(error && { error })
       });
     })
     .catch(routeErrorHandlerFactory(res));
@@ -75,6 +76,24 @@ router.post(
     WeekController.removeSegment(segmentId, dayId, weekId, req.user._id)
     .then(week => res.json({ week: cleanWeekDoc(week) }))
     .catch(routeErrorHandlerFactory(res));
+  }
+);
+
+router.post(
+  '/edit-segment',
+  verifyLogin,
+  (req, res) => {
+    checkRequiredProps(req.body, ['segmentId', 'weekId', 'dayId', 'updatedTimes'], res);
+    checkRequiredProps(req,body, segPropNames('updatedTimes'), res);
+    const { updatedTimes, weekId, dayId, fragments } = req.body;
+    [...fragments].forEach(el, index => {
+      checkRequiredProps(req.body, segPropNames(`fragments.${index}`), res);
+    });
+    // IN CTRL FXN:
+      // validate updates,
+      // update segment
+      // add fragments if any
+        // will need to allow `created` and `modified` for add segments ctrl fxn parameters
   }
 );
 

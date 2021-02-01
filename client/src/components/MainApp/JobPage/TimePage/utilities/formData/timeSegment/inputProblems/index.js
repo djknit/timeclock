@@ -9,7 +9,7 @@ function timeSegInputProblemsGetterFactory(isEditSegForm) {
     let { problems, problemMessages } = getIndividualInputProblems(this.state);
     if (problemMessages.length === 0) {
       const _wholeSegProbs = getWholeSegmentProblems(
-        this.state, problemMessages, this.props.job, isEditSegForm, segId
+        this.state, problemMessages, this.props.job, segId
       );
       addProblemsObjToExisting(problems, _wholeSegProbs);
     }
