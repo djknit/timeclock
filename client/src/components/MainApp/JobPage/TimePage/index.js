@@ -25,10 +25,13 @@ class TimePage extends Component {
     let state = {};
     addModalsStateAndMethods(this, state, modalsInfo);
     this.setSegmentToDelete = this.setSegmentToDelete.bind(this);
+    this.setSegmentToEdit = this.setSegmentToEdit.bind(this);
     this.state = {
       ...state,
       segmentToDelete: undefined,
-      segmentToEdit: undefined
+      segmentToEdit: undefined,
+      segToEditWeekId: undefined,
+      segToEditDayId: undefined
     };
   };
 
@@ -36,6 +39,11 @@ class TimePage extends Component {
     return new Promise(resolve => this.setState({ segmentToDelete }, resolve));
   };
 
+  setSegmentToEdit(segmentToEdit, segToEditWeekId, segToEditDayId) {
+    const stateUpdates = { segmentToEdit, segToEditWeekId, segToEditDayId };
+    return new Promise(resolve => this.setState(stateUpdates, resolve));
+  };
+  
   componentWillUnmount() {
     reportModalsClosedFor(this);
   };
@@ -43,7 +51,7 @@ class TimePage extends Component {
   render() {
     const { setSegmentToDelete } = this;
     const { job, parentPath, windowWidth } = this.props;
-    const { segmentToDelete, segmentToEdit } = this.state;
+    const { segmentToDelete, segmentToEdit, segToEditWeekId, segToEditDayId } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
 
@@ -54,7 +62,7 @@ class TimePage extends Component {
     const variableModalAttrs = {
       generalTimeEntry: { toggleDeleteSegmentModal, toggleEditSegmentModal, windowWidth },
       deleteSegment: { segmentToDelete, setSegmentToDelete },
-      editSegment: { segmentToEdit }
+      editSegment: { segmentToEdit, segToEditWeekId, segToEditDayId }
     };
 
     const crumbChain = [

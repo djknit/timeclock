@@ -7,7 +7,7 @@ import {
   isTimeSegmentInputIncomplete,
   processTimeSegmentInput,
   bindTimeSegFormMethodsAndRefs
-} from '../utilities';
+} from './utilities';
 import FormModal from '../../../../FormModal';
 import TimeSegmentInputs from '../TimeSegmentInputs';
 
@@ -29,10 +29,10 @@ class EditSegmentModal extends Component {
   };
 
   processAndSubmitData() {
-    const { job } = this.props;
+    const { job, segmentToEdit } = this.props;
     const timezone = job.time.sessionTimezone;
     const processedInput = processTimeSegmentInput(this.state, timezone);
-    // return api.time.
+    return api.time.editSegment({});
   };
 
   processSuccessResponse(response) {
