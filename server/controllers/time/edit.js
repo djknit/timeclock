@@ -7,9 +7,20 @@ const {
   days: daysCtrl
 } = require('../timePieces');
 const WeekCtrl = require('../Week');
+const JobCtrl = require('../Job');
+const {
+  ensureNewSegDoesntOverlap, ensureSegmentIsInDay, ensureSegmentIsValid
+} = require('./elemental');
+const { addMultipleSegments } = require('./add');
 
-function editSegment(segId, weekId, dayId, userId, newTimes, fragments) {
+module.exports = {
+  editSegment
+};
+
+
+function editSegment(segId, weekId, dayId, userId, newTimes, fragments, jobId) {
   return new Promise((resolve, reject) => {
+    ensureSegmentIsValid(newTimes);
     if (fragments) {
       const hasOverlap = segmentsCtrl.doSegsOverlap([newTimes, ...fragments]);
       checkForFailure(hasOverlap, 'Overlapping fragments.', { fragments: true }, 422);
@@ -17,7 +28,10 @@ function editSegment(segId, weekId, dayId, userId, newTimes, fragments) {
     let segment;
     WeekCtrl.getById(weekId, userId)
     .then(weekDoc => {
-      segment = findSegInWeek(weekDoc, segId, dayId);
+      const day = findItemWithId(dayId, weekDoc.days, 'Day');
+      const segment = findItemWithId(segId, day.segments, 'Segment');
+      ensureSegmentIsInDay(segment, day, 'updatedSegment');
+      // segment = findSegInWeek(weekDoc, segId, dayId);
       segment.modified.push({
         time: Date.now(),
         previousValue: {
@@ -28,34 +42,37 @@ function editSegment(segId, weekId, dayId, userId, newTimes, fragments) {
       });
       segment.startTime = newTimes.startTime;
       segment.endTime = newTimes.endTime;
+      ensureNewSegDoesntOverlap(segment, day)
+
       console.log('created\n', segment.created);
       console.log({ ...segment.created });
       console.log('modified\n', modified)
       console.log(modified.map(info => ({ ...info })));
-      return segment.save();
-    })
-    .then(() => {
-      resolve({ segment });
-    });
-    // get week document
-      // find segment
-      // get created & modified
-      // update modified
-    // attempt update of segment
-      // make update fxn return full seg info, or pick it out from week
-    // if no fragments, return
-    // add created and modified data to each fragment
-    // add fragments using addSegment in this (time) ctrl
-      // catch err, check for error in result, and treat the same
-  
-  });
-}
 
-function findSegInWeek(weekDoc, segId, dayId) {
-  if (!weekDoc) throw new Error('Week not found');
-  const day = findItemWithId(dayId, weekDoc.days);
-  if (!day) throw new Error('Day not found');
-  const segment = findItemWithId(segId, day.segments);
-  if (!segment) throw new Error('Segment not found');
-  return segment;
+      return weekDoc.save();
+    })
+    .then(
+      fragments ?
+      _addFragmentsAndFormatResult :
+      _getJobAndFormatResults
+    )
+    .then(resolve);
+
+    function _addFragmentsAndFormatResult() {
+      const mainSegArr = segment ? [segment] : [];
+      return addMultipleSegments(fragments, jobId, userId)
+      .then(({ newSegmentsInfo, ...other }) => ({
+        updatedSegments: [ ...mainSegArr, ...newSegmentsInfo ],
+        ...other
+      }));
+    }
+
+    function _getJobAndFormatResults() {
+      return JobCtrl.getJobById(jobId, userId)
+      .then(job => ({
+        job,
+        updatedSegments: [ segment ]
+      }));
+    }
+  });
 }

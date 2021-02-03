@@ -12,14 +12,17 @@ const {
   days: daysController,
   weeks: weeksController
 } = require('../timePieces');
-
 const { checkForFailure, findItemWithId } = require('../utilities');
+const {
+  ensureSegmentIsValid, ensureSegmentIsInDay, ensureNewSegDoesntOverlap
+} = require('./elemental');
 
 module.exports = {
   addSegmentToDay,
   addSegment,
   addMultipleSegments,
 };
+
 
 function addSegmentToDay(segment, dayId, weekId, userId) {
   return new Promise(
@@ -118,41 +121,10 @@ function addMultipleSegments(segments, jobId, userId) {
   });
 }
 
-function ensureSegmentIsValid(segment) {
-  const invalidSegMsg = 'Invalid segment. Segments must have both a `startTime` and `endTime`, and the `startTime` must be less than the `endTime`.';
-  const invalidSegProblemsObj = {
-    segment: {
-      startTime: true,
-      endTime: true
-    }
-  };
-  checkForFailure(!segmentsController.isSegmentValid(segment), invalidSegMsg, invalidSegProblemsObj, 422);
-}
-
 function ensureSegmentCanBeAddedToDay(segment, dayId, weekDoc) {
   checkForFailure(!weekDoc, 'Week not found.', { weekId: true }, 422);
   const day = findItemWithId(dayId, weekDoc.days);
   checkForFailure(!day, 'Day not found in the week specified.', { dayId: true }, 422);
-  const isSegmentInDay = daysController.isSegmentInDay(day, segment);
-  const segNotInDayMsg = 'The segment includes time that is not part of the specified day.';
-  const segNotInDayProblemsObj = {
-    segment: {
-      startTime: !(isSegmentInDay.startTime),
-      endTime: !(isSegmentInDay.endTime)
-    }
-  };
-  checkForFailure(!isSegmentInDay, segNotInDayMsg, segNotInDayProblemsObj, 422);
+  ensureSegmentIsInDay(segment, day);
   ensureNewSegDoesntOverlap(segment, day);
-}
-
-function ensureNewSegDoesntOverlap(segment, day) {
-  const doesNewSegOverlapExistingSegs = segmentsController.doesNewSegOverlapExistingSegs(day.segments, segment);
-  const segOverlapMsg = 'Segment could not be added because it overlaps with one or more existing segment(s).';
-  const segOverlapProblemsObj = {
-    segment: {
-      startTime: doesNewSegOverlapExistingSegs.startTime,
-      endTime: doesNewSegOverlapExistingSegs.endTime
-    }
-  };
-  checkForFailure(doesNewSegOverlapExistingSegs, segOverlapMsg, segOverlapProblemsObj, 422);
 }

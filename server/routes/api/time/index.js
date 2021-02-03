@@ -1,13 +1,15 @@
 const router = require('express').Router();
-
 const {
   Week: WeekController,
-  Job: JobController,
   time: timeController
 } = require('../../../controllers');
-
 const {
-  routeErrorHandlerFactory, checkRequiredProps, cleanJob, cleanWeekDoc, weeksSenderFactory, cleanWeeks
+  routeErrorHandlerFactory,
+  checkRequiredProps,
+  cleanWeekDoc,
+  weeksSenderFactory,
+  cleanWeeks,
+  sendWeeksAndErrorRes
 } = require('../utilities');
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
@@ -57,11 +59,7 @@ router.post(
     const { segments, jobId } = req.body;
     timeController.addMultipleSegments(segments, jobId, req.user._id)
     .then(({ job, newSegmentsInfo, error }) => {
-      res.status(error ? 207 : 200).json({
-        weeks: cleanWeeks(job.weeks),
-        newSegmentsInfo,
-        ...(error && { error })
-      });
+      sendWeeksAndErrorRes(res, job, error, { newSegmentsInfo });
     })
     .catch(routeErrorHandlerFactory(res));
   }
@@ -85,15 +83,21 @@ router.post(
   (req, res) => {
     checkRequiredProps(req.body, ['segmentId', 'weekId', 'dayId', 'updatedTimes'], res);
     checkRequiredProps(req,body, segPropNames('updatedTimes'), res);
-    const { updatedTimes, weekId, dayId, fragments } = req.body;
+    const { updatedTimes, weekId, dayId, segmentId, fragments } = req.body;
     [...fragments].forEach(el, index => {
       checkRequiredProps(req.body, segPropNames(`fragments.${index}`), res);
     });
-    // IN CTRL FXN:
-      // validate updates,
-      // update segment
-      // add fragments if any
-        // will need to allow `created` and `modified` for add segments ctrl fxn parameters
+    timeController
+    .editSegment(segmentId, weekId, dayId, req.user._id, updatedTimes, fragments, jobId)
+    .then(({ job, updatedSegments, error }) => {
+      const resData = (
+        updatedSegments.length > 0 ?
+        { updatedSegments } :
+        { updatedSegment: updatedSegments[0] }
+      );
+      sendWeeksAndErrorRes(res, job, error, resData);
+    })
+    .catch(routeErrorHandlerFactory(res));
   }
 );
 

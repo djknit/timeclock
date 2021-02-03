@@ -16,7 +16,7 @@ const {
 const modalsInfo = [
   createModalInfo('generalTimeEntry', GeneralEntryModal, false),
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
-  createModalInfo('editSegment', EditSegmentModal, false, 'segmentToEdit')
+  createModalInfo('editSegment', EditSegmentModal, false, 'segmentToEditInfo')
 ];
 
 class TimePage extends Component {
@@ -29,9 +29,7 @@ class TimePage extends Component {
     this.state = {
       ...state,
       segmentToDelete: undefined,
-      segmentToEdit: undefined,
-      segToEditWeekId: undefined,
-      segToEditDayId: undefined
+      segmentToEdit: undefined
     };
   };
 
@@ -39,9 +37,8 @@ class TimePage extends Component {
     return new Promise(resolve => this.setState({ segmentToDelete }, resolve));
   };
 
-  setSegmentToEdit(segmentToEdit, segToEditWeekId, segToEditDayId) {
-    const stateUpdates = { segmentToEdit, segToEditWeekId, segToEditDayId };
-    return new Promise(resolve => this.setState(stateUpdates, resolve));
+  setSegmentToEdit(segmentToEdit) {
+    return new Promise(resolve => this.setState({ segmentToEdit }, resolve));
   };
   
   componentWillUnmount() {
@@ -49,9 +46,9 @@ class TimePage extends Component {
   };
 
   render() {
-    const { setSegmentToDelete } = this;
+    const { setSegmentToDelete, setSegmentToEdit } = this;
     const { job, parentPath, windowWidth } = this.props;
-    const { segmentToDelete, segmentToEdit, segToEditWeekId, segToEditDayId } = this.state;
+    const { segmentToDelete, segmentToEdit } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
 
@@ -62,7 +59,7 @@ class TimePage extends Component {
     const variableModalAttrs = {
       generalTimeEntry: { toggleDeleteSegmentModal, toggleEditSegmentModal, windowWidth },
       deleteSegment: { segmentToDelete, setSegmentToDelete },
-      editSegment: { segmentToEdit, segToEditWeekId, segToEditDayId }
+      editSegment: { segmentToEdit, setSegmentToEdit }
     };
 
     const crumbChain = [
@@ -74,6 +71,7 @@ class TimePage extends Component {
     ];
 
     const style = getStyle(windowWidth);
+
     return (
       <>
         <PageTitle {...{ crumbChain }} />

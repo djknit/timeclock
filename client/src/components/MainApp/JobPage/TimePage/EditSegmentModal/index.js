@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import getStyle from './style';
+import { currentJobTimeService } from '../../../../../data';
 import {
   bindFormMethods,
   api,
   convertSegmentToInputValues,
   isTimeSegmentInputIncomplete,
-  processTimeSegmentInput,
+  processEditSegmentInput,
   bindTimeSegFormMethodsAndRefs
 } from './utilities';
 import FormModal from '../../../../FormModal';
@@ -24,22 +25,27 @@ class EditSegmentModal extends Component {
   getUniqueStartingState() {
     return {
       ...convertSegmentToInputValues(this.props.segmentToEdit),
-      messagesAreaMinHeight: undefined
+      messagesAreaMinHeight: undefined,
+      updatedSegments: undefined
     };
   };
 
   processAndSubmitData() {
-    const { job, segmentToEdit } = this.props;
-    const timezone = job.time.sessionTimezone;
-    const processedInput = processTimeSegmentInput(this.state, timezone);
-    return api.time.editSegment({});
+    const processedInput = processEditSegmentInput(this.state, this.props);
+    return api.time.editSegment(processedInput);
   };
 
   processSuccessResponse(response) {
-    const { weeks, updatedSegment, updatedSegments } = response.data;
+    console.log(response && response.data)
+    let { weeks, updatedSegment, updatedSegments } = response.data;
+    if (!updatedSegments) updatedSegments = [updatedSegment];
+    this.setState({ updatedSegments });
+    return this.props.setSegmentToEdit(null)
+    .then(() => currentJobTimeService.setValue(weeks));
   };
 
   afterSuccessCountdown() {
+    this.reset();
     this.props.closeModal();
   };
 

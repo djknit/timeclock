@@ -7,7 +7,8 @@ module.exports = {
   ...utilities,
   ...resCleaners,
   checkRequiredProps,
-  weeksSenderFactory
+  weeksSenderFactory,
+  sendWeeksAndErrorRes
 };
 
 function checkRequiredProps(props, requiredPropNames, res) {
@@ -57,5 +58,13 @@ function addProblem(propDisplayName, problems) {
 function weeksSenderFactory(res) {
   return (({ weeks }) => {
     res.json({ weeks: weeks && cleanWeeks(weeks) });
+  });
+}
+
+function sendWeeksAndErrorRes(res, job, error, resData) {
+  res.status(error ? 207 : 200).json({
+    weeks: cleanWeeks(job.weeks),
+    ...resData,
+    ...(error && { error })
   });
 }

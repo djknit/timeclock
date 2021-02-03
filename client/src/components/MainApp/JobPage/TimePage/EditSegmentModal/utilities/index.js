@@ -7,10 +7,7 @@ export * from '../../utilities';
 
 const { areDatesEquivalent } = dateUtils;
 
-function processEditSegmentInput(
-  inputValues,
-  { job, segmentToEdit, segToEditWeekId, segToEditDayId }
-) {
+function processEditSegmentInput(inputValues, { job, segmentToEdit }) {
   const { sessionTimezone } = job.time;
   const processedInput = processTimeSegmentInput(inputValues, sessionTimezone);
   const freshSegs = processedInput.segments || [processedInput.segment];
@@ -18,8 +15,8 @@ function processEditSegmentInput(
   const { updatedSegment, fragments } = sortFreshSegs(freshSegs, segmentDate);
   return {
     segmentId: segmentToEdit._id.toString(),
-    weekId: segToEditWeekId,
-    dayId: segToEditDayId,
+    weekId: segmentToEdit.weekId,
+    dayId: segmentToEdit.dayId,
     updatedTimes: updatedSegment,
     fragments
   };
@@ -37,3 +34,5 @@ function sortFreshSegs(freshSegs, segmentDate) {
     }
   }
 }
+
+export { processEditSegmentInput };
