@@ -31,9 +31,17 @@ function ensureSegmentIsInDay(segment, day, segPropName) {
 }
 
 function ensureNewSegDoesntOverlap(segment, day, segPropName) { // also for updated segment
-  const otherSegs = day.segments.filter(({ _id }) => segment._id !== _id);
-  const doesOverlap = segmentsController.doesOverlap(otherSegs, segment);
-  const segOverlapMsg = 'Segment could not be added because it overlaps with one or more existing segment(s).';
+  const segId = segment._id && segment._id.toString();
+  const otherSegs = day.segments.filter(({ _id }) => _id.toString() !== segId);
+  const doesOverlap = segmentsController.doesNewSegOverlapExistingSegs(otherSegs, segment);
+  const varMsgWords = segment._id ? (
+    ['updated', 'the update would cause it to overlap']
+  ) : (
+    ['added', 'it overlaps']
+  );
+  const segOverlapMsg = (
+    `Segment could not be ${varMsgWords[0]} because ${varMsgWords[1]} with one or more existing segment(s).`
+  );
   const segProbs = {
     startTime: doesOverlap.startTime,
     endTime: doesOverlap.endTime

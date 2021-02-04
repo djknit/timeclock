@@ -82,13 +82,13 @@ router.post(
   verifyLogin,
   (req, res) => {
     checkRequiredProps(req.body, ['segmentId', 'weekId', 'dayId', 'updatedTimes'], res);
-    checkRequiredProps(req,body, segPropNames('updatedTimes'), res);
+    checkRequiredProps(req.body, segPropNames('updatedTimes'), res);
     const { updatedTimes, weekId, dayId, segmentId, fragments } = req.body;
-    [...fragments].forEach(el, index => {
+    (fragments || []).forEach((el, index) => {
       checkRequiredProps(req.body, segPropNames(`fragments.${index}`), res);
     });
     timeController
-    .editSegment(segmentId, weekId, dayId, req.user._id, updatedTimes, fragments, jobId)
+    .editSegment(segmentId, weekId, dayId, req.user._id, updatedTimes, fragments)
     .then(({ job, updatedSegments, error }) => {
       const resData = (
         updatedSegments.length > 0 ?

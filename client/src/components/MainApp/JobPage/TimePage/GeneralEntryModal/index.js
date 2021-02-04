@@ -26,8 +26,7 @@ class EntryModal extends Component {
     bindFormMethods(this, { hasCountdown: false });
     this.resetJustAdded = this.resetJustAdded.bind(this);
     this.state = {
-      ...this.getStartingState(),
-      justAddedSegmentsInfo: []
+      ...this.getStartingState()
     };
   };
 
@@ -55,27 +54,28 @@ class EntryModal extends Component {
 
   processSuccessResponse(response) {
     const { weeks, newSegmentInfo, newSegmentsInfo } = response.data;
+    const { justAddedSegmentsInfo, setJustAdded } = this.props;
     currentJobTimeService.setValue(weeks);
-    this.setState({
-      justAddedSegmentsInfo: [
-        ...(newSegmentsInfo || [newSegmentInfo]),
-        ...this.state.justAddedSegmentsInfo
-      ]
-    });
+    setJustAdded([
+      ...(newSegmentsInfo || [newSegmentInfo]),
+      ...justAddedSegmentsInfo
+    ]);
   };
 
   resetJustAdded() {
-    this.setState({ justAddedSegmentsInfo: [] });
+    this.props.setJustAdded([]);
   };
 
   render() {
+    const { reset, submit, resetJustAdded } = this;
     const {
-      reset,
-      submit,
-      resetJustAdded
-    } = this;
-    const {
-      isActive, closeModal, job, toggleDeleteSegmentModal, windowWidth, toggleEditSegmentModal
+      isActive,
+      closeModal,
+      job,
+      toggleDeleteSegmentModal,
+      windowWidth,
+      toggleEditSegmentModal,
+      justAddedSegmentsInfo
     } = this.props;
     const {
       hasSuccess,
@@ -86,7 +86,6 @@ class EntryModal extends Component {
       isLoading,
       warningMessages,
       messagesAreaMinHeight,
-      justAddedSegmentsInfo
     } = this.state;
 
     const justAdded = findSegmentsFromSegmentInfo(justAddedSegmentsInfo, job.time.weeks);

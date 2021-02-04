@@ -83,6 +83,7 @@ function addSegment(segment, jobId, userId) {
                 weekId: weekDoc._id,
                 dayId,
                 created: segment.created,
+                modified: segment.modified,
                 startTime: segment.startTime,
                 endTime: segment.endTime
               }

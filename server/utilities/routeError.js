@@ -1,22 +1,13 @@
 module.exports = {
   routeErrorHandlerFactory,
-  errorHandlerMiddleware
+  errorHandlerMiddleware,
+  processErrorForRes
 };
 
 function routeErrorHandlerFactory(responseObj) {
   return err => {
-    if (!err) {
-      console.log('No error object in routeErrorHandler. Unknown error.');
-      err = { messages: ['Unknown error.'] };
-    }
-    let { status, messages, message, problems } = err;
-    if (!status) status = 500;
-    if (!messages) messages = [message || 'An unknown error has occurred.'];
-    if (err.type === 'entity.parse.failed') {
-      messages.unshift('Improperly formatted request.');
-    }
-    if (!problems) problems = message ? {} : { unknown: true };
-    responseObj.status(status).json({ messages, problems, err });
+    const { status, data } = processErrorForRes(err);
+    responseObj.status(status).json(data);
     if (status === 500) throw err;
   };
 }
@@ -31,4 +22,22 @@ function errorHandlerMiddleware(err, req, res, next) {
   }
 
   next();
+}
+
+function processErrorForRes(err) {
+  if (!err) {
+    console.log('No error object in routeErrorHandler. Unknown error.');
+    err = { messages: ['Unknown error.'] };
+  }
+  let { status, messages, message, problems } = err;
+  if (!status) status = 500;
+  if (!messages) messages = [message || 'An unknown error has occurred.'];
+  if (err.type === 'entity.parse.failed') {
+    messages.unshift('Improperly formatted request.');
+  }
+  if (!problems) problems = message ? {} : { unknown: true };
+  return {
+    status,
+    data: { messages, problems, err }
+  };
 }

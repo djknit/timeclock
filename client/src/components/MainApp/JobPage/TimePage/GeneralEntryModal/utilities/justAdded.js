@@ -1,8 +1,8 @@
 function findSegmentsFromSegmentInfo(segmentsInfo, weeks) {
-  return (
+  let result = (
     segmentsInfo
     .map(segmentInfo => {
-      const { dayId, weekId } = segmentInfo;
+      const { dayId, weekId, _id } = segmentInfo;
       const weekWithSeg = findItemWithId(segmentInfo.weekId, weeks, 'weekDocId');
       const dayWithSeg = findItemWithId(segmentInfo.dayId, weekWithSeg.days);
       const segment = findSegmentOnDay(dayWithSeg.segments, segmentInfo);
@@ -10,11 +10,15 @@ function findSegmentsFromSegmentInfo(segmentsInfo, weeks) {
         ...segment,
         dayId,
         weekId,
-        date: dayWithSeg.date
+        date: dayWithSeg.date,
+        _isGenEntryJustAdded: true
       };
     })
     .filter(segment => !!segment)
   );
+
+  console.log(result)
+  return removeDuplicateSegs(result);
 }
 
 function findItemWithId(id, array, idPropName = '_id') {
@@ -26,6 +30,7 @@ function findItemWithId(id, array, idPropName = '_id') {
 }
 
 function findSegmentOnDay(daySegments, segmentInfo) {
+  if (segmentInfo._id) return findItemWithId(segmentInfo._id, daySegments);
   for (let i = 0; i < daySegments.length; i++) {
     if (doesSegmentMatchInfo(daySegments[i], segmentInfo)) {
       return daySegments[i];
@@ -50,6 +55,15 @@ function doesSegmentMatchInfo(segment, segmentInfo) {
       )
     )
   );
+}
+
+function removeDuplicateSegs(segs) {
+  let segIds = [];
+  return segs.filter(({ _id }) => {
+    const isDup = segIds.includes(_id);
+    segIds.push(_id);
+    return isDup;
+  });
 }
 
 export { findSegmentsFromSegmentInfo };

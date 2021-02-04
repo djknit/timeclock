@@ -51,7 +51,7 @@ class EditSegmentModal extends Component {
 
   componentDidUpdate(prevProps) {
     const _getSegId = _props => _props.segmentToEdit && _props.segmentToEdit._id.toString();
-    if (_getSegId(this.props) !== _getSegId(prevProps)) {
+    if (_getSegId(this.props) !== _getSegId(prevProps) && !this.state.hasSuccess) {
       this.reset();
     }
   };

@@ -16,7 +16,7 @@ const {
 const modalsInfo = [
   createModalInfo('generalTimeEntry', GeneralEntryModal, false),
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
-  createModalInfo('editSegment', EditSegmentModal, false, 'segmentToEditInfo')
+  createModalInfo('editSegment', EditSegmentModal, false, 'segmentToEdit')
 ];
 
 class TimePage extends Component {
@@ -24,21 +24,22 @@ class TimePage extends Component {
     super(props);
     let state = {};
     addModalsStateAndMethods(this, state, modalsInfo);
-    this.setSegmentToDelete = this.setSegmentToDelete.bind(this);
-    this.setSegmentToEdit = this.setSegmentToEdit.bind(this);
+    this.stateSetterFactory = this.stateSetterFactory.bind(this);
+    this.setSegmentToDelete = this.stateSetterFactory('segmentToDelete').bind(this);
+    this.setSegmentToEdit = this.stateSetterFactory('segmentToEdit').bind(this);
+    this.setGenEntryJustAdded = this.stateSetterFactory('genEntryJustAddedSegsInfo').bind(this);
     this.state = {
       ...state,
       segmentToDelete: undefined,
-      segmentToEdit: undefined
+      segmentToEdit: undefined,
+      genEntryJustAddedSegsInfo: []
     };
   };
 
-  setSegmentToDelete(segmentToDelete) {
-    return new Promise(resolve => this.setState({ segmentToDelete }, resolve));
-  };
-
-  setSegmentToEdit(segmentToEdit) {
-    return new Promise(resolve => this.setState({ segmentToEdit }, resolve));
+  stateSetterFactory() {
+    return function (stateUpdates) {
+      return new Promise(resolve => this.setState(stateUpdates, resolve));
+    };
   };
   
   componentWillUnmount() {
@@ -46,20 +47,33 @@ class TimePage extends Component {
   };
 
   render() {
-    const { setSegmentToDelete, setSegmentToEdit } = this;
+    const { setSegmentToDelete, setSegmentToEdit, setGenEntryJustAdded } = this;
     const { job, parentPath, windowWidth } = this.props;
-    const { segmentToDelete, segmentToEdit } = this.state;
+    const { segmentToDelete, segmentToEdit, genEntryJustAddedSegsInfo } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
 
     const toggleGeneralEntryModal = modalTogglers.generalTimeEntry;
     const toggleDeleteSegmentModal = modalTogglers.deleteSegment;
     const toggleEditSegmentModal = modalTogglers.editSegment;
+    
 
     const variableModalAttrs = {
-      generalTimeEntry: { toggleDeleteSegmentModal, toggleEditSegmentModal, windowWidth },
+      generalTimeEntry: {
+        toggleDeleteSegmentModal,
+        toggleEditSegmentModal,
+        windowWidth,
+        justAddedSegmentsInfo: genEntryJustAddedSegsInfo,
+        setGenEntryJustAdded
+      },
       deleteSegment: { segmentToDelete, setSegmentToDelete },
-      editSegment: { segmentToEdit, setSegmentToEdit }
+      editSegment: {
+        segmentToEdit,
+        setSegmentToEdit,
+        addGenEntryJustAddedSegsInfo: _segsInfo => {
+          setGenEntryJustAdded([ ..._segsInfo, genEntryJustAddedSegsInfo ]);
+        }
+      }
     };
 
     const crumbChain = [
