@@ -40,6 +40,7 @@ class EditSegmentModal extends Component {
     let { weeks, updatedSegment, updatedSegments } = response.data;
     if (!updatedSegments) updatedSegments = [updatedSegment];
     this.setState({ updatedSegments });
+    this.props.handleEditSegSuccess(updatedSegments);
     return this.props.setSegmentToEdit(null)
     .then(() => currentJobTimeService.setValue(weeks));
   };
@@ -57,6 +58,7 @@ class EditSegmentModal extends Component {
   };
 
   render() {
+    console.log('segment to edit >>>>\n', this.props.segmentToEdit)
     const { isActive } = this.props;
     const { messagesAreaMinHeight } = this.state;
 

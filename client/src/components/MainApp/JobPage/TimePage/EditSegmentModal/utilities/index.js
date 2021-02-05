@@ -23,14 +23,16 @@ function processEditSegmentInput(inputValues, { job, segmentToEdit }) {
 }
 
 function sortFreshSegs(freshSegs, segmentDate) {
-  for (let i = 0; i < freshSegs.length; i++) {
-    const currentSeg = freshSegs[i];
-    if (areDatesEquivalent(segmentDate, getSegmentDate(currentSeg))) {
-      freshSegs.splice(i, 1);
-      return {
-        updatedSegment: currentSeg,
-        fragments: (freshSegs && freshSegs.length > 0) ? freshSegs : undefined
-      };
+  let sortedSegs = { updatedSegment: _pickOutUpdatedSeg() };
+  if (freshSegs.length > 0) sortedSegs.fragments = freshSegs;
+  return sortedSegs;
+  function _pickOutUpdatedSeg() {
+    for (let i = 0; i < freshSegs.length; i++) {
+      const currentSeg = freshSegs[i];
+      if (areDatesEquivalent(segmentDate, getSegmentDate(currentSeg))) {
+        freshSegs.splice(i, 1);
+        return currentSeg;
+      }
     }
   }
 }

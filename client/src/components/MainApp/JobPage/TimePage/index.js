@@ -16,7 +16,7 @@ const {
 const modalsInfo = [
   createModalInfo('generalTimeEntry', GeneralEntryModal, false),
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
-  createModalInfo('editSegment', EditSegmentModal, false, 'segmentToEdit')
+  createModalInfo('editSegment', EditSegmentModal, false, 'segmentToEdit', undefined, 'handleEditSegSuccess')
 ];
 
 class TimePage extends Component {
@@ -27,12 +27,11 @@ class TimePage extends Component {
     this.stateSetterFactory = this.stateSetterFactory.bind(this);
     this.setSegmentToDelete = this.stateSetterFactory('segmentToDelete').bind(this);
     this.setSegmentToEdit = this.stateSetterFactory('segmentToEdit').bind(this);
-    this.setGenEntryJustAdded = this.stateSetterFactory('genEntryJustAddedSegsInfo').bind(this);
     this.state = {
       ...state,
       segmentToDelete: undefined,
       segmentToEdit: undefined,
-      genEntryJustAddedSegsInfo: []
+      handleEditSegSuccess: undefined
     };
   };
 
@@ -47,9 +46,9 @@ class TimePage extends Component {
   };
 
   render() {
-    const { setSegmentToDelete, setSegmentToEdit, setGenEntryJustAdded } = this;
+    const { setSegmentToDelete, setSegmentToEdit } = this;
     const { job, parentPath, windowWidth } = this.props;
-    const { segmentToDelete, segmentToEdit, genEntryJustAddedSegsInfo } = this.state;
+    const { segmentToDelete, segmentToEdit, handleEditSegSuccess } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
 
@@ -62,17 +61,13 @@ class TimePage extends Component {
       generalTimeEntry: {
         toggleDeleteSegmentModal,
         toggleEditSegmentModal,
-        windowWidth,
-        justAddedSegmentsInfo: genEntryJustAddedSegsInfo,
-        setGenEntryJustAdded
+        windowWidth
       },
       deleteSegment: { segmentToDelete, setSegmentToDelete },
       editSegment: {
         segmentToEdit,
         setSegmentToEdit,
-        addGenEntryJustAddedSegsInfo: _segsInfo => {
-          setGenEntryJustAdded([ ..._segsInfo, genEntryJustAddedSegsInfo ]);
-        }
+        handleEditSegSuccess
       }
     };
 
