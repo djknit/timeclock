@@ -6,9 +6,10 @@ function findSegmentsFromSegmentInfo(segmentsInfo, weeks) {
   let matchingSegs = [];
   segmentsInfo.forEach(_findAllSegsMatchingInfo);
   return matchingSegs;
-
   function _findAllSegsMatchingInfo(_segInfo) {
-    const { dayId, weekId } = _segInfo;
+    _segInfo.days.forEach(_dayInfo => _findMatchingSegsOnDay(_segInfo, _dayInfo));
+  }
+  function _findMatchingSegsOnDay(_segInfo, { dayId, weekId }) {
     const { date, segments } = findDayWithIdInWeeks({ dayId, weekId }, weeks);
     segments.forEach(_seg => {
       if (doesSegmentMatchInfo(_seg, _segInfo) && !findItemWithId(_seg._id, matchingSegs)) {
