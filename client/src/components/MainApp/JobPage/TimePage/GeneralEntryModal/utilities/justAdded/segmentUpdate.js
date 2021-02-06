@@ -1,6 +1,17 @@
 import { findItemInArray } from '../../../utilities';
 import { doesSegmentMatchInfo } from './elemental';
 
+// note: `justAddedSegmentsInfo` probably only needs `created` and original `startTime` & `endTime` for each entry (not current value or `modified`)
+
+/* need to add `{ dayId, weekId }` of updated segment(s) to `justAddedSegmentsInfo` if updated seg is on list.
+  On every edit-segment success response:
+    * Check if segment matches segmentInfo for any of the justAdded segmentInfos
+      - if match:
+        * copy info; replace `dayId` and `weekId` in copy; add copy to justAdded.
+          ^ (not necessary if day is the same)
+*/ 
+
+// * * * NEW STRATEGY * * - see above^
 function segInfoUpdaterFactory(justAddedSegmentsInfo, setJustAddedSegsInfo) {
   return function applySegUpdateToJustAdded(segToEdit, updatedSegments) {
     let _justAddedSegsInfo = [ ...justAddedSegmentsInfo ];
