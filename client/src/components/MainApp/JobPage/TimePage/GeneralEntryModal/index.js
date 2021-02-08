@@ -7,8 +7,10 @@ import {
   getTimeInputStartingValue,
   isTimeSegmentInputIncomplete,
   processTimeSegmentInput,
-  findSegmentsFromSegmentInfo,
-  bindTimeSegFormMethodsAndRefs
+  findSegmentsFromSegmentInfos,
+  bindTimeSegFormMethodsAndRefs,
+  getUpdatedSegInfos,
+  getSegInfoForNewSegs
 } from './utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
@@ -22,6 +24,7 @@ const formId = 'general-time-entry-add-segment-form';
 class EntryModal extends Component {
   constructor(props) {
     super(props);
+    this.applySegmentUpdateToJustAdded = this.applySegmentUpdateToJustAdded.bind(this);
     bindTimeSegFormMethodsAndRefs(this);
     bindFormMethods(this, { hasCountdown: false });
     this.resetJustAdded = this.resetJustAdded.bind(this);
@@ -54,18 +57,21 @@ class EntryModal extends Component {
   };
 
   processSuccessResponse(response) {
-    const { weeks, newSegmentInfo, newSegmentsInfo } = response.data;
-    currentJobTimeService.setValue(weeks);
+    currentJobTimeService.setValue(response.data.weeks);
     this.setState({
       justAddedSegmentsInfo: [
-        ...(newSegmentsInfo || [newSegmentInfo]),
+        ...getSegInfoForNewSegs(response.data),
         ...this.state.justAddedSegmentsInfo
       ]
     });
   };
 
-  updateJustAdded(updatedSegments) {
-    
+  applySegmentUpdateToJustAdded(updatedSegs) {
+    this.setState({
+      justAddedSegmentsInfo: getUpdatedSegInfos(
+        updatedSegs, this.state.justAddedSegmentsInfo
+      )
+    });
   };
 
   resetJustAdded() {
@@ -73,7 +79,7 @@ class EntryModal extends Component {
   };
 
   render() {
-    const { reset, submit, resetJustAdded } = this;
+    const { reset, submit, resetJustAdded, applySegmentUpdateToJustAdded } = this;
     const {
       isActive,
       closeModal,
@@ -94,9 +100,7 @@ class EntryModal extends Component {
       messagesAreaMinHeight,
     } = this.state;
 
-    console.log('RAW JUST ADDED `\\-\\v \n', justAddedSegmentsInfo)
-    const justAdded = findSegmentsFromSegmentInfo(justAddedSegmentsInfo, job.time.weeks);
-    console.log(justAdded)
+    const justAdded = findSegmentsFromSegmentInfos(justAddedSegmentsInfo, job.time.weeks);
     const isFormIncomplete = isTimeSegmentInputIncomplete(this.state);
     const hasJustAdded = !!(justAdded && justAdded.length);
 
@@ -118,7 +122,8 @@ class EntryModal extends Component {
               justAdded,
               toggleDeleteSegmentModal,
               windowWidth,
-              toggleEditSegmentModal
+              toggleEditSegmentModal,
+              applySegmentUpdateToJustAdded
             }}
           />
         )}

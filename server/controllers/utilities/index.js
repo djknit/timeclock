@@ -4,11 +4,11 @@ module.exports = {
   findItemWithId
 };
 
-function findItemWithId(id, items, hardFailItemName) {
+function findItemWithId(id, items, hardFailItemName, removeItem = false) {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
     if (item._id.toString() === id.toString()) {
-      return item;
+      return removeItem ? items.splice(i, 1)[0] : item;
     }
   }
   if (!!hardFailItemName) {

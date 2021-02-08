@@ -1,4 +1,4 @@
-function doesSegmentMatchInfo(segment, segmentInfo) { // also works for 2 segments or 2 segmentInfos
+function doesSegmentMatchInfo(segment, segmentInfo) {
   const segmentOriginVal = _getSegOriginalValue(segment);
   const segmentInfoSegOriginVal = _getSegOriginalValue(segmentInfo);
   return (

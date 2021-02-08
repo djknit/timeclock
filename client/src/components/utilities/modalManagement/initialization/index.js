@@ -29,7 +29,8 @@ function addModalsStateAndMethods(component, state, modalsInfo) {
       inputRefName,
       togglerName,
       otherStatePropToEditName,
-      inputFocusMethodName
+      inputFocusMethodName,
+      thirdStatePropToEditName
     }) => {
       state[isActiveStatePropName] = false;
       let inputRef;
@@ -39,7 +40,7 @@ function addModalsStateAndMethods(component, state, modalsInfo) {
       component[togglerName] = (
         component
         .modalTogglerFactory(
-          isActiveStatePropName, inputRef, otherStatePropToEditName, inputFocusMethodName
+          isActiveStatePropName, inputRef, otherStatePropToEditName, inputFocusMethodName, thirdStatePropToEditName
         )
         .bind(component)
       );

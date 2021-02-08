@@ -1,35 +1,44 @@
-import { findItemInArray } from '../../../utilities';
 import { doesSegmentMatchInfo } from './elemental';
 
-function segInfoUpdaterFactory(justAddedSegmentsInfo, setJustAddedSegsInfo) {
-  return function applySegUpdateToJustAdded(updatedSegments) {
-    updatedSegments.forEach(updatedSeg => {
-      const segInfo = findInfoForSeg(updatedSeg, justAddedSegmentsInfo);
-      if (!segInfo) return;
-      addDayAndWeekIdsToSegInfo(segInfo, updatedSeg);
-    });
-    let _justAddedSegsInfo = [ ...justAddedSegmentsInfo ];
-    setJustAddedSegsInfo([ updatedSegments, ..._justAddedSegsInfo ]);
-  };
-}
+function getUpdatedSegInfos(updatedSegs, justAddedSegInfos) {
+  if (!updatedSegs || !justAddedSegInfos) return;
+  
+  let indexOfSegInfoForSeg = -1, updatedSegInfoDaysInfo;
 
-function findInfoForSeg(seg, segsInfo) {
-  for (const segInfo of segsInfo) {
-    if (doesSegmentMatchInfo(seg, segInfo)) {
-      return segInfo;
+  _getInfoForUpdatedSeg();
+  if (!updatedSegInfoDaysInfo) return;
+
+  updatedSegs.forEach(_addSegDayInfoToSegInfoDaysInfo);
+
+  return _getUpdatedSegInfosArray();
+
+  function _getInfoForUpdatedSeg() {
+    for (const _i in justAddedSegInfos) {
+      if (doesSegmentMatchInfo(updatedSegs[0], justAddedSegInfos[_i])) { // if multiple updatedSegs, they all have the same segmentInfo but different dayIds
+        indexOfSegInfoForSeg = _i;
+        updatedSegInfoDaysInfo = [ ...justAddedSegInfos[_i].days ];
+      }
     }
   }
-}
-
-function addDayAndWeekIdsToSegInfo(segInfo, ids) {
-  for (const { dayId, weekId } of segInfo.days) {
-    if (ids.dayId === dayId && ids.weekId === weekId) {
-      return;
+  function _addSegDayInfoToSegInfoDaysInfo(_seg) {
+    const _getWkDayId = ({ dayId, weekId }) => `${weekId}${dayId}`;
+    if (!updatedSegInfoDaysInfo.map(_getWkDayId).includes(_getWkDayId(_seg))) {
+      updatedSegInfoDaysInfo.push({
+        dayId: _seg.dayId,
+        weekId: _seg.weekId
+      });
     }
   }
-  segInfo.days.push(ids);
+  function _getUpdatedSegInfosArray() {
+    let _updatedSegInfos = [ ...justAddedSegInfos ];
+    _updatedSegInfos[indexOfSegInfoForSeg] = {
+      ...justAddedSegInfos[indexOfSegInfoForSeg],
+      days: updatedSegInfoDaysInfo
+    };
+    return _updatedSegInfos;
+  }
 }
 
 export {
-  segInfoUpdaterFactory
+  getUpdatedSegInfos
 };

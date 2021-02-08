@@ -19,13 +19,13 @@ function modalTogglerFactoryFactory(reportModalActivity) {
       }
     };
   
-    return (isOpenAfterToggle, otherPropToEditValue, thirdStatePropToEdit) => {
+    return (isOpenAfterToggle, otherPropVal, thirdPropVal) => {
       let stateUpdates = { [modalIsOpenStatePropName]: !!isOpenAfterToggle };
-      if (otherStatePropToEditName && otherPropToEditValue !== undefined) {
-        stateUpdates[otherStatePropToEditName] = otherPropToEditValue;
+      if (otherStatePropToEditName && otherPropVal !== undefined) {
+        stateUpdates[otherStatePropToEditName] = otherPropVal;
       }
-      if (thirdStatePropToEditName && thirdStatePropToEdit) {
-        stateUpdates[thirdStatePropToEditName] = thirdStatePropToEdit;
+      if (thirdStatePropToEditName && thirdPropVal !== undefined) {
+        stateUpdates[thirdStatePropToEditName] = thirdPropVal;
       }
       this.setState(
         stateUpdates,

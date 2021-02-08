@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { modalManagement, guessUserTimezone } from './utilities';
+import { modalManagement } from './utilities';
 import PageTitle from '../../PageTitle';
 import GeneralEntryModal from './GeneralEntryModal';
 import DeleteSegmentModal from './DeleteSegmentModal';
@@ -16,7 +16,9 @@ const {
 const modalsInfo = [
   createModalInfo('generalTimeEntry', GeneralEntryModal, false),
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
-  createModalInfo('editSegment', EditSegmentModal, false, 'segmentToEdit', undefined, 'handleEditSegSuccess')
+  createModalInfo(
+    'editSegment', EditSegmentModal, false, 'segmentToEdit', undefined, 'handleEditSegSuccess'
+  )
 ];
 
 class TimePage extends Component {
@@ -67,7 +69,7 @@ class TimePage extends Component {
       editSegment: {
         segmentToEdit,
         setSegmentToEdit,
-        handleEditSegSuccess
+        reportUpdate: handleEditSegSuccess
       }
     };
 

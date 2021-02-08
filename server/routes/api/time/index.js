@@ -81,8 +81,10 @@ router.post(
   '/edit-segment',
   verifyLogin,
   (req, res) => {
-    checkRequiredProps(req.body, ['segmentId', 'weekId', 'dayId', 'updatedTimes'], res);
-    checkRequiredProps(req.body, segPropNames('updatedTimes'), res);
+    checkRequiredProps(req.body, ['segmentId', 'weekId', 'dayId'], res);
+    if (req.body.updatedTimes) {
+      checkRequiredProps(req.body, segPropNames('updatedTimes'), res);
+    }
     const { updatedTimes, weekId, dayId, segmentId, fragments } = req.body;
     (fragments || []).forEach((el, index) => {
       checkRequiredProps(req.body, segPropNames(`fragments.${index}`), res);
