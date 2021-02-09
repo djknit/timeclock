@@ -116,7 +116,7 @@ class EntryModal extends Component {
         }}
         title="General Time Entry"
         isCloseButtonDisabled={isLoading}
-        extraPrecedingBodyContent={hasJustAdded && (
+        topBodyContent={hasJustAdded && (
           <JustAdded
             {...{
               justAdded,
@@ -127,7 +127,7 @@ class EntryModal extends Component {
             }}
           />
         )}
-        sectionStyles={{ precedingBody: style.extraPrecedingBody }}
+        bodyStyles={{ top: style.topBodySection }}
         footerContent={
           <>
             <Button

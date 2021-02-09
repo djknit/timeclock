@@ -2,7 +2,7 @@ export * from '../style';
 
 export default function getStyle(messagesAreaMinHeight) {
   return {
-    extraPrecedingBody: {
+    topBodySection: {
       textAlign: 'right'
     },
     messagesArea: {

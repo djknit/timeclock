@@ -7,9 +7,13 @@ import {
   convertSegmentToInputValues,
   isTimeSegmentInputIncomplete,
   processEditSegmentInput,
-  bindTimeSegFormMethodsAndRefs
+  bindTimeSegFormMethodsAndRefs,
+  formatMyDate,
+  formatSegmentTimes,
+  formatDuration
 } from './utilities';
 import FormModal from '../../../../FormModal';
+import Tag, { TagGroup } from '../../../../Tag';
 import TimeSegmentInputs from '../TimeSegmentInputs';
 
 const formId = 'edit-time-segment-form';
@@ -58,7 +62,7 @@ class EditSegmentModal extends Component {
   };
 
   render() {
-    const { isActive } = this.props;
+    const { isActive, segmentToEdit } = this.props;
     const { messagesAreaMinHeight } = this.state;
 
     const isFormIncomplete = isTimeSegmentInputIncomplete(this.state);
@@ -68,6 +72,8 @@ class EditSegmentModal extends Component {
     if (!isActive ) {
       return <></>;
     }
+
+    console.log('segmentToEdit\n', segmentToEdit)
 
     const style = getStyle(messagesAreaMinHeight);
 
@@ -87,6 +93,18 @@ class EditSegmentModal extends Component {
           formId,
           reverseWarning
         }}
+        messagesAreaContent={segmentToEdit && (
+          <>
+            <CurrentValueTags
+              content={['Work Date:', formatMyDate(segmentToEdit.date)]}
+            />
+            <CurrentValueTags
+              content={[
+                'Current Value:', formatSegmentTimes(segmentToEdit), formatDuration(segmentToEdit.duration)
+              ]}
+            />
+          </>
+        )}
       >
         <TimeSegmentInputs
           formMgmtComp={this}
@@ -98,3 +116,17 @@ class EditSegmentModal extends Component {
 }
 
 export default EditSegmentModal;
+
+function CurrentValueTags({ content }) {
+  return (
+    <TagGroup size="medium" align="center">
+      {content.map((tagContent, index) => (
+        <Tag
+          theme={index !== 2 && (index % 2 === 1 ? 'info light' : 'info')}
+          key={index}
+          children={tagContent}
+        />
+      ))}
+    </TagGroup>
+  );
+}

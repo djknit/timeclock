@@ -63,6 +63,7 @@ function DateInput({
         id={inputId}
         ref={inputRef}
         autoComplete="off"
+        fixedHeight
         {...(datePickerProps || {})}
         openToDate={openToDate && getDate(openToDate)}
       />
