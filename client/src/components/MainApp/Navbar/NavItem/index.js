@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import getStyle from './style';
 import './style.css';
-import { keyTriggerCheckerFactory } from '../../utilities';
+import { getClickableElAttrs } from '../../utilities';
 import { addPseudoPseudoClasses } from '../../../higherOrder';
 
 class _NavItem_needsPseudo extends Component {
@@ -21,8 +21,8 @@ class _NavItem_needsPseudo extends Component {
       pseudoHandlers,
       pseudoState,
       style: styleProp,
-      tabIndex,
-      goTo
+      goTo,
+      disabled
     } = this.props;
 
     let className = isDropdownLink ? 'navbar-link is-arrowless' : 'navbar-item';
@@ -41,28 +41,27 @@ class _NavItem_needsPseudo extends Component {
       className,
       ...pseudoHandlers,
       style: style.navItem,
-      ref: this.ref,
-      onClick,
-      tabIndex
+      ref: this.ref
     };
 
     return destinationPath ? (
       <Link
         {...commonAttrs}
         to={destinationPath}
-        onKeyDown={
-          keyTriggerCheckerFactory(() => {
+        {...getClickableElAttrs(
+          (() => {
             onClick();
             goTo(destinationPath);
-          })
-        }
+          }),
+          disabled
+        )}
       >
         {children}
       </Link>
     ) : (
       <a
         {...commonAttrs}
-        onKeyDown={keyTriggerCheckerFactory(onClick)}
+        {...getClickableElAttrs(onClick, disabled)}
       >
         {children}
       </a>

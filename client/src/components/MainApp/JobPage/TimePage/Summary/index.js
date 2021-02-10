@@ -5,10 +5,11 @@ import PeriodTotalsArea, { PeriodTotalsAreaBeginExpanded } from './PeriodTotalsA
 function Summary({
   style: styleProp,
   windowWidth,
-  timeData
+  timeData,
+  disabled
 }) {
 
-  const commonAttrs = { windowWidth };
+  const commonAttrs = { windowWidth, disabled };
 
   return (
     <ContentArea title="Summary" style={styleProp}>

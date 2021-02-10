@@ -9,7 +9,8 @@ import { Label, EmVal } from './smallPieces';
 function _Totals_needsPseudo({
   periodTotals,
   earningsContentToggle,
-  mainContentToggle
+  mainContentToggle,
+  disabled
 }) {
 
   const {
@@ -37,7 +38,10 @@ function _Totals_needsPseudo({
       {earnings && (
         <>
           <EarningDetailsToggle
-            {...{ earningsContentToggle }}
+            {...{
+              earningsContentToggle,
+              disabled
+            }}
             isVisible={mainContentToggle.isExpanded}
           />
           <div

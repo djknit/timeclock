@@ -4,7 +4,9 @@ import getStyle from './style';
 import {
   isLoggedInService, profileService, userService, jobsService, currentJobService, windowWidthService
 } from '../../../data';
-import { api, promiseToSetState, retrieveAndSetCurrentJob, keyTriggerCheckerFactory } from '../utilities';
+import {
+  api, promiseToSetState, retrieveAndSetCurrentJob, getClickableElAttrs
+} from '../utilities';
 import NavItem from './NavItem';
 import Dropdown from './Dropdown';
 import WelcomeAndLogout from './WelcomeAndLogout';
@@ -146,7 +148,7 @@ class _Navbar_needsDataAndPseudo extends Component {
     };
     const commonAttrs = {
       goTo,
-      tabIndex: areAnyModalsOpen ? -1 : 0
+      disabled: areAnyModalsOpen
     };
     const commonNavItemAttrs = {
       onClick: handleLinkClick,
@@ -176,10 +178,8 @@ class _Navbar_needsDataAndPseudo extends Component {
             aria-expanded="false"
             data-target={menuId}
             style={style.burger}
-            onClick={toggleMenu}
+            {...getClickableElAttrs(toggleMenu, !isFullNavDisplayed || areAnyModalsOpen)}
             {...pseudoHandlers}
-            tabIndex={isFullNavDisplayed ? -1 : 0}
-            onKeyDown={keyTriggerCheckerFactory(toggleMenu)}
           >
             {[...Array(3)].map((_e, _i) => (
               <span aria-hidden="true" key={_i} />
@@ -204,6 +204,7 @@ class _Navbar_needsDataAndPseudo extends Component {
                 label="Jobs"
               >
                 <NavItem
+                  {...commonAttrs}
                   onClick={(event) => {
                     openNewJobModal();
                     handleLinkClick(event);
@@ -215,6 +216,7 @@ class _Navbar_needsDataAndPseudo extends Component {
                 {jobs && jobs.map(
                   ({ _id, name }) => (
                     <NavItem
+                      {...commonAttrs}
                       destinationPath={getJobPagePath(_id)}
                       onClick={event => {
                         retrieveAndSetCurrentJob(_id);

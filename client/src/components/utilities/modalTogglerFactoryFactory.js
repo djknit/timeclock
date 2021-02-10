@@ -1,6 +1,3 @@
-// NEED TO ADD:
-  // modal reporting function should run after modal toggler ? ? (as seen on job page)
-
 function modalTogglerFactoryFactory() {
   return function (
     modalIsOpenStatePropName, inputRef, otherStatePropToEditName, inputFocusMethodName

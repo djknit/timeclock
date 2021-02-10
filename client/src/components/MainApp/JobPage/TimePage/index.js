@@ -49,7 +49,7 @@ class TimePage extends Component {
 
   render() {
     const { setSegmentToDelete, setSegmentToEdit } = this;
-    const { job, parentPath, windowWidth } = this.props;
+    const { job, parentPath, windowWidth, areAnyModalsOpen } = this.props;
     const { segmentToDelete, segmentToEdit, handleEditSegSuccess } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
@@ -85,12 +85,13 @@ class TimePage extends Component {
 
     return (
       <>
-        <PageTitle {...{ crumbChain }} />
+        <PageTitle {...{ crumbChain, areAnyModalsOpen }} />
         <div style={style.contentAreasRow}>
           <Summary
             style={style.summaryArea}
             timeData={job.time}
             {...{ windowWidth }}
+            disabled={areAnyModalsOpen}
           />
           <General
             style={style.generalEntryArea}
@@ -99,6 +100,7 @@ class TimePage extends Component {
               toggleGeneralEntryModal,
               toggleDeleteSegmentModal
             }}
+            disabled={areAnyModalsOpen}
           />
         </div>
         <Weeks />
