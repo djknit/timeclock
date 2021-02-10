@@ -15,7 +15,8 @@ function DateTimeInput({
   labelAreaRef,
   isLast,
   inputFieldMarginBottom,
-  sectionLabelMarginBottom
+  sectionLabelMarginBottom,
+  disabled
 }) {
 
   const style = getStyle(isLast, inputFieldMarginBottom, sectionLabelMarginBottom);
@@ -24,7 +25,7 @@ function DateTimeInput({
     changeHandlerFactory,
     formId,
     sectionName,
-    isActive,
+    isActive: !disabled && isActive !== false,
     isInline: true
   };
 

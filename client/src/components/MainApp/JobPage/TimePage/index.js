@@ -50,7 +50,9 @@ class TimePage extends Component {
   render() {
     const { setSegmentToDelete, setSegmentToEdit } = this;
     const { job, parentPath, windowWidth, areAnyModalsOpen } = this.props;
-    const { segmentToDelete, segmentToEdit, handleEditSegSuccess } = this.state;
+    const {
+      segmentToDelete, segmentToEdit, handleEditSegSuccess, isEditSegmentModalActive, isDeleteSegmentModalActive
+    } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
 
@@ -63,7 +65,8 @@ class TimePage extends Component {
       generalTimeEntry: {
         toggleDeleteSegmentModal,
         toggleEditSegmentModal,
-        windowWidth
+        windowWidth,
+        disabled: isEditSegmentModalActive || isDeleteSegmentModalActive
       },
       deleteSegment: { segmentToDelete, setSegmentToDelete },
       editSegment: {

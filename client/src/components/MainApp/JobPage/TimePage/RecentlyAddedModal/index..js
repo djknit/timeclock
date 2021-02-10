@@ -30,7 +30,15 @@ class RecentlyAddedModal extends Component {
     const style = getStyle();
 
     return (
-      <ModalSkeleton></ModalSkeleton>
+      <ModalSkeleton
+        {...{
+          isActive,
+          closeModal
+        }}
+        title="Recently Added Time"
+      >
+
+      </ModalSkeleton>
     );
   };
 }

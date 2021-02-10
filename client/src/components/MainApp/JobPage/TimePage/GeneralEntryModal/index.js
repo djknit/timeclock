@@ -86,7 +86,8 @@ class EntryModal extends Component {
       job,
       toggleDeleteSegmentModal,
       windowWidth,
-      toggleEditSegmentModal
+      toggleEditSegmentModal,
+      disabled
     } = this.props;
     const {
       justAddedSegmentsInfo,
@@ -103,6 +104,7 @@ class EntryModal extends Component {
     const justAdded = findSegmentsFromSegmentInfos(justAddedSegmentsInfo, job.time.weeks);
     const isFormIncomplete = isTimeSegmentInputIncomplete(this.state);
     const hasJustAdded = !!(justAdded && justAdded.length);
+    const isFormDisabled = isLoading || disabled;
 
     const reverseWarning = () => this.setState({ hasWarning: false });
 
@@ -115,7 +117,7 @@ class EntryModal extends Component {
           closeModal
         }}
         title="General Time Entry"
-        isCloseButtonDisabled={isLoading}
+        isCloseButtonDisabled={isFormDisabled}
         topBodyContent={hasJustAdded && (
           <JustAdded
             {...{
@@ -123,7 +125,8 @@ class EntryModal extends Component {
               toggleDeleteSegmentModal,
               windowWidth,
               toggleEditSegmentModal,
-              applySegmentUpdateToJustAdded
+              applySegmentUpdateToJustAdded,
+              disabled
             }}
           />
         )}
@@ -136,7 +139,7 @@ class EntryModal extends Component {
                 closeModal();
                 resetJustAdded();
               }}
-              disabled={isLoading}
+              disabled={isFormDisabled}
             >
               {hasSuccess ? 'Done' : 'Cancel'}
             </Button>
@@ -144,7 +147,7 @@ class EntryModal extends Component {
               <Button
                 theme="info"
                 onClick={reverseWarning}
-                disabled={isLoading || hasSuccess}
+                disabled={hasSuccess || isFormDisabled}
               >
                 Edit Form:
               </Button>
@@ -152,7 +155,7 @@ class EntryModal extends Component {
             <Button
               theme={hasWarning ? 'warning' : 'primary'}
               onClick={hasSuccess ? reset : submit}
-              disabled={isLoading || isFormIncomplete}
+              disabled={isFormDisabled || isFormIncomplete}
               isSubmit={!hasSuccess}
               formId={hasSuccess ? undefined : formId}
               {...{ isLoading }}
@@ -180,6 +183,7 @@ class EntryModal extends Component {
                 hasWarning,
                 problemMessages,
                 warningMessages,
+                disabled
               }}
               showMessage={showMessage && (!hasJustAdded || hasSuccess || hasProblem || hasWarning)}
               infoMessages={[
@@ -193,7 +197,7 @@ class EntryModal extends Component {
               closeMessage={() => this.setState({ showMessage: false })}
             />
           </div>
-          <TimeSegmentInputs formMgmtComp={this} {...{ formId }} />
+          <TimeSegmentInputs formMgmtComp={this} {...{ formId, disabled }} />
         </form>
       </ModalSkeleton>
     );

@@ -8,26 +8,27 @@ import DateTimeInput from '../DateTimeInput';
 function TimeSegmentInputs({
   formMgmtComp,
   formId,
-  inputRef
+  inputRef,
+  disabled
 }) {
 
   const extractedProps = extractTimeSegmentInputsProps(formMgmtComp);
+
+  const commonAttrs = { formId, disabled };
   
   return (
     <>
       <div {...extractedProps.firstInputArea}>
         <DateTimeInput
+          {...commonAttrs}
           {...extractedProps.firstInput}
-          {...{
-            formId,
-            inputRef
-          }}
+          {...{ inputRef }}
         />
       </div>
       <DateTimeInput
         {...extractedProps.lastInput}
-        {...{ formId }}
-        />
+        {...commonAttrs}
+      />
     </>
   );
 };

@@ -12,7 +12,8 @@ function FormMessages({
   infoMessages,
   warningMessages,
   successRedirect,
-  closeMessage
+  closeMessage,
+  disabled
 }) {
 
   let theme, messages, close;
@@ -34,6 +35,7 @@ function FormMessages({
     messages = infoMessages;
     close = closeMessage;
   }
+  if (disabled) close = undefined;
 
   const hasMessages = messages && messages.length > 0;
   const hasProgressBar = hasSuccess && successRedirect;
