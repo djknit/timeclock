@@ -5,6 +5,7 @@ import PageTitle from '../../PageTitle';
 import GeneralEntryModal from './GeneralEntryModal';
 import DeleteSegmentModal from './DeleteSegmentModal';
 import EditSegmentModal from './EditSegmentModal';
+import RecentlyAddedModal from './RecentlyAddedModal';
 import General from './General';
 import Summary from './Summary';
 import Weeks from './Weeks';
@@ -18,7 +19,8 @@ const modalsInfo = [
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
   createModalInfo(
     'editSegment', EditSegmentModal, false, 'segmentToEdit', undefined, 'handleEditSegSuccess'
-  )
+  ),
+  createModalInfo('recentlyAdded', RecentlyAddedModal, false)
 ];
 
 class TimePage extends Component {
@@ -59,21 +61,22 @@ class TimePage extends Component {
     const toggleGeneralEntryModal = modalTogglers.generalTimeEntry;
     const toggleDeleteSegmentModal = modalTogglers.deleteSegment;
     const toggleEditSegmentModal = modalTogglers.editSegment;
+    const toggleRecentlyAddedModal = modalTogglers.recentlyAdded;
     
-
+    const primaryModalAttrs = { // for the modals that can open other modals on top
+      toggleDeleteSegmentModal,
+      toggleEditSegmentModal,
+      disabled: isEditSegmentModalActive || isDeleteSegmentModalActive
+    };
     const variableModalAttrs = {
-      generalTimeEntry: {
-        toggleDeleteSegmentModal,
-        toggleEditSegmentModal,
-        windowWidth,
-        disabled: isEditSegmentModalActive || isDeleteSegmentModalActive
-      },
+      generalTimeEntry: { ...primaryModalAttrs, windowWidth },
       deleteSegment: { segmentToDelete, setSegmentToDelete },
       editSegment: {
         segmentToEdit,
         setSegmentToEdit,
         reportUpdate: handleEditSegSuccess
-      }
+      },
+      recentlyAdded: { ...primaryModalAttrs }
     };
 
     const crumbChain = [
@@ -101,7 +104,8 @@ class TimePage extends Component {
             {...{
               job,
               toggleGeneralEntryModal,
-              toggleDeleteSegmentModal
+              toggleDeleteSegmentModal,
+              toggleRecentlyAddedModal
             }}
             disabled={areAnyModalsOpen}
           />

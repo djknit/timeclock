@@ -1,4 +1,8 @@
 export default function getStyle() {
 
-  return {};
+  return {
+    periodSelectLabel: {
+      textAlign: 'left'
+    }
+  };
 };

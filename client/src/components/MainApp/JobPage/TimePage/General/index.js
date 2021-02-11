@@ -9,7 +9,8 @@ function GeneralArea({
   job,
   disabled,
   toggleGeneralEntryModal,
-  toggleDeleteSegmentModal
+  toggleDeleteSegmentModal,
+  toggleRecentlyAddedModal
 }) {
 
   const userTimezone = job.time.sessionTimezone;
@@ -29,16 +30,23 @@ function GeneralArea({
             <Bold>General Time Entry:</Bold>
           </p>
           <div style={style.btnsSubArea}>
-          <Button
-            theme="primary"
-            styles={style.firstBtn}
-            onClick={() => toggleGeneralEntryModal(true)}
-            allowTabFocus={!disabled}
-          >
-            <i className="fas fa-plus" /> Enter Time
-          </Button>
+            <Button
+              theme="primary light"
+              styles={style.firstBtn}
+              onClick={() => toggleRecentlyAddedModal(true)}
+              allowTabFocus={!disabled}
+            >
+              <i className="fas fa-history" /> Recently Added
+            </Button>
+            <Button
+              theme="primary"
+              styles={style.btnNotFirst}
+              onClick={() => toggleGeneralEntryModal(true)}
+              allowTabFocus={!disabled}
+            >
+              <i className="fas fa-plus" /> Enter Time
+            </Button>
           </div>
-          
         </div>
       </ContentArea>
     </>

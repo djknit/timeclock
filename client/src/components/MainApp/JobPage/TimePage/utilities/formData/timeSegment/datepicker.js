@@ -14,10 +14,6 @@ function addDatePickerHandlerAndRefs(component) {
 function popperToggleHandlerFactory() {
   return function handleDatepickerPopperToggle(isActiveAfterToggle, isStartDate) {
     // need to make space for datepicker popper above date input.
-    console.log('* * * * * pop')
-    console.log('sectionLabelHeight\n', this.firstInputAreaLabel.current.clientHeight)
-    console.log(`firstInputArea\n`, this.firstInputArea.current)
-    console.log(`firstInputAreaLabel\n`, this.firstInputAreaLabel.current)
     const sectionLabelHeight = this.firstInputAreaLabel.current.clientHeight;
     let roomAvailableBelowMsgArea = `${sectionLabelHeight}px + ${sectionLabelMarginBottom}`;
     if (!isStartDate) {
