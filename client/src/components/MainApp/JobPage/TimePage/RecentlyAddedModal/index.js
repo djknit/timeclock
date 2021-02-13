@@ -5,39 +5,44 @@ import {
   formatSegmentTimes,
   formatDuration,
   findRecentlyAddedSegs,
-  changeHandlerFactoryFactory
+  getInputProblems,
+  extractInputValues,
+  processInputChange,
+  getPeriodDurationInMsec,
+  getTimePeriodInputsStartingValue
 } from './utilities';
-import { SelectInput } from '../../../../formPieces';
+// import { SelectInput } from '../../../../formPieces';
 import Button from '../../../../Button';
 import Notification from '../../../../Notification';
 import ModalSkeleton from '../../../../ModalSkeleton';
-
-const formId = 'recently-added-period-form';
-
-const getOption = (name, value) => ({ name, value });
-const timePeriodOptions = [
-  getOption('hour', 'hour'),
-  getOption('4 hours', 'fourHour'),
-  getOption('24 hours', 'day'),
-  getOption('7 days', 'week'),
-  getOption('14 days', 'twoWeek')
-  // getOption('Other...', 'custom')
-];
+import TimePeriodInput from './PeriodInput';
+import Segments from './Segments';
 
 const getStartingState = () => ({
-  timePeriodChoice: 'day',
-  customPeriodNumber: '',
-  customPeriodUnit: 'hour',
-  showMessage: false
+  ...getTimePeriodInputsStartingValue(),
+  showMessage: false,
+  recentlyAddedSegments: null,
+  periodDurationInMsec: null
 });
 
 class RecentlyAddedModal extends Component {
   constructor(props) {
     super(props);
-    this.changeHandlerFactory = changeHandlerFactoryFactory().bind(this);
+    this.inputChangeHandlerFactory = this.inputChangeHandlerFactory.bind(this);
     this.reset = this.reset.bind(this);
     this.state = {
       ...getStartingState()
+    };
+  };
+
+  inputChangeHandlerFactory(propName) {
+    return ({ target }) => {
+      let stateUpdates = processInputChange(propName, target.value);
+      const periodDurationInMsec = getPeriodDurationInMsec({ ...this.state, ... stateUpdates });
+      if (periodDurationInMsec) {
+        stateUpdates.recentlyAddedSegments = findRecentlyAddedSegs(this.props.job.time.weeks, periodDurationInMsec);
+      }
+      this.setState({ ...stateUpdates, periodDurationInMsec }, () => console.log(this.state));
     };
   };
 
@@ -46,11 +51,10 @@ class RecentlyAddedModal extends Component {
   };
 
   render() {
-    const { reset, changeHandlerFactory } = this;
+    const { reset, inputChangeHandlerFactory } = this;
     const { isActive, closeModal, disabled } = this.props;
-    const {
-      timePeriodChoice, customPeriodNumber, customPeriodUnit, showMessage
-    } = this.state;
+    const { showMessage, recentlyAddedSegments } = this.state;
+    const inputValues = extractInputValues(this.state);
 
     const closeMessage = () => this.setState({ showMessage: false });
 
@@ -90,17 +94,13 @@ class RecentlyAddedModal extends Component {
             close={closeMessage}
           />
         )}
-        <SelectInput
-          propName="timePeriodChoice"
-          value={timePeriodChoice}
-          options={timePeriodOptions}
-          {...{
-            changeHandlerFactory,
-            formId
-          }}
-          label="Show Time Entered In The Past..."
+        <TimePeriodInput
+          changeHandlerFactory={inputChangeHandlerFactory}
+          {...inputValues}
           isActive={!disabled}
-          labelStyle={style.periodSelectLabel}
+        />
+        <Segments
+          segments={recentlyAddedSegments}
         />
       </ModalSkeleton>
     );
@@ -108,4 +108,3 @@ class RecentlyAddedModal extends Component {
 }
 
 export default RecentlyAddedModal;
-

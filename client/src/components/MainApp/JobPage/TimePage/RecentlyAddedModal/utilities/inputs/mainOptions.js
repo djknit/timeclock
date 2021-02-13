@@ -18,6 +18,7 @@ addOption('4 hours', 'fourHours', 4 * msecPerHr);
 addOption('24 hours', 'day', msecPerDay);
 addOption('7 days', 'week', 7 * msecPerDay);
 addOption('14 days', 'twoWeeks', 14 * msecPerDay);
+addOption('Other', 'custom');
 
 export {
   timePeriodOptions,

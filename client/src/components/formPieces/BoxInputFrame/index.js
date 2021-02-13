@@ -16,7 +16,8 @@ function _BoxInputFrame_needsData({
   isRadio,
   windowWidth,
   selectedRadioInput,
-  fieldToLabelRatio
+  fieldToLabelRatio,
+  helpText
   // isLastChild // Will be needed if bottom margin is changed from Bulma style.
 }) {
 
@@ -36,7 +37,13 @@ function _BoxInputFrame_needsData({
     {}
   );
   fieldAttributes.style = style.field;
-  const labelAttributes = { ...labelProps, isRadio, windowWidth, selectedRadioInput };
+  const labelAttributes = { ...labelProps, isRadio, selectedRadioInput };
+
+  const controlAttrs = { isRadio, hasIcon, windowWidth };
+
+  const helpTextHtml = helpText && (
+    <p className="help">{helpText}</p>
+  );
 
   return isInline ? (
     <div
@@ -48,18 +55,20 @@ function _BoxInputFrame_needsData({
       </div>
       <div className="field-body" style={style.subSectionFieldBody}>
         <div className="field">
-          <Control isInline {...{ isRadio, hasIcon, windowWidth }}>
+          <Control isInline {...controlAttrs}>
             {children}
           </Control>
+          {helpTextHtml}
         </div>
       </div>
     </div>
   ) : (
     <div className="field" {...fieldAttributes}>
       <Label {...labelAttributes} />
-      <Control {...{ isRadio, hasIcon, windowWidth }}>
+      <Control {...controlAttrs}>
         {children}
       </Control>
+      {helpTextHtml}
     </div>
   );
 }

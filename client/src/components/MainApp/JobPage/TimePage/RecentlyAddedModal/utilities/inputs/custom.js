@@ -5,20 +5,24 @@ const { minsPerHr, secsPerMin } = constants;
 const msecPerMin = secsPerMin * 1000;
 const msecPerHr = minsPerHr * msecPerMin;
 
-const getOption = (name, value) => ({ name, value });
+const customPeriodUnitValues = {
+  minutes: msecPerMin,
+  hours: msecPerHr,
+  days: 24 * msecPerHr
+};
 
-const customPeriodUnitOptions = [
-  getOption('minutes', msecPerMin),
-  getOption('hours', msecPerHr),
-  getOption('days', 24 * msecPerHr)
-];
+const customPeriodUnitOptions = (
+  ['minutes', 'hours', 'days']
+  .map(name => ({ name, value: customPeriodUnitValues[name] }))
+);
 
 function getCustomPeriodDurationInMsec({ customPeriodNumber, customPeriodUnit }) {
-  if (!customPeriodNumber || !customPeriodUnit) return;
-  return parseInt(customPeriodNumber) * customPeriodUnit;
+  if (!customPeriodNumber || !customPeriodUnit || customPeriodNumber <= 0) return;
+  return parseFloat(customPeriodNumber) * customPeriodUnit;
 }
 
 export {
   customPeriodUnitOptions,
+  customPeriodUnitValues,
   getCustomPeriodDurationInMsec
 };

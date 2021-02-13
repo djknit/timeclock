@@ -1,26 +1,33 @@
 import React from 'react';
 import getStyle from './style';
-import { getInputId } from '../utilities';
+import {
+  getInputId, timePeriodOptions, getInputProblems, customPeriodUnitOptions
+} from '../utilities';
 import { BoxInputFrame } from '../../../../../formPieces';
 
 
 function TimePeriodInput({
-  propName,
-  sectionName,
-  value,
-  label,
-  sublabel,
-  hasProblem,
-  problems,
   helpText,
   changeHandlerFactory,
   isActive,
   formId,
-  inputRef
+  inputRef,
+  timePeriodChoice,
+  customPeriodNumber,
+  customPeriodUnit,
+  wasNumberInputTouched
 }) {
 
-  const inputNamePrefix = `${sectionName ? sectionName + '-' : ''}${propName}`;
+  console.log(timePeriodChoice)
+
+  const {
+    problems, problemMessages
+  } = getInputProblems({ timePeriodChoice, customPeriodNumber, wasNumberInputTouched });
+
+  const inputNamePrefix = 'recently-addeded-segments-modal-period-inputs';
   const mainSelectInputId = getInputId(formId, 'selectedTimePeriod', inputNamePrefix);
+  let numInputClassName = 'input no-spin';
+  if (problems && problems.customPeriodNumber) numInputClassName += ' is-danger';
 
   const style = getStyle();
 
@@ -28,38 +35,63 @@ function TimePeriodInput({
     <BoxInputFrame
       label="Show Time Entered In The Past..."
       inputId={mainSelectInputId}
+      styles={{ label: style.label}}
     >
-      <div className={`select is-fullwidth${hasProblem ? ' is-danger' : ''}`}>
+      <div className="select">
         <select
-          id={inputId}
+          id={mainSelectInputId}
           ref={inputRef}
-          value={value}
-          onChange={changeHandlerFactory(propName, true)}
+          value={timePeriodChoice}
+          onChange={changeHandlerFactory('timePeriodChoice')}
           disabled={!isActive}
+          style={style.mainSelect}
         >
-          {
-            placeholder && (
-              <option disabled value="">
-                {placeholder}
-              </option>
-            )
-          }
-          {
-            options.map(option => (
-              <option
-                key={option.value}
-                value={option.value}
-                disabled={option.isDisabled}
-              >
-                {option.name}
-              </option>
-            ))
-          }
+          {timePeriodOptions.map(option => (
+            <option
+              key={option.value}
+              value={option.value}
+              disabled={option.isDisabled}
+            >
+              {option.name}
+            </option>
+          ))}
         </select>
       </div>
-      {helpText &&
+      {timePeriodChoice === 'custom' && (
+        <>
+          <i className="fas fa-long-arrow-alt-right" style={style.arrow} />
+          <input
+            className={numInputClassName}
+            type="number"
+            value={customPeriodNumber || customPeriodNumber === 0 ? customPeriodNumber : ''}
+            onChange={changeHandlerFactory('customPeriodNumber')}
+            disabled={!isActive}
+            placeholder="00.00"
+            style={style.customNumInput}
+          />
+          <div className="select">
+            <select
+              value={customPeriodUnit}
+              onChange={changeHandlerFactory('customPeriodUnit')}
+              disabled={!isActive}
+              style={style.customUnitInput}
+            >
+              {customPeriodUnitOptions.map(option => (
+                <option
+                  key={option.value}
+                  value={option.value}
+                  disabled={option.isDisabled}
+                >
+                  {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </>
+      )}
+      {helpText && (
         <p className="help">{helpText}</p>
-      }
+      )}
     </BoxInputFrame>
   );
 }
