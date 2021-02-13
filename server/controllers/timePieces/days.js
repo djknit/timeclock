@@ -11,7 +11,6 @@ const {
 module.exports = {
   createDaysForDates,
   findDayForDate,
-  findDayWithId,
   getDaysInDateRanges,
   getIdsOfDaysInRange,
   isSegmentInDay,
@@ -39,16 +38,6 @@ function findDayForDate(date, days) {
   for (let i = 0; i < days.length; i++) {
     const day = days[i];
     if (areDatesEquivalent(date, day.date)) {
-      return day;
-    }
-  }
-  return null;
-}
-
-function findDayWithId(dayId, days) {
-  for (let i = 0; i < days.length; i++) {
-    const day = days[i];
-    if (day._id.toString() === dayId.toString()) {
       return day;
     }
   }

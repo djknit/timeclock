@@ -1,23 +1,26 @@
 const router = require('express').Router();
-
 const {
   Week: WeekController,
-  Job: JobController,
   time: timeController
 } = require('../../../controllers');
-
 const {
-  routeErrorHandlerFactory, checkRequiredProps, cleanJob, cleanWeekDoc, weeksSenderFactory, cleanWeeks
+  routeErrorHandlerFactory,
+  checkRequiredProps,
+  cleanWeekDoc,
+  weeksSenderFactory,
+  cleanWeeks,
+  sendWeeksAndErrorRes
 } = require('../utilities');
 
 const verifyLogin = require('connect-ensure-login').ensureLoggedIn('/api/auth/fail');
+const segPropNames = (segName = 'segment') => ([`${segName}.startTime`, `${segName}.endTime`]);
 
 router.post(
   '/add-segment-to-day',
   verifyLogin,
   (req, res) => {
     checkRequiredProps(req.body, ['segment', 'dayId', 'weekId'], res);
-    checkRequiredProps(req.body, ['segment.startTime', 'segment.endTime'], res);
+    checkRequiredProps(req.body, segPropNames(), res);
     const { segment, dayId, weekId } = req.body;
     timeController.addSegmentToDay(segment, dayId, weekId, req.user._id)
     .then(({ weekDoc, newSegmentInfo }) => {
@@ -35,7 +38,7 @@ router.post(
   verifyLogin,
   (req, res) => {
     checkRequiredProps(req.body, ['segment', 'jobId'], res);
-    checkRequiredProps(req.body, ['segment.startTime', 'segment.endTime'], res);
+    checkRequiredProps(req.body, segPropNames(), res);
     const { segment, jobId } = req.body;
     timeController.addSegment(segment, jobId, req.user._id)
     .then(({ job, newSegmentInfo }) => {
@@ -54,13 +57,9 @@ router.post(
   (req, res) => {
     checkRequiredProps(req.body, ['segments', 'jobId']);
     const { segments, jobId } = req.body;
-    console.log(segments)
     timeController.addMultipleSegments(segments, jobId, req.user._id)
-    .then(({ job, newSegmentsInfo }) => {
-      res.json({
-        weeks: cleanWeeks(job.weeks),
-        newSegmentsInfo
-      });
+    .then(({ job, newSegmentsInfo, error }) => {
+      sendWeeksAndErrorRes(res, job, error, { newSegmentsInfo });
     })
     .catch(routeErrorHandlerFactory(res));
   }
@@ -74,6 +73,32 @@ router.post(
     const { segmentId, weekId, dayId } = req.body;
     WeekController.removeSegment(segmentId, dayId, weekId, req.user._id)
     .then(week => res.json({ week: cleanWeekDoc(week) }))
+    .catch(routeErrorHandlerFactory(res));
+  }
+);
+
+router.post(
+  '/edit-segment',
+  verifyLogin,
+  (req, res) => {
+    checkRequiredProps(req.body, ['segmentId', 'weekId', 'dayId'], res);
+    if (req.body.updatedTimes) {
+      checkRequiredProps(req.body, segPropNames('updatedTimes'), res);
+    }
+    const { updatedTimes, weekId, dayId, segmentId, fragments } = req.body;
+    (fragments || []).forEach((el, index) => {
+      checkRequiredProps(req.body, segPropNames(`fragments.${index}`), res);
+    });
+    timeController
+    .editSegment(segmentId, weekId, dayId, req.user._id, updatedTimes, fragments)
+    .then(({ job, updatedSegments, error }) => {
+      const resData = (
+        updatedSegments.length > 0 ?
+        { updatedSegments } :
+        { updatedSegment: updatedSegments[0] }
+      );
+      sendWeeksAndErrorRes(res, job, error, resData);
+    })
     .catch(routeErrorHandlerFactory(res));
   }
 );

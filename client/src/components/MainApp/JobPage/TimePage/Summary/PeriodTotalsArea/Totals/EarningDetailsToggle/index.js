@@ -1,12 +1,13 @@
 import React from 'react';
 import getStyle from './style';
-import { keyTriggerCheckerFactory } from '../../../../../utilities';
+import { getClickableElAttrs } from '../../../../../utilities';
 import { addPseudoPseudoClasses } from '../../../../../../../higherOrder';
 
 function _EarningDetailsToggler_needsPseudo({
   pseudoHandlers,
   pseudoState,
   isVisible,
+  disabled,
   earningsContentToggle
 }) {
 
@@ -15,9 +16,7 @@ function _EarningDetailsToggler_needsPseudo({
   return (
     <div
       {...pseudoHandlers}
-      onClick={earningsContentToggle.toggle}
-      tabIndex={isVisible ? 0 : -1}
-      onKeyDown={keyTriggerCheckerFactory(earningsContentToggle.toggle)}
+      {...getClickableElAttrs(earningsContentToggle.toggle, disabled || !isVisible)}
       style={style.togglerArea}
     >
       <i className="fas fa-chevron-up" style={style.arrow} />

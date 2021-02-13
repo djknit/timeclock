@@ -12,24 +12,18 @@ app.use(express.json({ limit: '10mb' }));
 app.use(require('morgan')('combined')); // logs http requests
 
 // Additional middleware needed for Passport
-const { middleware } = require('./passport.js');
-middleware.forEach(_middleware => app.use(_middleware));
+require('./passport').middleware.forEach(midWare => app.use(midWare));
 
 // Error handler middleware
 app.use(require('../utilities').errorHandlerMiddleware);
 
 // ----------------------
 
-const router = require('../routes');
-app.use(router);
-
-function startServer() {
-  app.listen(
-    PORT,
-    () => console.log('Server listening on PORT: ' + PORT)
-  );
-}
-
 module.exports = {
-  start: startServer
+  addRoutes(router) {
+    app.use(router);
+  },
+  start() {
+    app.listen(PORT, () => console.log(`Server listening on PORT: ${PORT}`));
+  }
 };

@@ -12,6 +12,7 @@ import FormMessages from './FormMessages';
 import FormButtons from './FormButtons';
 import TimeInput from './TimeInput';
 import SectionLabel from './SectionLabel';
+import BoxInputFrame from './BoxInputFrame';
 
 export {
   TextInput,
@@ -27,5 +28,6 @@ export {
   FormMessages,
   FormButtons,
   TimeInput,
-  SectionLabel
+  SectionLabel,
+  BoxInputFrame
 };

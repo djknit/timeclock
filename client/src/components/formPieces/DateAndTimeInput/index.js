@@ -74,7 +74,7 @@ function DateAndTimeInput({
         _value.is24hr = childPropValue;
       }
       else if (childPropName !== 'amPm') {
-        _value.amPm = (
+        _value[childPropName] = (
           childPropValue || childPropValue === 0 ?
           parseInt(childPropValue) :
           undefined
@@ -82,10 +82,12 @@ function DateAndTimeInput({
       }
       else if (childPropValue === 'am' && hour >= 12) {
         _value.hour = hour - 12;
+        _value.amPm = childPropValue;
       }
       else if (childPropValue === 'pm' && hour < 12) {
       _value.hour = hour + 12;
-      }
+      _value.amPm = childPropValue;
+    }
       return _value;
     };
   }

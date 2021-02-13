@@ -29,6 +29,9 @@ const timeApi = {
   },
   deleteSegmentsForDayIds({ ids, jobId }) {
     return timeAxios.post('/delete-segments-for-day-ids', { ids, jobId });
+  },
+  editSegment({ segmentId, weekId, dayId, updatedTimes, fragments }) {
+    return timeAxios.post('/edit-segment', { segmentId, weekId, dayId, updatedTimes, fragments });
   }
 };
 

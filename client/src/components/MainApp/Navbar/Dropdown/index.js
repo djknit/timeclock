@@ -33,9 +33,9 @@ function Dropdown({
         style={style.dropdownLink}
         onClick={toggle}
         {...{
-          isActive
+          isActive,
+          disabled
         }}
-        tabIndex={disabled ? -1 : tabIndex}
       >
         {label}&nbsp;<i className={ddLinkArrowClassName} style={style.ddLinkArrow} />
       </NavItem>

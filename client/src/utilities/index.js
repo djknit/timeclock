@@ -30,10 +30,20 @@ function guessUserTimezone() {
   return moment.tz.guess();
 }
 
+function findItemInArray(array, checkIsItem, removeItemFromArray) {
+  for (const i in array) {
+    const el = array[i];
+    if (checkIsItem(el)) {
+      return removeItemFromArray ? array.splice(i, 1)[0] : el;
+    }
+  }
+}
+
 export {
   api,
   capitalizeFirstLetter,
   isWindowWide,
   roundNumToNDecimalDigits,
-  guessUserTimezone
+  guessUserTimezone,
+  findItemInArray
 };

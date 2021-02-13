@@ -1,6 +1,6 @@
 import React from 'react';
 import getStyle from './style';
- import { keyTriggerCheckerFactory } from '../../../utilities';
+import { getClickableElAttrs } from '../../../utilities';
 import Tag from '../../../../../../../Tag';
 import { addPseudoPseudoClasses } from '../../../../../../../higherOrder';
 
@@ -19,7 +19,7 @@ function _ButtonTag_needsPseudo({
     theme += ' light';
   }
 
-  const handleClick = !disabled && clickHandlerProp;
+  const handleClick = !disabled ? clickHandlerProp : undefined;
 
   const style = getStyle(themeProp, pseudoState);
 
@@ -27,9 +27,7 @@ function _ButtonTag_needsPseudo({
     <Tag
       {...{ theme }}
       style={style.tag}
-      onClick={handleClick}
-      onKeyDown={keyTriggerCheckerFactory(handleClick)}
-      tabIndex={disabled ? -1 : 0}
+      {...getClickableElAttrs(handleClick, disabled)}
       {...pseudoHandlers}
     >
       {iconName && (

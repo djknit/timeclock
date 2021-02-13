@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { keyTriggerCheckerFactory } from '../utilities';
+import { getClickableElAttrs } from '../utilities';
 import ModalSectionTitle from '../ModalSectionTitle';
 import Segment from './Segment';
 import { addCollapsing, addPseudoPseudoClasses } from '../../../../../higherOrder';
@@ -28,7 +28,8 @@ class _JustAdded_needsCollapsingAndPseudo extends Component {
       disabled,
       sectionToggle,
       pseudoState,
-      pseudoHandlers
+      pseudoHandlers,
+      applySegmentUpdateToJustAdded
     } = this.props;
 
     if (!justAdded || justAdded.length === 0) {
@@ -49,8 +50,10 @@ class _JustAdded_needsCollapsingAndPseudo extends Component {
                 segment,
                 toggleDeleteSegmentModal,
                 disabled,
-                toggleEditSegmentModal
+                toggleEditSegmentModal,
+                applySegmentUpdateToJustAdded
               }}
+              disabled={disabled || !sectionToggle.isExpanded}
               key={segment._id}
             />
           ))}
@@ -58,9 +61,7 @@ class _JustAdded_needsCollapsingAndPseudo extends Component {
         <div
           style={style.togglerDiv}
           {...pseudoHandlers}
-          tabIndex={disabled ? -1 : 0}
-          onClick={sectionToggle.toggle}
-          onKeyDown={keyTriggerCheckerFactory(sectionToggle.toggle)}
+          {...getClickableElAttrs(sectionToggle.toggle, disabled)}
         >
           <p style={style.togglerP}>
             <span style={style.toggleOpenText}>Show Just Added </span>

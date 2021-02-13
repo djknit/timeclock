@@ -8,14 +8,15 @@ function Segment({
   segment,
   toggleDeleteSegmentModal,
   toggleEditSegmentModal,
-  disabled
+  disabled,
+  applySegmentUpdateToJustAdded
 }) {
 
   const style = getStyle();
 
   const _getCommonBtnProps = _toggleModal => ({
     disabled,
-    handleClick: () => _toggleModal(true, segment)
+    handleClick: () => _toggleModal(true, segment, applySegmentUpdateToJustAdded)
   });
 
   return (

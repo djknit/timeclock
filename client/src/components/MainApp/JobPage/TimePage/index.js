@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { modalManagement, guessUserTimezone } from './utilities';
+import { modalManagement } from './utilities';
 import PageTitle from '../../PageTitle';
 import GeneralEntryModal from './GeneralEntryModal';
 import DeleteSegmentModal from './DeleteSegmentModal';
 import EditSegmentModal from './EditSegmentModal';
+import RecentlyAddedModal from './RecentlyAddedModal';
 import General from './General';
 import Summary from './Summary';
 import Weeks from './Weeks';
@@ -14,9 +15,12 @@ const {
 } = modalManagement;
 
 const modalsInfo = [
-  createModalInfo('generalTimeEntry', GeneralEntryModal, false, undefined, 'setFocus'),
+  createModalInfo('generalTimeEntry', GeneralEntryModal, false),
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
-  createModalInfo('editSegment', EditSegmentModal, true, 'segmentToEdit')
+  createModalInfo(
+    'editSegment', EditSegmentModal, false, 'segmentToEdit', undefined, 'handleEditSegSuccess'
+  ),
+  createModalInfo('recentlyAdded', RecentlyAddedModal, false)
 ];
 
 class TimePage extends Component {
@@ -24,37 +28,55 @@ class TimePage extends Component {
     super(props);
     let state = {};
     addModalsStateAndMethods(this, state, modalsInfo);
-    this.setSegmentToDelete = this.setSegmentToDelete.bind(this);
+    this.stateSetterFactory = this.stateSetterFactory.bind(this);
+    this.setSegmentToDelete = this.stateSetterFactory('segmentToDelete').bind(this);
+    this.setSegmentToEdit = this.stateSetterFactory('segmentToEdit').bind(this);
     this.state = {
       ...state,
       segmentToDelete: undefined,
-      segmentToEdit: undefined
+      segmentToEdit: undefined,
+      handleEditSegSuccess: undefined
     };
   };
 
-  setSegmentToDelete(segmentToDelete) {
-    return new Promise(resolve => this.setState({ segmentToDelete }, resolve));
+  stateSetterFactory() {
+    return function (stateUpdates) {
+      return new Promise(resolve => this.setState(stateUpdates, resolve));
+    };
   };
-
+  
   componentWillUnmount() {
     reportModalsClosedFor(this);
   };
 
   render() {
-    const { setSegmentToDelete } = this;
-    const { job, parentPath, windowWidth } = this.props;
-    const { segmentToDelete, segmentToEdit } = this.state;
+    const { setSegmentToDelete, setSegmentToEdit } = this;
+    const { job, parentPath, windowWidth, areAnyModalsOpen } = this.props;
+    const {
+      segmentToDelete, segmentToEdit, handleEditSegSuccess, isEditSegmentModalActive, isDeleteSegmentModalActive
+    } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
 
     const toggleGeneralEntryModal = modalTogglers.generalTimeEntry;
     const toggleDeleteSegmentModal = modalTogglers.deleteSegment;
     const toggleEditSegmentModal = modalTogglers.editSegment;
-
+    const toggleRecentlyAddedModal = modalTogglers.recentlyAdded;
+    
+    const primaryModalAttrs = { // for the modals that can open other modals on top
+      toggleDeleteSegmentModal,
+      toggleEditSegmentModal,
+      disabled: isEditSegmentModalActive || isDeleteSegmentModalActive
+    };
     const variableModalAttrs = {
-      generalTimeEntry: { toggleDeleteSegmentModal, toggleEditSegmentModal, windowWidth },
+      generalTimeEntry: { ...primaryModalAttrs, windowWidth },
       deleteSegment: { segmentToDelete, setSegmentToDelete },
-      editSegment: { segmentToEdit }
+      editSegment: {
+        segmentToEdit,
+        setSegmentToEdit,
+        reportUpdate: handleEditSegSuccess
+      },
+      recentlyAdded: { ...primaryModalAttrs }
     };
 
     const crumbChain = [
@@ -66,22 +88,26 @@ class TimePage extends Component {
     ];
 
     const style = getStyle(windowWidth);
+
     return (
       <>
-        <PageTitle {...{ crumbChain }} />
+        <PageTitle {...{ crumbChain, areAnyModalsOpen }} />
         <div style={style.contentAreasRow}>
           <Summary
             style={style.summaryArea}
             timeData={job.time}
             {...{ windowWidth }}
+            disabled={areAnyModalsOpen}
           />
           <General
             style={style.generalEntryArea}
             {...{
               job,
               toggleGeneralEntryModal,
-              toggleDeleteSegmentModal
+              toggleDeleteSegmentModal,
+              toggleRecentlyAddedModal
             }}
+            disabled={areAnyModalsOpen}
           />
         </div>
         <Weeks />

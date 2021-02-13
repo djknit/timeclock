@@ -1,8 +1,13 @@
 function modalTogglerFactoryFactory(reportModalActivity) {
 
   return function (
-    modalIsOpenStatePropName, inputRef, otherStatePropToEditName, inputFocusMethodName
+    modalIsOpenStatePropName,
+    inputRef,
+    otherStatePropToEditName,
+    inputFocusMethodName,
+    thirdStatePropToEditName
   ) {
+
     const _focusInput = () => {
       if (!this.state[modalIsOpenStatePropName] || !inputRef) return;
       if (inputRef.current) {
@@ -14,10 +19,13 @@ function modalTogglerFactoryFactory(reportModalActivity) {
       }
     };
   
-    return (isOpenAfterToggle, otherPropToEditValue) => {
+    return (isOpenAfterToggle, otherPropVal, thirdPropVal) => {
       let stateUpdates = { [modalIsOpenStatePropName]: !!isOpenAfterToggle };
-      if (otherStatePropToEditName && otherPropToEditValue !== undefined) {
-        stateUpdates[otherStatePropToEditName] = otherPropToEditValue;
+      if (otherStatePropToEditName && otherPropVal !== undefined) {
+        stateUpdates[otherStatePropToEditName] = otherPropVal;
+      }
+      if (thirdStatePropToEditName && thirdPropVal !== undefined) {
+        stateUpdates[thirdStatePropToEditName] = thirdPropVal;
       }
       this.setState(
         stateUpdates,

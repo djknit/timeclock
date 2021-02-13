@@ -28,8 +28,7 @@ function create(newWeek, jobId, userId) {
       job: jobId,
       user: userId
     })
-    .then(resolve)
-    .catch(err => reject(determineCreateWeekError(err)));
+    .then(resolve);
   });
 }
 
@@ -58,8 +57,7 @@ function addSegmentToDay(segment, dayId, weekId, userId) {
       },
       { new: true }
     )
-    .then(resolve)
-    .catch(err => reject(determineAddSegmentToDayError(err)));
+    .then(resolve);
   });
 }
 
@@ -80,10 +78,22 @@ function removeSegment(segmentId, dayId, weekId, userId) {
       },
       { new: true }
     )
-    .then(resolve)
-    .catch(err => reject(determineAddSegmentToDayError(err)));
+    .then(resolve);
   });
 }
+
+// function updateSegment(segId, dayId, weekId, userId, newTimes) {
+//   return new Promise(resolve => {
+//     Week.findOneAndUpdate(
+//       {
+//         _id: weekId,
+//         user: userId,
+//         'days._id':
+//       }
+//     )
+//     .then(resolve);
+//   });
+// }
 
 function removeAllSegments(weekId, userId) {
   return new Promise((resolve, reject) => {
@@ -140,12 +150,4 @@ function deleteWeeks(weekIds, userId) {
     })
     .then(resolve);
   });
-}
-
-function determineCreateWeekError(err) {
-  return err;
-}
-
-function determineAddSegmentToDayError(err) {
-  return err; 
 }
