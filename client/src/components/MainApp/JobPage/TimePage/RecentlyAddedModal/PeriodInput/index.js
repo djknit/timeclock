@@ -1,7 +1,7 @@
 import React from 'react';
 import getStyle from './style';
 import {
-  getInputId, timePeriodOptions, getInputProblems, customPeriodUnitOptions
+  getInputId, timePeriodOptions, getInputProblems, customPeriodUnitOptions, getReverseProcessedInputValue
 } from '../utilities';
 import { BoxInputFrame } from '../../../../../formPieces';
 
@@ -12,22 +12,31 @@ function TimePeriodInput({
   isActive,
   formId,
   inputRef,
-  timePeriodChoice,
-  customPeriodNumber,
-  customPeriodUnit,
-  wasNumberInputTouched
+  ...inputValues
 }) {
 
+  const {
+    timePeriodChoice,
+    customPeriodNumber,
+    customPeriodUnit,
+    wasNumberInputTouched
+  } = inputValues;
   console.log(timePeriodChoice)
 
   const {
     problems, problemMessages
   } = getInputProblems({ timePeriodChoice, customPeriodNumber, wasNumberInputTouched });
 
-  const inputNamePrefix = 'recently-addeded-segments-modal-period-inputs';
+  const inputNamePrefix = 'time-period';
   const mainSelectInputId = getInputId(formId, 'selectedTimePeriod', inputNamePrefix);
   let numInputClassName = 'input no-spin';
   if (problems && problems.customPeriodNumber) numInputClassName += ' is-danger';
+
+  const _commonInputAttrs = _propName => ({
+    value: getReverseProcessedInputValue(_propName, inputValues),
+    onChange: changeHandlerFactory(_propName),
+    disabled: !isActive
+  });
 
   const style = getStyle();
 
@@ -41,9 +50,7 @@ function TimePeriodInput({
         <select
           id={mainSelectInputId}
           ref={inputRef}
-          value={timePeriodChoice}
-          onChange={changeHandlerFactory('timePeriodChoice')}
-          disabled={!isActive}
+          {..._commonInputAttrs('timePeriodChoice')}
           style={style.mainSelect}
         >
           {timePeriodOptions.map(option => (
@@ -63,6 +70,7 @@ function TimePeriodInput({
           <input
             className={numInputClassName}
             type="number"
+            {..._commonInputAttrs('customPeriodNumber')}
             value={customPeriodNumber || customPeriodNumber === 0 ? customPeriodNumber : ''}
             onChange={changeHandlerFactory('customPeriodNumber')}
             disabled={!isActive}
@@ -89,8 +97,10 @@ function TimePeriodInput({
           </div>
         </>
       )}
-      {helpText && (
-        <p className="help">{helpText}</p>
+      {problemMessages && problemMessages.length > 0 && (
+        <p className="help">
+          {problemMessages.join(' ')}
+        </p>
       )}
     </BoxInputFrame>
   );

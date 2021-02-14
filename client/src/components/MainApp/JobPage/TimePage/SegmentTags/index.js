@@ -1,7 +1,7 @@
 import React from 'react';
 import getStyle from './style';
-import { formatMyDate, formatSegmentTimes, formatDuration } from '../../utilities';
-import Tag, { TagGroup } from '../../../../../../Tag';
+import { formatMyDate, formatSegmentTimes, formatDuration } from '../utilities';
+import Tag, { TagGroup } from '../../../../Tag';
 import ButtonTag from './ButtonTag';
 
 function Segment({
@@ -9,14 +9,14 @@ function Segment({
   toggleDeleteSegmentModal,
   toggleEditSegmentModal,
   disabled,
-  applySegmentUpdateToJustAdded
+  handleSegUpdateSuccess
 }) {
 
   const style = getStyle();
 
   const _getCommonBtnProps = _toggleModal => ({
     disabled,
-    handleClick: () => _toggleModal(true, segment, applySegmentUpdateToJustAdded)
+    handleClick: () => _toggleModal(true, segment, handleSegUpdateSuccess)
   });
 
   return (

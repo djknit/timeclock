@@ -1,8 +1,8 @@
 import React from 'react';
 import getStyle from './style';
-import { getClickableElAttrs } from '../../../utilities';
-import Tag from '../../../../../../../Tag';
-import { addPseudoPseudoClasses } from '../../../../../../../higherOrder';
+import { getClickableElAttrs } from '../../utilities';
+import Tag from '../../../../../Tag';
+import { addPseudoPseudoClasses } from '../../../../../higherOrder';
 
 function _ButtonTag_needsPseudo({
   theme: themeProp,

@@ -1,23 +1,25 @@
-import { constants } from '../../utilities';
 export * from '../../utilities';
 export * from './inputs';
 
-const { secsPerMin } = constants;
-
-function findRecentlyAddedSegs(weeks, periodDurationInMins) {
-  if (!weeks || !periodDurationInMins) return;
-  const periodDurInMsec = periodDurationInMins * secsPerMin * 1000;
-  const cutoffTime = Date.now() - periodDurInMsec;
+function findRecentlyAddedSegs(weeks, periodDurationInMsec) {
+  if (!weeks || !periodDurationInMsec) return;
+  const cutoffTime = Date.now() - periodDurationInMsec;
   let recentlyAdded = [];
   weeks.forEach(_findSegsInWeek);
 
   return recentlyAdded;
 
   function _findSegsInWeek(_week) {
-    _week.days.forEach(_findSegsInDay);
+    _week.days.forEach(_day => _findSegsInDay(_day, _week.id));
   }
-  function _findSegsInDay(_day) {
-    recentlyAdded.push(..._day.segments.filter(_isRecentlyAdded));
+  function _findSegsInDay(_day, _weekId) {
+    let _segs = _day.segments.filter(_isRecentlyAdded);
+    for (const _seg of _segs) {
+      _seg.date = { ..._day.date };
+      _seg.dayId = _day._id;
+      _seg.weekId = _weekId;
+    }
+    recentlyAdded.push(..._segs);
   }
   function _isRecentlyAdded(_segment) {
     return _segment.created.time.utcTime >= cutoffTime;
