@@ -1,17 +1,13 @@
 import React, { Component } from 'react';
 import getStyle from './style';
+import { currentJobService } from '../../../../../data';
 import {
-  formatMyDate,
-  formatSegmentTimes,
-  formatDuration,
   findRecentlyAddedSegs,
-  getInputProblems,
   extractInputValues,
   processInputChange,
   getPeriodDurationInMsec,
   getTimePeriodInputsStartingValue
 } from './utilities';
-// import { SelectInput } from '../../../../formPieces';
 import Button from '../../../../Button';
 import Notification from '../../../../Notification';
 import ModalSkeleton from '../../../../ModalSkeleton';
@@ -35,11 +31,11 @@ class RecentlyAddedModal extends Component {
     super(props);
     this.inputChangeHandlerFactory = this.inputChangeHandlerFactory.bind(this);
     this.reset = this.reset.bind(this);
+    this.refreshTimeData = this.refreshTimeData.bind(this);
     const _state = getStartingState();
-    const { job } = this.props;
     this.state = {
       ..._state,
-      recentlyAddedSegments: findRecentlyAddedSegs(job && job.time.weeks, _state.periodDurationInMsec)
+      recentlyAddedSegments: findRecentlyAddedSegs(this.props.job.time.weeks, _state.periodDurationInMsec)
     };
   };
 
@@ -54,6 +50,23 @@ class RecentlyAddedModal extends Component {
 
   reset() {
     this.setState(getStartingState());
+  };
+
+  refreshTimeData() {
+    const job = currentJobService.getValue();
+    this.setState({
+      recentlyAddedSegments: findRecentlyAddedSegs(
+        job.time.weeks, this.state.periodDurationInMsec
+      )
+    });
+  };
+
+  componentDidMount() {
+    currentJobService.subscribe(this.refreshTimeData);
+  };
+
+  componentWillUnmount() {
+    currentJobService.unsub(this.refreshTimeData);
   };
 
   render() {
@@ -96,7 +109,7 @@ class RecentlyAddedModal extends Component {
           <Notification
             theme="info"
             messages={[
-              'The most recently added time segments are listed below beginning with the most recent.',
+              'The most recently added time segments are listed below beginning with the most recently added.',
               'Use the controls below to adjust how far back in time to look.'
             ]}
             close={closeMessage}

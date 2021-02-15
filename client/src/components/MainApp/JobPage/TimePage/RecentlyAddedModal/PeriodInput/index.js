@@ -1,7 +1,11 @@
 import React from 'react';
 import getStyle from './style';
 import {
-  getInputId, timePeriodOptions, getInputProblems, customPeriodUnitOptions, getReverseProcessedInputValue
+  getInputId,
+  timePeriodOptions,
+  getInputProblems,
+  customPeriodUnitOptions,
+  getReverseProcessedInputValue
 } from '../utilities';
 import { BoxInputFrame } from '../../../../../formPieces';
 

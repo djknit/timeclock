@@ -1,3 +1,8 @@
+  // *****************************************************
+// THIS FILE NOT IN USE * * * *
+  // *****************************************************
+
+
 function modalTogglerFactoryFactory() {
   return function (
     modalIsOpenStatePropName, inputRef, otherStatePropToEditName, inputFocusMethodName

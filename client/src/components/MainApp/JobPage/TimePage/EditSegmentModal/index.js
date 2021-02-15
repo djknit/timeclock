@@ -44,8 +44,9 @@ class EditSegmentModal extends Component {
     let { weeks, updatedSegment, updatedSegments } = response.data;
     if (!updatedSegments) updatedSegments = [updatedSegment];
     this.setState({ updatedSegments });
-    this.props.reportUpdate(updatedSegments);
-    return this.props.setSegmentToEdit(null)
+    const { reportUpdate, setSegmentToEdit } = this.props;
+    if (reportUpdate) reportUpdate(updatedSegments);
+    return setSegmentToEdit(null)
     .then(() => currentJobTimeService.setValue(weeks));
   };
 

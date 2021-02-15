@@ -1,3 +1,7 @@
+  // *****************************************************
+// THIS FILE NOT IN USE * * * *
+  // *****************************************************
+
 import { areModalsOpenService } from '../../data';
 
 function addReportModalActivity(component, state, isActiveStatePropNames) {
