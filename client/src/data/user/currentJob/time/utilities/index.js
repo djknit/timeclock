@@ -16,24 +16,8 @@ function cloneMyDate({ day, month, year }) {
   return { day, month, year };
 }
 
-function getTimeInfoFromUtcTime(utcTime, timezone) {
-  const timeMoment = moment.tz(utcTime, timezone);
-  return {
-    time: {
-      hour: timeMoment.hour(),
-      minute: timeMoment.minute(),
-      second: timeMoment.second(),
-      is24hr: true
-    },
-    date: convertMomentToMyDate(timeMoment),
-    timezone,
-    utcTime
-  };
-}
-
 export {
   getDateFromUtcDateTime,
   cloneMyDate,
-  getTimeInfoFromUtcTime,
   isDateInRange
 };

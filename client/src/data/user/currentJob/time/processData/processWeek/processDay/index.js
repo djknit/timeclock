@@ -7,7 +7,7 @@ import {
   processWage,
   getTimestampFromDateAndTime,
   getTimeInfoFromUtcTime
-} from '../../../utilities';
+} from '../../utilities';
 import processSegments from './processSegments';
 
 const { getPrecedingDate, getNextDate } = dateUtils;
@@ -16,8 +16,6 @@ export default function processDay(
   { date, startCutoff, endCutoff, startTimezone, timezone, wage, _id, segments },
   sessionTimezone
 ) {
-  // const startTime = getDayBoundary(date, startCutoff, startTimezone);
-  // const endTime = getDayBoundary(getNextDate(date), endCutoff, timezone);
 
   return {
     _id: _id.toString(),

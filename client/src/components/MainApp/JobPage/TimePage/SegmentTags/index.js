@@ -1,7 +1,7 @@
 import React from 'react';
 import getStyle from './style';
-import { formatMyDate, formatSegmentTimes, formatDuration } from '../../utilities';
-import Tag, { TagGroup } from '../../../../../../Tag';
+import { formatMyDate, formatSegmentTimes, formatDuration } from '../utilities';
+import Tag, { TagGroup } from '../../../../Tag';
 import ButtonTag from './ButtonTag';
 
 function Segment({
@@ -9,18 +9,27 @@ function Segment({
   toggleDeleteSegmentModal,
   toggleEditSegmentModal,
   disabled,
-  applySegmentUpdateToJustAdded
+  handleSegUpdateSuccess,
+  groupMargin,
+  tagMargin
 }) {
 
   const style = getStyle();
 
   const _getCommonBtnProps = _toggleModal => ({
     disabled,
-    handleClick: () => _toggleModal(true, segment, applySegmentUpdateToJustAdded)
+    handleClick: () => _toggleModal(true, segment, handleSegUpdateSuccess)
   });
 
   return (
-    <TagGroup size="medium" align="center">
+    <TagGroup
+      size="medium"
+      align="center"
+      {...{
+        groupMargin,
+        tagMargin
+      }}
+    >
       <Tag theme="info light">
         {formatMyDate(segment.date)}
       </Tag>

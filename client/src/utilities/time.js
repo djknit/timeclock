@@ -1,4 +1,7 @@
 import moment from 'moment-timezone';
+import { dates as dateUtils } from './dates';
+
+const { convertMomentToMyDate } = dateUtils;
 
 function convertAmPmTimeTo24hr(timeToConvert) {
   // Note: now keeping `amPm` value when time is changed to 24hr so it can be used when switching back to AM/PM if amPm value is not determined by 24hr hour input value
@@ -44,8 +47,24 @@ function getTimestampFromDateAndTime(date, time, timezone) {
   return moment.tz(dateTimeInfo, timezone).valueOf();
 }
 
+function getTimeInfoFromUtcTime(utcTime, timezone) {
+  const timeMoment = moment.tz(utcTime, timezone);
+  return {
+    time: {
+      hour: timeMoment.hour(),
+      minute: timeMoment.minute(),
+      second: timeMoment.second(),
+      is24hr: true
+    },
+    date: convertMomentToMyDate(timeMoment),
+    timezone,
+    utcTime
+  };
+}
+
 export {
   getTimestampFromDateAndTime,
   convertAmPmTimeTo24hr,
-  convert24hrTimeToAmPm
+  convert24hrTimeToAmPm,
+  getTimeInfoFromUtcTime
 };

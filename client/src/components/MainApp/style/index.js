@@ -2,6 +2,7 @@ import {
   headingFontFam, sectionHeadingFontFam, shadow, mainBackgroundColor, secondaryBackgroundColor, footerHeight
 } from '../../../AppStyle';
 import { mainAreaPadding } from './mainArea';
+export * from '../../../AppStyle';
 export * from './contentAreas';
 export * from './contentButton';
 export * from './infoItemArea';

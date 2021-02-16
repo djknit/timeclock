@@ -1,5 +1,3 @@
-import modalTogglerFactoryFactory from './modalTogglerFactoryFactory';
-import addReportModalActivity from './addReportModalActivity';
 export * from '../../utilities';
 export * from './currency';
 export * from './forms';
@@ -52,7 +50,5 @@ export {
   getColorClass,
   getSizeClass,
   keyTriggerCheckerFactory,
-  modalTogglerFactoryFactory,
-  addReportModalActivity,
   getClickableElAttrs
 };

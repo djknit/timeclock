@@ -30,6 +30,7 @@ function getOrphanedSegments(day, segModificationMethodName) {
       _markSegModified();
       orphanedSegments.push({
         ...segment._doc,
+        _id: undefined,
         endTime: dayStartTime
       });
       segment.startTime = dayStartTime;
@@ -38,6 +39,7 @@ function getOrphanedSegments(day, segModificationMethodName) {
       _markSegModified();
       orphanedSegments.push({
         ...segment._doc,
+        _id: undefined,
         startTime: dayEndTime
       });
       segment.endTime = dayEndTime;

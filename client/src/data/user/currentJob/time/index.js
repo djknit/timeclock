@@ -41,7 +41,7 @@ let timeService = dataServiceFactory({
       state.sessionTimezone = newTimezone;
     }
   }
-}); 
+});
 
 settingsService.subscribe(() => {
   state.settings = settingsService._getRawSchedules();
@@ -57,6 +57,10 @@ timeService.getInfoForDateRange = function(firstDate, lastDate) {
 timeService._setJobSetTime = function (weeksArray) {
   setWeeks(weeksArray);
   state.sessionTimezone = guessUserTimezone();
+};
+
+timeService.getSessionTimezone = function() {
+  return state.sessionTimezone || guessUserTimezone();
 };
 
 export default timeService;

@@ -1,7 +1,7 @@
 import {
   getTimeInfoFromUtcTime,
   getDurationInfo
-} from '../../../utilities';
+} from '../../utilities';
 
 export default function processSegments(segments, timezone) {
 
@@ -12,7 +12,7 @@ export default function processSegments(segments, timezone) {
       endTime: getTimeInfoFromUtcTime(endTime, timezone),
       duration: getDurationInfo(endTime - startTime),
       created: {
-        time: created.time && getTimeInfoFromUtcTime(created.time),
+        time: created.time && getTimeInfoFromUtcTime(created.time, timezone),
         method: created.method
       },
       modified: modified && modified.map(

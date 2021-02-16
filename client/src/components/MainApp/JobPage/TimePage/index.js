@@ -16,11 +16,11 @@ const {
 
 const modalsInfo = [
   createModalInfo('generalTimeEntry', GeneralEntryModal, false),
+  createModalInfo('recentlyAdded', RecentlyAddedModal, false),
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
   createModalInfo(
     'editSegment', EditSegmentModal, false, 'segmentToEdit', undefined, 'handleEditSegSuccess'
-  ),
-  createModalInfo('recentlyAdded', RecentlyAddedModal, false)
+  )
 ];
 
 class TimePage extends Component {
@@ -39,9 +39,11 @@ class TimePage extends Component {
     };
   };
 
-  stateSetterFactory() {
-    return function (stateUpdates) {
-      return new Promise(resolve => this.setState(stateUpdates, resolve));
+  stateSetterFactory(propName) {
+    return function (newValue) {
+      return new Promise(resolve => {
+        this.setState({ [propName]: newValue }, resolve)
+      });
     };
   };
   

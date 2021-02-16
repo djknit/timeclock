@@ -55,6 +55,10 @@ function shadow(blur, offsetDirection, color, isInset) {
   return { boxShadow: `${_inset} ${xOffset} ${yOffset} ${_blur} ${color || '#202020'}` };
 };
 
+function processsLength(rawLength) {
+  return typeof(rawLength) === 'number' ? `${rawLength}px` : rawLength;
+}
+
 export default function getStyle() {
   return {
     wholeApp: {
@@ -81,5 +85,6 @@ export {
   dynamicBgColors,
   dangerBgColors,
   shadow,
-  isWindowWide
+  isWindowWide,
+  processsLength
 };

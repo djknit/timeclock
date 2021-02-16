@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import { getClickableElAttrs } from '../utilities';
 import ModalSectionTitle from '../ModalSectionTitle';
-import Segment from './Segment';
+import Segment from '../../SegmentTags';
 import { addCollapsing, addPseudoPseudoClasses } from '../../../../../higherOrder';
 
 class _JustAdded_needsCollapsingAndPseudo extends Component {
@@ -49,12 +49,11 @@ class _JustAdded_needsCollapsingAndPseudo extends Component {
               {...{
                 segment,
                 toggleDeleteSegmentModal,
-                disabled,
-                toggleEditSegmentModal,
-                applySegmentUpdateToJustAdded
+                toggleEditSegmentModal
               }}
               disabled={disabled || !sectionToggle.isExpanded}
               key={segment._id}
+              handleSegUpdateSuccess={applySegmentUpdateToJustAdded}
             />
           ))}
         </div>

@@ -126,8 +126,6 @@ class _Navbar_needsDataAndPseudo extends Component {
       brandItemInnerHeight, isLoading, hasProblem, isMenuActive, isJobsDropdownActive, isCurrentJobDropdownActive
     } = this.state;
 
-    // console.log('are any modals open?\n', areAnyModalsOpen)
-
     const isActiveClass = isMenuActive ? ' is-active' : '';
 
     const toggleMenu = () => this.setState({ isMenuActive: !isMenuActive });

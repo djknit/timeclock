@@ -1,8 +1,8 @@
 import React from 'react';
 import getStyle from './style';
-import { getClickableElAttrs } from '../../../utilities';
-import Tag from '../../../../../../../Tag';
-import { addPseudoPseudoClasses } from '../../../../../../../higherOrder';
+import { getClickableElAttrs } from '../../utilities';
+import Tag from '../../../../../Tag';
+import { addPseudoPseudoClasses } from '../../../../../higherOrder';
 
 function _ButtonTag_needsPseudo({
   theme: themeProp,
@@ -11,7 +11,8 @@ function _ButtonTag_needsPseudo({
   disabled,
   children,
   pseudoState,
-  pseudoHandlers
+  pseudoHandlers,
+  style: styleProp
 }) {
 
   let theme = themeProp;
@@ -26,7 +27,7 @@ function _ButtonTag_needsPseudo({
   return (
     <Tag
       {...{ theme }}
-      style={style.tag}
+      style={{ ...style.tag, ...styleProp }}
       {...getClickableElAttrs(handleClick, disabled)}
       {...pseudoHandlers}
     >
