@@ -1,3 +1,5 @@
+const dividerMargin = '10px';
+
 export default function getStyle() {
 
   return {
@@ -5,7 +7,9 @@ export default function getStyle() {
       textAlign: 'left'
     },
     divider: {
-      margin: '10px 0'
+      margin: `${dividerMargin} 0`
     }
   };
 };
+
+export { dividerMargin };

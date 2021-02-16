@@ -1,4 +1,4 @@
-import { dashContentBtnSpecs, getContentAreaCornerButtonStyles } from '../style';
+import { dashContentBtnSpecs, getContentAreaCornerButtonStyles, shadow } from '../style';
 
 export default function getStyle(additionalStyle) {
   const addJobBtnWidthPerHeight = 3.1426; // Measured. Depends on text and needs changed manually if text changes.
@@ -23,14 +23,17 @@ export default function getStyle(additionalStyle) {
         cursor: 'pointer'
       },
       hover: {
-        backgroundColor: '#dddddd'
+        backgroundColor: '#dddddd',
+        ...shadow(3)
       },
       active: {
-        backgroundColor: '#f5f5f5'
+        backgroundColor: '#f5f5f5',
+        ...shadow(4, undefined, undefined, true)
       },
       focus: {
         backgroundColor: '#d9d9d9',
-        outline: 'none'
+        outline: 'none',
+        ...shadow(3)
       }
     },
     addJobButton: {

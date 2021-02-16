@@ -9,7 +9,9 @@ function Segment({
   toggleDeleteSegmentModal,
   toggleEditSegmentModal,
   disabled,
-  handleSegUpdateSuccess
+  handleSegUpdateSuccess,
+  groupMargin,
+  tagMargin
 }) {
 
   const style = getStyle();
@@ -20,7 +22,14 @@ function Segment({
   });
 
   return (
-    <TagGroup size="medium" align="center">
+    <TagGroup
+      size="medium"
+      align="center"
+      {...{
+        groupMargin,
+        tagMargin
+      }}
+    >
       <Tag theme="info light">
         {formatMyDate(segment.date)}
       </Tag>

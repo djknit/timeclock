@@ -44,7 +44,7 @@ class RecentlyAddedModal extends Component {
       let stateUpdates = processInputChange(propName, target.value);
       const periodDurationInMsec = getPeriodDurationInMsec({ ...this.state, ... stateUpdates });
       stateUpdates.recentlyAddedSegments = findRecentlyAddedSegs(this.props.job.time.weeks, periodDurationInMsec);
-      this.setState({ ...stateUpdates, periodDurationInMsec }, () => console.log(this.state));
+      this.setState({ ...stateUpdates, periodDurationInMsec });
     };
   };
 

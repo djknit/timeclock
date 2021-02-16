@@ -5,31 +5,35 @@ function TagGroup({
   children,
   align,
   isInline,
-  size
+  size,
+  groupMargin,
+  tagMargin
 }) {
 
   let className = 'tags has-addons';
-
   let hasAlign;
   if (align === 'center') {
     hasAlign = true;
     className += ' has-text-centered';
   }
-
   if (size) {
     className += ` are-${size}`;
   }
 
-  const style = getStyle(hasAlign, isInline);
+  const style = getStyle(hasAlign, isInline, groupMargin, tagMargin);
 
   return (
-    <div
-      {...{
-        style,
-        className,
-        children
-      }}
-    />
+    <div {...{ className }} style={style.tagGroup}>
+      {children.map((child, index) => (
+        React.cloneElement(
+          child,
+          {
+            style: style.tag,
+            key: child.key || index
+          }
+        )
+      ))}
+    </div>
   );
 }
 

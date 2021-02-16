@@ -25,7 +25,6 @@ function TimePeriodInput({
     customPeriodUnit,
     wasNumberInputTouched
   } = inputValues;
-  console.log(timePeriodChoice)
 
   const {
     problems, problemMessages
@@ -102,7 +101,7 @@ function TimePeriodInput({
         </>
       )}
       {problemMessages && problemMessages.length > 0 && (
-        <p className="help">
+        <p className="help is-danger">
           {problemMessages.join(' ')}
         </p>
       )}

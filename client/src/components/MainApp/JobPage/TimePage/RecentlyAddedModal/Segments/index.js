@@ -1,6 +1,11 @@
 import React from 'react';
-import getStyle from './style';
-import { separateSegsByDateCreated, formatMyDate, dates as dateUtils } from '../utilities';
+import getStyle, { dividerMargin, getSegmentsAddedOnDayStyle } from './style';
+import {
+  separateSegsByDateCreated,
+  dates as dateUtils,
+  getDateAddedOnText,
+  capitalizeFirstLetter
+} from '../utilities';
 import Segment from '../../SegmentTags';
 
 const { getUtcDateTime } = dateUtils;
@@ -15,8 +20,6 @@ function Segments({
 
   const segsGroupedByCreatedDate = separateSegsByDateCreated(segments);
 
-  console.log(segsGroupedByCreatedDate)
-
   const commonSegProps = {
     toggleDeleteSegmentModal,
     toggleEditSegmentModal,
@@ -24,7 +27,7 @@ function Segments({
     handleSegUpdateSuccess
   };
 
-  const style = getStyle();
+  const style = getStyle(!!segments);
   
   return (
     (segments && segments.length > 0) ? (
@@ -35,7 +38,7 @@ function Segments({
             segmentProps={commonSegProps}
           />
           {index < segsGroupedByCreatedDate.length - 1 && (
-            <hr />
+            <hr style={style.divider} />
           )}
         </React.Fragment>
       ))
@@ -59,14 +62,21 @@ function SegmentsAddedOnDay({
   segments,
   segmentProps
 }) {
+
+  const style = getSegmentsAddedOnDayStyle();
+
   return (
     <>
-      {segments.map(segment =>
+      <p style={style.areaLabel}>
+        Added {capitalizeFirstLetter(getDateAddedOnText(date, true))}:
+      </p>
+      {segments.map((segment, index) =>
         <Segment
           {...{ segment }}
           {...segmentProps}
           key={segment._id}
-        />  
+          groupMargin={index < segments.length - 1 ? dividerMargin : 0}
+        />
       )}
     </>
   );

@@ -1,6 +1,7 @@
 import { dates as dateUtils } from '../../utilities';
 export * from '../../utilities';
 export * from './inputs';
+export * from './display';
 
 const { areDatesEquivalent } = dateUtils;
 
