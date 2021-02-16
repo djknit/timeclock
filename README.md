@@ -82,11 +82,11 @@ This plan is not complete. Future steps will be expanded on in the plan before t
         * [x] General time entry
           * [x] Time segment general entry
           * [x] Track and display segments just added
-        * [ ] Consider recently added segments similarly to just added from general entry?
+        * [x] Create recently added segments similarly to just added from general entry
+        * [ ] _Session timezone info and management_
       * [x] Allow delete time segment
-      * [ ] _Allow edit time segment_
+      * [x] Allow edit time segment
       * [ ] Time details by weeks/days and corresponding time entry
-      * [ ] Management for session timezone
       * [ ] Full report of time data
         * [ ] All time
         * [ ] Arbitrary (user defined) time period

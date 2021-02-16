@@ -6,10 +6,11 @@ import GeneralEntryModal from './GeneralEntryModal';
 import DeleteSegmentModal from './DeleteSegmentModal';
 import EditSegmentModal from './EditSegmentModal';
 import RecentlyAddedModal from './RecentlyAddedModal';
+import SessionTimezoneModal from './SessionTimezoneModal';
 import General from './General';
 import Summary from './Summary';
 import Weeks from './Weeks';
-
+ 
 const {
   addModalsStateAndMethods, reportModalsClosedFor, extractModalsResources, createModalInfo
 } = modalManagement;
@@ -20,7 +21,8 @@ const modalsInfo = [
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
   createModalInfo(
     'editSegment', EditSegmentModal, false, 'segmentToEdit', undefined, 'handleEditSegSuccess'
-  )
+  ),
+  createModalInfo('sessionTimezone', SessionTimezoneModal, false)
 ];
 
 class TimePage extends Component {
@@ -64,6 +66,7 @@ class TimePage extends Component {
     const toggleDeleteSegmentModal = modalTogglers.deleteSegment;
     const toggleEditSegmentModal = modalTogglers.editSegment;
     const toggleRecentlyAddedModal = modalTogglers.recentlyAdded;
+    const toggleSessionTimezoneModal = modalTogglers.sessionTimezone;
     
     const primaryModalAttrs = { // for the modals that can open other modals on top
       toggleDeleteSegmentModal,
@@ -107,7 +110,8 @@ class TimePage extends Component {
               job,
               toggleGeneralEntryModal,
               toggleDeleteSegmentModal,
-              toggleRecentlyAddedModal
+              toggleRecentlyAddedModal,
+              toggleSessionTimezoneModal
             }}
             disabled={areAnyModalsOpen}
           />

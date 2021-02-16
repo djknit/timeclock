@@ -6,7 +6,7 @@ import {
 import { getJobEarnings } from './earnings';
 import { getInfoForCurrentTimePeriods } from './currentTimePeriods';
 
-function processTimeData(rawWeeks, jobSettings, sessionTimezone) {
+function processTimeData(rawWeeks, jobSettings, sessionTimezone, wasSessionTimezoneGuessed) {
   if (!rawWeeks || !jobSettings) return;
   const processedWeeks = rawWeeks.map(wk => processWeek(wk, sessionTimezone));
   const { totalTime, daysWorked } = getTotalTimeAndDaysWorked(processedWeeks);
@@ -24,7 +24,8 @@ function processTimeData(rawWeeks, jobSettings, sessionTimezone) {
     currentWeek,
     precedingWeek,
     ...getPaidAndUnpaidTotalTime(earnings, totalTime),
-    sessionTimezone
+    sessionTimezone,
+    wasSessionTimezoneGuessed
   };
 }
 

@@ -2,8 +2,7 @@ import { currentJobTimeService } from '../../../../../../data';
 import {
   getTimeInfoFromUtcTime,
   dates as dateUtils,
-  formatMyDate,
-  capitalizeFirstLetter
+  formatMyDate
 } from '../../utilities';
 
 const { areDatesEquivalent, getPrecedingDate } = dateUtils;
