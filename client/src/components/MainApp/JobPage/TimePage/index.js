@@ -10,7 +10,7 @@ import SessionTimezoneModal from './SessionTimezoneModal';
 import General from './General';
 import Summary from './Summary';
 import Weeks from './Weeks';
- 
+
 const {
   addModalsStateAndMethods, reportModalsClosedFor, extractModalsResources, createModalInfo
 } = modalManagement;
