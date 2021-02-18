@@ -20,25 +20,43 @@ export default function processDay(
   return {
     _id: _id.toString(),
     date: cloneMyDate(date),
-    startTime: getDayBoundary(date, startCutoff, startTimezone, sessionTimezone),
-    endTime: getDayBoundary(getNextDate(date), endCutoff, timezone, sessionTimezone),
+    startTime: getDayBoundary(
+      date, startCutoff, startTimezone, getOutputTzs(sessionTimezone, timezone, startTimezone)
+    ),
+    endTime: getDayBoundary(
+      getNextDate(date), endCutoff, timezone, getOutputTzs(sessionTimezone, timezone)
+    ),
     settings: {
       dayCutoff: convertDayCutoffToMinutes(endCutoff),
       timezone,
       wage: processWage(wage)
     },
-    segments: processSegments(segments, sessionTimezone),
+    segments: processSegments(segments, getOutputTzs(sessionTimezone, timezone)),
     totalTime: getTotalSegmentsDurationInfo(segments)
   };
 };
 
+function getOutputTzs(sessionTimezone, jobScheduledTimezone, otherJobSchedTimezone) {
+  let primary, alt = {};
+  if (sessionTimezone) {
+    primary = sessionTimezone;
+    alt.job = jobScheduledTimezone;
+  }
+  else {
+    primary = jobScheduledTimezone;
+  }
+  if (otherJobSchedTimezone) {
+    alt.governing = otherJobSchedTimezone;
+  }
+  return { primary, alt };
+}
 
-function getDayBoundary(date, rawCutoffValue, timezone, sessionTimezone) {
+function getDayBoundary(date, rawCutoffValue, timezone, outputTimezones) {
   const cutoff = convertDayCutoffToMinutes(rawCutoffValue);
   const dayBoundaryTime = getDayCutoffTime(cutoff);
   const dayBoundaryDate = (cutoff >= 0) ? date : getPrecedingDate(date);
   const boundaryUtcTime = getTimestampFromDateAndTime(dayBoundaryDate, dayBoundaryTime, timezone);
-  return getTimeInfoFromUtcTime(boundaryUtcTime, sessionTimezone);
+  return getTimeInfoFromUtcTime(boundaryUtcTime, outputTimezones.primary, outputTimezones.alt);
 }
 
 function getTotalSegmentsDurationInfo(segments) {

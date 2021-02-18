@@ -31,7 +31,7 @@ function GeneralArea({
               onClick={() => toggleSessionTimezoneModal(true)}
               allowTabFocus={!disabled}
             >
-              <i className="fas fa-info-circle" /><i className="fas fa-pencil-alt" /> About / Change
+              <i className="fas fa-info-circle" /><i className="fas fa-pencil-alt" /> About/Change
             </Button>
           </div>
         </div>

@@ -47,9 +47,9 @@ function getTimestampFromDateAndTime(date, time, timezone) {
   return moment.tz(dateTimeInfo, timezone).valueOf();
 }
 
-function getTimeInfoFromUtcTime(utcTime, timezone) {
-  const timeMoment = moment.tz(utcTime, timezone);
-  return {
+function getTimeInfoFromUtcTime(utcTime, primaryTimezone, altTimezones = {}) {
+  const timeMoment = moment.tz(utcTime, primaryTimezone);
+  let timeInfo = {
     time: {
       hour: timeMoment.hour(),
       minute: timeMoment.minute(),
@@ -57,9 +57,14 @@ function getTimeInfoFromUtcTime(utcTime, timezone) {
       is24hr: true
     },
     date: convertMomentToMyDate(timeMoment),
-    timezone,
+    timezone: primaryTimezone,
     utcTime
   };
+  for (const tzRoleName in altTimezones) {
+    if (!timeInfo.altTimezones) timeInfo.altTimezones = {};
+    timeInfo.altTimezones[tzRoleName] = getTimeInfoFromUtcTime(utcTime, altTimezones[tzRoleName]);
+  }
+  return timeInfo;
 }
 
 export {

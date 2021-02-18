@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import getStyle from './style';
+import { currentJobTimeService } from '../../../../../data';
 import {
   getTimezoneFullName, getTimezoneOptions, bindFormMethods
 } from '../utilities';
-import ModalSkeleton from '../../../../ModalSkeleton';
 import FormModal from '../../../../FormModal';
 import Notification from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
@@ -15,17 +15,36 @@ class SessionTimezoneModal extends Component {
   constructor(props) {
     super(props);
     bindFormMethods(this);
-    this.state = {};
+    this.inputRef = React.createRef();
+    this.state = this.getStartingState();
+  };
+
+  getUniqueStartingState() {
+    return {
+      timezoneInputValue: this.props.job.time.sessionTimezone,
+      hasSessionTimezone: true,
+      showGuessMessage: true
+    };
+  };
+
+  processAndSubmitData() {
+    const { timezoneInputValue, hasSessionTimezone } = this.state;
+    currentJobTimeService.setSessionTimezone(
+      hasSessionTimezone ? timezoneInputValue : null
+    );
   };
 
   render() {
+    const { changeHandlerFactory, inputRef } = this;
     const {
       closeModal,
       isActive,
       job
     } = this.props;
+    const { timezoneInputValue, isLoading, hasSuccess, showGuessMessage } = this.state;
 
     const { sessionTimezone, wasSessionTimezoneGuessed } = job.time;
+
 
     if (!isActive) {
       return <></>;
@@ -48,14 +67,17 @@ class SessionTimezoneModal extends Component {
         successRedirectMessageFragment="This dialog box will close"
         title="Session Timezone Management"
         messagesAreaStyle={style.messagesArea}
-        messagesAreaContent={wasSessionTimezoneGuessed && (
+        messagesAreaContent={
           <>
-            <Notification
-              theme="info light"
-              messages={[
-                'The current session timezone value was set by guessing the timezone where you are currently accessing the internet from.'
-              ]}
-            />
+            {wasSessionTimezoneGuessed && showGuessMessage && (
+              <Notification
+                theme="info light"
+                messages={[
+                  'The current session timezone was automatically set by guessing your timezone using your browser information.'
+                ]}
+                close={() => this.setState({ showGuessMessage: false })}
+              />
+            )}
             <TagGroup size="medium" align="center">
               <Tag theme="info">
                 Current Session Timezone:
@@ -65,7 +87,7 @@ class SessionTimezoneModal extends Component {
               </Tag>
             </TagGroup>
           </>
-        )}
+        }
         {...{
           isActive,
           closeModal,
@@ -74,11 +96,19 @@ class SessionTimezoneModal extends Component {
         title="Session Timezone"
         isFormIncomplete={false}
       >
-        {/* <SelectInput
-          options={[]}
-
-        /> */}
-        stuff and things and so on and so on
+        <SelectInput
+          options={getTimezoneOptions()}
+          propName="timezoneInputValue"
+          value={timezoneInputValue}
+          isActive={!isLoading && !hasSuccess}
+          {...{
+            changeHandlerFactory,
+            formId,
+            inputRef
+          }}
+          label="New Timezone:"
+          isInline
+        />
       </FormModal>
     );
   };

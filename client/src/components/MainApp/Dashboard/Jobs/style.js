@@ -7,6 +7,11 @@ export default function getStyle(additionalStyle) {
     dashContentBtnSpecs, addJobBtnWidthPerHeight, 12, 12
   );
 
+  const selectedTrStyle = {
+    ...shadow(3),
+    zIndex: 5
+  };
+
   return {
     contentArea: {
       position: 'relative',
@@ -24,16 +29,17 @@ export default function getStyle(additionalStyle) {
       },
       hover: {
         backgroundColor: '#dddddd',
-        ...shadow(3)
+        ...selectedTrStyle
       },
       active: {
         backgroundColor: '#f5f5f5',
-        ...shadow(4, undefined, undefined, true)
+        ...shadow(4, undefined, undefined, true),
+        zIndex: 'auto'
       },
       focus: {
         backgroundColor: '#d9d9d9',
         outline: 'none',
-        ...shadow(3)
+        ...selectedTrStyle
       }
     },
     addJobButton: {
