@@ -45,6 +45,7 @@ function submitFactory(hasCountdown) {
             clearInterval(intervalId);
             this.reset();
             if (this.afterSuccessCountdown) this.afterSuccessCountdown();
+            else this.props.closeModal();
           }
         },
         1000 * stepSizeOfRedirectDelay

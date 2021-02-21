@@ -2,29 +2,39 @@ import React, { Component } from 'react';
 import getStyle from './style';
 import { currentJobTimeService } from '../../../../../data';
 import {
-  getTimezoneFullName, getTimezoneOptions, bindFormMethods
+  getTimezoneFullName, getTimezoneOptions, bindFormMethods, guessUserTimezone
 } from '../utilities';
 import FormModal from '../../../../FormModal';
 import Notification from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
 import { SelectInput } from '../../../../formPieces';
+import Button from '../../../../Button';
 
 const formId = 'change-session-timezone-form';
+const guessTimezoneBtnTxt = 'Guess My Timezone'
 
 class SessionTimezoneModal extends Component {
   constructor(props) {
     super(props);
+    this.setInputWithGuess = this.setInputWithGuess.bind(this);
     bindFormMethods(this);
     this.inputRef = React.createRef();
     this.state = this.getStartingState();
   };
 
   getUniqueStartingState() {
+    console.log('setting session tz modal')
+    const { sessionTimezone, wasSessionTimezoneGuessed } = this.props.job.time;
+    console.log(wasSessionTimezoneGuessed)
     return {
-      timezoneInputValue: this.props.job.time.sessionTimezone,
+      timezoneInputValue: sessionTimezone,
       hasSessionTimezone: true,
-      showGuessMessage: true
+      showGuessMessage: wasSessionTimezoneGuessed
     };
+  };
+
+  setInputWithGuess() {
+    this.setState({ timezoneInputValue: guessUserTimezone() });
   };
 
   processAndSubmitData() {
@@ -35,7 +45,7 @@ class SessionTimezoneModal extends Component {
   };
 
   render() {
-    const { changeHandlerFactory, inputRef } = this;
+    const { changeHandlerFactory, inputRef, setInputWithGuess } = this;
     const {
       closeModal,
       isActive,
@@ -45,6 +55,9 @@ class SessionTimezoneModal extends Component {
 
     const { sessionTimezone, wasSessionTimezoneGuessed } = job.time;
 
+    const toggleGuessMsg = _isOpenAfterToggle => {
+      this.setState({ showGuessMessage: _isOpenAfterToggle });
+    };
 
     if (!isActive) {
       return <></>;
@@ -73,9 +86,9 @@ class SessionTimezoneModal extends Component {
               <Notification
                 theme="info light"
                 messages={[
-                  'The current session timezone was automatically set by guessing your timezone using your browser information.'
+                  'The current session timezone was automatically set by guessing your timezone using information provided by your browser.'
                 ]}
-                close={() => this.setState({ showGuessMessage: false })}
+                close={() => toggleGuessMsg(false)}
               />
             )}
             <TagGroup size="medium" align="center">
@@ -106,9 +119,39 @@ class SessionTimezoneModal extends Component {
             formId,
             inputRef
           }}
-          label="New Timezone:"
-          isInline
+          label="New Session Timezone:"
         />
+        {!wasSessionTimezoneGuessed && !hasSuccess && (
+          <>
+            {showGuessMessage && (
+              <Notification
+                theme="info light"
+                messages={[
+                  `When you choose "${guessTimezoneBtnTxt}," information provided by your browser will be used to attempt to guess your current timezone.`
+                ]}
+                close={() => toggleGuessMsg(false)}
+              />
+            )}
+            <div style={style.guessButtonsField}>
+              {!showGuessMessage && (
+                <Button
+                  theme="info light"
+                  style={style.guessInfoButton}
+                  onClick={() => toggleGuessMsg(true)}
+                >
+                  <i className="fas fa-info" style={style.guessInfoIcon} />
+                </Button>
+              )}
+              <Button
+                theme="info"
+                style={style.guessButton}
+                onClick={setInputWithGuess}
+              >
+                {guessTimezoneBtnTxt}
+              </Button>
+            </div>
+          </>
+        )}
       </FormModal>
     );
   };

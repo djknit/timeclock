@@ -9,7 +9,7 @@ const {
 
 } = dynamicBgColors;
 
-export default function getStyle(additionalStyles, pseudoClassState, colorTheme) {
+export default function getStyle(additionalStyles, pseudoClassState, colorTheme, styleProp) {
   const { isActive, isFocused } = pseudoClassState || {};
   const shadowBlur = (isActive && 3) || (isFocused && 9) || 7;
 
@@ -20,6 +20,7 @@ export default function getStyle(additionalStyles, pseudoClassState, colorTheme)
       ...shadow(shadowBlur, undefined, '#000000',),
       display: 'inline-block',
       ...calculateStyleForPseudoClassState(backgroundColorStyles, pseudoClassState),
+      ...styleProp,
       ...calculateStyleForPseudoClassState(additionalStyles, pseudoClassState)
     }
   };

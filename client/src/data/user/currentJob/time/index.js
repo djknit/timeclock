@@ -6,7 +6,7 @@ import getDateRangeInfo from './getDateRangeInfo';
 let state = {
   weeks: undefined,
   settings: settingsService._getRawSchedules(),
-  sessionTimezone: undefined,
+  sessionTimezone: guessUserTimezone(),
   wasSessionTzGuessed: true
 };
 
@@ -18,7 +18,7 @@ let timeService = dataServiceFactory({
   readFunction() {
     const { weeks, settings, sessionTimezone, wasSessionTzGuessed } = state;
     if (!weeks || !settings) return;
-    const timezone = sessionTimezone || guessUserTimezone();
+    const timezone = sessionTimezone;
     return processData(weeks, settings, timezone, wasSessionTzGuessed);
   },
   setFunction(weeksArray) {
@@ -40,7 +40,7 @@ let timeService = dataServiceFactory({
     },
     setSessionTimezone(newTimezone) {
       state.sessionTimezone = newTimezone;
-      state.wasSessionTzGuessed = true;
+      state.wasSessionTzGuessed = false;
     }
   }
 });

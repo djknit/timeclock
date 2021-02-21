@@ -9,6 +9,7 @@ function _Button_needsPseudo({
   size,
   theme,
   styles,
+  style: styleProp,
   onClick,
   disabled,
   formId,
@@ -31,7 +32,7 @@ function _Button_needsPseudo({
     { type: 'button' }
   );
   
-  const completeStyle = getStyle(styles, pseudoState, theme);
+  const completeStyle = getStyle(styles, pseudoState, theme, styleProp);
 
   const sizeClass = getSizeClass(size || 'medium');
   const colorClass = getColorClass(theme || 'light');
