@@ -1,5 +1,4 @@
 import {
-  cloneMyDate,
   convertDayCutoffToMinutes,
   getDayCutoffTime,
   dates as dateUtils,
@@ -7,7 +6,8 @@ import {
   processWage,
   getTimestampFromDateAndTime,
   getTimeInfoFromUtcTime
-} from '../../utilities';
+} from '../../../../../utilities';
+import { cloneMyDate } from '../../../elemental';
 import processSegments from './processSegments';
 
 const { getPrecedingDate, getNextDate } = dateUtils;

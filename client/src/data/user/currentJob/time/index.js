@@ -1,7 +1,7 @@
-import { dataServiceFactory, guessUserTimezone } from './utilities';
+import {
+  dataServiceFactory, guessUserTimezone, getDateRangeInfo, processData
+} from './utilities';
 import settingsService from '../settings';
-import processData from './processData';
-import getDateRangeInfo from './getDateRangeInfo';
 
 let state = {
   weeks: undefined,
@@ -50,19 +50,21 @@ settingsService.subscribe(() => {
   timeService._emit();
 });
 
-timeService.getInfoForDateRange = function(firstDate, lastDate) {
-  let processedWeeks = processData(state.weeks).weeks;
-  return getDateRangeInfo({ firstDate, lastDate }, processedWeeks);
+const otherMethods = {
+  getInfoForDateRange(firstDate, lastDate) {
+    let processedWeeks = processData(state.weeks).weeks;
+    return getDateRangeInfo({ firstDate, lastDate }, processedWeeks);
+  },
+  _setJobSetTime(weeksArray) { // special alternative to normal set function to wait for new settings value before emitting (for when setting whole job and not just time)
+    setWeeks(weeksArray);
+    state.sessionTimezone = guessUserTimezone();
+    state.wasSessionTzGuessed = true;
+  },
+  getSessionTimezone() {
+    return state.sessionTimezone;
+  }
 };
 
-// special alternative to normal set function to wait for new settings value before emitting (for when setting whole job and not just time)
-timeService._setJobSetTime = function (weeksArray) {
-  setWeeks(weeksArray);
-  state.sessionTimezone = guessUserTimezone();
-};
-
-timeService.getSessionTimezone = function() {
-  return state.sessionTimezone || guessUserTimezone();
-};
+Object.assign(timeService, otherMethods);
 
 export default timeService;

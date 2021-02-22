@@ -1,4 +1,4 @@
-import { jobData as jobDataUtils } from '../utilities';
+import { jobData as jobDataUtils } from '../../../../utilities';
 import { getCurrentMonthsInfo } from './months';
 import { getCurrentWeeksInfo } from './weeks';
 

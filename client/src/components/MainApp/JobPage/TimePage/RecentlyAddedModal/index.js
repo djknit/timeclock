@@ -49,7 +49,7 @@ class RecentlyAddedModal extends Component {
   };
 
   reset() {
-    this.setState(getStartingState());
+    this.setState(getStartingState(), this.refreshTimeData);
   };
 
   refreshTimeData() {

@@ -1,7 +1,11 @@
-import { cloneMyDate, getDurationInfo, getPaidAndUnpaidTotalTime } from '../../utilities';
+import { getDurationInfo } from '../../../../utilities';
+import { getPaidAndUnpaidTotalTime } from '../../earnings';
+import { cloneMyDate } from '../../elemental';
 import processDay from './processDay';
 import { addEarningsToDays, getWeekEarnings } from './earnings';
 import { getWeekSettings } from './settings';
+
+
 
 export default function processWeek(weekDocument, sessionTimezone) {
   

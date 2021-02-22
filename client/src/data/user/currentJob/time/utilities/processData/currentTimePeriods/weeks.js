@@ -3,7 +3,7 @@ import {
   jobData as jobDataUtils,
   dates as dateUtils,
   findWeekWithDate
-} from '../utilities';
+} from '../../../../utilities';
 
 const { getDatesInWeekWithDate } = jobDataUtils;
 const { getPrecedingDate } = dateUtils;
