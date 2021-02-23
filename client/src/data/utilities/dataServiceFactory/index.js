@@ -1,5 +1,5 @@
 // ABOUT THIS FILE:
-// I got the general idea that I am using for these data stores from the following source.
+// I got the general idea that I am using for these data services from the following source.
 // https://codeutopia.net/blog/2016/02/01/react-application-data-flow-where-and-how-to-store-your-data/
 // This source also introduced me to the 'events' module and its usage.
 

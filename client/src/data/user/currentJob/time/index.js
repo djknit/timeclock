@@ -1,32 +1,18 @@
-import {
-  dataServiceFactory, guessUserTimezone, getDateRangeInfo, processData
-} from './utilities';
+import { dataServiceFactory, getDateRangeInfo, processData } from './utilities';
 import settingsService from '../settings';
+import sessionTzDataStore from './sessionTzStore';
 
 let state = {
   weeks: undefined,
-  settings: settingsService._getRawSchedules(),
-  sessionTimezone: guessUserTimezone(),
-  wasSessionTzGuessed: true
+  settings: settingsService._getRawSchedules()
 };
 
-function setWeeks(rawWeeksArray) {
-  state.weeks = [ ...rawWeeksArray ];
-}
-
 let timeService = dataServiceFactory({
-  readFunction() {
-    const { weeks, settings, sessionTimezone, wasSessionTzGuessed } = state;
-    if (!weeks || !settings) return;
-    const timezone = sessionTimezone;
-    return processData(weeks, settings, timezone, wasSessionTzGuessed);
-  },
-  setFunction(weeksArray) {
-    setWeeks(weeksArray);
-  },
+  readFunction: readTime,
+  setFunction: setWeeks,
   clearFunction() {
     state.weeks = undefined;
-    state.sessionTimezone = undefined;
+    sessionTzDataStore._reset();
   },
   methods: {
     updateWeek(updatedWeek) {
@@ -38,10 +24,7 @@ let timeService = dataServiceFactory({
         }
       }
     },
-    setSessionTimezone(newTimezone) {
-      state.sessionTimezone = newTimezone;
-      state.wasSessionTzGuessed = false;
-    }
+    setSessionTimezone: sessionTzDataStore._setValue
   }
 });
 
@@ -52,19 +35,31 @@ settingsService.subscribe(() => {
 
 const otherMethods = {
   getInfoForDateRange(firstDate, lastDate) {
-    let processedWeeks = processData(state.weeks).weeks;
-    return getDateRangeInfo({ firstDate, lastDate }, processedWeeks);
+    return getDateRangeInfo({ firstDate, lastDate }, readTime().weeks);
   },
   _setJobSetTime(weeksArray) { // special alternative to normal set function to wait for new settings value before emitting (for when setting whole job and not just time)
     setWeeks(weeksArray);
-    state.sessionTimezone = guessUserTimezone();
-    state.wasSessionTzGuessed = true;
+    sessionTzDataStore._reset();
   },
   getSessionTimezone() {
-    return state.sessionTimezone;
+    return { ...sessionTzDataStore };
   }
 };
 
 Object.assign(timeService, otherMethods);
 
 export default timeService;
+
+export { sessionTzDataStore };
+
+
+function setWeeks(rawWeeksArray) {
+  state.weeks = [ ...rawWeeksArray ];
+}
+
+function readTime() {
+  const { weeks, settings } = state;
+  if (!weeks || !settings) return;
+  const { sessionTimezone, wasSessionTzGuessed } = sessionTzDataStore;
+  return processData(weeks, settings, sessionTimezone, wasSessionTzGuessed);
+}

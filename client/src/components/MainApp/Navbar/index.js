@@ -4,9 +4,7 @@ import getStyle from './style';
 import {
   isLoggedInService, profileService, userService, jobsService, currentJobService, windowWidthService
 } from '../../../data';
-import {
-  api, promiseToSetState, retrieveAndSetCurrentJob, getClickableElAttrs
-} from '../utilities';
+import { api, promiseToSetState, getClickableElAttrs } from '../utilities';
 import NavItem from './NavItem';
 import Dropdown from './Dropdown';
 import WelcomeAndLogout from './WelcomeAndLogout';
@@ -33,6 +31,7 @@ class _Navbar_needsDataAndPseudo extends Component {
     this.brandText = React.createRef();
     this.brandItem = React.createRef();
     this.dropdownTogglerFactory = this.dropdownTogglerFactory.bind(this);
+    this.retrieveAndSetCurrentJob = this.retrieveAndSetCurrentJob.bind(this);
     this.submitLogout = this.submitLogout.bind(this);
     this.state = {
       brandItemInnerHeight: undefined,
@@ -59,6 +58,14 @@ class _Navbar_needsDataAndPseudo extends Component {
         .forEach(key => stateUpdates[dropdownActivityPropNames[key]] = false);
       }
       this.setState(stateUpdates);
+    });
+  };
+
+  retrieveAndSetCurrentJob(jobId) {
+    return api.jobs.get(jobId)
+    .then(res => {
+      if (!res || !res.data) throw new Error('Failed to retrieve for data for job.');
+      currentJobService.setValue(res.data);
     });
   };
 
@@ -104,7 +111,7 @@ class _Navbar_needsDataAndPseudo extends Component {
   };
 
   render() {
-    const { submitLogout } = this;
+    const { submitLogout, retrieveAndSetCurrentJob } = this;
     const {
       isLoggedIn,
       profileData,
