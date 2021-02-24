@@ -45,7 +45,6 @@ const otherMethods = {
     return { ...sessionTzDataStore };
   }
 };
-
 Object.assign(timeService, otherMethods);
 
 export default timeService;

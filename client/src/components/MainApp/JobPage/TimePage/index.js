@@ -57,7 +57,11 @@ class TimePage extends Component {
     const { setSegmentToDelete, setSegmentToEdit } = this;
     const { job, parentPath, windowWidth, areAnyModalsOpen } = this.props;
     const {
-      segmentToDelete, segmentToEdit, handleEditSegSuccess, isEditSegmentModalActive, isDeleteSegmentModalActive
+      segmentToDelete,
+      segmentToEdit,
+      handleEditSegSuccess,
+      isEditSegmentModalActive,
+      isDeleteSegmentModalActive
     } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);

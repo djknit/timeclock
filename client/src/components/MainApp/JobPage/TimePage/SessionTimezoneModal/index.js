@@ -9,6 +9,7 @@ import Notification from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
 import { SelectInput } from '../../../../formPieces';
 import Button from '../../../../Button';
+import InfoButton from '../../../InfoButton';
 
 const formId = 'change-session-timezone-form';
 const guessTimezoneBtnTxt = 'Guess My Timezone'
@@ -23,9 +24,7 @@ class SessionTimezoneModal extends Component {
   };
 
   getUniqueStartingState() {
-    console.log('setting session tz modal')
     const { sessionTimezone, wasSessionTimezoneGuessed } = this.props.job.time;
-    console.log(wasSessionTimezoneGuessed)
     return {
       timezoneInputValue: sessionTimezone,
       hasSessionTimezone: true,
@@ -134,13 +133,17 @@ class SessionTimezoneModal extends Component {
             )}
             <div style={style.guessButtonsField}>
               {!showGuessMessage && (
-                <Button
-                  theme="info light"
+                // <Button
+                //   theme="info light"
+                //   style={style.guessInfoButton}
+                //   onClick={() => toggleGuessMsg(true)}
+                // >
+                //   <i className="fas fa-info" style={style.guessInfoIcon} />
+                // </Button>
+                <InfoButton
+                  onClick={() =>  toggleGuessMsg(true)}
                   style={style.guessInfoButton}
-                  onClick={() => toggleGuessMsg(true)}
-                >
-                  <i className="fas fa-info" style={style.guessInfoIcon} />
-                </Button>
+                />
               )}
               <Button
                 theme="info"

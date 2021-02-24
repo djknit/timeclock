@@ -1,17 +1,12 @@
-import {
-  shadow,
-  dynamicBgColors
-} from '../../AppStyle';
+import { shadow, dynamicBgColors } from '../../AppStyle';
 import { calculateStyleForPseudoClassState } from '../higherOrder';
+export * from '../../AppStyle';
 
-const {
-  daner: dangerBgColors,
-
-} = dynamicBgColors;
-
-export default function getStyle(additionalStyles, pseudoClassState, colorTheme, styleProp) {
+export default function getStyle(
+  additionalStyles, pseudoClassState, colorTheme, styleProp, shadowBlurRatio = 1
+) {
   const { isActive, isFocused } = pseudoClassState || {};
-  const shadowBlur = (isActive && 3) || (isFocused && 9) || 7;
+  const shadowBlur = shadowBlurRatio * ((isActive && 3) || (isFocused && 9) || 7);
 
   const backgroundColorStyles = getBackgroundColorStyles(colorTheme);
 
@@ -26,7 +21,6 @@ export default function getStyle(additionalStyles, pseudoClassState, colorTheme,
   };
 };
 
-export * from '../../AppStyle';
 
 function getBackgroundColorStyles(colorTheme) {
   const _getResult = (

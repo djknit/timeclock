@@ -11,6 +11,7 @@ import {
 import Button from '../../../../Button';
 import Notification from '../../../../Notification';
 import ModalSkeleton from '../../../../ModalSkeleton';
+import ModalTimezoneNotification from '../ModalTimezoneInfo';
 import TimePeriodInput from './PeriodInput';
 import Segments from './Segments';
 
@@ -105,6 +106,7 @@ class RecentlyAddedModal extends Component {
           </Button>
         }
       >
+        <ModalTimezoneNotification />
         {showMessage && (
           <Notification
             theme="info"
@@ -126,7 +128,8 @@ class RecentlyAddedModal extends Component {
           segments={recentlyAddedSegments}
           {...{
             toggleDeleteSegmentModal,
-            toggleEditSegmentModal
+            toggleEditSegmentModal,
+            disabled
           }}
         />
       </ModalSkeleton>

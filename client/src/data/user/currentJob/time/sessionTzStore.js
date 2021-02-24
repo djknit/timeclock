@@ -18,13 +18,7 @@ let sessionTimezoneDataStore = {
   }
 };
 
-const getMethodInfo = _method => ({
-  value: _method,
-  enumerable: false
-});
-
-Object.defineProperty(sessionTimezoneDataStore, '_reset', getMethodInfo(reset));
-Object.defineProperty(sessionTimezoneDataStore, '_setValue', getMethodInfo(setValue));
+assignHiddenProps(sessionTimezoneDataStore, { reset, setValue });
 
 export default sessionTimezoneDataStore;
 
@@ -36,5 +30,16 @@ function reset() {
 
 function setValue(newVal) {
   _sessionTimezone = newVal;
-  _wasGuessed = true;
+  _wasGuessed = false;
+}
+
+function assignHiddenProps(targetObj, propsObj) {
+  for (const propName in propsObj) {
+    const propInfo = {
+      value: propsObj[propName],
+      enumerable: false
+    };
+    const newName = propName[0] === '_' ? propName : `_${propName}`;
+    Object.defineProperty(targetObj, newName, propInfo);
+  }
 }
