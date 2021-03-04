@@ -10,17 +10,19 @@ function _IconButtonTag_needsPseudo({
   iconClassName,
   disabled,
   pseudoState,
-  pseudoHandlers
+  pseudoHandlers,
+  style: styleProp
 }) {
 
   const lightTheme = `${theme} light`;
 
-  const style = getStyle(theme, pseudoState);
+  const style = getStyle(theme, pseudoState, styleProp);
 
   return (
     <Tag
       theme={lightTheme}
       {...pseudoHandlers}
+      style={style.tag}
     >
       <InfoButton
         theme={lightTheme}

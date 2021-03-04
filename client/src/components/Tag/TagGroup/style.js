@@ -1,5 +1,5 @@
 export default function getStyle(
-  hasAlign,
+  align,
   isInline,
   groupMargin = 10,
   tagMargin = '0.2rem'
@@ -8,15 +8,17 @@ export default function getStyle(
   const processedMargin = typeof(groupMargin) === 'number' ? `${groupMargin}px` : groupMargin;
 
   let groupStyle = {
-    marginBottom: `calc(${processedMargin} - ${tagMargin})` // .5rem come from Bulma .tag style
+    marginBottom: tagMargin ? `calc(${processedMargin} - ${tagMargin})` : processedMargin
   };
 
   if (isInline) {
     groupStyle.display = 'inline-block';
     groupStyle.marginRight = groupStyle.marginLeft = '0.5em'
   }
-  else if (hasAlign) {
-    groupStyle.display = 'block';
+  else if (align === 'center' || align === 'right') {
+    groupStyle.justifyContent = (
+      align === 'right' ? 'flex-end' : 'center'
+    );
   }
 
   return {

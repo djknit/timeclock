@@ -5,7 +5,10 @@ export * from './displayData';
 
 const completeConstants = {
   ...constants,
-  editSessionTzIconClass: 'fas fa-pencil-alt'
+  iconClassNames: {
+    editSessionTimezone: 'fas fa-pencil-alt',
+    
+  }
 };
 
 export {

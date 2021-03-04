@@ -105,7 +105,7 @@ class EditJobNameModal extends Component {
           hasProblem={problems && problems.updatedJobName}
           isActive={!isLoading && !hasSuccess}
           type="text"
-          label="New Name:"
+          label={<>New&nbsp;Name:</>}
           placeholder="New job name..."
           isInline
           {...{

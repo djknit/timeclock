@@ -32,18 +32,6 @@ function ModalTimezoneInfo({
       <Tag theme="info light">
         Timezone: {tzAbbreviation}
       </Tag>
-      <Tag theme="info light">
-        <InfoButton
-          shadowBlurRatio={0.65}
-        />
-      </Tag>
-      <Tag theme="primary light">
-        <InfoButton
-          shadowBlurRatio={0.65}
-          iconClassName={editSessionTzIconClass}
-          theme="primary light"
-        />
-      </Tag>
       <IconButtonTag
         theme="info"
         {...{ disabled }}

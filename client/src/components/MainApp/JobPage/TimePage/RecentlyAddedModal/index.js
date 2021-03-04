@@ -43,7 +43,7 @@ class RecentlyAddedModal extends Component {
   inputChangeHandlerFactory(propName) {
     return ({ target }) => {
       let stateUpdates = processInputChange(propName, target.value);
-      const periodDurationInMsec = getPeriodDurationInMsec({ ...this.state, ... stateUpdates });
+      const periodDurationInMsec = getPeriodDurationInMsec({ ...this.state, ...stateUpdates });
       stateUpdates.recentlyAddedSegments = findRecentlyAddedSegs(this.props.job.time.weeks, periodDurationInMsec);
       this.setState({ ...stateUpdates, periodDurationInMsec });
     };

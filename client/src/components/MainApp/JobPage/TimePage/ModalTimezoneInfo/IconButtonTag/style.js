@@ -1,13 +1,6 @@
 import { dynamicBgColors, calculateStyleForPseudoClassState } from '../style';
 
-// BUG TO FIX ***** ----:
-// ^^ dynamicBgColors is empty ??? !!!!!
-//            .._  .   .
-  //       ..     \.     .
-    //  ..          \.c~'l__.    .
-      //             V``````\ .   . .
-
-export default function getStyle(theme, pseudoState) {
+export default function getStyle(theme, pseudoState, styleProp) {
 
   let pseudoClassStyles = {}, pseudoClassNames = ['hover', 'focus', 'active'];
 
@@ -19,6 +12,9 @@ export default function getStyle(theme, pseudoState) {
   };
 
   return {
-    tag: calculateStyleForPseudoClassState(pseudoClassStyles, pseudoState)
+    tag: {
+      ...calculateStyleForPseudoClassState(pseudoClassStyles, pseudoState),
+      ...styleProp
+    }
   };
 };

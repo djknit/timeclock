@@ -77,7 +77,6 @@ class SessionTimezoneModal extends Component {
           <><strong>Success!</strong> The session timezone was updated.</>
         ]}
         successRedirectMessageFragment="This dialog box will close"
-        title="Session Timezone Management"
         messagesAreaStyle={style.messagesArea}
         messagesAreaContent={
           <>
@@ -133,13 +132,6 @@ class SessionTimezoneModal extends Component {
             )}
             <div style={style.guessButtonsField}>
               {!showGuessMessage && (
-                // <Button
-                //   theme="info light"
-                //   style={style.guessInfoButton}
-                //   onClick={() => toggleGuessMsg(true)}
-                // >
-                //   <i className="fas fa-info" style={style.guessInfoIcon} />
-                // </Button>
                 <InfoButton
                   onClick={() =>  toggleGuessMsg(true)}
                   style={style.guessInfoButton}

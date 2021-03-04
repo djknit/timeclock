@@ -85,7 +85,8 @@ class TimePage extends Component {
         setSegmentToEdit,
         reportUpdate: handleEditSegSuccess
       },
-      recentlyAdded: { ...primaryModalAttrs }
+      recentlyAdded: { ...primaryModalAttrs },
+      sessionTimezone: {}
     };
 
     const crumbChain = [
