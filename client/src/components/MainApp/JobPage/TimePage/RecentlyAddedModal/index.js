@@ -23,7 +23,8 @@ const getStartingState = () => {
     ...inputVals,
     showMessage: true,
     recentlyAddedSegments: null,
-    periodDurationInMsec: getPeriodDurationInMsec(inputVals)
+    periodDurationInMsec: getPeriodDurationInMsec(inputVals),
+    showSessionTzMessage: false
   };
 };
 
@@ -73,12 +74,20 @@ class RecentlyAddedModal extends Component {
   render() {
     const { reset, inputChangeHandlerFactory } = this;
     const {
-      isActive, closeModal, disabled, toggleDeleteSegmentModal, toggleEditSegmentModal
+      isActive,
+      closeModal,
+      disabled,
+      toggleDeleteSegmentModal,
+      toggleEditSegmentModal,
+      toggleSessionTimezoneModal
     } = this.props;
-    const { showMessage, recentlyAddedSegments } = this.state;
+    const { showMessage, recentlyAddedSegments, showSessionTzMessage } = this.state;
     const inputValues = extractInputValues(this.state);
 
     const closeMessage = () => this.setState({ showMessage: false });
+    const toggleSessionTzMessage = (
+      isActiveAfterToggle => this.setState({ showSessionTzMessage: !!isActiveAfterToggle })
+    );
 
     if (!isActive ) {
       return <></>;
@@ -106,7 +115,13 @@ class RecentlyAddedModal extends Component {
           </Button>
         }
       >
-        <ModalTimezoneNotification />
+        <ModalTimezoneNotification
+          {...{
+            toggleSessionTimezoneModal
+          }}
+          showMessage={showSessionTzMessage}
+          toggleMessage={toggleSessionTzMessage}
+        />
         {showMessage && (
           <Notification
             theme="info"

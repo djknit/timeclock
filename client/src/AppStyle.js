@@ -18,6 +18,9 @@ function getColorsObj(innate, hover, focus, active) {
   return { innate, hover, focus, active };
 }
 const dynamicBgColors = {
+  success: getColorsObj(
+    '#48c774', '#3ec46d', '#3abb67', '#48c774'
+  ),
   danger: getColorsObj(
     '#f14668', '#f03a5f', '#df415b', '#ff4a6e'
   ),
@@ -28,10 +31,10 @@ const dynamicBgColors = {
     '#3298dc', '#2793da', '#2e8cca', '#35a1e9'
   ),
   infoLight: getColorsObj(
-    '#eef6fc', '#e3f1fa', '#d5e3ed', '#f1ffff'
+    '#eef6fc', '#e3f1fa', '#d3e0eb', '#eef6fc'
   ),
   primaryLight: getColorsObj(
-    '#ebfffc', '#defffa', '#d1fcf8', '#faffff'
+    '#ebfffc', '#defffa', '#d1fcf8', '#ebfffc'
   ),
   light: getColorsObj(
     '#f5f5f5', '#eeeeee', '#e7e7e7', '#f8f8f8'

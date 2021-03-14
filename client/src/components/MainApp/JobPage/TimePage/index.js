@@ -75,6 +75,7 @@ class TimePage extends Component {
     const primaryModalAttrs = { // for the modals that can open other modals on top
       toggleDeleteSegmentModal,
       toggleEditSegmentModal,
+      toggleSessionTimezoneModal,
       disabled: isEditSegmentModalActive || isDeleteSegmentModalActive
     };
     const variableModalAttrs = {

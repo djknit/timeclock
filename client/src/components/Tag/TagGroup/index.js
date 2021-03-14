@@ -7,7 +7,8 @@ function TagGroup({
   isInline,
   size,
   groupMargin,
-  tagMargin
+  tagMargin,
+  ...attributes
 }) {
 
   let className = 'tags has-addons';
@@ -24,7 +25,7 @@ function TagGroup({
   const style = getStyle(align, isInline, groupMargin, tagMargin);
 
   return (
-    <div {...{ className }} style={style.tagGroup}>
+    <div {...{ className }} style={style.tagGroup} {...attributes}>
       {children.map((child, index) => (
         React.cloneElement(
           child,

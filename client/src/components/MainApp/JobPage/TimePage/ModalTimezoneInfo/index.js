@@ -3,18 +3,17 @@ import getStyle from './style';
 import { currentJobSessionTzStore } from '../../../../../data';
 import { getTimezoneAbbreviation, constants } from '../utilities';
 import Notification, { NotificationText } from '../../../../Notification';
-import Tag, { TagGroup } from '../../../../Tag';
-import InfoButton from '../../../InfoButton';
-import IconButtonTag from './IconButtonTag';
+import Button from '../../../../Button';
+import Tags from './Tags';
 
-const { editSessionTzIconClass } = constants;
+const { iconClassNames: { editSessionTimezone } } = constants;
 
 function ModalTimezoneInfo({
   showMessage,
   toggleMessage,
   toggleSessionTimezoneModal,
   disabled,
-  margin = '0.75em'
+  margin = '0.75em',
 }) {
 
   const { sessionTimezone } = currentJobSessionTzStore;
@@ -24,24 +23,30 @@ function ModalTimezoneInfo({
   const style = getStyle();
 
   return showMessage ? (
-    <Notification>
-      All times are in {tzAbbreviation} ({sessionTimezone}).
+    <Notification
+      theme="info light"
+      close={() => toggleMessage(false)}
+      style={style.notification}
+    >
+      <NotificationText>
+        All times are in {tzAbbreviation} (timezone "{sessionTimezone}").
+      </NotificationText>
+      <Button
+        theme="primary"
+        onClick={() => toggleSessionTimezoneModal(true)}
+        style={style.inNotificationBtn}
+      >
+        <i className={editSessionTimezone} /> Change
+      </Button>
     </Notification>
   ) : (
-    <TagGroup tagMargin={0} groupMargin={margin} align="right">
-      <Tag theme="info light">
-        Timezone: {tzAbbreviation}
-      </Tag>
-      <IconButtonTag
-        theme="info"
-        {...{ disabled }}
-      />
-      <IconButtonTag
-        theme="primary"
-        iconClassName={editSessionTzIconClass}
-        {...{ disabled }}
-      />
-    </TagGroup>
+    <Tags
+      {...{
+        toggleMessage,
+        sessionTimezone,
+        toggleSessionTimezoneModal
+      }}
+    />
   );
 }
 

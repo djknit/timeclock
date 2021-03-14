@@ -71,7 +71,7 @@ class SessionTimezoneModal extends Component {
           <strong>About the Session Timezone</strong>,
           'The "session timezone" is the timezone that all times will be displayed in and all time inputs will be interpretted using.',
           'It does not affect the timezone defined in the job settings.',
-          'When the session timezone differs from the job timezone, all times are converted to the session timezone to display. All time input is interpretted in the session timezone and then converted back to the timezone defined by the job settings. The day cutoff time is calculated using the timezone defined in job settings.'
+          'When the session timezone differs from the job timezone, all times are converted to the session timezone to display. All time input is interpretted in the session timezone and then converted back to the timezone defined by the job settings. The day cutoff time is still calculated using the timezone defined in job settings.'
         ]}
         successMessages={[
           <><strong>Success!</strong> The session timezone was updated.</>
@@ -125,7 +125,8 @@ class SessionTimezoneModal extends Component {
               <Notification
                 theme="info light"
                 messages={[
-                  `When you choose "${guessTimezoneBtnTxt}," information provided by your browser will be used to attempt to guess your current timezone.`
+                  `When you choose "${guessTimezoneBtnTxt}," information provided by your browser will be used to attempt to guess your current timezone.`,
+                  'In order to best protect your privacy, this is done in your browser and the information is not sent to the server.'
                 ]}
                 close={() => toggleGuessMsg(false)}
               />
