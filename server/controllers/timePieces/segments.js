@@ -5,7 +5,8 @@ const {
 module.exports = {
   isSegmentValid,
   doesNewSegOverlapExistingSegs,
-  getDateForNewSegment
+  getDateForNewSegment,
+  doSegsOverlap
 };
 
 function getDateForNewSegment(segment, job) {
@@ -41,4 +42,12 @@ function doesNewSegOverlapExistingSegs(segments, newSegment) {
     }
   }
   return false;
+}
+
+function doSegsOverlap(segments) {
+  const seg = segments.shift();
+  if (doesNewSegOverlapExistingSegs(seg, segments)) {
+    return true;
+  }
+  return segments.length > 0 ? doSegsOverlap(segments) : false;
 }

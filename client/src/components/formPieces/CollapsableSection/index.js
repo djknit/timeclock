@@ -1,5 +1,5 @@
 import React from 'react';
-import { keyTriggerCheckerFactory } from '../../utilities';
+import { getClickableElAttrs } from '../../utilities';
 import getStyle from './style';
 import SectionLabel from '../SectionLabel';
 import { addPseudoPseudoClasses } from '../../higherOrder';
@@ -10,7 +10,8 @@ function _CollapsableSection_needsPseudo({
   label,
   pseudoState, // for section content toggle arrow
   pseudoHandlers,
-  contentToggle
+  contentToggle,
+  disabled
 }) {
 
   const style = getStyle(contentToggle.styles, pseudoState);
@@ -28,9 +29,7 @@ function _CollapsableSection_needsPseudo({
           className="fas fa-chevron-up"
           style={style.sectionToggle}
           {...pseudoHandlers}
-          onClick={contentToggle.toggle}
-          tabIndex={0}
-          onKeyDown={keyTriggerCheckerFactory(contentToggle.toggle)}
+          {...getClickableElAttrs(contentToggle.toggle, disabled)}
         />
       </div>
     </>

@@ -1,28 +1,19 @@
-export default function getStyle(sectionStyles) {
-  const extraBodyBorder = 'solid 2px #dbdbdb';
+export default function getStyle(hasExtraSection) {
 
-  let style = {
-    body: {
-      padding: '10px 20px'
+  const bodySectionStyles = { padding: '10px 20px' };
+
+  return {
+    body: hasExtraSection ? { padding: 0 } : bodySectionStyles,
+    firstSection: {
+      ...bodySectionStyles
     },
-    precedingBody: {
-      borderBottom: extraBodyBorder
-    },
-    followingBody: {
-      borderTop: extraBodyBorder
+    sectionNotFirst: {
+      ...bodySectionStyles,
+      borderTop: 'solid 2px #dbdbdb'
     },
     footer: {
       textAlign: 'right',
       display: 'block'
     }
   };
-
-  if (!sectionStyles) return style;
-
-  Object.keys(sectionStyles).forEach(elName => {
-    if (!style[elName]) style[elName] = { ...sectionStyles[elName] };
-    else Object.assign(style[elName], sectionStyles[elName]);
-  });
-
-  return style;
 };

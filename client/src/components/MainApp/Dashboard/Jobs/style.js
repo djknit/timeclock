@@ -1,4 +1,4 @@
-import { dashContentBtnSpecs, getContentAreaCornerButtonStyles } from '../style';
+import { dashContentBtnSpecs, getContentAreaCornerButtonStyles, shadow } from '../style';
 
 export default function getStyle(additionalStyle) {
   const addJobBtnWidthPerHeight = 3.1426; // Measured. Depends on text and needs changed manually if text changes.
@@ -6,6 +6,11 @@ export default function getStyle(additionalStyle) {
   const { btnInnateStyle, titleWidth } = getContentAreaCornerButtonStyles(
     dashContentBtnSpecs, addJobBtnWidthPerHeight, 12, 12
   );
+
+  const selectedTrStyle = {
+    ...shadow(3),
+    zIndex: 5
+  };
 
   return {
     contentArea: {
@@ -23,14 +28,18 @@ export default function getStyle(additionalStyle) {
         cursor: 'pointer'
       },
       hover: {
-        backgroundColor: '#dddddd'
+        backgroundColor: '#dddddd',
+        ...selectedTrStyle
       },
       active: {
-        backgroundColor: '#f5f5f5'
+        backgroundColor: '#f5f5f5',
+        ...shadow(4, undefined, undefined, true),
+        zIndex: 'auto'
       },
       focus: {
         backgroundColor: '#d9d9d9',
-        outline: 'none'
+        outline: 'none',
+        ...selectedTrStyle
       }
     },
     addJobButton: {

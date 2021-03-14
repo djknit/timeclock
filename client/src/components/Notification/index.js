@@ -7,7 +7,8 @@ function Notification({
   theme,
   close,
   messages,
-  isLastChild
+  isLastChild,
+  style: styleProp
 }) {
 
   const style = getStyle(isLastChild);
@@ -21,7 +22,7 @@ function Notification({
   }
 
   return (
-    <div {...{ className }} style={style.notification}>
+    <div {...{ className }} style={{ ...style.notification, ...styleProp }}>
       {close && (
         <button className="delete" onClick={_close} type="button" />
       )}

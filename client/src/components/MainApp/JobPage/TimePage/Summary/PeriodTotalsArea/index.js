@@ -30,15 +30,15 @@ class _PeriodTotalsArea_needsCollapsing extends Component {
   };
 
   render() {
-    const { label, mainContentToggle, periodTotals, earningsContentToggle } = this.props;
+    const { label, mainContentToggle, periodTotals, earningsContentToggle, disabled } = this.props;
 
     return (
       <div>
         <Header {...{ label }} />
         <Body {...{ mainContentToggle }}>
-          <Totals {...{ periodTotals, earningsContentToggle, mainContentToggle }} />
+          <Totals {...{ periodTotals, earningsContentToggle, mainContentToggle, disabled }} />
         </Body>
-        <Footer contentToggle={mainContentToggle} />
+        <Footer contentToggle={mainContentToggle} {...{ disabled }} />
       </div>
     );
   };

@@ -1,5 +1,3 @@
-import modalTogglerFactoryFactory from './modalTogglerFactoryFactory';
-import addReportModalActivity from './addReportModalActivity';
 export * from '../../utilities';
 export * from './currency';
 export * from './forms';
@@ -35,11 +33,22 @@ function keyTriggerCheckerFactory(handleClick) {
   };
 }
 
+function getClickableElAttrs(handleClick, disabled) {
+  return disabled ? (
+    { tabIndex: -1 }
+  ) : (
+    {
+      tabIndex: 0,
+      onClick: handleClick,
+      onKeyDown: keyTriggerCheckerFactory(handleClick)
+    }
+  );
+}
+
 export {
   promiseToSetState,
   getColorClass,
   getSizeClass,
   keyTriggerCheckerFactory,
-  modalTogglerFactoryFactory,
-  addReportModalActivity
+  getClickableElAttrs
 };

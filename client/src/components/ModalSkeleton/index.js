@@ -8,12 +8,19 @@ function ModalSkeleton({
   children,
   footerContent,
   isCloseButtonDisabled,
-  extraPrecedingBodyContent,
-  extraFollowingBodyContent,
-  sectionStyles: { body, precedingBody, followingBody, footer } = {} // for auto complete
+  topBodyContent,
+  bottomBodyContent,
+  bodyStyles = {}
 }) {
 
-  const style = getStyle({ body, precedingBody, followingBody, footer });
+  const hasExtraSection = topBodyContent || bottomBodyContent;
+  const bodySections = hasExtraSection && (
+    [['top', topBodyContent], ['main', children], ['bottom', bottomBodyContent]]
+    .filter(orderedPair => !!orderedPair[1])
+    .map(pair => ({ key: pair[0], content: pair[1] }))
+  );
+  
+  const style = getStyle(hasExtraSection);
 
   const modalContainerClass = `modal${isActive ? ' is-active' : ''}`;
 
@@ -28,36 +35,29 @@ function ModalSkeleton({
             aria-label="close"
             onClick={closeModal}
             disabled={isCloseButtonDisabled}
-          ></button>
+          />
         </header>
-        {extraPrecedingBodyContent && (
-          <ModalCardBody style={style.precedingBody}>
-            {extraPrecedingBodyContent}
-          </ModalCardBody>
-        )}
-        <ModalCardBody {...{ children }} />
-        {extraFollowingBodyContent && (
-          <ModalCardBody style={style.followingBody}>
-            {extraFollowingBodyContent}
-          </ModalCardBody>
-        )}
+        <main className="modal-card-body" style={style.body}>
+          {bodySections ? (
+            bodySections.map(({ key, content }, index) => (
+              <section
+                {...{ key }}
+                style={{
+                  ...(index > 0 ? style.sectionNotFirst : style.firstSection),
+                  ...bodyStyles[key]
+                }}
+                children={content}
+              />
+            ))
+          ) : (
+            children
+          )}
+        </main>
         <footer className="modal-card-foot" style={style.footer}>
           {footerContent}
         </footer>
       </div>
     </div>
-  );
-}
-
-function ModalCardBody({ children, style: styleProp }) {
-  const style = getStyle();
-  return (
-    <section
-      className="modal-card-body"
-      style={{ ...style.body, ...styleProp }}
-    >
-      {children}
-    </section>
   );
 }
 

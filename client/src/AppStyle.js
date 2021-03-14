@@ -4,8 +4,8 @@ import { isWindowWide } from './utilities';
 const mainBackgroundColor = '#f6e653';
 const secondaryBackgroundColor = '#6141D1';
 
-const tertiaryColor = '#A749D1';
-const quaternaryColor = '#B2D158';
+// const tertiaryColor = '#A749D1';
+// const quaternaryColor = '#B2D158';
 
 const headingFontFam = 'Averia Serif Libre, Alice, IM Fell English, Overlock, serif, Times';
 const sectionHeadingFontFam = 'Averia Serif Libre, IM Fell English, serif';
@@ -14,29 +14,33 @@ const footerHeight = 50;
 const bulmaFormBlue = '#3273dc';
 const bulmaFormBlack = '#363636';
 
+function getColorsObj(innate, hover, focus, active) {
+  return { innate, hover, focus, active };
+}
 const dynamicBgColors = {
-  danger: {
-    innate: '#f14668', // matches Bulma
-    hover: '#f03a5f', // matches Bulma
-    focus: '#df415b',
-    active: '#ff4a6e'
-  },
-  primary: {
-    innate: '#f14668', // matches Bulma
-    hover: '#00c4a7', // matches Bulma
-    focus: '#00b19a',
-    active: '#00debd'
-  }
+  success: getColorsObj(
+    '#48c774', '#3ec46d', '#3abb67', '#48c774'
+  ),
+  danger: getColorsObj(
+    '#f14668', '#f03a5f', '#df415b', '#ff4a6e'
+  ),
+  primary: getColorsObj(
+    '#00d1b2', '#00c4a7', '#00b19a', '#00debd'
+  ),
+  info: getColorsObj(
+    '#3298dc', '#2793da', '#2e8cca', '#35a1e9'
+  ),
+  infoLight: getColorsObj(
+    '#eef6fc', '#e3f1fa', '#d3e0eb', '#eef6fc'
+  ),
+  primaryLight: getColorsObj(
+    '#ebfffc', '#defffa', '#d1fcf8', '#ebfffc'
+  ),
+  light: getColorsObj(
+    '#f5f5f5', '#eeeeee', '#e7e7e7', '#f8f8f8'
+  )
 };
-const dangerBgColors = {
-  innate: '#f14668', // matches Bulma
-  hover: '#f03a5f', // matches Bulma
-  focus: '#df415b',
-  active: '#ff4a6e'
-};
-const bulmaPrimaryBgColors = {
-
-};
+const dangerBgColors = dynamicBgColors.danger;
 
 function shadow(blur, offsetDirection, color, isInset) {
   if (blur === 0 || blur === null) {
@@ -54,6 +58,10 @@ function shadow(blur, offsetDirection, color, isInset) {
   const yOffset = getOneDimensionalOffset(y);
   return { boxShadow: `${_inset} ${xOffset} ${yOffset} ${_blur} ${color || '#202020'}` };
 };
+
+function processsLength(rawLength) {
+  return typeof(rawLength) === 'number' ? `${rawLength}px` : rawLength;
+}
 
 export default function getStyle() {
   return {
@@ -81,5 +89,6 @@ export {
   dynamicBgColors,
   dangerBgColors,
   shadow,
-  isWindowWide
+  isWindowWide,
+  processsLength
 };

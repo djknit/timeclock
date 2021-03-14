@@ -24,4 +24,9 @@ function getTimezoneAbbreviation(zoneName) {
   return moment.tz(zoneName).format('z');
 }
 
-export { getValidTimezones, getTimezoneOptions, getTimezoneFullName };
+export {
+  getValidTimezones,
+  getTimezoneOptions,
+  getTimezoneFullName,
+  getTimezoneAbbreviation
+};

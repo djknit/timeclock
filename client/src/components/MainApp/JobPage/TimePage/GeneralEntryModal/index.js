@@ -3,38 +3,31 @@ import getStyle from './style';
 import { currentJobTimeService } from '../../../../../data';
 import {
   api,
-  constants,
   bindFormMethods,
-  timeSegInputProblemsGetterFactory,
   getTimeInputStartingValue,
   isTimeSegmentInputIncomplete,
-  getNumDaysSpannedBySegment,
   processTimeSegmentInput,
-  findSegmentsFromSegmentInfo,
-  performAutoChangesAfterInputChange
+  findSegmentsFromSegmentInfos,
+  bindTimeSegFormMethodsAndRefs,
+  getUpdatedSegInfos,
+  getSegInfoForNewSegs
 } from './utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
 import Button from '../../../../Button';
-import DateTimeInput from './DateTimeInput';
+import TimeSegmentInputs from '../TimeSegmentInputs';
 import JustAdded from './JustAdded';
 import ModalSectionTitle from './ModalSectionTitle';
 
-const { datePickerPopperHeight } = constants;
-
 const formId = 'general-time-entry-add-segment-form';
-const inputFieldMarginBottom = '0.75rem'; // matches Bulma style for `.field:not(:last-child)`
-const sectionLabelMarginBottom = '0.5rem'; // matches Bulma style for `.label:not(:last-child)`, almost ("em"->"rem") 
 
 class EntryModal extends Component {
   constructor(props) {
     super(props);
-    this.getInputProblems = timeSegInputProblemsGetterFactory().bind(this);
+    this.applySegmentUpdateToJustAdded = this.applySegmentUpdateToJustAdded.bind(this);
+    bindTimeSegFormMethodsAndRefs(this);
     bindFormMethods(this, { hasCountdown: false });
     this.resetJustAdded = this.resetJustAdded.bind(this);
-    this.handleDatepickerPopperToggle = this.handleDatepickerPopperToggle.bind(this);
-    this.firstInputArea = React.createRef();
-    this.firstInputAreaLabel = React.createRef();
     this.state = {
       ...this.getStartingState(),
       justAddedSegmentsInfo: []
@@ -51,52 +44,10 @@ class EntryModal extends Component {
     };
   };
 
-  afterChange(propName, childPropName) {
-    performAutoChangesAfterInputChange(propName, childPropName, this)
-    .then(wasAutoChanged => {
-      if (this.state.hasBeenSubmitted) {
-        this.setState(this.getInputProblems());
-      }
-    });
-  };
-
-  handleDatepickerPopperToggle(isActiveAfterToggle, isStartDate) {
-    // need to make space for datepicker popper above date input.
-    const sectionLabelHeight = this.firstInputAreaLabel.current.clientHeight;
-    let roomAvailableBelowMsgArea = `${sectionLabelHeight}px + ${sectionLabelMarginBottom}`;
-    if (!isStartDate) {
-      const firstSectionHeight = this.firstInputArea.current.clientHeight;
-      roomAvailableBelowMsgArea += ` + ${firstSectionHeight}px + ${inputFieldMarginBottom}`;
-    }
-    const msgAreaMinH = `calc(${datePickerPopperHeight} - (${roomAvailableBelowMsgArea}))`;
-    this.setState({ messagesAreaMinHeight: isActiveAfterToggle ? msgAreaMinH : undefined });
-  };
-
-  getWarnings() {
-    const timezone = this.props.job.time.sessionTimezone;
-    let warnings = {
-      hasWarning: false,
-      warningMessages: []
-    };
-    if (this.state.hasWarning) {
-      return warnings;
-    }
-    const numDaysSpanned = getNumDaysSpannedBySegment(this.state, timezone);
-    if (numDaysSpanned > 1) {
-      warnings.hasWarning = true;
-      warnings.warningMessages.push(
-        `This time segment spans accross ${numDaysSpanned} work days.`,
-        `It will be automatically split into ${numDaysSpanned} time segments.`,
-        'Are you sure you want to continue?'
-      );
-    }
-    return warnings;
-  };
-
   processAndSubmitData() {
     const { job } = this.props;
     const timezone = job.time.sessionTimezone;
-    const processedInput = processTimeSegmentInput(this.state, timezone, job);
+    const processedInput = processTimeSegmentInput(this.state, timezone);
     const namesSuffix = processedInput.isSplit ? 's' : '';
     const segDataPropName = `segment${namesSuffix}`;
     return api.time[`addSegment${namesSuffix}`]({
@@ -106,34 +57,40 @@ class EntryModal extends Component {
   };
 
   processSuccessResponse(response) {
-    const { weeks, newSegmentInfo, newSegmentsInfo } = response.data;
-    currentJobTimeService.setValue(weeks);
+    currentJobTimeService.setValue(response.data.weeks);
     this.setState({
       justAddedSegmentsInfo: [
-        ...(newSegmentsInfo || [newSegmentInfo]),
+        ...getSegInfoForNewSegs(response.data),
         ...this.state.justAddedSegmentsInfo
       ]
     });
   };
 
+  applySegmentUpdateToJustAdded(updatedSegs) {
+    this.setState({
+      justAddedSegmentsInfo: getUpdatedSegInfos(
+        updatedSegs, this.state.justAddedSegmentsInfo
+      )
+    });
+  };
+
   resetJustAdded() {
-    this.setState({ justAddedSegmentsInfo: [] });
+    this.setState({ justAdded: [] });
   };
 
   render() {
+    const { reset, submit, resetJustAdded, applySegmentUpdateToJustAdded } = this;
     const {
-      reset,
-      submit,
-      resetJustAdded,
-      changeHandlerFactory,
-      firstInputArea,
-      firstInputAreaLabel,
-      handleDatepickerPopperToggle
-    } = this;
-    const {
-      isActive, closeModal, inputRef, job, toggleDeleteSegmentModal, windowWidth, toggleEditSegmentModal
+      isActive,
+      closeModal,
+      job,
+      toggleDeleteSegmentModal,
+      windowWidth,
+      toggleEditSegmentModal,
+      disabled
     } = this.props;
     const {
+      justAddedSegmentsInfo,
       hasSuccess,
       hasProblem,
       hasWarning,
@@ -141,32 +98,15 @@ class EntryModal extends Component {
       showMessage,
       isLoading,
       warningMessages,
-      problems,
       messagesAreaMinHeight,
-      justAddedSegmentsInfo
     } = this.state;
 
-    const justAdded = findSegmentsFromSegmentInfo(justAddedSegmentsInfo, job.time.weeks);
+    const justAdded = findSegmentsFromSegmentInfos(justAddedSegmentsInfo, job.time.weeks);
     const isFormIncomplete = isTimeSegmentInputIncomplete(this.state);
     const hasJustAdded = !!(justAdded && justAdded.length);
+    const isFormDisabled = isLoading || disabled;
 
     const reverseWarning = () => this.setState({ hasWarning: false });
-    const getInputProps = propName => ({
-      propName,
-      problems: problems[propName],
-      hasProblem: !!problems[propName],
-      value: this.state[propName]
-    });
-
-    const isUserActionAllowed = !isLoading && !hasWarning && !hasSuccess;
-    const commonAttrs = {
-      changeHandlerFactory,
-      formId,
-      isActive: isUserActionAllowed,
-      handleDatepickerPopperToggle,
-      inputFieldMarginBottom,
-      sectionLabelMarginBottom
-    };
 
     const style = getStyle(messagesAreaMinHeight);
 
@@ -177,18 +117,20 @@ class EntryModal extends Component {
           closeModal
         }}
         title="General Time Entry"
-        isCloseButtonDisabled={isLoading}
-        extraPrecedingBodyContent={hasJustAdded && (
+        isCloseButtonDisabled={isFormDisabled}
+        topBodyContent={hasJustAdded && (
           <JustAdded
             {...{
               justAdded,
               toggleDeleteSegmentModal,
               windowWidth,
-              toggleEditSegmentModal
+              toggleEditSegmentModal,
+              applySegmentUpdateToJustAdded,
+              disabled
             }}
           />
         )}
-        sectionStyles={{ precedingBody: style.extraPrecedingBody }}
+        bodyStyles={{ top: style.topBodySection }}
         footerContent={
           <>
             <Button
@@ -197,7 +139,7 @@ class EntryModal extends Component {
                 closeModal();
                 resetJustAdded();
               }}
-              disabled={isLoading}
+              disabled={isFormDisabled}
             >
               {hasSuccess ? 'Done' : 'Cancel'}
             </Button>
@@ -205,7 +147,7 @@ class EntryModal extends Component {
               <Button
                 theme="info"
                 onClick={reverseWarning}
-                disabled={isLoading || hasSuccess}
+                disabled={hasSuccess || isFormDisabled}
               >
                 Edit Form:
               </Button>
@@ -213,7 +155,7 @@ class EntryModal extends Component {
             <Button
               theme={hasWarning ? 'warning' : 'primary'}
               onClick={hasSuccess ? reset : submit}
-              disabled={isLoading || isFormIncomplete}
+              disabled={isFormDisabled || isFormIncomplete}
               isSubmit={!hasSuccess}
               formId={hasSuccess ? undefined : formId}
               {...{ isLoading }}
@@ -241,6 +183,7 @@ class EntryModal extends Component {
                 hasWarning,
                 problemMessages,
                 warningMessages,
+                disabled
               }}
               showMessage={showMessage && (!hasJustAdded || hasSuccess || hasProblem || hasWarning)}
               infoMessages={[
@@ -254,25 +197,7 @@ class EntryModal extends Component {
               closeMessage={() => this.setState({ showMessage: false })}
             />
           </div>
-          <div ref={firstInputArea} style={style.firstInputArea}>
-            <DateTimeInput
-              sectionLabel="Time Segment Start (Clock-In)"
-              timeInputProps={getInputProps('startTime')}
-              dateInputProps={getInputProps('startDate')}
-              {...commonAttrs}
-              sectionName="segment-start"
-              {...{ inputRef }}
-              labelAreaRef={firstInputAreaLabel}
-            />
-          </div>
-          <DateTimeInput
-            sectionLabel="Time Segment End (Clock-Out)"
-            timeInputProps={getInputProps('endTime')}
-            dateInputProps={getInputProps('endDate')}
-            {...commonAttrs}
-            sectionName="segment-end"
-            isLast
-          />
+          <TimeSegmentInputs formMgmtComp={this} {...{ formId, disabled }} />
         </form>
       </ModalSkeleton>
     );

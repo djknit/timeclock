@@ -1,5 +1,8 @@
-import { dates as dateUtils } from '../../utilities';
 import moment from 'moment-timezone';
+import { dates as dateUtils } from '../../utilities';
+import { cloneMyDate } from './elemental';
+import getDateRangeInfo from './getDateRangeInfo';
+import processData from './processData';
 export * from '../../utilities';
 export * from './wage';
 export * from './earnings';
@@ -12,28 +15,10 @@ function getDateFromUtcDateTime(utcDateTime) {
   return convertMomentToMyDate(moment.utc(utcDateTime));
 }
 
-function cloneMyDate({ day, month, year }) {
-  return { day, month, year };
-}
-
-function getTimeInfoFromUtcTime(utcTime, timezone) {
-  const timeMoment = moment.tz(utcTime, timezone);
-  return {
-    time: {
-      hour: timeMoment.hour(),
-      minute: timeMoment.minute(),
-      second: timeMoment.second(),
-      is24hr: true
-    },
-    date: convertMomentToMyDate(timeMoment),
-    timezone,
-    utcTime
-  };
-}
-
 export {
   getDateFromUtcDateTime,
   cloneMyDate,
-  getTimeInfoFromUtcTime,
-  isDateInRange
+  isDateInRange,
+  getDateRangeInfo,
+  processData
 };

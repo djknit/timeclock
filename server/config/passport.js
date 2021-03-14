@@ -21,9 +21,8 @@ passport.use(new LocalStrategy(
       }
       else throw new Error('password');
     })
-    .then(user => {
-      const { _id, username, email, jobs } = user;
-      return done(null, { _id, username, email, jobs });
+    .then(({ _id, username, email, jobs }) => {
+      done(null, { _id, username, email, jobs });
     })
     .catch(err => done(null, false, { message: (err && err.message) || 'unknown' }));
   }
@@ -47,8 +46,8 @@ const middleware = [
     saveUninitialized: false,
     maxAge: 240000
   }),
-  passport.initialize(),
-  passport.session()
+  passport.initialize(), // required before `passport.session()`
+  passport.session(), // deserializes `req.user`. (source: https://stackoverflow.com/questions/46644366/what-is-passport-initialize-nodejs-express#answers )
 ];
 
 module.exports = {

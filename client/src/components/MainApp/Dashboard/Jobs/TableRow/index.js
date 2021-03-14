@@ -1,5 +1,5 @@
 import React from 'react';
-import { keyTriggerCheckerFactory } from '../../../utilities';
+import { getClickableElAttrs } from '../../../utilities';
 import { addPseudoPseudoClasses, calculateStyleForPseudoClassState } from '../../../../higherOrder';
 
 function _TableRow_needsPseudo({
@@ -17,9 +17,7 @@ function _TableRow_needsPseudo({
     <tr
       style={style}
       {...pseudoHandlers}
-      {...{ onClick }}
-      tabIndex={allowTabFocus ? 0 : -1}
-      onKeyDown={keyTriggerCheckerFactory(onClick)}
+      {...getClickableElAttrs(onClick, !allowTabFocus)}
     >
       {children}
     </tr>

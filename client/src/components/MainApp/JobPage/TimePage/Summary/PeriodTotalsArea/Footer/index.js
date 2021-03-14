@@ -1,12 +1,13 @@
 import React from 'react';
 import getStyle from './style';
-import { keyTriggerCheckerFactory } from '../../../../utilities';
+import { getClickableElAttrs } from '../../../../utilities';
 import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
 
 function _Footer_needsPseudo({
   contentToggle,
   pseudoHandlers,
-  pseudoState
+  pseudoState,
+  disabled
 }) {
 
   const style = getStyle(pseudoState);
@@ -18,9 +19,7 @@ function _Footer_needsPseudo({
         className="fas fa-chevron-up"
         style={{ ...contentToggle.styles.toggle, ...style.togglerArrow }}
         {...pseudoHandlers}
-        onClick={contentToggle.toggle}
-        tabIndex={0}
-        onKeyDown={keyTriggerCheckerFactory(contentToggle.toggle)}
+        {...getClickableElAttrs(contentToggle.toggle, disabled)}
       />
     </div>
   );

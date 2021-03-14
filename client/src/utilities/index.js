@@ -2,7 +2,6 @@ import moment from 'moment-timezone';
 import api from './api';
 export * from './jobData';
 export * from './dates';
-export * from './data';
 export * from './currency';
 export * from './constants';
 export { time } from './shared';
@@ -30,10 +29,20 @@ function guessUserTimezone() {
   return moment.tz.guess();
 }
 
+function findItemInArray(array, checkIsItem, removeItemFromArray) {
+  for (const i in array) {
+    const el = array[i];
+    if (checkIsItem(el)) {
+      return removeItemFromArray ? array.splice(i, 1)[0] : el;
+    }
+  }
+}
+
 export {
   api,
   capitalizeFirstLetter,
   isWindowWide,
   roundNumToNDecimalDigits,
-  guessUserTimezone
+  guessUserTimezone,
+  findItemInArray
 };

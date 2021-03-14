@@ -12,17 +12,19 @@ const createTimeProbsObj = (time) => ({
   amPm: !(time && time.is24hr) || undefined
 });
 
-function getWholeSegmentProblems(inputValues, problemMessages, job) {
-  console.log('get whole seg probs')
+function getWholeSegmentProblems(inputValues, problemMessages, job, segId) {
   const timezone = job.time.sessionTimezone;
   const startEndCompatibilityProbs = getSegStartEndCompatibilityProbs(inputValues, timezone);
   if (startEndCompatibilityProbs) {
     problemMessages.push('The segment end time must occur after the start time.');
     return startEndCompatibilityProbs;
   }
-  if (doesSegmentOverlapExistingSegs(inputValues, timezone, job, false)) {
+  let overlappingSegs = doesSegmentOverlapExistingSegs(inputValues, timezone, job, true);
+  if (overlappingSegs.filter(({ _id }) => _id.toString() !== segId).length > 0) {
     problemMessages.push(
-      'This time segment can\'t be added because it overlaps with one or more existing time segment(s).'
+      !segId ?
+      'This time segment can\'t be added because it overlaps with one or more existing time segment(s).' :
+      'The time segment can\'t be updated because it will overlap with one or more existing time segment(s).'
     );
     return {
       startDate: true,

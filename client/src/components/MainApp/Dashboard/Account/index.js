@@ -1,9 +1,12 @@
 import React from 'react';
 import getStyle from './style';
 import { profileService } from '../../../../data';
+import { constants } from '../../utilities';
 import ContentArea from '../../ContentArea';
 import Button from '../../../Button';
 import { addData } from '../../../higherOrder';
+
+const { iconClassNames } = constants;
 
 function _Account_needsData({
   user,
@@ -25,8 +28,8 @@ function _Account_needsData({
           allowTabFocus={!areAnyModalsOpen}
         >
           {user[propToEditName] || propToEditName === 'password' ?
-            <><i className="fas fa-edit" /> Edit</> :
-            <><i className="fas fa-plus" /> Add</>
+            <><i className={iconClassNames.edit} /> Edit</> :
+            <><i className={iconClassNames.add} /> Add</>
           }
         </Button>
         {user.username && user.email && propToEditName !== 'password' &&
@@ -36,7 +39,7 @@ function _Account_needsData({
             onClick={accountPropDeletingModalOpenerFactory(propToEditName)}
             allowTabFocus={!areAnyModalsOpen}
           >
-            <i className="fas fa-times" /> Delete
+            <i className={iconClassNames.deleteSingleValue} /> Delete
           </Button>
         }
       </>

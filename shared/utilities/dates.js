@@ -11,7 +11,8 @@ module.exports = {
   areDatesEquivalent,
   isDateValid,
   getPrecedingDate,
-  getNextDate
+  getNextDate,
+  addDaysToDate
 };
 
 function getDateTime(myDate) {
@@ -88,4 +89,8 @@ function getMomentFriendlyDate(myDate) {
     year: myDate.year,
     month: myDate.month
   };
+}
+
+function addDaysToDate(date, numDaysToAdd) {
+  return convertMomentToMyDate(getMoment(date).add(numDaysToAdd, 'days'));
 }

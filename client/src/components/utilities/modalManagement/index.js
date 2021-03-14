@@ -7,9 +7,21 @@ import { extractModalsResources } from './extraction';
 export * from './initialization';
 export * from './extraction';
 
-function createModalInfo(name, ModalComponent, hasInputRef, otherStatePropToEditName, inputFocusMethodName) {
+function createModalInfo(
+  name,
+  ModalComponent,
+  hasInputRef,
+  otherStatePropToEditName,
+  inputFocusMethodName,
+  thirdStatePropToEditName
+) {
   return {
-    name, ModalComponent, hasInputRef, otherStatePropToEditName, inputFocusMethodName
+    name,
+    ModalComponent,
+    hasInputRef,
+    otherStatePropToEditName,
+    inputFocusMethodName,
+    thirdStatePropToEditName
   };
 }
 

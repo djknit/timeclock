@@ -1,9 +1,9 @@
 require('dotenv').config();
 
-require('./config/database');
+const { start, addRoutes } = require('./config').server;
 
-require('./models');
+addRoutes(require('./routes'));
 
-const server = require('./config/server');
-
-module.exports = server;
+module.exports = {
+  start
+};

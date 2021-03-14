@@ -21,10 +21,8 @@ export default function addMethods({
         });
       }
       else {
-        // console.log('  ...in service method...')
         const result = methods[methodName](...args);
         dataService._emit();
-        // console.log('method result\n', result)
         return result;
       }
     };

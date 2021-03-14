@@ -1,13 +1,15 @@
 const utilities = require('../../../utilities');
 const resCleaners = require('./resCleaners');
 
+const { processErrorForRes } = utilities;
 const { cleanWeeks } = resCleaners;
 
 module.exports = {
   ...utilities,
   ...resCleaners,
   checkRequiredProps,
-  weeksSenderFactory
+  weeksSenderFactory,
+  sendWeeksAndErrorRes
 };
 
 function checkRequiredProps(props, requiredPropNames, res) {
@@ -58,4 +60,16 @@ function weeksSenderFactory(res) {
   return (({ weeks }) => {
     res.json({ weeks: weeks && cleanWeeks(weeks) });
   });
+}
+
+function sendWeeksAndErrorRes(res, job, error, resData) {
+  let fullResData = {
+    weeks: cleanWeeks(job.weeks),
+    ...resData 
+  };
+  if (error) {
+    const { status, data } = processErrorForRes(error);
+    fullResData.error = { status, ...data };
+  }
+  res.status(error ? 207 : 200).json(fullResData);
 }
