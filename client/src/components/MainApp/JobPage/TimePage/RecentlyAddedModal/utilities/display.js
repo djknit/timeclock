@@ -1,15 +1,14 @@
-import { currentJobTimeService } from '../../../../../../data';
+import { currentJobSessionTzStore } from '../../../../../../data';
 import {
   getTimeInfoFromUtcTime,
   dates as dateUtils,
-  formatMyDate,
-  capitalizeFirstLetter
+  formatMyDate
 } from '../../utilities';
 
 const { areDatesEquivalent, getPrecedingDate } = dateUtils;
 
 function getDateAddedOnText(date, isCapitalized) {
-  const timezone = currentJobTimeService.getSessionTimezone();
+  const timezone = currentJobSessionTzStore.sessionTimezone;
   const today = getTimeInfoFromUtcTime(Date.now(), timezone).date;
   if (areDatesEquivalent(date, today)) {
     return 'today';

@@ -1,4 +1,4 @@
-import { dynamicBgColors, calculateStyleForPseudoClassState, shadow } from '../style';
+import { dynamicBgColors, calculateStyleForPseudoClassState, shadow } from '../../style';
 
 export default function getStyle(theme, pseudoState) {
 

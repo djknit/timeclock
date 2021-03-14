@@ -6,6 +6,7 @@ import GeneralEntryModal from './GeneralEntryModal';
 import DeleteSegmentModal from './DeleteSegmentModal';
 import EditSegmentModal from './EditSegmentModal';
 import RecentlyAddedModal from './RecentlyAddedModal';
+import SessionTimezoneModal from './SessionTimezoneModal';
 import General from './General';
 import Summary from './Summary';
 import Weeks from './Weeks';
@@ -20,7 +21,8 @@ const modalsInfo = [
   createModalInfo('deleteSegment', DeleteSegmentModal, false, 'segmentToDelete'),
   createModalInfo(
     'editSegment', EditSegmentModal, false, 'segmentToEdit', undefined, 'handleEditSegSuccess'
-  )
+  ),
+  createModalInfo('sessionTimezone', SessionTimezoneModal, false)
 ];
 
 class TimePage extends Component {
@@ -55,7 +57,11 @@ class TimePage extends Component {
     const { setSegmentToDelete, setSegmentToEdit } = this;
     const { job, parentPath, windowWidth, areAnyModalsOpen } = this.props;
     const {
-      segmentToDelete, segmentToEdit, handleEditSegSuccess, isEditSegmentModalActive, isDeleteSegmentModalActive
+      segmentToDelete,
+      segmentToEdit,
+      handleEditSegSuccess,
+      isEditSegmentModalActive,
+      isDeleteSegmentModalActive
     } = this.state;
 
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
@@ -64,10 +70,12 @@ class TimePage extends Component {
     const toggleDeleteSegmentModal = modalTogglers.deleteSegment;
     const toggleEditSegmentModal = modalTogglers.editSegment;
     const toggleRecentlyAddedModal = modalTogglers.recentlyAdded;
+    const toggleSessionTimezoneModal = modalTogglers.sessionTimezone;
     
     const primaryModalAttrs = { // for the modals that can open other modals on top
       toggleDeleteSegmentModal,
       toggleEditSegmentModal,
+      toggleSessionTimezoneModal,
       disabled: isEditSegmentModalActive || isDeleteSegmentModalActive
     };
     const variableModalAttrs = {
@@ -78,7 +86,8 @@ class TimePage extends Component {
         setSegmentToEdit,
         reportUpdate: handleEditSegSuccess
       },
-      recentlyAdded: { ...primaryModalAttrs }
+      recentlyAdded: { ...primaryModalAttrs },
+      sessionTimezone: {}
     };
 
     const crumbChain = [
@@ -107,7 +116,8 @@ class TimePage extends Component {
               job,
               toggleGeneralEntryModal,
               toggleDeleteSegmentModal,
-              toggleRecentlyAddedModal
+              toggleRecentlyAddedModal,
+              toggleSessionTimezoneModal
             }}
             disabled={areAnyModalsOpen}
           />

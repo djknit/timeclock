@@ -1,13 +1,17 @@
 import {
-  addWeekEarningsToTotals,
-  addDayEarningsToWeekTotals,
   getDurationInfo,
-  formatEarnings,
   isPartialWeekInDateRange,
   isWholeWeekInDateRange,
-  isDateInRange,
+  dates as dateUtils
+} from '../../utilities';
+import {
+  addWeekEarningsToTotals,
+  addDayEarningsToWeekTotals,
+  formatEarnings,
   getPaidAndUnpaidTotalTime
-} from './utilities';
+} from './earnings';
+
+const { isDateInRange } = dateUtils;
 
 export default getDateRangeInfo;
 

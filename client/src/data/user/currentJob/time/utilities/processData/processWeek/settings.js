@@ -1,4 +1,4 @@
-import { areWagesEquivalent } from '../utilities';
+import { areWagesEquivalent } from '../../wage';
 
 function getWeekSettings(processedDays) {
   let weekSettings = {

@@ -1,7 +1,7 @@
-import { dataServiceFactory, guessUserTimezone } from './utilities';
+import { dataServiceFactory } from './utilities';
 import jobsService from '../jobs';
 import basicsService from './basics';
-import timeService from './time';
+import timeService, { sessionTzDataStore } from './time';
 import settingsService from './settings';
 
 const childDataServices = {
@@ -57,5 +57,6 @@ export default currentJobService;
 export {
   basicsService as currentJobBasicsService,
   settingsService as currentJobSettingsService,
-  timeService as currentJobTimeService
+  timeService as currentJobTimeService,
+  sessionTzDataStore as currentJobSessionTzStore
 };

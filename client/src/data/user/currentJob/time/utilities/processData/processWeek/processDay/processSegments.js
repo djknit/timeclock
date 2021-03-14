@@ -1,23 +1,25 @@
 import {
   getTimeInfoFromUtcTime,
   getDurationInfo
-} from '../../utilities';
+} from '../../../../../utilities';
 
-export default function processSegments(segments, timezone) {
+export default function processSegments(segments, outputTimezones) {
+
+  return segments.map(_processSegment);
 
   function _processSegment({ _id, startTime, endTime, created, modified }) {
     return {
       _id: _id.toString(),
-      startTime: getTimeInfoFromUtcTime(startTime, timezone),
-      endTime: getTimeInfoFromUtcTime(endTime, timezone),
+      startTime: _getTimeInfo(startTime),
+      endTime: _getTimeInfo(endTime),
       duration: getDurationInfo(endTime - startTime),
       created: {
-        time: created.time && getTimeInfoFromUtcTime(created.time, timezone),
+        time: created.time && _getTimeInfo(created.time),
         method: created.method
       },
       modified: modified && modified.map(
         modInfo => ({
-          time: getTimeInfoFromUtcTime(modInfo.time, timezone),
+          time: _getTimeInfo(modInfo.time),
           method: modInfo.method,
           previousValue: { ...modInfo.previousValue }
         })
@@ -25,5 +27,7 @@ export default function processSegments(segments, timezone) {
     };
   }
 
-  return segments.map(_processSegment);
+  function _getTimeInfo(_utcTime) {
+    return getTimeInfoFromUtcTime(_utcTime, outputTimezones.primary, outputTimezones.alt);
+  }
 };

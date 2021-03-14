@@ -1,4 +1,4 @@
-import { getDurationInfo, getCurrencyAmountInfo } from '../../../../utilities';
+import { getDurationInfo, getCurrencyAmountInfo } from '../../../../../../utilities';
 
 
 // Calculate earrnings for a single day or segment.

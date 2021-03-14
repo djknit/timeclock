@@ -4,6 +4,13 @@ export * from '../style';
 
 const { contentAreasRow, columnContentArea } = contentAreasGridStyles;
 
+const minorInModalButtonStyle = {
+  lineHeight: 1,
+  height: 'auto',
+  fontSize: '1em',
+  padding: 5
+};
+
 export default function getStyle(windowWidth) {
   
   const rightColWidthPercent = 36;
@@ -25,4 +32,8 @@ export default function getStyle(windowWidth) {
       ...contentAreaNotLast
     }
   };
+};
+
+export {
+  minorInModalButtonStyle
 };

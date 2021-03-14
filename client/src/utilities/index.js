@@ -2,7 +2,6 @@ import moment from 'moment-timezone';
 import api from './api';
 export * from './jobData';
 export * from './dates';
-export * from './data';
 export * from './currency';
 export * from './constants';
 export { time } from './shared';

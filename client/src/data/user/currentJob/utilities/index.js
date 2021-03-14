@@ -1,8 +1,8 @@
-import { getCurrencyAmountInfo } from '../../../utilities';
+import { getCurrencyAmountInfo, constants } from '../../../utilities';
 export * from '../../../utilities';
 
-const secsPerMin = 60;
-const minsPerHr = 60;
+const { secsPerMin, minsPerHr } = constants;
+
 const secsPerHr = secsPerMin * minsPerHr;
 
 export {

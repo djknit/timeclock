@@ -9,7 +9,7 @@ function GeneralArea({
   job,
   disabled,
   toggleGeneralEntryModal,
-  toggleDeleteSegmentModal,
+  toggleSessionTimezoneModal,
   toggleRecentlyAddedModal
 }) {
 
@@ -24,6 +24,16 @@ function GeneralArea({
           <p style={style.areaHasBtnsText}>
             <Bold>Your Timezone:</Bold> {getTimezoneFullName(userTimezone)}
           </p>
+          <div style={style.btnsSubArea}>
+            <Button
+              theme="info light"
+              styles={style.firstBtn}
+              onClick={() => toggleSessionTimezoneModal(true)}
+              allowTabFocus={!disabled}
+            >
+              <i className="fas fa-info-circle" /><i className="fas fa-pencil-alt" /> About/Change
+            </Button>
+          </div>
         </div>
         <div style={style.lastAreaHasBtns}>
           <p style={style.areaHasBtnsText}>

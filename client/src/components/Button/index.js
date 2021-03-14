@@ -9,17 +9,19 @@ function _Button_needsPseudo({
   size,
   theme,
   styles,
+  style: styleProp,
   onClick,
   disabled,
   formId,
   isSubmit,
-  allowTabFocus,
+  allowTabFocus = true,
   isLoading,
   pseudoState,
   pseudoHandlers,
   buttonRef,
   isLink,
-  to
+  to,
+  shadowBlurRatio
 }) {
 
   let formRelatedAttributes = (
@@ -31,7 +33,7 @@ function _Button_needsPseudo({
     { type: 'button' }
   );
   
-  const completeStyle = getStyle(styles, pseudoState, theme);
+  const completeStyle = getStyle(styles, pseudoState, theme, styleProp, shadowBlurRatio);
 
   const sizeClass = getSizeClass(size || 'medium');
   const colorClass = getColorClass(theme || 'light');
@@ -49,27 +51,25 @@ function _Button_needsPseudo({
   return (
     isLink ? (
       <Link
+        {...commonAttrs}
         {...{
-          ...commonAttrs,
-          to
+          to,
+          children
         }}
-      >
-        {children}
-      </Link>
+      />
     ) : (
       <button
+        {...commonAttrs}
         {...{
-          ...commonAttrs,
           onClick,
-          ...formRelatedAttributes
+          children
         }}
-      >
-        {children}
-      </button>
+        {...formRelatedAttributes}
+      />
     )
   );
 }
 
 const Button = addPseudoPseudoClasses(_Button_needsPseudo);
 
-export default Button;      
+export default Button;

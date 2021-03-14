@@ -1,4 +1,4 @@
-import { formatEarnings, addWeekEarningsToTotals } from './utilities';
+import { formatEarnings, addWeekEarningsToTotals } from '../earnings';
 
 function getJobEarnings(processedWeeks) {
   let totalEarningsByCurrency = [];
