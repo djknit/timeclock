@@ -56,11 +56,13 @@ class RecentlyAddedModal extends Component {
 
   refreshTimeData() {
     const job = currentJobService.getValue();
-    this.setState({
-      recentlyAddedSegments: findRecentlyAddedSegs(
-        job.time.weeks, this.state.periodDurationInMsec
-      )
-    });
+    if (job) {
+      this.setState({
+        recentlyAddedSegments: findRecentlyAddedSegs(
+          job.time.weeks, this.state.periodDurationInMsec
+        )
+      });
+    }
   };
 
   componentDidMount() {

@@ -37,17 +37,7 @@ const currentJobService = dataServiceFactory({
     timeService.clearValue();
   },
   methods: {
-    updateCurrentJob(updatedJob) {
-      setCurrentJob(updatedJob);
-      let _jobs = jobsService.getValue();
-      for (let i = 0; i < _jobs.length; i++) {
-        if (_jobs[i]._id.toString() === updatedJob._id.toString()) {
-          _jobs[i] = updatedJob;
-          jobsService.setValue(_jobs);
-          return;
-        }
-      }
-    }
+    updateCurrentJob: setCurrentJob // now unnecessary but already in use
   },
   childDataServices
 });

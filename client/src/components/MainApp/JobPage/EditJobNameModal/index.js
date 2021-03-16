@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { jobsService, currentJobService } from '../../../../data';
+import { jobsService, currentJobService, currentJobBasicsService } from '../../../../data';
 import { api, bindFormMethods } from '../../utilities';
 import FormModal from '../../../FormModal';
 import Tag, { TagGroup } from '../../../Tag';
@@ -20,13 +20,17 @@ class EditJobNameModal extends Component {
 
   getInputProblems() {
     const { updatedJobName } = this.state;
+    const { name } = this.props.job;
     let problems = {};
     let problemMessages = [];
     if (!updatedJobName) {
       problems.updatedJobName = true;
       problemMessages.push('You must enter a new job name.');
     }
-    else if (jobsService.getValue().map(job => job.name).includes(updatedJobName)) {
+    else if (
+      jobsService.getValue().map(job => job.name).includes(updatedJobName) &&
+      updatedJobName !== name
+    ) {
       problems.updatedJobName = true;
       problemMessages.push(
         `You already have a job with the name "${updatedJobName}". Each job must have a unique name.`
@@ -43,7 +47,7 @@ class EditJobNameModal extends Component {
   };
 
   processSuccessResponse(response) {
-    currentJobService.updateCurrentJob(response.data);
+    currentJobBasicsService.setValue(response.data);
   };
 
   afterSuccessCountdown() {
@@ -69,6 +73,7 @@ class EditJobNameModal extends Component {
       problems,
       hasSuccess,
       isLoading,
+      secondsUntilRedirect
     } = state;
 
     if (!isActive) {

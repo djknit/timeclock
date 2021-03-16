@@ -13,7 +13,6 @@ function CurrentItemValueDisplay({
 
   const currentDate = getDateForTime(Date.now(), settings, true);
   const currentValue = getMostRecentScheduleValueForDate(currentDate, settings[propName]);
-  // console.log({ propName, currentValue })
 
   const style = getStyle();
 

@@ -2,6 +2,7 @@
 // This file is for job basics only (name, _id, and startDate) for all of the user's job.
 
 import { dataServiceFactory } from '../utilities';
+import { currentJobBasicsService } from './currentJob';
 
 let state = { jobs: undefined };
 
@@ -15,15 +16,31 @@ const service = dataServiceFactory({
   },
   methods: {
     removeJob(jobId) {
-      const { jobs } = state;
-      for (let i = 0; i < jobs.length; i++) {
-        if (jobs[i]._id.toString() === jobId.toString()) {
-          jobs.splice(i, 1);
-          return;
-        }
-      }
+      const indexOfJobToRemove = findIndexOfJobById(jobId);
+      if (indexOfJobToRemove === -1) return;
+      state.jobs.splice(indexOfJobToRemove, 1);
+    },
+    updateJob({ _id, name, startDate } = {}) {
+      if (!_id || !state.jobs) return;
+      const jobToUpdate = state.jobs[findIndexOfJobById(_id)];
+      if (!jobToUpdate) return;
+      Object.assign(jobToUpdate, { name, startDate });
     }
   }
 });
+
+currentJobBasicsService.subscribe(function() {
+  service.updateJob(currentJobBasicsService.getValue());
+});
+
+function findIndexOfJobById(jobId) {
+  const { jobs } = state;
+  for (const i in jobs) {
+    if (jobs[i]._id.toString() === jobId.toString()) {
+      return i;
+    }
+  }
+  return -1;
+}
 
 export default service;
