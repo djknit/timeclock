@@ -1,5 +1,6 @@
 import React from 'react';
 import Notification from '../../Notification';
+import RestorableNotification from '../../RestorableNotification';
 import ProgressBar from '../ProgressBar';
 
 function FormMessages({
@@ -13,7 +14,8 @@ function FormMessages({
   warningMessages,
   successRedirect,
   closeMessage,
-  disabled
+  disabled,
+  allowRestore
 }) {
 
   let theme, messages, close;
@@ -55,6 +57,20 @@ function FormMessages({
         />
       )}
     </Notification>
+  ) : (
+    <></>
+  );
+
+  return (hasMessages || hasProgressBar) ? (
+    <RestorableNotification {...{ theme, messages, close, allowRestore }}>
+      {hasProgressBar && (
+        <ProgressBar
+          {...{ theme }}
+          remaining={secondsRemaining}
+          max={secondsToDelayRedirect}
+        />
+      )}
+    </RestorableNotification>
   ) : (
     <></>
   );

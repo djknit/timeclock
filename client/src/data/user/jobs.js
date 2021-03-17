@@ -1,5 +1,5 @@
 // ABOUT THIS FILE:
-// This file is for job basics only (name, _id, and startDate) for all of the user's job.
+// This file is for job basics only (name, _id, and startDate) for all of the user's jobs.
 
 import { dataServiceFactory } from '../utilities';
 import { currentJobBasicsService } from './currentJob';

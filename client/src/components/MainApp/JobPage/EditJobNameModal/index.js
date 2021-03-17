@@ -73,7 +73,6 @@ class EditJobNameModal extends Component {
       problems,
       hasSuccess,
       isLoading,
-      secondsUntilRedirect
     } = state;
 
     if (!isActive) {
