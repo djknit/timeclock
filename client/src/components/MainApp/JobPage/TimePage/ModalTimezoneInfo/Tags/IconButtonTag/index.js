@@ -1,7 +1,7 @@
 import React from 'react';
 import getStyle from './style';
 import Tag from '../../../../../../Tag';
-import InfoButton from '../../../../../InfoButton';
+import InfoButton from '../../../../../../InfoButton';
 
 function IconButtonTag({
   onClick,

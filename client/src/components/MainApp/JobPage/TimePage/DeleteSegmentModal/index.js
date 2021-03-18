@@ -8,7 +8,6 @@ import {
 } from '../utilities';
 import { currentJobTimeService } from '../../../../../data';
 import Tag, { TagGroup } from '../../../../Tag';
-// import { FormButtons, FormMessages } from '../../../../formPieces';
 import FormModal from '../../../../FormModal';
 
 class DeleteSegmentModal extends Component {

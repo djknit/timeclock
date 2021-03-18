@@ -4,8 +4,12 @@
 
 import { dynamicBgColors} from '../../AppStyle';
 export * from '../../AppStyle';
+
+const notificationDefaultMarginBottom = 10;
+
 export {
-  getDynamicBgStylesForTheme
+  getDynamicBgStylesForTheme,
+  notificationDefaultMarginBottom
 };
 
 

@@ -183,7 +183,7 @@ class _Navbar_needsDataAndPseudo extends Component {
             aria-expanded="false"
             data-target={menuId}
             style={style.burger}
-            {...getClickableElAttrs(toggleMenu, !isFullNavDisplayed || areAnyModalsOpen)}
+            {...getClickableElAttrs(toggleMenu, isFullNavDisplayed || areAnyModalsOpen)}
             {...pseudoHandlers}
           >
             {[...Array(3)].map((_e, _i) => (

@@ -8,7 +8,7 @@ const service = dataServiceFactory({
     return state._id ? { ...state } : undefined
   },
   setFunction: ({ _id, name, startDate }) => {
-    Object.assign(state, { name, startDate }, { _id: _id.toString() });
+    Object.assign(state, { name, startDate, _id: _id.toString() });
   },
   clearFunction: resetState
 });

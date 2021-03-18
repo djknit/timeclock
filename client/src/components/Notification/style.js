@@ -1,3 +1,5 @@
+import { notificationDefaultMarginBottom } from '../style';
+
 export default function getStyle(isNotificationLastChild) {
   const allPs = {
     textAlign: 'center',
@@ -17,7 +19,7 @@ export default function getStyle(isNotificationLastChild) {
   };
 
   if (!isNotificationLastChild) {
-    style.notification.marginBottom = 10;
+    style.notification.marginBottom = notificationDefaultMarginBottom;
   }
 
   return style;

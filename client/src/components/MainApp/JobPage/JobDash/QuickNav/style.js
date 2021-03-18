@@ -1,6 +1,19 @@
 import { contentAreaPadding, mainAreaPadding } from '../style';
 
-export default function getStyle(buttonHeight, additionalAreaStyle) {
+export default function getStyle(buttonHeight, windowWidth, additionalAreaStyle) {
+
+  const isButtonOnTitleLine = windowWidth > 448; // depends on 1st button & title sizes (measured manually)
+  let titleStyle;
+  if (buttonHeight && isButtonOnTitleLine) {
+    titleStyle = {
+      display: 'inline-block',
+      paddingRight: contentAreaPadding,
+      margin: 0,
+      height: buttonHeight,
+      lineHeight: `${buttonHeight}px`,
+      verticalAlign: 'middle'
+    };
+  }
 
   return {
     contentArea: {
@@ -8,19 +21,7 @@ export default function getStyle(buttonHeight, additionalAreaStyle) {
       paddingRight: 0,
       ...(additionalAreaStyle || {})
     },
-    title: {
-      display: 'inline-block',
-      paddingRight: contentAreaPadding,
-      margin: 0,
-      ...(
-        buttonHeight ?
-        {
-          height: buttonHeight,
-          lineHeight: `${buttonHeight}px`
-        } :
-        {}
-      )
-    },
+    title: titleStyle,
     button: {
       innate: {
         marginRight: contentAreaPadding,

@@ -45,7 +45,7 @@ function TimePeriodInput({
 
   return (
     <BoxInputFrame
-      label="Show Time Entered In The Past..."
+      label="Show time entered in the past..."
       inputId={mainSelectInputId}
       styles={{ label: style.label}}
     >
