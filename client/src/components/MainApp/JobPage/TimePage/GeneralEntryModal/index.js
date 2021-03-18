@@ -194,7 +194,7 @@ class EntryModal extends Component {
                 'Time segment successfully added.',
                 'Would you like to enter more time?'
               ]}
-              closeMessage={() => this.setState({ showMessage: false })}
+              toggleMessage={shouldShowMsg => this.setState({ showMessage: shouldShowMsg })}
             />
           </div>
           <TimeSegmentInputs formMgmtComp={this} {...{ formId, disabled }} />

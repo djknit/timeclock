@@ -88,7 +88,7 @@ function FormModal({
               successMessages,
               successRedirect
             }}
-            closeMessage={() => formMgmtComponent.setState({ showMessage: false })}
+            toggleMessage={shouldShowMsg=> formMgmtComponent.setState({ showMessage: shouldShowMsg })}
           />
           {messagesAreaContent}
         </MessagesArea>
