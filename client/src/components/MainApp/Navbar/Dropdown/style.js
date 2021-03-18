@@ -6,9 +6,15 @@ export default function getStyle(isFullNavDisplayed, isDropdownActive) {
     backgroundColor,
     borderTop: 'none'
   };
+  let ddLinkArrow = {
+    display: 'inline-block',
+    position: 'relative',
+    fontSize: '0.8em'
+  };
   
   if (isFullNavDisplayed) {
     Object.assign(dropdown, navShadow);
+    ddLinkArrow.top = '0.115em'; // number comes from trial & error
   }
   else if (isDropdownActive) {
     dropdown.paddingTop = 0;
@@ -24,12 +30,7 @@ export default function getStyle(isFullNavDisplayed, isDropdownActive) {
     dropdownLink: {
       zIndex: 22 // must be greater than .navbar-dropdown Bulma z-idex of 20
     },
-    ddLinkArrow: {
-      display: 'inline-block',
-      position: 'relative',
-      top: '.2em',
-      fontSize: '.8em'
-    },
+    ddLinkArrow,
     dropdown
   };
 };

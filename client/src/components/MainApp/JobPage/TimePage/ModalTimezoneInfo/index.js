@@ -27,6 +27,7 @@ function ModalTimezoneInfo({
       theme="info light"
       close={() => toggleMessage(false)}
       style={style.notification}
+      {...{ disabled }}
     >
       <NotificationText>
         All times are in {tzAbbreviation} (timezone "{sessionTimezone}").
@@ -44,7 +45,8 @@ function ModalTimezoneInfo({
       {...{
         toggleMessage,
         sessionTimezone,
-        toggleSessionTimezoneModal
+        toggleSessionTimezoneModal,
+        disabled
       }}
     />
   );

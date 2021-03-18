@@ -1,6 +1,6 @@
 import React from 'react';
 import getStyle from './style';
-import Button from '../../Button';
+import Button from '../Button';
 
 function InfoButton({
   style: styleProp,

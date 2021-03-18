@@ -9,7 +9,7 @@ import Notification from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
 import { SelectInput } from '../../../../formPieces';
 import Button from '../../../../Button';
-import InfoButton from '../../../InfoButton';
+import InfoButton from '../../../../InfoButton';
 
 const formId = 'change-session-timezone-form';
 const guessTimezoneBtnTxt = 'Guess My Timezone'

@@ -34,7 +34,8 @@ class JobDash extends Component {
           {...{
             jobSettingsPath,
             timePagePath,
-            dashboardPath
+            dashboardPath,
+            windowWidth
           }}
           disabled={areAnyModalsOpen}
           style={style.quickNav}

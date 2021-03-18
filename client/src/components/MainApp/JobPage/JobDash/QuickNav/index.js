@@ -23,11 +23,12 @@ class QuickNav extends Component {
       style: styleProp,
       jobSettingsPath,
       timePagePath,
-      dashboardPath
+      dashboardPath,
+      windowWidth
     } = props;
     const { buttonHeight } = state;
 
-    const style = getStyle(buttonHeight, styleProp);
+    const style = getStyle(buttonHeight, windowWidth, styleProp);
 
     const commonAttrs = {
       allowTabFocus: !disabled,

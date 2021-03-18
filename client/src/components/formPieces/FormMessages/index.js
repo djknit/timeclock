@@ -1,5 +1,5 @@
 import React from 'react';
-import Notification from '../../Notification';
+import RestorableNotification from '../../RestorableNotification';
 import ProgressBar from '../ProgressBar';
 
 function FormMessages({
@@ -12,8 +12,9 @@ function FormMessages({
   infoMessages,
   warningMessages,
   successRedirect,
-  closeMessage,
-  disabled
+  disabled,
+  allowRestore,
+  toggleMessage
 }) {
 
   let theme, messages, close;
@@ -24,7 +25,7 @@ function FormMessages({
   else if (hasProblem) {
     theme = 'danger';
     messages = problemMessages;
-    close = closeMessage;
+    close = () => toggleMessage(false);
   }
   else if (hasWarning) {
     theme = 'warning';
@@ -33,7 +34,7 @@ function FormMessages({
   else {
     theme = 'info';
     messages = infoMessages;
-    close = closeMessage;
+    close = () => toggleMessage(false);
   }
   if (disabled) close = undefined;
 
@@ -45,16 +46,24 @@ function FormMessages({
     messages.push(`${messageFragment} in ${Math.round(secondsRemaining)} seconds...`);
   }
 
-  return (showMessage && (hasMessages || hasProgressBar)) ? (
-    <Notification {...{ theme, messages, close }}>
-      {hasSuccess && successRedirect && (
+  return (hasMessages || hasProgressBar) ? (
+    <RestorableNotification
+      {...{
+        theme,
+        messages,
+        allowRestore,
+        showMessage,
+        toggleMessage
+      }}
+    >
+      {hasProgressBar && (
         <ProgressBar
           {...{ theme }}
           remaining={secondsRemaining}
           max={secondsToDelayRedirect}
         />
       )}
-    </Notification>
+    </RestorableNotification>
   ) : (
     <></>
   );
