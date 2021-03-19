@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { api, bindFormMethods } from '../utilities';
 import { userService } from '../../../../data';
 import FormModal from '../../../FormModal';
-import InfoNotification from '../../../RestorableNotification'; //--* TEST *-* * * *
 import { TextInput } from '../../../formPieces';
 
 const fieldsInfo = [
@@ -38,7 +37,6 @@ class LoginModal extends Component {
     return {
       usernameOrEmail: '',
       password: '',
-      showTestMsg: true //--* TEST *-* * * *
     };
   };
 
@@ -94,7 +92,6 @@ class LoginModal extends Component {
       problems,
       usernameOrEmail,
       password,
-      showTestMsg //--* TEST *-* * * *
     } = this.state;
 
     return (
@@ -109,13 +106,6 @@ class LoginModal extends Component {
         title="Sign In"
         disableCloseOnSuccess
       >
-        <InfoNotification
-          showMessage={showTestMsg}
-          toggleMessage={shouldShowMsg => this.setState({ showTestMsg: shouldShowMsg })}
-          theme="info"
-          disabled={!isActive || isLoading || hasSuccess}
-          messages={['This is a test.', 'Important information can go here.']}
-        />
         {fieldsInfo.map((field, index) => (
           <TextInput
             {...field}

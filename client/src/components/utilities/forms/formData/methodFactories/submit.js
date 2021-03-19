@@ -1,9 +1,10 @@
 import { constants } from '../../../../utilities';
 import { genericFormStates } from '../formState';
+import { scrollTopIfShould } from './elemental';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
-function submitFactory(hasCountdown) {
+function submitFactory(hasCountdown, scrollOptions) {
 
   return function (event) {
     event.preventDefault();
@@ -33,6 +34,7 @@ function submitFactory(hasCountdown) {
         ...genericFormStates.success,
         secondsUntilRedirect
       });
+      scrollTopIfShould('success', this);
       return this.processSuccessResponse && this.processSuccessResponse(res);
     })
     .then(() => {

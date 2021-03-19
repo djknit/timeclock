@@ -100,12 +100,8 @@ function FormModal({
 
 export default FormModal;
 
-function Form({ formId, children }) {
-  return formId ? (
-    <form id={formId}>{children}</form>
-  ) : (
-    children
-  );
+function Form({ formId: id, children }) {
+  return id ? (<form {...{ id, children }} />) : children;
 }
 
 function MessagesArea({ style, children }) {

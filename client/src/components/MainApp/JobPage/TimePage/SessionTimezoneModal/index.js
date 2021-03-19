@@ -5,6 +5,7 @@ import {
   getTimezoneFullName, getTimezoneOptions, bindFormMethods, guessUserTimezone
 } from '../utilities';
 import FormModal from '../../../../FormModal';
+import RestorableNotification from '../../../../RestorableNotification';
 import Notification from '../../../../Notification';
 import Tag, { TagGroup } from '../../../../Tag';
 import { SelectInput } from '../../../../formPieces';
@@ -80,13 +81,14 @@ class SessionTimezoneModal extends Component {
         messagesAreaStyle={style.messagesArea}
         messagesAreaContent={
           <>
-            {wasSessionTimezoneGuessed && showGuessMessage && (
-              <Notification
+            {wasSessionTimezoneGuessed && (
+              <RestorableNotification
                 theme="info light"
                 messages={[
                   'The current session timezone was automatically set by guessing your timezone using information provided by your browser.'
                 ]}
-                close={() => toggleGuessMsg(false)}
+                showMessage={showGuessMessage}
+                toggleMessage={toggleGuessMsg}
               />
             )}
             <TagGroup size="medium" align="center">
