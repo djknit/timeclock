@@ -53,4 +53,9 @@ const genericFormStates = {
   }
 };
 
-export { genericFormStates };
+const containerRefName = 'containerRef';
+
+export {
+  genericFormStates,
+  containerRefName
+};

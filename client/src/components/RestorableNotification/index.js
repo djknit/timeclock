@@ -3,7 +3,7 @@ import { getCollapsedNoteStyle } from './style';
 import Notification from '../Notification';
 import InfoButton from '../InfoButton';
 
-function InfoNotification({
+function RestorableNotification({
   showMessage,
   toggleMessage,
   theme,
@@ -37,7 +37,7 @@ function InfoNotification({
   );
 }
 
-export default InfoNotification;
+export default RestorableNotification;
 
 
 function CollapsedNote({

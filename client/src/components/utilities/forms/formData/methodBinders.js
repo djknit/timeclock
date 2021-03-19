@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   changeHandlerFactoryFactory,
   getStartingStateFactory,
@@ -5,6 +6,7 @@ import {
   submitFactory,
   resetFactory
 } from './methodFactories';
+import { containerRefName } from './formState';
 
 function bindCommonFormMethods(component, options) {
   component.changeHandlerFactory = changeHandlerFactoryFactory().bind(component);
@@ -35,6 +37,7 @@ function bindFormSpecificMethods(component) {
 function bindFormMethods(component, options) {
   bindCommonFormMethods(component, options);
   bindFormSpecificMethods(component);
+  component[containerRefName] = React.createRef();
 }
 
 export {
