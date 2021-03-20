@@ -1,5 +1,5 @@
 import React from 'react';
-import { constants } from '../utilities';
+import { constants, extractFormContainerRef } from '../utilities';
 import ModalSkeleton from '../ModalSkeleton';
 import { FormButtons, FormMessages } from '../formPieces';
 
@@ -73,6 +73,7 @@ function FormModal({
           reverseWarning={() => formMgmtComponent.setState({ hasWarning: false })}
         />
       }
+      bodyRef={extractFormContainerRef(formMgmtComponent)}
     >
       <Form {...{ formId }}>
         <MessagesArea style={messagesAreaStyle}>
@@ -88,7 +89,7 @@ function FormModal({
               successMessages,
               successRedirect
             }}
-            toggleMessage={shouldShowMsg=> formMgmtComponent.setState({ showMessage: shouldShowMsg })}
+            toggleMessage={shouldShowMsg => formMgmtComponent.setState({ showMessage: shouldShowMsg })}
           />
           {messagesAreaContent}
         </MessagesArea>

@@ -34,7 +34,7 @@ function submitFactory(hasCountdown, scrollOptions) {
         ...genericFormStates.success,
         secondsUntilRedirect
       });
-      scrollTopIfShould('success', this);
+      scrollTopIfShould('success', this, scrollOptions);
       return this.processSuccessResponse && this.processSuccessResponse(res);
     })
     .then(() => {
@@ -54,6 +54,8 @@ function submitFactory(hasCountdown, scrollOptions) {
       );
     })
     .catch(err => {
+      console.error(err)
+      console.log(err)
       const _err = err || {};
       if (this.props.catchApiUnauthorized) this.props.catchApiUnauthorized(err);
       let { response } = _err;
@@ -69,6 +71,8 @@ function submitFactory(hasCountdown, scrollOptions) {
         problems,
         ...genericFormStates[isWarning ? 'warning' : 'problem']
       });
+      const eventName = isWarning ? 'warning' : 'problem';
+      scrollTopIfShould(eventName, this, scrollOptions);
     });
   };
 

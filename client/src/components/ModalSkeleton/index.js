@@ -10,7 +10,8 @@ function ModalSkeleton({
   isCloseButtonDisabled,
   topBodyContent,
   bottomBodyContent,
-  bodyStyles = {}
+  bodyStyles = {},
+  bodyRef
 }) {
 
   const hasExtraSection = topBodyContent || bottomBodyContent;
@@ -37,7 +38,7 @@ function ModalSkeleton({
             disabled={isCloseButtonDisabled}
           />
         </header>
-        <main className="modal-card-body" style={style.body}>
+        <main className="modal-card-body" style={style.body} ref={bodyRef}>
           {bodySections ? (
             bodySections.map(({ key, content }, index) => (
               <section
