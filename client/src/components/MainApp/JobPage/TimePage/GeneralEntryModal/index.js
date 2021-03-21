@@ -10,7 +10,8 @@ import {
   findSegmentsFromSegmentInfos,
   bindTimeSegFormMethodsAndRefs,
   getUpdatedSegInfos,
-  getSegInfoForNewSegs
+  getSegInfoForNewSegs,
+  extractFormContainerRef
 } from './utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
@@ -105,6 +106,7 @@ class EntryModal extends Component {
     const isFormIncomplete = isTimeSegmentInputIncomplete(this.state);
     const hasJustAdded = !!(justAdded && justAdded.length);
     const isFormDisabled = isLoading || disabled;
+    const bodyRef = extractFormContainerRef(this);
 
     const reverseWarning = () => this.setState({ hasWarning: false });
 
@@ -114,7 +116,8 @@ class EntryModal extends Component {
       <ModalSkeleton
         {...{
           isActive,
-          closeModal
+          closeModal,
+          bodyRef
         }}
         title="General Time Entry"
         isCloseButtonDisabled={isFormDisabled}
@@ -126,7 +129,7 @@ class EntryModal extends Component {
               windowWidth,
               toggleEditSegmentModal,
               applySegmentUpdateToJustAdded,
-              disabled
+              disabled,
             }}
           />
         )}

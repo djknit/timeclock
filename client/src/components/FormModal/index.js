@@ -33,6 +33,8 @@ function FormModal({
     warningMessages
   } = formMgmtComponent.state;
 
+  const bodyRef = extractFormContainerRef(formMgmtComponent);
+
   const successRedirect = successRedirectMessageFragment ? (
     {
       secondsToDelayRedirect,
@@ -51,7 +53,8 @@ function FormModal({
         isActive,
         closeModal,
         title,
-        isCloseButtonDisabled
+        isCloseButtonDisabled,
+        bodyRef
       }}
       footerContent={
         <FormButtons
@@ -73,7 +76,6 @@ function FormModal({
           reverseWarning={() => formMgmtComponent.setState({ hasWarning: false })}
         />
       }
-      bodyRef={extractFormContainerRef(formMgmtComponent)}
     >
       <Form {...{ formId }}>
         <MessagesArea style={messagesAreaStyle}>

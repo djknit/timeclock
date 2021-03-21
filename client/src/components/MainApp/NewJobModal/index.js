@@ -157,7 +157,6 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     if (!isActive) return <></>;
 
     const bodyRef = extractFormContainerRef(this);
-    console.log('bodyRef:\n', bodyRef);
 
     return (
       <FormModal

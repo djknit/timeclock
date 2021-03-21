@@ -1,6 +1,6 @@
 import { constants } from '../../../../utilities';
 import { genericFormStates } from '../formState';
-import { scrollTopIfShould } from './elemental';
+import { scrollTopIfShould } from './autoScroll';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
@@ -54,8 +54,6 @@ function submitFactory(hasCountdown, scrollOptions) {
       );
     })
     .catch(err => {
-      console.error(err)
-      console.log(err)
       const _err = err || {};
       if (this.props.catchApiUnauthorized) this.props.catchApiUnauthorized(err);
       let { response } = _err;
@@ -71,8 +69,10 @@ function submitFactory(hasCountdown, scrollOptions) {
         problems,
         ...genericFormStates[isWarning ? 'warning' : 'problem']
       });
-      const eventName = isWarning ? 'warning' : 'problem';
-      scrollTopIfShould(eventName, this, scrollOptions);
+      if (messages.length) {
+        const eventName = isWarning ? 'warning' : 'problem';
+        scrollTopIfShould(eventName, this, scrollOptions);
+      }
     });
   };
 

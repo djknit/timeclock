@@ -8,11 +8,11 @@ import {
 } from './methodFactories';
 import { containerRefName } from './formState';
 
-function bindCommonFormMethods(component, options) {
+function bindCommonFormMethods(component, { hasCountdown, scrollOptions } = {}) {
   component.changeHandlerFactory = changeHandlerFactoryFactory().bind(component);
   component.getStartingState = getStartingStateFactory().bind(component);
   component.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(component);
-  component.submit = submitFactory(options && options.hasCountdown).bind(component);
+  component.submit = submitFactory(hasCountdown, scrollOptions).bind(component);
   component.reset = component.reset ? component.reset.bind(component) : resetFactory().bind(component);
 }
 
