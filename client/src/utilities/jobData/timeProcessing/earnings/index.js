@@ -1,4 +1,4 @@
-import { getDurationInfo } from '../../utilities';
+import { getDurationInfo } from '../durationInfo';
 export * from './formatting';
 export * from './totalsCalc';
 

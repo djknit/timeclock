@@ -1,6 +1,8 @@
 import moment from 'moment';
-import { dates as dateUtils } from '../../../../utilities';
-import getDateRangeInfo from '../../getDateRangeInfo';
+import {
+  dates as dateUtils,
+  getDateRangeInfo
+} from '../../../../utilities';
 
 const { convertMomentToMyDate } = dateUtils;
 

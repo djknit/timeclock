@@ -1,9 +1,9 @@
 import {
-  getDurationInfo,
   isPartialWeekInDateRange,
-  isWholeWeekInDateRange,
-  dates as dateUtils
-} from '../../utilities';
+  isWholeWeekInDateRange
+} from '../../jobData';
+import { dates as dateUtils } from '../../dates';
+import { getDurationInfo } from './durationInfo';
 import {
   addWeekEarningsToTotals,
   addDayEarningsToWeekTotals,
@@ -13,7 +13,7 @@ import {
 
 const { isDateInRange } = dateUtils;
 
-export default getDateRangeInfo;
+export { getDateRangeInfo };
 
 
 function getDateRangeInfo(dateRange, processedWeeks) {
