@@ -6,7 +6,6 @@ import {
 import { cloneMyDate } from './elemental';
 import processData from './processData';
 export * from '../../utilities';
-// export * from './earnings';
 
 const {
   convertMomentToMyDate, isDateInRange

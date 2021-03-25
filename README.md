@@ -28,7 +28,7 @@
   * Server and database
   * Proper security measures on backend to prevent unauthorized data access.
 * Get working MVP before adding optional features.
-* After MVP, add timeclock feature to allow user to "punch in" and "punch out" so that they don't have to write down their time and enter it later.
+* After MVP, add punchclock feature to allow user to "punch in" and "punch out" so that they don't have to write down their time and enter it later.
 
 ## Action Plan
 Items in italics are currently being worked on.

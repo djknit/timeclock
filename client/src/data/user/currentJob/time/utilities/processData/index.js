@@ -1,5 +1,4 @@
-import { getDurationInfo } from '../../../utilities';
-import { getPaidAndUnpaidTotalTime } from '../earnings';
+import { getDurationInfo, getPaidAndUnpaidTotalTime } from '../../../utilities';
 import { getJobEarnings } from './earnings';
 import { getInfoForCurrentTimePeriods } from './currentTimePeriods';
 import processWeek from './processWeek';
