@@ -250,7 +250,7 @@ class _Navbar_needsDataAndPseudo extends Component {
                   </span>
                 }
               >
-                <NavItem destinationPath={currentJobPath} {...commonNavItemAttrs}>
+                <NavItem destinationPath={currentJobPath} {...commonNavItemAttrs} matchExactPath>
                   Home
                 </NavItem>
                 <NavItem

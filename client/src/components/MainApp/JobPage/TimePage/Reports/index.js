@@ -1,5 +1,6 @@
 import React from 'react';
 import getStyle from './style';
+import { processTimeForReport } from '../utilities';
 import ContentArea from '../../../ContentArea';
 
 function Reports({
