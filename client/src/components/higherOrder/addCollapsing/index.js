@@ -31,6 +31,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       this.toggleWithParentOrChild = this.toggleWithParentOrChild.bind(this);
       this.linkParentOrChild = this.linkParentOrChild.bind(this);
       this.setIsExpanded = this.setIsExpanded.bind(this);
+      this.pauseAnimation = this.pauseAnimation.bind(this);
       this.reset = this.reset.bind(this);
       this.containerRef = React.createRef();
       this.state = { ...initialState };
@@ -109,6 +110,10 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       return this.toggle();
     };
 
+    pauseAnimation() {
+      this.setState({ isAnimationOn: false });
+    };
+
     reset() {
       return this.promiseToSetState({ ...initialState });
     };
@@ -116,7 +121,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     render() {
 
       const {
-        containerRef, setHeight, clearHeight, toggle, setIsExpanded, reset, linkParentOrChild
+        containerRef, setHeight, clearHeight, toggle, setIsExpanded, reset, linkParentOrChild, pauseAnimation
       } = this;
 
       const { containerHeight, isExpanded, isAnimationOn, hasBeenExpanded, isMoving } = this.state;
@@ -137,7 +142,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
           isHeightSet: !!(containerHeight || containerHeight === 0),
           reset,
           isMoving,
-          linkParentOrChild
+          linkParentOrChild,
+          pauseAnimation
         }
       };
 

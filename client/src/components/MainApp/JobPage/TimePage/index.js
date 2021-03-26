@@ -41,7 +41,7 @@ class TimePage extends Component {
   stateSetterFactory(propName) {
     return function (newValue) {
       return new Promise(resolve => {
-        this.setState({ [propName]: newValue }, resolve)
+        this.setState({ [propName]: newValue }, resolve);
       });
     };
   };
@@ -58,7 +58,8 @@ class TimePage extends Component {
       segmentToEdit,
       handleEditSegSuccess,
       isEditSegmentModalActive,
-      isDeleteSegmentModalActive
+      isDeleteSegmentModalActive,
+      isSessionTimezoneModalActive
     } = this.state;
 
     const thisPath = match.url;
@@ -74,7 +75,7 @@ class TimePage extends Component {
       toggleDeleteSegmentModal,
       toggleEditSegmentModal,
       toggleSessionTimezoneModal,
-      disabled: isEditSegmentModalActive || isDeleteSegmentModalActive
+      disabled: isEditSegmentModalActive || isDeleteSegmentModalActive || isSessionTimezoneModalActive
     };
     const variableModalAttrs = {
       generalTimeEntry: { ...primaryModalAttrs, windowWidth },
@@ -85,7 +86,7 @@ class TimePage extends Component {
         reportUpdate: handleEditSegSuccess
       },
       recentlyAdded: { ...primaryModalAttrs },
-      sessionTimezone: {}
+      // sessionTimezone: {}
     };
 
     const crumbChain = [
