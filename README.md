@@ -28,7 +28,7 @@
   * Server and database
   * Proper security measures on backend to prevent unauthorized data access.
 * Get working MVP before adding optional features.
-* After MVP, add timeclock feature to allow user to "punch in" and "punch out" so that they don't have to write down their time and enter it later.
+* After MVP, add punchclock feature to allow user to "punch in" and "punch out" so that they don't have to write down their time and enter it later.
 
 ## Action Plan
 Items in italics are currently being worked on.
@@ -83,13 +83,19 @@ This plan is not complete. Future steps will be expanded on in the plan before t
           * [x] Time segment general entry
           * [x] Track and display segments just added
         * [x] Create recently added segments similarly to just added from general entry
-        * [ ] _Session timezone info and management_
+        * [x] Session timezone info and management
       * [x] Allow delete time segment
       * [x] Allow edit time segment
       * [ ] Time details by weeks/days and corresponding time entry
-      * [ ] Full report of time data
-        * [ ] All time
-        * [ ] Arbitrary (user defined) time period
+      * [ ] _Full report of time data_
+        * [ ] _Regular display_
+        * [ ] PDF or printer-friendly version
+        * [ ] Arbitrary (user defined) time period (default is all time)
+          * [ ] Period inputs
+          * [ ] Utility function to get arbitrary period data
+        * [ ] Let user define how much info to include
+          * [ ] Inputs
+          * [ ] Display (update regular display)
   * [x] Navbar navigation menu
   
 * [ ] Review code for bugs and code organization/readability

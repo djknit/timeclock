@@ -15,6 +15,9 @@ import EditJobNameModal from './EditJobNameModal';
 import DeleteJobModal from './DeleteJobModal';
 import { addData } from '../../higherOrder';
 
+// TO BE REMOVED LATER: (log job to console)
+currentJobService.subscribe(() => console.log('job\n', currentJobService.getValue()));
+
 const {
   createModalInfo, addModalsStateAndMethods, extractModalsResources, reportModalsClosedFor
 } = modalManagement;
@@ -45,7 +48,7 @@ class _JobPage_needsData extends Component {
   };
 
   componentDidMount() {
-    const { job, match, addPageNavMenu } = this.props;
+    const { job, match } = this.props;
     const { jobId } = match.params;
     if (!job || job._id !== jobId) {
       this.setWaitingForDataState()
@@ -105,8 +108,6 @@ class _JobPage_needsData extends Component {
       catchApiUnauthorized,
       areAnyModalsOpen
     };
-
-    console.log('job\n', job);
 
     return (
       job ? (

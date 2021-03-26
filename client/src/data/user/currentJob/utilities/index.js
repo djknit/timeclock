@@ -1,27 +1,13 @@
-import { getCurrencyAmountInfo, constants } from '../../../utilities';
+import { getCurrencyAmountInfo, constants, getDurationInfo } from '../../../utilities';
 export * from '../../../utilities';
 
-const { secsPerMin, minsPerHr } = constants;
-
-const secsPerHr = secsPerMin * minsPerHr;
+const { secsPerMin } = constants;
 
 export {
-  getDurationInfo,
   convertDayCutoffToMinutes,
   processWage
 };
 
-
-function getDurationInfo(durationInMsec) {
-  const durationInSeconds = Math.round(durationInMsec / 1000);
-  return {
-    hours: Math.floor(durationInSeconds / secsPerHr),
-    minutes: Math.floor(durationInSeconds / secsPerMin) % minsPerHr,
-    seconds: durationInSeconds % secsPerMin,
-    durationInMsec,
-    durationInHours: durationInSeconds / secsPerHr
-  };
-}
 
 function convertDayCutoffToMinutes(rawValue = 0) {
   const mSecsPerMin = 1000 * secsPerMin;

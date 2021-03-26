@@ -10,7 +10,6 @@ function Dropdown({
   children,
   label,
   disabled,
-  goTo,
   tabIndex
 }) {
 
@@ -23,7 +22,6 @@ function Dropdown({
 
   const childProps = {
     tabIndex: (isActive && !disabled) ? tabIndex : -1,
-    goTo
   };
 
   return (

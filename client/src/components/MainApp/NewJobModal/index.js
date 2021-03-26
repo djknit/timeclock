@@ -12,7 +12,8 @@ import {
   getTimezoneInputProblems,
   processDayCutoffInput,
   getSettingInputInitialValues,
-  bindFormMethods
+  bindFormMethods,
+  extractFormContainerRef
 } from '../utilities';
 import { jobsService, currentJobService, windowWidthService } from '../../../data';
 import Input from './Input';
@@ -154,6 +155,8 @@ class _NewJobModal_needsCollapsingAndData extends Component {
     } = props;
 
     if (!isActive) return <></>;
+
+    const bodyRef = extractFormContainerRef(this);
 
     return (
       <FormModal

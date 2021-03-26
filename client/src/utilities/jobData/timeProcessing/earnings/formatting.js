@@ -1,4 +1,5 @@
-import { getCurrencyAmountInfo, getDurationInfo } from '../../../utilities';
+import { getCurrencyAmountInfo } from '../../../currency';
+import { getDurationInfo } from '../durationInfo';
 
 // final processing of earnings before output
 function formatEarnings(earningsByCurrency) {

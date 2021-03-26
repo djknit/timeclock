@@ -10,7 +10,8 @@ import {
   findSegmentsFromSegmentInfos,
   bindTimeSegFormMethodsAndRefs,
   getUpdatedSegInfos,
-  getSegInfoForNewSegs
+  getSegInfoForNewSegs,
+  extractFormContainerRef
 } from './utilities';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
@@ -28,6 +29,7 @@ class EntryModal extends Component {
     bindTimeSegFormMethodsAndRefs(this);
     bindFormMethods(this, { hasCountdown: false });
     this.resetJustAdded = this.resetJustAdded.bind(this);
+    this.resetFormAfterSegmentAdded = this.resetFormAfterSegmentAdded.bind(this);
     this.state = {
       ...this.getStartingState(),
       justAddedSegmentsInfo: []
@@ -75,11 +77,20 @@ class EntryModal extends Component {
   };
 
   resetJustAdded() {
-    this.setState({ justAdded: [] });
+    this.setState({ justAddedSegmentsInfo: [] });
+  };
+
+  resetFormAfterSegmentAdded() {
+    this.setState({
+      ...this.getStartingState(),
+      showMessage: false
+    });
   };
 
   render() {
-    const { reset, submit, resetJustAdded, applySegmentUpdateToJustAdded } = this;
+    const {
+      reset, submit, resetJustAdded, applySegmentUpdateToJustAdded, resetFormAfterSegmentAdded
+    } = this;
     const {
       isActive,
       closeModal,
@@ -105,6 +116,7 @@ class EntryModal extends Component {
     const isFormIncomplete = isTimeSegmentInputIncomplete(this.state);
     const hasJustAdded = !!(justAdded && justAdded.length);
     const isFormDisabled = isLoading || disabled;
+    const bodyRef = extractFormContainerRef(this);
 
     const reverseWarning = () => this.setState({ hasWarning: false });
 
@@ -114,7 +126,8 @@ class EntryModal extends Component {
       <ModalSkeleton
         {...{
           isActive,
-          closeModal
+          closeModal,
+          bodyRef
         }}
         title="General Time Entry"
         isCloseButtonDisabled={isFormDisabled}
@@ -126,7 +139,7 @@ class EntryModal extends Component {
               windowWidth,
               toggleEditSegmentModal,
               applySegmentUpdateToJustAdded,
-              disabled
+              disabled,
             }}
           />
         )}
@@ -136,8 +149,8 @@ class EntryModal extends Component {
             <Button
               onClick={() => {
                 reset();
-                closeModal();
                 resetJustAdded();
+                closeModal();
               }}
               disabled={isFormDisabled}
             >
@@ -154,7 +167,7 @@ class EntryModal extends Component {
             )}
             <Button
               theme={hasWarning ? 'warning' : 'primary'}
-              onClick={hasSuccess ? reset : submit}
+              onClick={hasSuccess ? resetFormAfterSegmentAdded : submit}
               disabled={isFormDisabled || isFormIncomplete}
               isSubmit={!hasSuccess}
               formId={hasSuccess ? undefined : formId}
@@ -183,9 +196,9 @@ class EntryModal extends Component {
                 hasWarning,
                 problemMessages,
                 warningMessages,
-                disabled
+                disabled,
+                showMessage
               }}
-              showMessage={showMessage && (!hasJustAdded || hasSuccess || hasProblem || hasWarning)}
               infoMessages={[
                 'Use the form below to record your time worked one time segment at a time.',
                 'Enter the start (clock-in) time and end (clock-out) time for each segment.'
