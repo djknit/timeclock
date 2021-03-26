@@ -1,7 +1,7 @@
 import React from 'react';
 import getStyle from './style';
 import { formatMyDate, getListSeparator, getHoursDurationDisplay } from './utilities';
-import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
+import { addPseudoPseudoClasses } from '../../../../../../../higherOrder';
 import EarningDetailsToggle from './EarningDetailsToggle';
 import EarningDetails from './EarningDetails';
 import { Label, EmVal } from './smallPieces';

@@ -1,8 +1,8 @@
 import React from 'react';
 import getStyle, { boldStyle } from './style';
-import { getTimezoneFullName } from '../utilities';
-import Button from '../../../../Button';
-import ContentArea from '../../../ContentArea';
+import { getTimezoneFullName } from '../../utilities';
+import Button from '../../../../../Button';
+import ContentArea from '../../../../ContentArea';
 
 function GeneralArea({
   style: styleProp,

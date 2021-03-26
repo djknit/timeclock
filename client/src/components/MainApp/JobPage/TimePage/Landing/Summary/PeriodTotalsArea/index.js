@@ -3,7 +3,7 @@ import Header from './Header';
 import Body from './Body';
 import Footer from './Footer';
 import Totals from './Totals';
-import { addCollapsing } from '../../../../../higherOrder';
+import { addCollapsing } from '../../../../../../higherOrder';
 
 class _PeriodTotalsArea_needsCollapsing extends Component {
   constructor(props) {

@@ -4,7 +4,7 @@ import {
   contentAreaTextLinkColors,
   valueLabelStyle
 } from '../style';
-import { calculateStyleForPseudoClassState } from '../../../../../../../higherOrder';
+import { calculateStyleForPseudoClassState } from '../../../../../../../../higherOrder';
 
 export default function getStyle(pseudoState, toggleStyles) {
 

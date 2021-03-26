@@ -1,7 +1,7 @@
 import React from 'react';
 import getStyle from './style';
 import { getClickableElAttrs } from '../../../../utilities';
-import { addPseudoPseudoClasses } from '../../../../../../higherOrder';
+import { addPseudoPseudoClasses } from '../../../../../../../higherOrder';
 
 function _Footer_needsPseudo({
   contentToggle,

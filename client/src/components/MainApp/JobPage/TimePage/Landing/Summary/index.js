@@ -1,5 +1,5 @@
 import React from 'react';
-import ContentArea from '../../../ContentArea';
+import ContentArea from '../../../../ContentArea';
 import PeriodTotalsArea, { PeriodTotalsAreaBeginExpanded } from './PeriodTotalsArea';
 
 function Summary({

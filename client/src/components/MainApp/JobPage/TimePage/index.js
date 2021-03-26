@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
-import getStyle from './style';
+import { Switch, Route } from 'react-router-dom';
 import { modalManagement } from './utilities';
-import PageTitle from '../../PageTitle';
 import GeneralEntryModal from './GeneralEntryModal';
 import DeleteSegmentModal from './DeleteSegmentModal';
 import EditSegmentModal from './EditSegmentModal';
 import RecentlyAddedModal from './RecentlyAddedModal';
 import SessionTimezoneModal from './SessionTimezoneModal';
-import General from './General';
-import Summary from './Summary';
-import Reports from './Reports';
+import Landing from './Landing';
 
 const {
   addModalsStateAndMethods, reportModalsClosedFor, extractModalsResources, createModalInfo
@@ -55,7 +52,7 @@ class TimePage extends Component {
 
   render() {
     const { setSegmentToDelete, setSegmentToEdit } = this;
-    const { job, parentPath, windowWidth, areAnyModalsOpen } = this.props;
+    const { job, parentPath, windowWidth, areAnyModalsOpen, match } = this.props;
     const {
       segmentToDelete,
       segmentToEdit,
@@ -64,6 +61,7 @@ class TimePage extends Component {
       isDeleteSegmentModalActive
     } = this.state;
 
+    const thisPath = match.url;
     const { modals, modalTogglers } = extractModalsResources(this, modalsInfo);
 
     const toggleGeneralEntryModal = modalTogglers.generalTimeEntry;
@@ -93,36 +91,37 @@ class TimePage extends Component {
     const crumbChain = [
       {
         text: <>JOB:&nbsp;{job.name}</>,
-        url: parentPath
+        url: parentPath,
+        stringText: `JOB: ${job.name}`
       },
-      { text: 'Time' }
+      {
+        text: 'Time',
+        url: thisPath
+      }
     ];
-
-    const style = getStyle(windowWidth);
 
     return (
       <>
-        <PageTitle {...{ crumbChain, areAnyModalsOpen }} />
-        <div style={style.contentAreasRow}>
-          <Summary
-            style={style.summaryArea}
-            timeData={job.time}
-            {...{ windowWidth }}
-            disabled={areAnyModalsOpen}
+        <Switch>
+          <Route
+            path={thisPath}
+            render={props => (
+              <Landing
+                {...props}
+                {...{
+                  crumbChain,
+                  windowWidth,
+                  job,
+                  areAnyModalsOpen,
+                  toggleGeneralEntryModal,
+                  toggleDeleteSegmentModal,
+                  toggleRecentlyAddedModal,
+                  toggleSessionTimezoneModal
+                }}
+              />
+            )}
           />
-          <General
-            style={style.generalEntryArea}
-            {...{
-              job,
-              toggleGeneralEntryModal,
-              toggleDeleteSegmentModal,
-              toggleRecentlyAddedModal,
-              toggleSessionTimezoneModal
-            }}
-            disabled={areAnyModalsOpen}
-          />
-        </div>
-        <Reports />
+        </Switch>
         {modals.map(
           ({ ModalComponent, toggle, inputRef, isActive, name }) => (
             <ModalComponent

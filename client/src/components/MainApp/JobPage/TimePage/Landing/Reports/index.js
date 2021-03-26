@@ -1,10 +1,13 @@
 import React from 'react';
 import getStyle from './style';
-import { processTimeForReport } from '../utilities';
-import ContentArea from '../../../ContentArea';
+import { processTimeForReport } from '../../utilities';
+import ContentArea from '../../../../ContentArea';
 
 function Reports({
-  style: styleProp
+  style: styleProp,
+  job,
+  windowWidth,
+  disabled
 }) {
 
   const style = getStyle(styleProp);
