@@ -85,7 +85,6 @@ class MainApp extends Component {
     const toggleEditAccountModal = modalTogglers.editAccount;
     const toggleDeleteAccountPropModal = modalTogglers.deleteAccountProp;
     const toggleNewJobModal = modalTogglers.newJob;
-
     const style = getStyle(navHeight);
 
     const buildPath = subpath => `${match.path}/${subpath}`;
@@ -135,10 +134,10 @@ class MainApp extends Component {
     return (
       <>
         <Navbar
-          history={history}
           totalHeight={navHeight}
           reportHeight={setNavHeight}
           {...{
+            history,
             catchApiUnauthorized,
             areAnyModalsOpen,
             dashboardPath,

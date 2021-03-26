@@ -77,7 +77,7 @@ class EntryModal extends Component {
   };
 
   resetJustAdded() {
-    this.setState({ justAdded: [] });
+    this.setState({ justAddedSegmentsInfo: [] });
   };
 
   resetFormAfterSegmentAdded() {
@@ -149,8 +149,8 @@ class EntryModal extends Component {
             <Button
               onClick={() => {
                 reset();
-                closeModal();
                 resetJustAdded();
+                closeModal();
               }}
               disabled={isFormDisabled}
             >

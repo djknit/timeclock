@@ -17,6 +17,7 @@ class _NavItem_needsPseudo extends Component {
       isActive,
       isDropdownLink,
       destinationPath,
+      currentPath,
       onClick: onClickProp,
       pseudoHandlers,
       pseudoState,
@@ -29,6 +30,7 @@ class _NavItem_needsPseudo extends Component {
 
     const style = getStyle(
       isActive ? { ...pseudoState, isActive } : pseudoState,
+      (destinationPath && currentPath === destinationPath),
       styleProp
     );
 

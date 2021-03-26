@@ -113,6 +113,7 @@ class _Navbar_needsDataAndPseudo extends Component {
   render() {
     const { submitLogout, retrieveAndSetCurrentJob } = this;
     const {
+      history,
       isLoggedIn,
       profileData,
       totalHeight,
@@ -152,12 +153,13 @@ class _Navbar_needsDataAndPseudo extends Component {
       this.setState({ isMenuActive: false, useDefaultDropdownActivity: true });
     };
     const commonAttrs = {
-      goTo,
+      currentPath: history.location.pathname,
       disabled: areAnyModalsOpen
     };
+    const commonNavItemHasOwnClickAttrs = { ...commonAttrs, goTo };
     const commonNavItemAttrs = {
       onClick: handleLinkClick,
-      ...commonAttrs
+      ...commonNavItemHasOwnClickAttrs
     };
     const commonDropdownAttrs = { isFullNavDisplayed, ...commonAttrs };
     const welcomeLogoutAttrs = {
@@ -209,7 +211,7 @@ class _Navbar_needsDataAndPseudo extends Component {
                 label="Jobs"
               >
                 <NavItem
-                  {...commonAttrs}
+                  {...commonNavItemHasOwnClickAttrs}
                   onClick={(event) => {
                     openNewJobModal();
                     handleLinkClick(event);
@@ -221,7 +223,7 @@ class _Navbar_needsDataAndPseudo extends Component {
                 {jobs && jobs.map(
                   ({ _id, name }) => (
                     <NavItem
-                      {...commonAttrs}
+                      {...commonNavItemHasOwnClickAttrs}
                       destinationPath={getJobPagePath(_id)}
                       onClick={event => {
                         retrieveAndSetCurrentJob(_id);
