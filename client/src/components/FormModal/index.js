@@ -1,5 +1,5 @@
 import React from 'react';
-import { constants } from '../utilities';
+import { constants, extractFormContainerRef } from '../utilities';
 import ModalSkeleton from '../ModalSkeleton';
 import { FormButtons, FormMessages } from '../formPieces';
 
@@ -33,6 +33,8 @@ function FormModal({
     warningMessages
   } = formMgmtComponent.state;
 
+  const bodyRef = extractFormContainerRef(formMgmtComponent);
+
   const successRedirect = successRedirectMessageFragment ? (
     {
       secondsToDelayRedirect,
@@ -51,7 +53,8 @@ function FormModal({
         isActive,
         closeModal,
         title,
-        isCloseButtonDisabled
+        isCloseButtonDisabled,
+        bodyRef
       }}
       footerContent={
         <FormButtons
@@ -88,7 +91,7 @@ function FormModal({
               successMessages,
               successRedirect
             }}
-            toggleMessage={shouldShowMsg=> formMgmtComponent.setState({ showMessage: shouldShowMsg })}
+            toggleMessage={shouldShowMsg => formMgmtComponent.setState({ showMessage: shouldShowMsg })}
           />
           {messagesAreaContent}
         </MessagesArea>
@@ -100,12 +103,8 @@ function FormModal({
 
 export default FormModal;
 
-function Form({ formId, children }) {
-  return formId ? (
-    <form id={formId}>{children}</form>
-  ) : (
-    children
-  );
+function Form({ formId: id, children }) {
+  return id ? (<form {...{ id, children }} />) : children;
 }
 
 function MessagesArea({ style, children }) {

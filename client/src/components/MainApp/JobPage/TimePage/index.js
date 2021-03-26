@@ -9,7 +9,7 @@ import RecentlyAddedModal from './RecentlyAddedModal';
 import SessionTimezoneModal from './SessionTimezoneModal';
 import General from './General';
 import Summary from './Summary';
-import Weeks from './Weeks';
+import Reports from './Reports';
 
 const {
   addModalsStateAndMethods, reportModalsClosedFor, extractModalsResources, createModalInfo
@@ -122,7 +122,7 @@ class TimePage extends Component {
             disabled={areAnyModalsOpen}
           />
         </div>
-        <Weeks />
+        <Reports />
         {modals.map(
           ({ ModalComponent, toggle, inputRef, isActive, name }) => (
             <ModalComponent

@@ -1,5 +1,21 @@
 import { constants } from '../../../../utilities';
+
 const { emailRegEx } = constants;
+
+export {
+  getUsernameProblems,
+  getEmailProblems,
+  getPasswordProblems,
+  checkApiResProbMsgsForTakenUsernameOrEmail
+};
+
+export default {
+  getEmailProblems,
+  getUsernameProblems,
+  getPasswordProblems,
+  checkApiResProbMsgsForTakenUsernameOrEmail
+};
+
 
 function getTakenUsernameDisplayMessage(username) {
   return `The username "${username}" is not available.`;
@@ -70,17 +86,3 @@ function checkApiResProbMsgsForTakenUsernameOrEmail(problemMessages, inputs, tak
     takenPropValues.emails.push(email);
   }
 }
-
-export {
-  getUsernameProblems,
-  getEmailProblems,
-  getPasswordProblems,
-  checkApiResProbMsgsForTakenUsernameOrEmail
-};
-
-export default {
-  getEmailProblems,
-  getUsernameProblems,
-  getPasswordProblems,
-  checkApiResProbMsgsForTakenUsernameOrEmail
-};

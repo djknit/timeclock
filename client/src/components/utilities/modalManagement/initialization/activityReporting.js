@@ -8,7 +8,9 @@ function modalActivityReporterFactory(isActiveStatePropNames, modalsRegistration
         hasModalOpen = true;
       }
     });
-    if (!modalsRegistrationId) console.log('Missing modals registration ID in ', this);
+    if (!modalsRegistrationId && modalsRegistrationId !== 0) {
+      console.log('Missing modals registration ID in ', this);
+    }
     areModalsOpenService.report(modalsRegistrationId, hasModalOpen);
   };
 }

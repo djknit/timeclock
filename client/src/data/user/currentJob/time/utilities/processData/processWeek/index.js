@@ -1,5 +1,4 @@
-import { getDurationInfo } from '../../../../utilities';
-import { getPaidAndUnpaidTotalTime } from '../../earnings';
+import { getDurationInfo, getPaidAndUnpaidTotalTime } from '../../../../utilities';
 import { cloneMyDate } from '../../elemental';
 import processDay from './processDay';
 import { addEarningsToDays, getWeekEarnings } from './earnings';

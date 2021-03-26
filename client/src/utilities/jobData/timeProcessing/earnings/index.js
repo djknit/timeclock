@@ -1,4 +1,4 @@
-import { getDurationInfo } from '../../utilities';
+import { getDurationInfo } from '../durationInfo';
 export * from './formatting';
 export * from './totalsCalc';
 
@@ -23,14 +23,5 @@ function getTotalPaidTme(fullyProcessedEarnings) {
   });
   return getDurationInfo(paidTotalInMsec);
 }
-
-// earnings for `currency: null` removed in previous step, so following function won't work anymore 
-// function getTotalUnpaidTime(earningsByCurrency) {
-//   for (let i = 0; i < earningsByCurrency.length; i++) {
-//     const { currency, totalTime } = earningsByCurrency[i];
-//     if (!currency) return totalTime;
-//   }
-//   return getDurationInfo(0);
-// }
 
 export { getPaidAndUnpaidTotalTime };

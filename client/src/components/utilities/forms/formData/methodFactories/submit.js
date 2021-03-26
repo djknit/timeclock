@@ -1,9 +1,10 @@
 import { constants } from '../../../../utilities';
 import { genericFormStates } from '../formState';
+import { scrollTopIfShould } from './autoScroll';
 
 const { secondsToDelayRedirect, stepSizeOfRedirectDelay } = constants;
 
-function submitFactory(hasCountdown) {
+function submitFactory(hasCountdown, scrollOptions) {
 
   return function (event) {
     event.preventDefault();
@@ -33,6 +34,7 @@ function submitFactory(hasCountdown) {
         ...genericFormStates.success,
         secondsUntilRedirect
       });
+      scrollTopIfShould('success', this, scrollOptions);
       return this.processSuccessResponse && this.processSuccessResponse(res);
     })
     .then(() => {
@@ -67,6 +69,10 @@ function submitFactory(hasCountdown) {
         problems,
         ...genericFormStates[isWarning ? 'warning' : 'problem']
       });
+      if (messages.length) {
+        const eventName = isWarning ? 'warning' : 'problem';
+        scrollTopIfShould(eventName, this, scrollOptions);
+      }
     });
   };
 

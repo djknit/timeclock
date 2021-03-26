@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   changeHandlerFactoryFactory,
   getStartingStateFactory,
@@ -5,12 +6,13 @@ import {
   submitFactory,
   resetFactory
 } from './methodFactories';
+import { containerRefName } from './formState';
 
-function bindCommonFormMethods(component, options) {
+function bindCommonFormMethods(component, { hasCountdown, scrollOptions } = {}) {
   component.changeHandlerFactory = changeHandlerFactoryFactory().bind(component);
   component.getStartingState = getStartingStateFactory().bind(component);
   component.setSubmissionProcessingState = setSubmissionProcessingStateFactory().bind(component);
-  component.submit = submitFactory(options && options.hasCountdown).bind(component);
+  component.submit = submitFactory(hasCountdown, scrollOptions).bind(component);
   component.reset = component.reset ? component.reset.bind(component) : resetFactory().bind(component);
 }
 
@@ -35,6 +37,7 @@ function bindFormSpecificMethods(component) {
 function bindFormMethods(component, options) {
   bindCommonFormMethods(component, options);
   bindFormSpecificMethods(component);
+  component[containerRefName] = React.createRef();
 }
 
 export {

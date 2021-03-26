@@ -1,5 +1,7 @@
 export default function getStyle(messageDivMinHeight) {
-  const areaDiv = { overflow: 'auto' };
+  const areaDiv = {
+    // overflow: 'auto' // <-- Removed to accomodate msg restore btn. Not sure of original purpose
+  };
 
   return {
     label: {

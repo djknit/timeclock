@@ -6,7 +6,8 @@ import {
   extractInputValues,
   processInputChange,
   getPeriodDurationInMsec,
-  getTimePeriodInputsStartingValue
+  getTimePeriodInputsStartingValue,
+  extractFormContainerRef
 } from './utilities';
 import Button from '../../../../Button';
 import Notification from '../../../../Notification';
@@ -85,6 +86,7 @@ class RecentlyAddedModal extends Component {
     } = this.props;
     const { showMessage, recentlyAddedSegments, showSessionTzMessage } = this.state;
     const inputValues = extractInputValues(this.state);
+    const bodyRef = extractFormContainerRef(this);
 
     const closeMessage = () => this.setState({ showMessage: false });
     const toggleSessionTzMessage = (
@@ -101,7 +103,8 @@ class RecentlyAddedModal extends Component {
       <ModalSkeleton
         {...{
           isActive,
-          closeModal
+          closeModal,
+          bodyRef
         }}
         isCloseButtonDisabled={disabled}
         title="Recently Added Time"
