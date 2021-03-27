@@ -1,17 +1,15 @@
 import React from 'react';
-import getStyle from './style';
+import getStyle, { getStyleVars } from './style';
+import InnerAreaHeader from '../../../../InnerAreaHeader';
 
 function Header({ label }) {
 
   const style = getStyle();
 
+  const styleVariables = getStyleVars();
+
   return (
-    <div style={style.div}>
-      <h3 style={style.areaLabel}>
-        {label}
-      </h3>
-      <hr style={style.labelHr} />
-    </div>
+    <InnerAreaHeader {...{ label, styleVariables, style }} />
   );
 }
 

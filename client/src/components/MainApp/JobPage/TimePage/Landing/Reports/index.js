@@ -1,22 +1,30 @@
-import React from 'react';
+import React, { Component } from 'react';
 import getStyle from './style';
 import { processTimeForReport } from '../../utilities';
 import ContentArea from '../../../../ContentArea';
+import FullReport from '../../FullReport';
 
-function Reports({
-  style: styleProp,
-  job,
-  windowWidth,
-  disabled
-}) {
+class Reports extends Component {
+  render() {
+    const {
+      style: styleProp,
+      job,
+      windowWidth,
+      disabled
+    } = this.props;
 
-  const style = getStyle(styleProp);
-  
-  return (
-    <ContentArea title="View Time Details" style={style.contentArea}>
-      
-    </ContentArea>
-  );
+    const processedTimeData = processTimeForReport(job.time);
+
+    const style = getStyle(styleProp);
+    
+    return (
+      <ContentArea title="View Time Details" style={style.contentArea}>
+        <FullReport
+          {...{ processedTimeData }}
+        />
+      </ContentArea>
+    );
+  };
 }
 
 export default Reports;
