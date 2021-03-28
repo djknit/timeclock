@@ -20,8 +20,8 @@ function getTimezoneFullName(tzName) {
   return `${tzName} (${abbreviation})`;
 }
 
-function getTimezoneAbbreviation(zoneName) {
-  return moment.tz(zoneName).format('z');
+function getTimezoneAbbreviation(zoneName, date) {
+  return moment.tz(date, zoneName).format('z');
 }
 
 export {

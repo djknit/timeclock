@@ -1,19 +1,24 @@
 import { contentAreaBgColor, contentAreaDividerColor } from '../style';
 
+const defaultLabelEmFontSize = 1.15;
+const lineHeight = 1.5;
+
 export default function getStyle(
   styleProp,
   {
     backgroundColor = contentAreaBgColor,
-    labelEmFontSize = 1.15,
+    labelEmFontSize = defaultLabelEmFontSize,
     dividerColor = contentAreaDividerColor
   } = {}
 ) {
 
+  const emTextHeight = getLabelTextEmHeight(labelEmFontSize);
+
   return {
     div: {
       position: 'relative',
-      paddingTop: `${0.5 * 1.5 * labelEmFontSize}em`,
-      paddingBottom: `calc(${0.5 * 1.5 * labelEmFontSize}em - 1px)`,
+      paddingTop: `${0.5 * emTextHeight}em`,
+      paddingBottom: `calc(${0.5 * emTextHeight}em - 1px)`,
       ...styleProp
     },
     text: {
@@ -35,3 +40,9 @@ export default function getStyle(
     }
   };
 };
+
+function getLabelTextEmHeight(emFontSize = defaultLabelEmFontSize) {
+  return lineHeight * emFontSize;
+}
+
+export { getLabelTextEmHeight };

@@ -1,6 +1,9 @@
+import { contentAreaDividerColor } from '../style';
+export * from '../style';
+
 export default function getStyle(styleProp) {
 
-  const borderStyle = 'solid';
+  const borderStyle = `2px solid ${contentAreaDividerColor}`;
 
   return {
     wholeReport: {

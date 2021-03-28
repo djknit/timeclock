@@ -1,6 +1,7 @@
 import React from 'react';
 import getStyle from './style';
-import InnerAreaHeader from '../../InnerAreaHeader';
+import AreaHeader from './AreaHeader';
+import Day from './Day';
 
 function Week({
   week: {
@@ -12,10 +13,15 @@ function Week({
     weekDocId
   }
 }) {
-  
+
+  const style = getStyle();
+
   return (
     <>
-      <InnerAreaHeader label={`Week ${weekNumber}`} />
+      <AreaHeader {...{ isPartial, weekNumber, dateRange }} />
+      {days.map(day => (
+        <Day key={day._id} {...{ day }} />
+      ))}
     </>
   );
 }

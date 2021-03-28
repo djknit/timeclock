@@ -1,5 +1,7 @@
 import React from 'react';
 import getStyle from './style';
+import * as styles from './style';
+export { styles };
 
 function InnerAreaHeader({
   label,
@@ -8,7 +10,8 @@ function InnerAreaHeader({
     backgroundColor,
     labelEmFontSize,
     dividerColor
-  } = {}
+  } = {},
+  children
 }) {
 
   const style = getStyle(styleProp, { backgroundColor, labelEmFontSize, dividerColor });
@@ -19,6 +22,7 @@ function InnerAreaHeader({
         {label}
       </h3>
       <hr style={style.hr} />
+      {children}
     </div>
   );
 }
