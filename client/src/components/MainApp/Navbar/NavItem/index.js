@@ -18,6 +18,7 @@ class _NavItem_needsPseudo extends Component {
       isDropdownLink,
       destinationPath,
       currentPath,
+      matchExactPath,
       onClick: onClickProp,
       pseudoHandlers,
       pseudoState,
@@ -28,9 +29,14 @@ class _NavItem_needsPseudo extends Component {
 
     let className = isDropdownLink ? 'navbar-link is-arrowless' : 'navbar-item';
 
+    const isCurrentPath = (
+      destinationPath &&
+      (matchExactPath ? currentPath === destinationPath : currentPath.includes(destinationPath))
+    );
+
     const style = getStyle(
       isActive ? { ...pseudoState, isActive } : pseudoState,
-      (destinationPath && currentPath === destinationPath),
+      isCurrentPath,
       styleProp
     );
 

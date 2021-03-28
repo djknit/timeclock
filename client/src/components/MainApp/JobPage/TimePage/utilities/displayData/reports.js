@@ -8,10 +8,10 @@ import {
 
 const { isDateInRange } = dateUtils;
 
-export { processTime };
+export { processTimeForReport };
 
 
-function processTime(timeData, { dateRange } = {}) {
+function processTimeForReport(timeData, { dateRange } = {}) {
   const { weeks, sessionTimezone } = timeData;
   const hasDateRange = !!(dateRange && (dateRange.firstDate || dateRange.lastDate))
   const weeksInRange = hasDateRange ? findWeeksInDateRange(weeks, dateRange) : weeks;
@@ -67,6 +67,9 @@ function processWeek(
 }
 
 function getProcessedRateAndCurrencyTotals(unprocessedEarningsByCurrency) {
+  if (!unprocessedEarningsByCurrency) {
+    return { byRate: [], byCurrency: [] };
+  }
   let totalsByRate = [];
   const totalsByCurrency = unprocessedEarningsByCurrency.map(
     ({ amount, currency, rates, totalTime }) => {
@@ -88,11 +91,14 @@ function processDay(
   { segments, earnings, date, settings, totalTime, _id },
   sessionTimezone
 ) {
-  const unpaidTime = earnings ? totalTime : getDurationInfo(0);
   return {
     date,
-    totals: processTotals({ totalTime, earnings, unpaidTime }),
+    totals: {
+      duration: totalTime,
+      amountEarned: earnings && earnings.amount
+    },
     segments: segments.map(processSegment),
+    currency: settings.wage && settings.wage.currency,
     officialTimezone: settings.timezone,
     areTimezonesDifferent: settings.timezone === sessionTimezone,
     _id
@@ -114,21 +120,32 @@ function getProcessedRateTotalsForCurrency({ currency, rates }) {
 }
 
 function processSegment({ _id, duration, startTime, endTime, earnings }) {
+  let payRate = null, amountEarned = null;
+  if (earnings) {
+    const { currency, rates, amount } = earnings;
+    const { rate, isOvertime } = rates[0];
+    payRate = { amount: rate, isOvertime, currency };
+    amountEarned = amount;
+  }
   return {
     duration,
-    startTime: {
-      sessionTimezone: startTime,
-      officialTimezone
-    },
-    endTime: {
-      sessionTimezone: endTime,
-      officialTimezone
-    }
+    startTime: _processTime(startTime),
+    endTime: _processTime(endTime),
+    payRate,
+    amountEarned,
+    _id
   };
+
+  function _processTime({ altTimezones, ...mainTime }) {
+    return {
+      sessionTimezone: mainTime,
+      officialTimezone: (altTimezones && altTimezones.job) || mainTime
+    };
+  }
 }
 
 
-// RESULT OBJ FROM `processTime` DESCRIPTION
+// RESULT OBJ FROM `processTimeForReport` DESCRIPTION
 /* 
   processed time data result should have the form:
     {
@@ -174,15 +191,13 @@ function processSegment({ _id, duration, startTime, endTime, earnings }) {
       isOvertime,
       currency
     }
+    || `null` (for unpaid segments)
   
   `segment`s have the form:
     {
       duration,
-      startTime: {
-        sessionTimezone,
-        officialTimezone
-      },
-      endTime,
+      startTime: { sessionTimezone, officialTimezone },
+      endTime: { sessionTimezone, officialTimezone },
       payRate,
       amountEarned,
       _id

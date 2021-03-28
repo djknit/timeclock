@@ -10,7 +10,7 @@ import {
   extractFormContainerRef
 } from './utilities';
 import Button from '../../../../Button';
-import Notification from '../../../../Notification';
+import RestorableNotification from '../../../../RestorableNotification';
 import ModalSkeleton from '../../../../ModalSkeleton';
 import ModalTimezoneNotification from '../ModalTimezoneInfo';
 import TimePeriodInput from './PeriodInput';
@@ -88,7 +88,7 @@ class RecentlyAddedModal extends Component {
     const inputValues = extractInputValues(this.state);
     const bodyRef = extractFormContainerRef(this);
 
-    const closeMessage = () => this.setState({ showMessage: false });
+    const toggleFormMessage = shouldShowMessage => this.setState({ showMessage: shouldShowMessage });
     const toggleSessionTzMessage = (
       isActiveAfterToggle => this.setState({ showSessionTzMessage: !!isActiveAfterToggle })
     );
@@ -122,21 +122,24 @@ class RecentlyAddedModal extends Component {
       >
         <ModalTimezoneNotification
           {...{
-            toggleSessionTimezoneModal
+            toggleSessionTimezoneModal,
+            disabled
           }}
           showMessage={showSessionTzMessage}
           toggleMessage={toggleSessionTzMessage}
         />
-        {showMessage && (
-          <Notification
-            theme="info"
-            messages={[
-              'The most recently added time segments are listed below beginning with the most recently added.',
-              'Use the controls below to adjust how far back in time to look.'
-            ]}
-            close={closeMessage}
-          />
-        )}
+        <RestorableNotification
+          theme="info"
+          messages={[
+            'Time segments are listed below in order of when they were created beginning with the most recent.',
+            'Use the controls below to adjust how far back in time to look.'
+          ]}
+          {...{
+            showMessage,
+            disabled
+          }}
+          toggleMessage={toggleFormMessage}
+        />
         <TimePeriodInput
           changeHandlerFactory={inputChangeHandlerFactory}
           {...inputValues}

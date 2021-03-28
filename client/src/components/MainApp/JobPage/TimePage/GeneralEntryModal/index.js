@@ -16,6 +16,7 @@ import {
 import ModalSkeleton from '../../../../ModalSkeleton';
 import { FormMessages } from '../../../../formPieces';
 import Button from '../../../../Button';
+import ModalTimezoneNotification from '../ModalTimezoneInfo';
 import TimeSegmentInputs from '../TimeSegmentInputs';
 import JustAdded from './JustAdded';
 import ModalSectionTitle from './ModalSectionTitle';
@@ -32,7 +33,8 @@ class EntryModal extends Component {
     this.resetFormAfterSegmentAdded = this.resetFormAfterSegmentAdded.bind(this);
     this.state = {
       ...this.getStartingState(),
-      justAddedSegmentsInfo: []
+      justAddedSegmentsInfo: [],
+      showSessionTzMessage: false
     };
   };
 
@@ -98,7 +100,8 @@ class EntryModal extends Component {
       toggleDeleteSegmentModal,
       windowWidth,
       toggleEditSegmentModal,
-      disabled
+      disabled,
+      toggleSessionTimezoneModal
     } = this.props;
     const {
       justAddedSegmentsInfo,
@@ -110,6 +113,7 @@ class EntryModal extends Component {
       isLoading,
       warningMessages,
       messagesAreaMinHeight,
+      showSessionTzMessage
     } = this.state;
 
     const justAdded = findSegmentsFromSegmentInfos(justAddedSegmentsInfo, job.time.weeks);
@@ -119,6 +123,14 @@ class EntryModal extends Component {
     const bodyRef = extractFormContainerRef(this);
 
     const reverseWarning = () => this.setState({ hasWarning: false });
+    const sessionTzInfoAttrs = {
+      toggleSessionTimezoneModal,
+      disabled,
+      showMessage: showSessionTzMessage,
+      toggleMessage: _shouldShow => {
+        this.setState({ showSessionTzMessage: !!_shouldShow });
+      }
+    };
 
     const style = getStyle(messagesAreaMinHeight);
 
@@ -132,16 +144,20 @@ class EntryModal extends Component {
         title="General Time Entry"
         isCloseButtonDisabled={isFormDisabled}
         topBodyContent={hasJustAdded && (
-          <JustAdded
-            {...{
-              justAdded,
-              toggleDeleteSegmentModal,
-              windowWidth,
-              toggleEditSegmentModal,
-              applySegmentUpdateToJustAdded,
-              disabled,
-            }}
-          />
+          <>
+            <ModalTimezoneNotification {...sessionTzInfoAttrs} />
+            <JustAdded
+              {...{
+                justAdded,
+                toggleDeleteSegmentModal,
+                windowWidth,
+                toggleEditSegmentModal,
+                applySegmentUpdateToJustAdded,
+                disabled
+              }}
+              isModalActive={isActive}
+            />
+          </>
         )}
         bodyStyles={{ top: style.topBodySection }}
         footerContent={
@@ -184,6 +200,9 @@ class EntryModal extends Component {
       >
         <form id={formId}>
           <div style={style.messagesArea}>
+            {!hasJustAdded && (
+              <ModalTimezoneNotification {...sessionTzInfoAttrs} />
+            )}
             {hasJustAdded && !(justAdded.length === 1 && hasSuccess) && (
               <ModalSectionTitle>
                 Add Time Segment

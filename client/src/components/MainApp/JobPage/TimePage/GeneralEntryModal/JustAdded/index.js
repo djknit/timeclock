@@ -11,12 +11,15 @@ class _JustAdded_needsCollapsingAndPseudo extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { windowWidth, sectionToggle, justAdded } = this.props;
+    const { windowWidth, sectionToggle, justAdded, isModalActive } = this.props;
     if (
       windowWidth !== prevProps.windowWidth ||
       (justAdded && justAdded.length) !== (prevProps.justAdded && prevProps.justAdded.length)
     ) {
       sectionToggle.setHeight();
+    }
+    if (!isModalActive && prevProps.isModalActive) {
+      sectionToggle.pauseAnimation();
     }
   };
 
