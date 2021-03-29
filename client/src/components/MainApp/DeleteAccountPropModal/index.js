@@ -93,7 +93,7 @@ class _DeleteAccountPropModal_needsData extends Component {
           placeholder="Your password..."
           hasProblem={problems && problems.password}
           iconClass={hasSuccess ? 'fas fa-unlock' : 'fas fa-lock'}
-          helpText="Enter your current password to verify your identity and complete the update to your account."
+          helpText="Enter your current password to complete the update to your account."
           isActive={!isLoading && !hasSuccess}
           {...{
             changeHandlerFactory,

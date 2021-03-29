@@ -18,8 +18,9 @@ function processTimeForReport(timeData, { dateRange } = {}) {
   const rangeTotals = hasDateRange ? getDateRangeInfo(dateRange, weeks) : timeData;
   // See below comment for description of result object (end of this file)
   return {
-    weeks: processWeeks(weeksInRange, sessionTimezone),
-    totals: processTotals(rangeTotals)
+    ...processWeeksForReport(weeksInRange, sessionTimezone),
+    totals: processTotals(rangeTotals),
+    hasPaidTime: !!rangeTotals.earnings, // include rate & earnings columns throughout report if there is any paid time anywhere in reported time period
   };
 }
 
@@ -40,8 +41,14 @@ function findWeeksInDateRange(weeks, dateRange) {
   return weeksInRange;
 }
 
-function processWeeks(unprocessedWeeks, sessionTimezone) {
-  return unprocessedWeeks.map(_week => processWeek(_week, sessionTimezone));
+function processWeeksForReport(unprocessedWeeks, sessionTimezone) {
+  let hasMultipleTimezones = false; // same idea as earnings (see note in `processTimeForReport`)
+  const processedWeeks = unprocessedWeeks.map(_week => {
+    const processedWeek = processWeek(_week, sessionTimezone);
+    if (processedWeek.hasMultipleTimezones) hasMultipleTimezones = true;
+    return processedWeek;
+  });
+  return { hasMultipleTimezones, weeks: processedWeeks };
 }
 
 function processTotals({ totalTime, earnings, unpaidTime }) {
@@ -56,13 +63,20 @@ function processWeek(
   { weekNumber, days, isPartial, earnings, totalTime, firstDate, lastDate, unpaidTime, weekDocId },
   sessionTimezone
 ) {
+  let hasMultipleTimezones = false;
+  const processedDays = days.map(_day => {
+    const processedDay = processDay(_day, sessionTimezone);
+    if (processedDay.areTimezonesDifferent) hasMultipleTimezones = true;
+    return processedDay;
+  });
   return {
     isPartial,
     totals: processTotals({ totalTime, earnings, unpaidTime }),
     weekNumber,
     dateRange: { firstDate, lastDate },
-    days: days.map(_day => processDay(_day, sessionTimezone)),
-    weekDocId
+    days: processedDays,
+    weekDocId,
+    hasMultipleTimezones
   };
 }
 
@@ -127,20 +141,20 @@ function processSegment({ _id, duration, startTime, endTime, earnings }) {
     payRate = { amount: rate, isOvertime, currency };
     amountEarned = amount;
   }
+  let times = { sessionTimezone: {}, officialTimezone: {} };
+  _processTime(startTime, 'startTime');
+  _processTime(endTime, 'endTime');
   return {
     duration,
-    startTime: _processTime(startTime),
-    endTime: _processTime(endTime),
+    times,
     payRate,
     amountEarned,
-    _id
+    _id,
   };
 
-  function _processTime({ altTimezones, ...mainTime }) {
-    return {
-      sessionTimezone: mainTime,
-      officialTimezone: (altTimezones && altTimezones.job) || mainTime
-    };
+  function _processTime({ altTimezones, ...mainTime }, name) {
+    times.sessionTimezone[name] = mainTime;
+    times.officialTimezone[name] = (altTimezones && altTimezones.job) || mainTime;
   }
 }
 
@@ -196,8 +210,10 @@ function processSegment({ _id, duration, startTime, endTime, earnings }) {
   `segment`s have the form:
     {
       duration,
-      startTime: { sessionTimezone, officialTimezone },
-      endTime: { sessionTimezone, officialTimezone },
+      times: {
+        sessionTimezone: { startTime, endTime },
+        officialTimezone: { startTime, endTime }
+      },
       payRate,
       amountEarned,
       _id
