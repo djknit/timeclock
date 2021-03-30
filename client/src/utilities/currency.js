@@ -1,6 +1,7 @@
 import React from 'react';
 import cc from 'currency-codes';
 import getSymbolFromCurrency from 'currency-symbol-map';
+import { XtSp } from './jsxPieces';
 
 function getCurrencyAmountInfo(rawAmount, currencyCode) {
   if (!rawAmount || !currencyCode) return null;
@@ -40,7 +41,7 @@ function addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode, isShort
   const currencySymbol = getCurrencySymbol(currencyCode);
   return (
     currencySymbol ?
-    <>{currencySymbol}{!isShort && <>&nbsp;</>}{numericDisplay}</> :
+    <>{currencySymbol}{!isShort && <XtSp />}{numericDisplay}</> :
     numericDisplay
   );
 };

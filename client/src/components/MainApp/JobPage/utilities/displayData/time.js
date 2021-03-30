@@ -2,20 +2,17 @@ import React from 'react';
 import { roundNumToNDecimalDigits } from '../../utilities';
 import { combineWords } from './elemental';
 
-function formatTime({ hour, minute, amPm, is24hr }, isString) {
+function formatTime({ hour, minute, amPm, is24hr }, isString, useHairSpace) {
   let firstWord = `${hour}:`;
   if (minute < 10) firstWord += '0';
   firstWord += minute;
   if (is24hr) return firstWord;
-  const resultWords = [firstWord, amPm.toUpperCase()];
-  if (!isString) {
-    resultWords[1] = (
-      <span style={{ fontVariant: 'small-caps' }}>
-        {amPm}
-      </span>
-    );
-  }
-  return combineWords(resultWords, isString);
+  if (isString) return `${firstWord} ${amPm.toUpperCase()}`
+  const resultWords = [
+    firstWord,
+    <span style={{ fontVariant: 'small-caps' }}>{amPm}</span>
+  ];
+  return combineWords(resultWords, false, true);
 }
 
 function getHoursDurationDisplay(durationInfo) {

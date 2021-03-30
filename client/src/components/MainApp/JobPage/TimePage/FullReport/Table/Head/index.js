@@ -1,5 +1,6 @@
 import React from 'react';
 import getStyle from './style';
+import { getTimezoneAbbreviation } from '../utilities';
 
 function Thead({
   hasTimes,
@@ -29,17 +30,19 @@ function Thead({
 
   return (
     <thead>
-      <Th>{firstColLabel}</Th>
-      <Th>Hours Worked</Th>
-      {hasEarningCols && (
-        <>
-          <Th>Pay Rate</Th>
-          <Th>Amount Earned</Th>
-        </> 
-      )}
-      {hasSecondTzCol && (
-        <Th>{lastColLabel}</Th>
-      )}
+      <tr>
+        <Th>{firstColLabel}</Th>
+        <Th>Hours Worked</Th>
+        {hasEarningCols && (
+          <>
+            <Th>Pay Rate</Th>
+            <Th>Amount Earned</Th>
+          </> 
+        )}
+        {hasSecondTzCol && (
+          <Th>{lastColLabel}</Th>
+        )}
+      </tr>
     </thead>
   );
 

@@ -1,27 +1,28 @@
-import { roundNumToNDecimalDigits } from '../../../utilities';
+import React from 'react';
+import { roundNumToNDecimalDigits, XtSp } from '../../../utilities';
 export * from '../../../utilities';
 
-function formatDurationValue(
+export {
+  formatDurationForReportTable,
+  formatAmountEarnedForReportTable,
+  formatPayRateForReportTable
+};
+
+
+function formatDurationForReportTable(
   { durationInHours },
   { decimalDigits = 3 } = {}
 ) {
-  return `${roundNumToNDecimalDigits(durationInHours, decimalDigits)} h`;
+  const roundedDurationHrs = roundNumToNDecimalDigits(durationInHours, decimalDigits);
+  return `${roundedDurationHrs.toFixed(decimalDigits)} h`;
 }
 
-function formatDataForRow({ duration, payRate, amountEarned }) {
-  return {
-    duration: formatDurationValue(duration),
-    amountEarned: formatAmountValue(amountEarned),
-    payRate: formatPayRate(payRate)
-  };
+function formatAmountEarnedForReportTable(amountVal) {
+  return amountVal && amountVal.display.standard;
 }
-
-export { formatDurationValue };
-
-function formatAmountValue(amountVal) {
-  return amountVal.display.standard;
-}
-
-function formatPayRate({ amount, isOvertime, currency }) {
-  return `${formatDurationValue(amount)} /h`;
+let i = 0;
+function formatPayRateForReportTable({ amount, /* isOvertime, currency */} = {}) {
+  return amount && (
+    <>{formatAmountEarnedForReportTable(amount)}&nbsp;/<XtSp/>h</>
+  );
 }

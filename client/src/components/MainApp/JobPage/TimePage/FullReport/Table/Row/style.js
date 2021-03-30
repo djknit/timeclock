@@ -1,9 +1,22 @@
-export default function getStyle() {
+export default function getStyle(styleProp) {
+  const numAmountTdStyle = {
+    textAlign: 'right'
+  };
+
   return {
+    tr: {
+      ...styleProp
+    },
     timesTd: {},
-    durationTd: {},
-    payRateTd: {},
-    amountEarnedTd: {},
+    durationTd: {
+      ...numAmountTdStyle
+    },
+    payRateTd: {
+      ...numAmountTdStyle
+    },
+    amountEarnedTd: {
+      ...numAmountTdStyle
+    },
     firstColNoTimes: {},
     lastColNoTimes: {}
   };

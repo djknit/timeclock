@@ -1,40 +1,50 @@
 import React from 'react';
 import getStyle from './style';
-import { getTimezoneAbbreviation } from '../utilities';
-import THead from './Head';
-import Row from './Row';
+import Thead from './Head';
+import RowsGroup from './RowsGroup';
 
 function Table({
+  rowGroups,
   hasTimes,
-  primaryTimezone,
-  secondaryTimezone,
-  primaryTzLabel,
-  secondaryTzLabel,
-  date,
-  hasSecondTzCols,
-  hasEarningCols
+  hasSecondTzCol,
+  hasEarningCols,
+  ...propsForTheadOnly
 }) {
 
   const style = getStyle();
 
   return (
-    <table>
-      <THead
+    <table className="table">
+      <Thead
         {...{
           hasTimes,
-          primaryTimezone,
-          secondaryTimezone,
-          primaryTzLabel,
-          secondaryTzLabel,
-          date,
-          hasSecondTzCols,
+          ...propsForTheadOnly,
+          hasSecondTzCol,
           hasEarningCols
         }}
       />
       <tbody>
-        {data.map(rowData => (
-          <Row {...{ hasTimes, hasSecondTzCol, hasEarningCols, rowData }} />
-        ))}
+        {rowGroups.map(
+          (
+            {
+              rows,
+              isTotals,
+              hasTimes: groupHasTimes = hasTimes
+            },
+            index
+          ) => (
+            <RowsGroup
+              key={index}
+              {...{
+                rows,
+                hasSecondTzCol,
+                hasEarningCols,
+                isTotals
+              }}  
+              hasTimes={groupHasTimes}
+            />
+          )
+        )}
       </tbody>
     </table>
   );

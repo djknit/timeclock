@@ -1,6 +1,6 @@
 import React from 'react';
 import getStyle from './style';
-import { getWeekDateRangeText } from '../../utilities';
+import { getWeekDateRangeText, XtSp } from '../../utilities';
 import InnerAreaHeader from '../../../InnerAreaHeader';
 
 function WeekHeader({
@@ -16,11 +16,11 @@ function WeekHeader({
   let dateRangeAsterisk, childStyle, grandchildren;
 
   if (isPartial) {
-    dateRangeAsterisk = <>&#8202;*</>;
+    dateRangeAsterisk = <><XtSp />*</>;
     childStyle = style.areaHeaderPartialWeek;
     grandchildren = (
       <p style={style.partialWeekNote}>
-        <span style={style.partWkNoteAsterisk}>*</span>&#8202;Includes dates outside the scope of this report
+        <span style={style.partWkNoteAsterisk}>*</span><XtSp />Includes dates outside the scope of this report
       </p>
     );
   }
@@ -30,7 +30,7 @@ function WeekHeader({
       label={(
         <>
           <span style={style.primaryLabel}>
-            Week #&#8202;{weekNumber}
+            Week #<XtSp/>{weekNumber}
           </span> <span style={style.sublabel}>
             ({dateRangeDispTxt}){dateRangeAsterisk}
           </span>

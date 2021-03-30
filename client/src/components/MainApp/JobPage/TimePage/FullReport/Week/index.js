@@ -2,6 +2,7 @@ import React from 'react';
 import getStyle from './style';
 import AreaHeader from './AreaHeader';
 import Day from './Day';
+import Totals from '../Totals';
 
 function Week({
   week: {
@@ -11,7 +12,9 @@ function Week({
     dateRange,
     days,
     weekDocId
-  }
+  },
+  reportHasPaidTime,
+  reportHasMultipleTimezones
 }) {
 
   const style = getStyle();
@@ -20,8 +23,16 @@ function Week({
     <>
       <AreaHeader {...{ isPartial, weekNumber, dateRange }} />
       {days.map(day => (
-        <Day key={day._id} {...{ day }} />
+        <Day
+          key={day._id}
+          {...{
+            day,
+            reportHasPaidTime,
+            reportHasMultipleTimezones
+          }}
+        />
       ))}
+      <Totals {...{ totals }} />
     </>
   );
 }

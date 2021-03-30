@@ -2,8 +2,7 @@ import {
   getDateRangeInfo,
   isWholeWeekInDateRange,
   isPartialWeekInDateRange,
-  dates as dateUtils,
-  getDurationInfo
+  dates as dateUtils
 } from '../../../utilities';
 
 const { isDateInRange } = dateUtils;
@@ -84,19 +83,17 @@ function getProcessedRateAndCurrencyTotals(unprocessedEarningsByCurrency) {
   if (!unprocessedEarningsByCurrency) {
     return { byRate: [], byCurrency: [] };
   }
-  let totalsByRate = [];
   const totalsByCurrency = unprocessedEarningsByCurrency.map(
     ({ amount, currency, rates, totalTime }) => {
-      totalsByRate.push(getProcessedRateTotalsForCurrency({ currency, rates }));
       return {
         duration: totalTime,
         amountEarned: amount,
-        currency
+        currency,
+        byRate: getProcessedRateTotalsForCurrency({ currency, rates })
       };
     }
   );
   return {
-    byRate: totalsByRate,
     byCurrency: totalsByCurrency
   };
 }
@@ -115,6 +112,7 @@ function processDay(
     currency: settings.wage && settings.wage.currency,
     officialTimezone: settings.timezone,
     areTimezonesDifferent: settings.timezone === sessionTimezone,
+    reportTimezone: sessionTimezone,
     _id
   };
 }
@@ -164,7 +162,9 @@ function processSegment({ _id, duration, startTime, endTime, earnings }) {
   processed time data result should have the form:
     {
       weeks: [week],
-      totals 
+      totals,
+      hasPaidTime,
+      hasMultipleTimezones
     }
 
   `week`s have the form:
@@ -179,8 +179,12 @@ function processSegment({ _id, duration, startTime, endTime, earnings }) {
 
   `totals` for week and whole date range (but not day) have the form:
     {
-      byRate: [{ duration, payRate, amountEarned }],
-      byCurrency: [{ duration, amountEarned, currency }],
+      byCurrency: [{
+        duration,
+        amountEarned,
+        byRate: [{ duration, payRate, amountEarned }],
+        currency
+      }],
       unpaid, (duration)
       all (duration)
     }
