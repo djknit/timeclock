@@ -1,17 +1,24 @@
 import { styles as headerStyles } from '../../../InnerAreaHeader';
+import { marginBetweenDays } from '../style';
 
 const { getLabelTextEmHeight } = headerStyles;
 
-export default function getStyle() {
+export default function getStyle(isPartialWeek) {
   
   const labelEmHeight = getLabelTextEmHeight();
   const partialNoteEmFontSize = 0.85;
   const partialNoteLineHeight = 1.5;
 
+  let areaHeader = {
+    marginBottom: marginBetweenDays
+  };
+  if (isPartialWeek) {
+    // DOUBLE CHECK FOLLOWING
+    areaHeader.paddingBottom = `${partialNoteLineHeight}em`; // matches note height
+  }
+
   return {
-    areaHeaderPartialWeek: {
-      paddingBottom: `${partialNoteLineHeight}em` // matches note height
-    },
+    areaHeader,
     primaryLabel: {
       whiteSpace: 'nowrap',
     },

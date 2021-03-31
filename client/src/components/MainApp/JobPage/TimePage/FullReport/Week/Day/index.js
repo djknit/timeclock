@@ -1,6 +1,6 @@
 import React from 'react';
 import getStyle from './style';
-import { time as timeUtils } from '../../utilities';
+import { time as timeUtils, formatMyDate } from '../../utilities';
 import Table from '../../Table';
 
 function Day({
@@ -17,9 +17,14 @@ function Day({
   reportHasMultipleTimezones,
   reportHasPaidTime
 }) {
+
+  const style = getStyle();
   
   return (
     <>
+      <h2 style={style.heading}>
+        {formatMyDate(date)}:
+      </h2>
       <Table
         hasTimes
         hasSecondTzCol={reportHasMultipleTimezones}
@@ -44,6 +49,7 @@ function Day({
             isTotals: true
           }
         ]}
+        style={style.table}
       />
     </>
   );

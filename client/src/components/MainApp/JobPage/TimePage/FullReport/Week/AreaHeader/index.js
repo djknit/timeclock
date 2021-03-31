@@ -9,15 +9,14 @@ function WeekHeader({
   dateRange,
 }) {
 
-  const style = getStyle();
-
+  const style = getStyle(isPartial);
+  
   const dateRangeDispTxt = getWeekDateRangeText({ dateRange });
   
-  let dateRangeAsterisk, childStyle, grandchildren;
-
+  let dateRangeAsterisk, grandchildren;
+  
   if (isPartial) {
     dateRangeAsterisk = <><XtSp />*</>;
-    childStyle = style.areaHeaderPartialWeek;
     grandchildren = (
       <p style={style.partialWeekNote}>
         <span style={style.partWkNoteAsterisk}>*</span><XtSp />Includes dates outside the scope of this report
@@ -36,7 +35,7 @@ function WeekHeader({
           </span>
         </>
       )}
-      style={childStyle}
+      style={style.areaHeader}
       children={grandchildren}
     />
   );

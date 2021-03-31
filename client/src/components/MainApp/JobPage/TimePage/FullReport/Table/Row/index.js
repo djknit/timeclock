@@ -24,8 +24,11 @@ function Row({
     style: styleProp
   },
   isTotal,
-  isFirstInGroup
+  isFirstInGroup,
+  date
 }) {
+
+  const commonTimesAttrs = { dayDate: date };
 
   const style = getStyle(styleProp);
 
@@ -33,9 +36,9 @@ function Row({
     <tr style={style.tr}>
       <td style={hasTimes ? style.timesTd : style.firstColNoTimes}>
         {hasTimes ? (
-          <Times {...sessTzTimes} />
+          <Times {...sessTzTimes} {...commonTimesAttrs} />
         ) : (
-          rowLabel
+          <>{rowLabel}:</>
         )}
       </td>
       <td style={style.durationTd}>
@@ -54,7 +57,7 @@ function Row({
       {hasSecondTzCol && (
         <td style={hasTimes ? style.timesTd : style.lastColNoTimes}>
           {hasTimes && (
-            <Times {...jobTzTimes} />
+            <Times {...jobTzTimes} {...commonTimesAttrs} />
           )}
         </td>
       )}

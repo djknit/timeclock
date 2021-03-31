@@ -1,3 +1,5 @@
+import { labelWeight } from '../style';
+
 export default function getStyle(styleProp) {
   const numAmountTdStyle = {
     textAlign: 'right'
@@ -7,7 +9,13 @@ export default function getStyle(styleProp) {
     tr: {
       ...styleProp
     },
-    timesTd: {},
+    timesTd: {
+      textAlign: 'center'
+    },
+    firstColNoTimes: {
+      textAlign: 'right',
+      fontWeight: labelWeight
+    },
     durationTd: {
       ...numAmountTdStyle
     },
@@ -17,7 +25,8 @@ export default function getStyle(styleProp) {
     amountEarnedTd: {
       ...numAmountTdStyle
     },
-    firstColNoTimes: {},
-    lastColNoTimes: {}
+    lastColNoTimes: {
+      
+    }
   };
 };

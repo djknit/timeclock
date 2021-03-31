@@ -22,17 +22,19 @@ function Week({
   return (
     <>
       <AreaHeader {...{ isPartial, weekNumber, dateRange }} />
-      {days.map(day => (
-        <Day
-          key={day._id}
-          {...{
-            day,
-            reportHasPaidTime,
-            reportHasMultipleTimezones
-          }}
-        />
-      ))}
-      <Totals {...{ totals }} />
+      <div style={style.areaBody}>
+        {days.map(day => (
+          <Day
+            key={day._id}
+            {...{
+              day,
+              reportHasPaidTime,
+              reportHasMultipleTimezones
+            }}
+          />
+        ))}
+        <Totals {...{ totals }} />
+      </div>
     </>
   );
 }

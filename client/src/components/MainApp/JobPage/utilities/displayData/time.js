@@ -12,7 +12,7 @@ function formatTime({ hour, minute, amPm, is24hr }, isString, useHairSpace) {
     firstWord,
     <span style={{ fontVariant: 'small-caps' }}>{amPm}</span>
   ];
-  return combineWords(resultWords, false, true);
+  return combineWords(resultWords, false, useHairSpace);
 }
 
 function getHoursDurationDisplay(durationInfo) {

@@ -8,16 +8,19 @@ function Table({
   hasTimes,
   hasSecondTzCol,
   hasEarningCols,
+  date,
+  style: styleProp,
   ...propsForTheadOnly
 }) {
 
-  const style = getStyle();
+  const style = getStyle(styleProp);
 
   return (
-    <table className="table">
+    <table className="table" style={style.table}>
       <Thead
         {...{
           hasTimes,
+          date,
           ...propsForTheadOnly,
           hasSecondTzCol,
           hasEarningCols
@@ -39,7 +42,8 @@ function Table({
                 rows,
                 hasSecondTzCol,
                 hasEarningCols,
-                isTotals
+                isTotals,
+                date
               }}  
               hasTimes={groupHasTimes}
             />

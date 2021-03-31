@@ -31,26 +31,30 @@ function Thead({
   return (
     <thead>
       <tr>
-        <Th>{firstColLabel}</Th>
-        <Th>Hours Worked</Th>
+        <th style={style.timesTh}>
+          {firstColLabel}
+        </th>
+        <th style={style.numAmountColTh}>
+          Hours Worked
+        </th>
         {hasEarningCols && (
           <>
-            <Th>Pay Rate</Th>
-            <Th>Amount Earned</Th>
+            <th style={style.numAmountColTh}>
+              Pay Rate
+            </th>
+            <th style={style.numAmountColTh}>
+              Amount Earned
+            </th>
           </> 
         )}
         {hasSecondTzCol && (
-          <Th>{lastColLabel}</Th>
+          <th style={style.timesTh}>
+            {lastColLabel}
+          </th>
         )}
       </tr>
     </thead>
   );
-
-  function Th(props) {
-    return (
-      <th style={style.th} {...props} />
-    );
-  }
 }
 
 export default Thead;

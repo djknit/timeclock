@@ -1,11 +1,20 @@
 import React from 'react';
-import { roundNumToNDecimalDigits, XtSp } from '../../../utilities';
+import {
+  roundNumToNDecimalDigits,
+  XtSp,
+  formatTime,
+  formatMyDate,
+  dates as dateUtils
+} from '../../../utilities';
 export * from '../../../utilities';
+
+const { areDatesEquivalent } = dateUtils;
 
 export {
   formatDurationForReportTable,
   formatAmountEarnedForReportTable,
-  formatPayRateForReportTable
+  formatPayRateForReportTable,
+  formatSegmentTimesForReportTable
 };
 
 
@@ -20,9 +29,26 @@ function formatDurationForReportTable(
 function formatAmountEarnedForReportTable(amountVal) {
   return amountVal && amountVal.display.standard;
 }
-let i = 0;
+
 function formatPayRateForReportTable({ amount, /* isOvertime, currency */} = {}) {
   return amount && (
     <>{formatAmountEarnedForReportTable(amount)}&nbsp;/<XtSp/>h</>
   );
+}
+
+function formatSegmentTimesForReportTable({ startTime, endTime }, dayDate ) {
+  const includeDates = (
+    !areDatesEquivalent(startTime.date, dayDate) || !areDatesEquivalent(endTime.date, dayDate)
+  );
+  return {
+    startTime: _formatTime(startTime),
+    endTime: _formatTime(endTime)
+  };
+  function _formatTime(_time) {
+    let _formattedTime = { time: formatTime(_time.time, false, true) };
+    if (includeDates) {
+      _formattedTime.date = formatMyDate(_time.date, 'M/D');
+    }
+    return _formattedTime;
+  }
 }
