@@ -1,5 +1,5 @@
 import React from 'react';
-import getStyle from './style';
+import getStyle, { headerStyleVars } from './style';
 import { getWeekDateRangeText, XtSp } from '../../utilities';
 import InnerAreaHeader from '../../../InnerAreaHeader';
 
@@ -37,6 +37,8 @@ function WeekHeader({
       )}
       style={style.areaHeader}
       children={grandchildren}
+      styleVariables={headerStyleVars}
+      isInSection
     />
   );
 }

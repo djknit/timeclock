@@ -1,7 +1,10 @@
 import { styles as headerStyles } from '../../../InnerAreaHeader';
-import { marginBetweenDays } from '../style';
 
 const { getLabelTextEmHeight } = headerStyles;
+
+const headerStyleVars = {
+  dividerHeight: '2.6px'
+};
 
 export default function getStyle(isPartialWeek) {
   
@@ -10,12 +13,13 @@ export default function getStyle(isPartialWeek) {
   const partialNoteLineHeight = 1.5;
 
   let areaHeader = {
-    marginBottom: marginBetweenDays
+    marginBottom: '0.8rem'
   };
   if (isPartialWeek) {
-    // DOUBLE CHECK FOLLOWING
-    areaHeader.paddingBottom = `${partialNoteLineHeight}em`; // matches note height
+    areaHeader.paddingBottom = `${partialNoteLineHeight}em`; // matches note height as defined below including asterisk
   }
+
+  const labelFontSizeInPartialNoteEm = 1 / partialNoteEmFontSize; // fs of label w/ respect to partial note fs
 
   return {
     areaHeader,
@@ -34,12 +38,14 @@ export default function getStyle(isPartialWeek) {
       position: 'absolute',
       fontSize: `${partialNoteEmFontSize}em`,
       right: 0,
-      top: `${(labelEmHeight / partialNoteEmFontSize) / 2}em`,
+      top: `${(labelEmHeight * labelFontSizeInPartialNoteEm) / 2}em`,
       paddingRight: '0.75em',
       lineHeight: partialNoteLineHeight
     },
     partWkNoteAsterisk: {
-      fontSize: `${1 / partialNoteEmFontSize}em`
+      fontSize: `${labelFontSizeInPartialNoteEm}em`
     }
   };
 };
+
+export { headerStyleVars };

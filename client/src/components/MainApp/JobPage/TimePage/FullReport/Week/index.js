@@ -20,9 +20,9 @@ function Week({
   const style = getStyle();
 
   return (
-    <>
+    <section>
       <AreaHeader {...{ isPartial, weekNumber, dateRange }} />
-      <div style={style.areaBody}>
+      <main style={style.areaBody}>
         {days.map(day => (
           <Day
             key={day._id}
@@ -34,8 +34,8 @@ function Week({
           />
         ))}
         <Totals {...{ totals }} />
-      </div>
-    </>
+      </main>
+    </section>
   );
 }
 

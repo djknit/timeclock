@@ -1,7 +1,12 @@
-import { labelWeight } from '../style';
+import { labelWeight, contentAreaDividerColor } from '../style';
 
 export default function getStyle(styleProp) {
+  const allTdStyle = {
+    borderColor: contentAreaDividerColor
+  };
+
   const numAmountTdStyle = {
+    ...allTdStyle,
     textAlign: 'right'
   };
 
@@ -10,9 +15,11 @@ export default function getStyle(styleProp) {
       ...styleProp
     },
     timesTd: {
+      ...allTdStyle,
       textAlign: 'center'
     },
     firstColNoTimes: {
+      ...allTdStyle,
       textAlign: 'right',
       fontWeight: labelWeight
     },
@@ -26,7 +33,7 @@ export default function getStyle(styleProp) {
       ...numAmountTdStyle
     },
     lastColNoTimes: {
-      
+      ...allTdStyle
     }
   };
 };

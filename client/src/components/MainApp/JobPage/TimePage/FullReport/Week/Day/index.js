@@ -1,7 +1,8 @@
 import React from 'react';
-import getStyle from './style';
-import { time as timeUtils, formatMyDate } from '../../utilities';
+import getStyle, { headingStyleVars } from './style';
+import { formatMyDate } from '../../utilities';
 import Table from '../../Table';
+import InnerAreaHeader from '../../../InnerAreaHeader';
 
 function Day({
   day: {
@@ -22,9 +23,12 @@ function Day({
   
   return (
     <>
-      <h2 style={style.heading}>
-        {formatMyDate(date)}:
-      </h2>
+      <InnerAreaHeader
+        label={formatMyDate(date)}
+        style={style.heading}
+        ranking={3}
+        styleVariables={headingStyleVars}
+      />
       <Table
         hasTimes
         hasSecondTzCol={reportHasMultipleTimezones}

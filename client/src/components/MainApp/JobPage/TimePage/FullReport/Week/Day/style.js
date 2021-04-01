@@ -1,5 +1,10 @@
 import { marginBetweenDays } from '../style';
 
+const headingStyleVars = {
+  dividerHeight: '2px',
+  labelEmFontSize: 1
+};
+
 export default function getStyle() {
   return {
     heading: {
@@ -13,3 +18,5 @@ export default function getStyle() {
     }
   };
 };
+
+export { headingStyleVars };
