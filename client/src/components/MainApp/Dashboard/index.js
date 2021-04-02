@@ -16,7 +16,6 @@ class _Dashboard_needsData extends Component {
     const {
       redirectToJobPage,
       openNewJobModal,
-      catchApiUnauthorized,
       accountEditingModalOpenerFactory,
       accountPropDeletingModalOpenerFactory,
       areAnyModalsOpen,
@@ -42,7 +41,6 @@ class _Dashboard_needsData extends Component {
             {...{
               redirectToJobPage,
               openNewJobModal,
-              catchApiUnauthorized,
               areAnyModalsOpen,
               getJobPagePath
             }}

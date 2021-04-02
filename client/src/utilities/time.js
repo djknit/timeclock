@@ -32,8 +32,7 @@ function convert24hrTimeToAmPm(timeToConvert) {
   return {
     ...timeToConvert,
     is24hr: false,
-    amPm: hour >= 12 ? 'pm' : 'am',
-    hour: (hour % 12) || 12
+    ...getAmPmHourInfoFrom24hrHour(hour)
   };
 }
 
@@ -47,24 +46,35 @@ function getTimestampFromDateAndTime(date, time, timezone) {
   return moment.tz(dateTimeInfo, timezone).valueOf();
 }
 
-function getTimeInfoFromUtcTime(utcTime, primaryTimezone, altTimezones = {}) {
+function getTimeInfoFromUtcTime(utcTime, primaryTimezone, altTimezones = {}, is24hr = false) {
   const timeMoment = moment.tz(utcTime, primaryTimezone);
+  const hour = timeMoment.hour();
   let timeInfo = {
     time: {
-      hour: timeMoment.hour(),
+      hour,
       minute: timeMoment.minute(),
       second: timeMoment.second(),
-      is24hr: true
+      is24hr
     },
     date: convertMomentToMyDate(timeMoment),
     timezone: primaryTimezone,
     utcTime
   };
+  if (!is24hr) {
+    Object.assign(timeInfo.time, getAmPmHourInfoFrom24hrHour(hour));
+  }
   for (const tzRoleName in altTimezones) {
     if (!timeInfo.altTimezones) timeInfo.altTimezones = {};
     timeInfo.altTimezones[tzRoleName] = getTimeInfoFromUtcTime(utcTime, altTimezones[tzRoleName]);
   }
   return timeInfo;
+}
+
+function getAmPmHourInfoFrom24hrHour(hour) { // assumes valid hour
+  return {
+    amPm: hour >= 12 ? 'pm' : 'am',
+    hour: (hour % 12) || 12
+  };
 }
 
 export {

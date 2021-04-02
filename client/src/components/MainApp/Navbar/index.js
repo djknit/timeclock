@@ -78,7 +78,6 @@ class _Navbar_needsDataAndPseudo extends Component {
       this.props.goTo('/');
     })
     .catch(err => {
-      if (this.props.catchApiUnauthorized(err)) return;
       this.setState({
         isLoading: false,
         hasProblem: true
@@ -250,7 +249,7 @@ class _Navbar_needsDataAndPseudo extends Component {
                   </span>
                 }
               >
-                <NavItem destinationPath={currentJobPath} {...commonNavItemAttrs}>
+                <NavItem destinationPath={currentJobPath} {...commonNavItemAttrs} matchExactPath>
                   Home
                 </NavItem>
                 <NavItem

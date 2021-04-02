@@ -2,24 +2,24 @@ import {
   getDateRangeInfo,
   isWholeWeekInDateRange,
   isPartialWeekInDateRange,
-  dates as dateUtils,
-  getDurationInfo
+  dates as dateUtils
 } from '../../../utilities';
 
 const { isDateInRange } = dateUtils;
 
-export { processTime };
+export { processTimeForReport };
 
 
-function processTime(timeData, { dateRange } = {}) {
+function processTimeForReport(timeData, { dateRange } = {}) {
   const { weeks, sessionTimezone } = timeData;
   const hasDateRange = !!(dateRange && (dateRange.firstDate || dateRange.lastDate))
   const weeksInRange = hasDateRange ? findWeeksInDateRange(weeks, dateRange) : weeks;
   const rangeTotals = hasDateRange ? getDateRangeInfo(dateRange, weeks) : timeData;
   // See below comment for description of result object (end of this file)
   return {
-    weeks: processWeeks(weeksInRange, sessionTimezone),
-    totals: processTotals(rangeTotals)
+    ...processWeeksForReport(weeksInRange, sessionTimezone),
+    totals: processTotals(rangeTotals),
+    hasPaidTime: !!rangeTotals.earnings, // include rate & earnings columns throughout report if there is any paid time anywhere in reported time period
   };
 }
 
@@ -40,8 +40,14 @@ function findWeeksInDateRange(weeks, dateRange) {
   return weeksInRange;
 }
 
-function processWeeks(unprocessedWeeks, sessionTimezone) {
-  return unprocessedWeeks.map(_week => processWeek(_week, sessionTimezone));
+function processWeeksForReport(unprocessedWeeks, sessionTimezone) {
+  let hasMultipleTimezones = false; // same idea as earnings (see note in `processTimeForReport`)
+  const processedWeeks = unprocessedWeeks.map(_week => {
+    const processedWeek = processWeek(_week, sessionTimezone);
+    if (processedWeek.hasMultipleTimezones) hasMultipleTimezones = true;
+    return processedWeek;
+  });
+  return { hasMultipleTimezones, weeks: processedWeeks };
 }
 
 function processTotals({ totalTime, earnings, unpaidTime }) {
@@ -56,30 +62,38 @@ function processWeek(
   { weekNumber, days, isPartial, earnings, totalTime, firstDate, lastDate, unpaidTime, weekDocId },
   sessionTimezone
 ) {
+  let hasMultipleTimezones = false;
+  const processedDays = days.map(_day => {
+    const processedDay = processDay(_day, sessionTimezone);
+    if (processedDay.areTimezonesDifferent) hasMultipleTimezones = true;
+    return processedDay;
+  });
   return {
     isPartial,
     totals: processTotals({ totalTime, earnings, unpaidTime }),
     weekNumber,
     dateRange: { firstDate, lastDate },
-    days: days.map(_day => processDay(_day, sessionTimezone)),
-    weekDocId
+    days: processedDays,
+    weekDocId,
+    hasMultipleTimezones
   };
 }
 
 function getProcessedRateAndCurrencyTotals(unprocessedEarningsByCurrency) {
-  let totalsByRate = [];
+  if (!unprocessedEarningsByCurrency) {
+    return { byRate: [], byCurrency: [] };
+  }
   const totalsByCurrency = unprocessedEarningsByCurrency.map(
     ({ amount, currency, rates, totalTime }) => {
-      totalsByRate.push(getProcessedRateTotalsForCurrency({ currency, rates }));
       return {
         duration: totalTime,
         amountEarned: amount,
-        currency
+        currency,
+        byRate: getProcessedRateTotalsForCurrency({ currency, rates })
       };
     }
   );
   return {
-    byRate: totalsByRate,
     byCurrency: totalsByCurrency
   };
 }
@@ -88,13 +102,17 @@ function processDay(
   { segments, earnings, date, settings, totalTime, _id },
   sessionTimezone
 ) {
-  const unpaidTime = earnings ? totalTime : getDurationInfo(0);
   return {
     date,
-    totals: processTotals({ totalTime, earnings, unpaidTime }),
+    totals: {
+      duration: totalTime,
+      amountEarned: earnings && earnings.amount
+    },
     segments: segments.map(processSegment),
+    currency: settings.wage && settings.wage.currency,
     officialTimezone: settings.timezone,
     areTimezonesDifferent: settings.timezone === sessionTimezone,
+    reportTimezone: sessionTimezone,
     _id
   };
 }
@@ -114,26 +132,39 @@ function getProcessedRateTotalsForCurrency({ currency, rates }) {
 }
 
 function processSegment({ _id, duration, startTime, endTime, earnings }) {
+  let payRate = null, amountEarned = null;
+  if (earnings) {
+    const { currency, rates, amount } = earnings;
+    const { rate, isOvertime } = rates[0];
+    payRate = { amount: rate, isOvertime, currency };
+    amountEarned = amount;
+  }
+  let times = { sessionTimezone: {}, officialTimezone: {} };
+  _processTime(startTime, 'startTime');
+  _processTime(endTime, 'endTime');
   return {
     duration,
-    startTime: {
-      sessionTimezone: startTime,
-      officialTimezone
-    },
-    endTime: {
-      sessionTimezone: endTime,
-      officialTimezone
-    }
+    times,
+    payRate,
+    amountEarned,
+    _id,
   };
+
+  function _processTime({ altTimezones, ...mainTime }, name) {
+    times.sessionTimezone[name] = mainTime;
+    times.officialTimezone[name] = (altTimezones && altTimezones.job) || mainTime;
+  }
 }
 
 
-// RESULT OBJ FROM `processTime` DESCRIPTION
+// RESULT OBJ FROM `processTimeForReport` DESCRIPTION
 /* 
   processed time data result should have the form:
     {
       weeks: [week],
-      totals 
+      totals,
+      hasPaidTime,
+      hasMultipleTimezones
     }
 
   `week`s have the form:
@@ -148,8 +179,12 @@ function processSegment({ _id, duration, startTime, endTime, earnings }) {
 
   `totals` for week and whole date range (but not day) have the form:
     {
-      byRate: [{ duration, payRate, amountEarned }],
-      byCurrency: [{ duration, amountEarned, currency }],
+      byCurrency: [{
+        duration,
+        amountEarned,
+        byRate: [{ duration, payRate, amountEarned }],
+        currency
+      }],
       unpaid, (duration)
       all (duration)
     }
@@ -174,15 +209,15 @@ function processSegment({ _id, duration, startTime, endTime, earnings }) {
       isOvertime,
       currency
     }
+    || `null` (for unpaid segments)
   
   `segment`s have the form:
     {
       duration,
-      startTime: {
-        sessionTimezone,
-        officialTimezone
+      times: {
+        sessionTimezone: { startTime, endTime },
+        officialTimezone: { startTime, endTime }
       },
-      endTime,
       payRate,
       amountEarned,
       _id

@@ -5,6 +5,7 @@ import {
   formatMyDate,
   formatTime
 } from '../../../utilities';
+export * from './reports';
 
 const { areDatesEquivalent } = dateUtils;
 
