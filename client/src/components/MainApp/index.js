@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { userService } from '../../data';
-import { api, modalManagement } from './utilities';
+import { api, modalManagement, setOnApiUnauthFxn } from './utilities';
 import getStyle from './style';
 import Navbar from './Navbar';
 import Dashboard from './Dashboard';
@@ -27,7 +27,7 @@ class MainApp extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
-    this.catchApiUnauthorized = this.catchApiUnauthorized.bind(this);
+    this.onApiUnauthorized = this.onApiUnauthorized.bind(this);
     let state = {};
     addModalsStateAndMethods(this, state, modalsInfo);
     this.state = {
@@ -41,16 +41,13 @@ class MainApp extends Component {
     this.setState({ navHeight });
   };
 
-  catchApiUnauthorized(err) {
-    if (err && err.response && err.response.status === 401) {
-      userService.clearValue();
-      this.props.history.push('/');
-      return true;
-    }
-    return false;
+  onApiUnauthorized() {
+    userService.clearValue();
+    this.props.history.push('/');
   };
-  
+
   componentDidMount() {
+    setOnApiUnauthFxn(this.onApiUnauthorized);
     api.auth.test()
     .then(res => {
       const { match, history } = this.props
@@ -61,10 +58,10 @@ class MainApp extends Component {
         history.push(`${match.path}/${dashboardPathName}`);
       }
     })
-    .catch(() => {
-      userService.clearValue();
-      this.props.history.push('/');
-    });
+    // .catch(() => {
+    //   userService.clearValue();
+    //   this.props.history.push('/');
+    // });
   };
 
   componentWillUnmount() {
@@ -72,7 +69,7 @@ class MainApp extends Component {
   };
 
   render() {
-    const { setNavHeight, catchApiUnauthorized } = this;
+    const { setNavHeight } = this;
     const {
       history,
       match,
@@ -120,7 +117,6 @@ class MainApp extends Component {
           ...props,
           redirectToJobPage,
           openNewJobModal,
-          catchApiUnauthorized,
           accountEditingModalOpenerFactory,
           accountPropDeletingModalOpenerFactory,
           areAnyModalsOpen,
@@ -138,7 +134,6 @@ class MainApp extends Component {
           reportHeight={setNavHeight}
           {...{
             history,
-            catchApiUnauthorized,
             areAnyModalsOpen,
             dashboardPath,
             getJobPagePath,
@@ -166,7 +161,6 @@ class MainApp extends Component {
                 <JobPage
                   {...{
                     ...props,
-                    catchApiUnauthorized,
                     areAnyModalsOpen,
                     returnToDashboard,
                     dashboardPath,
@@ -186,7 +180,6 @@ class MainApp extends Component {
               {...{
                 isActive,
                 inputRef,
-                catchApiUnauthorized,
                 ...(
                   (name === 'newJob' && { redirectToJobPage }) ||
                   (name === 'editAccount' && { propToEditName: accountPropToEditName }) ||

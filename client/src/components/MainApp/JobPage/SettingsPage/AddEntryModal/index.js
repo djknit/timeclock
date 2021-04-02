@@ -32,9 +32,11 @@ class _AddEntryModal_needsCollapsing extends Component {
   };
 
   getUniqueStartingState() {
-    const jobSettingInitialInputValues = getSettingInputInitialValues();
+    const { settingName } = this.props;
+    const settingValue = getSettingInputInitialValues()[settingName];
+    if (settingName === 'wage') settingValue.useWage = true;
     return {
-      settingValue: jobSettingInitialInputValues[this.props.settingName],
+      settingValue,
       startDate: null,
       messagesAreaMinHeight: undefined
     };

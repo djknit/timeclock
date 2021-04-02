@@ -55,7 +55,6 @@ function submitFactory(hasCountdown, scrollOptions) {
     })
     .catch(err => {
       const _err = err || {};
-      if (this.props.catchApiUnauthorized) this.props.catchApiUnauthorized(err);
       let { response } = _err;
       if (response && this.processErrorResponse) this.processErrorResponse(response);
       const { isWarning } = _err;

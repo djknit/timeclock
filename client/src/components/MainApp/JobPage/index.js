@@ -58,7 +58,6 @@ class _JobPage_needsData extends Component {
         currentJobService.setValue(res.data);
       })
       .catch(err => {
-        if (this.props.catchApiUnauthorized(err)) return;
         this.setState({
           isLoading: false,
           hasProblem: true,
@@ -79,7 +78,6 @@ class _JobPage_needsData extends Component {
       match,
       returnToDashboard,
       areAnyModalsOpen,
-      catchApiUnauthorized,
       dashboardPath,
       windowWidth,
       jobPageSubpaths,
@@ -105,7 +103,6 @@ class _JobPage_needsData extends Component {
     const commonRouteAttributes = {
       job,
       parentPath: match.url,
-      catchApiUnauthorized,
       areAnyModalsOpen
     };
 
@@ -167,7 +164,6 @@ class _JobPage_needsData extends Component {
                   isActive,
                   inputRef,
                   job,
-                  catchApiUnauthorized
                 }}
                 {...(name === 'deleteJob' ? { returnToDashboard } : {})}
                 closeModal={() => toggle(false)}

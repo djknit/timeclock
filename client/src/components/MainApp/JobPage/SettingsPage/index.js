@@ -17,7 +17,7 @@ class SettingsPage extends Component {
 
   render() {
     const {
-      job, parentPath, match, catchApiUnauthorized, areAnyModalsOpen, jobSettingsPageSubpaths
+      job, parentPath, match, areAnyModalsOpen, jobSettingsPageSubpaths
     } = this.props;
     const thisPath = match.url;
 
@@ -59,7 +59,7 @@ class SettingsPage extends Component {
       // getRouteInfoObj('All Settings', undefined, All)
     ];
 
-    const commonRouteAttrs = { ...this.props, job, catchApiUnauthorized, areAnyModalsOpen };
+    const commonRouteAttrs = { ...this.props, job, areAnyModalsOpen };
 
     return job && job.settings ? (
       <>
