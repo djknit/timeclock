@@ -106,7 +106,7 @@ This plan is not complete. Future steps will be expanded on in the plan before t
 * Icebox:
   * [ ] Pay periods (should be optional)
   * [ ] Mark time as finalized and/or paid, and maybe allow finalized time to be locked so it can't be changed
-  * [ ] Add manager/supervisor account with priviledges to define job; link to employee account for employee self-reporting of hours; require manager to finalize.
+  * [ ] Add manager/supervisor account with privileges to define job, and link manager account to employee account for employee self-reporting of hours. Require manager to finalize hours.
 
 ## Project Features
 (Coming soon...)
@@ -116,7 +116,7 @@ This plan is not complete. Future steps will be expanded on in the plan before t
 * React
 * Bulma
 * Axios
-* Moment
+* Moment Timezone
 * react-router-dom package
 * create-react-app package
 
