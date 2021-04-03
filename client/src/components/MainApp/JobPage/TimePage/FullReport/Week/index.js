@@ -17,6 +17,15 @@ function Week({
   reportHasMultipleTimezones
 }) {
 
+  console.log('render Week\nweek\n', {
+    isPartial,
+    totals,
+    weekNumber,
+    dateRange,
+    days,
+    weekDocId
+  })
+
   const style = getStyle();
 
   return (
