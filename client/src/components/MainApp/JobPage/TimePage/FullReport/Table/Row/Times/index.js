@@ -15,13 +15,12 @@ function Times({
 
   return (
     <>
-      <span style={style.startTime}>
+      {/* <span style={style.startTime}>
         {startTime.time}<DateDisplay date={startTime.date} />
-      </span>
+      </span> */}
+      <TimeAndDateDisplay timeInfo={startTime} style={style.startTime} />
       &nbsp;&ndash;&nbsp;
-      <span style={style.endTime}>
-        {endTime.time}<DateDisplay date={endTime.date} />
-      </span>
+      <TimeAndDateDisplay timeInfo={endTime} style={style.endTime} />
     </>
   );
 }
@@ -34,5 +33,13 @@ function DateDisplay({ date }) { // already formatted date
     <>&nbsp;<span style={style.span}>{date}</span></>
   ) : (
     <></>
+  );
+}
+
+function TimeAndDateDisplay({ timeInfo, style }) {
+  return (
+    <span {...{ style }}>
+      {timeInfo.time}<DateDisplay date={timeInfo.date} />
+    </span>
   );
 }

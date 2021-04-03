@@ -2,14 +2,16 @@ import { marginBetweenDays } from '../style';
 
 const headingStyleVars = {
   dividerHeight: '2px',
-  labelEmFontSize: 1
+  labelEmFontSize: 1,
+  labelFontWeight: 600
 };
 
 export default function getStyle() {
   return {
     heading: {
       textAlign: 'left',
-      fontWeight: 'bold',
+      fontWeight: headingStyleVars.labelFontWeight,
+      fontSize: '1.1em'
     },
     table: {
       marginBottom: marginBetweenDays,

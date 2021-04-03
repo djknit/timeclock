@@ -23,7 +23,7 @@ function Row({
     // _id, // segment id; only defined for rows that represent segments; not currently needed.
     style: styleProp
   },
-  isTotal,
+  // isTotal,
   isFirstInGroup,
   date
 }) {
@@ -35,11 +35,12 @@ function Row({
   return (
     <tr style={style.tr}>
       <td style={hasTimes ? style.timesTd : style.firstColNoTimes}>
-        {hasTimes ? (
+        {(hasTimes && (
           <Times {...sessTzTimes} {...commonTimesAttrs} />
-        ) : (
+        )) ||
+        (rowLabel && (
           <>{rowLabel}:</>
-        )}
+        ))}
       </td>
       <td style={style.durationTd}>
         {formatDurationForReportTable(duration)}
@@ -49,9 +50,13 @@ function Row({
           <td style={style.payRateTd}>
             {formatPayRateForReportTable(payRate)}
           </td>
-          <td style={style.amountEarnedTd}>
-            {formatAmountEarnedForReportTable(amountEarned)}
-          </td>
+          {amountEarned ? (
+            <td style={style.amountEarnedTd}>
+              {formatAmountEarnedForReportTable(amountEarned)}
+            </td>
+          ) : (
+            <td style={style.amountEarnedTdNoEarnings}> &mdash; </td>
+          )}
         </>
       )}
       {hasSecondTzCol && (

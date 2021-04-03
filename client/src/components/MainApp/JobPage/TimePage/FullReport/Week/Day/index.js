@@ -30,7 +30,7 @@ function Day({
         styleVariables={headingStyleVars}
       />
       <Table
-        hasTimes
+        hasTimes={segments.length > 0}
         hasSecondTzCol={reportHasMultipleTimezones}
         hasEarningCols={reportHasPaidTime}
         primaryTimezone={reportTimezone}

@@ -34,6 +34,10 @@ export default function getStyle(styleProp) {
     },
     lastColNoTimes: {
       ...allTdStyle
+    },
+    amountEarnedTdNoEarnings: {
+      ...allTdStyle,
+      textAlign: 'center'
     }
   };
 };

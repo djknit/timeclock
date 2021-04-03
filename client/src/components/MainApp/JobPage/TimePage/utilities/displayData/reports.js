@@ -93,9 +93,7 @@ function getProcessedRateAndCurrencyTotals(unprocessedEarningsByCurrency) {
       };
     }
   );
-  return {
-    byCurrency: totalsByCurrency
-  };
+  return { byCurrency: totalsByCurrency };
 }
 
 function processDay(
