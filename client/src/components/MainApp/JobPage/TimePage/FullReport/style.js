@@ -3,7 +3,7 @@ export * from '../style';
 
 export default function getStyle(styleProp) {
 
-  const borderStyle = `2px solid ${contentAreaDividerColor}`;
+  const borderStyle = `3.4px solid ${contentAreaDividerColor}`;
 
   return {
     wholeReport: {

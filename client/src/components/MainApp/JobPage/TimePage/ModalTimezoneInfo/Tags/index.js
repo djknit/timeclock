@@ -19,12 +19,11 @@ function _Tags_needsPseudo({
 
   const tzAbbreviation = getTimezoneAbbreviation(sessionTimezone);
 
-  const isTagGroupEngaged = pseudoState.isHovered || pseudoState.isFocused || pseudoState.isActive;
-  const commonBtnTagAttrs = { disabled, isTagGroupEngaged };
+  const commonBtnTagAttrs = {
+    disabled,
+    isTagGroupEngaged: pseudoState.isHovered || pseudoState.isFocused || pseudoState.isActive
+  };
   
-  let valueTagClassName = 'info';
-  if (!isTagGroupEngaged) valueTagClassName += ' light';
-
   const style = getStyle();
 
   return (
@@ -39,7 +38,7 @@ function _Tags_needsPseudo({
           align="right"
           {...pseudoHandlers}
         >
-          <Tag theme={valueTagClassName}>
+          <Tag theme="info">
             Timezone: {tzAbbreviation}
           </Tag>
           <IconButtonTag

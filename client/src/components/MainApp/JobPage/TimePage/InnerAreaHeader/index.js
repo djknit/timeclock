@@ -6,25 +6,57 @@ export { styles };
 function InnerAreaHeader({
   label,
   style: styleProp,
-  styleVariables: {
+  styleVariables: { // destructuring to assist text editor autofill
     backgroundColor,
     labelEmFontSize,
-    dividerColor
+    labelFontWeight,
+    dividerColor,
+    dividerHeight
   } = {},
-  children
+  children,
+  ranking,
+  isInSection
 }) {
 
-  const style = getStyle(styleProp, { backgroundColor, labelEmFontSize, dividerColor });
+  const style = getStyle(
+    styleProp,
+    { backgroundColor, labelEmFontSize, dividerColor, dividerHeight, labelFontWeight }
+  );
 
   return (
-    <div style={style.div}>
-      <h3 style={style.text}>
+    <Container style={style.div} {...{ isInSection }}>
+      <Hx style={style.text} {...{ ranking }}>
         {label}
-      </h3>
+      </Hx>
       <hr style={style.hr} />
       {children}
-    </div>
+    </Container>
   );
 }
 
 export default InnerAreaHeader;
+
+function Container({
+  isInSection,
+  ...props
+}) {
+  return isInSection ? (
+    <header {...props} />
+  ) : (
+    <div {...props} />
+  );
+}
+
+function Hx({
+  ranking = 2,
+  ...props
+}) {
+  switch (ranking) {
+    case 1: return <h1 {...props} />;
+    case 2: return <h2 {...props} />;
+    case 3: return <h3 {...props} />;
+    case 4: return <h4 {...props} />;
+    case 5: return <h5 {...props} />;
+    case 6: return <h6 {...props} />;
+  }
+}

@@ -1,6 +1,6 @@
 import React from 'react';
-import getStyle from './style';
-import { getWeekDateRangeText } from '../../utilities';
+import getStyle, { headerStyleVars } from './style';
+import { getWeekDateRangeText, XtSp } from '../../utilities';
 import InnerAreaHeader from '../../../InnerAreaHeader';
 
 function WeekHeader({
@@ -9,18 +9,17 @@ function WeekHeader({
   dateRange,
 }) {
 
-  const style = getStyle();
-
+  const style = getStyle(isPartial);
+  
   const dateRangeDispTxt = getWeekDateRangeText({ dateRange });
   
-  let dateRangeAsterisk, childStyle, grandchildren;
-
+  let dateRangeAsterisk, grandchildren;
+  
   if (isPartial) {
-    dateRangeAsterisk = <>&#8202;*</>;
-    childStyle = style.areaHeaderPartialWeek;
+    dateRangeAsterisk = <><XtSp />*</>;
     grandchildren = (
       <p style={style.partialWeekNote}>
-        <span style={style.partWkNoteAsterisk}>*</span>&#8202;Includes dates outside the scope of this report
+        <span style={style.partWkNoteAsterisk}>*</span><XtSp />Includes dates outside the scope of this report
       </p>
     );
   }
@@ -30,14 +29,16 @@ function WeekHeader({
       label={(
         <>
           <span style={style.primaryLabel}>
-            Week #&#8202;{weekNumber}
+            Week #<XtSp/>{weekNumber}
           </span> <span style={style.sublabel}>
             ({dateRangeDispTxt}){dateRangeAsterisk}
           </span>
         </>
       )}
-      style={childStyle}
+      style={style.areaHeader}
       children={grandchildren}
+      styleVariables={headerStyleVars}
+      isInSection
     />
   );
 }

@@ -1,81 +1,57 @@
 import React from 'react';
 import getStyle from './style';
-import { getTimezoneAbbreviation } from '../utilities';
-
+import Thead from './Head';
+import RowsGroup from './RowsGroup';
 
 function Table({
+  rowGroups,
   hasTimes,
-  primaryTimezone,
-  secondaryTimezone,
-  data,
-  primaryTzLabel,
-  secondaryTzLabel,
-  date
+  hasSecondTzCol,
+  hasEarningCols,
+  date,
+  style: styleProp,
+  ...propsForTheadOnly
 }) {
 
-  let firstColLabel, lastColLabel;
-
-  if (hasTimes) {
-    firstColLabel = (
-      primaryTzLabel ||
-      `Times (${getTimezoneAbbreviation(primaryTimezone)})`
-    );
-    lastColLabel = (
-      secondaryTzLabel ||
-      `Job Timezone (${getTimezoneAbbreviation(secondaryTimezone, date)})`
-    );
-  }
-
-  const primaryTzDefaultLabel = (
-    primaryTzLabel || `Times (${getTimezoneAbbreviation(primaryTimezone)})`
-  );
-
-  const style = getStyle();
+  const style = getStyle(styleProp);
 
   return (
-    <table>
-      <thead>
-        <th span={3}>
-          {hasTimes && (
-            primaryTzLabel || primaryTzDefaultLabel
-          )}
-        </th>
-        <th>
-          Hours Worked
-        </th>
-        <th>
-          Pay Rate
-        </th>
-        <th>
-          Amount Earned
-        </th>
-        {secondaryTimezone && (
-          <th span={3}>
-            {hasTimes && (
-              secondaryTzLabel || ''
-            )}
-          </th>
-        )}
-      </thead>
+    <table className="table" style={style.table}>
+      <Thead
+        {...{
+          hasTimes,
+          date,
+          ...propsForTheadOnly,
+          hasSecondTzCol,
+          hasEarningCols
+        }}
+      />
       <tbody>
-        {data && data.map(row => (
-          <row>
-            <td></td>
-            <td>&ndash;</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            {secondaryTimezone && (
-              <>
-                <td></td>
-                <td></td>
-                <td></td>
-              </>
-            )}
-          </row>
-        ))}
+        {rowGroups.map(
+          (
+            {
+              rows,
+              isTotals,
+              hasTimes: groupHasTimes = hasTimes
+            },
+            index
+          ) => (
+            <RowsGroup
+              key={index}
+              {...{
+                rows,
+                hasSecondTzCol,
+                hasEarningCols,
+                isTotals,
+                date
+              }}  
+              hasTimes={groupHasTimes}
+            />
+          )
+        )}
       </tbody>
     </table>
   );
 }
+
+export default Table;

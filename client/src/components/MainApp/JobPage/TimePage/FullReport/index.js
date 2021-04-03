@@ -8,11 +8,18 @@ function FullReport({
   style: styleProp
 }) {
 
+  console.log('processedTimeData\n', processedTimeData);
+
   if (!processedTimeData) {
     return (<></>);
   }
 
-  const { weeks, totals } = processedTimeData;
+  const {
+    weeks,
+    totals,
+    hasPaidTime: reportHasPaidTime,
+    hasMultipleTimezones: reportHasMultipleTimezones
+  } = processedTimeData;
 
   const style = getStyle(styleProp);
 
@@ -24,11 +31,19 @@ function FullReport({
       {weeks.map(week => (
         <Week
           key={week.weekDocId}
-          {...{ week }}
+          {...{
+            week,
+            reportHasPaidTime,
+            reportHasMultipleTimezones
+          }}
         />
       ))}
       <Totals
-        {...{ totals }}
+        {...{
+          totals,
+          reportHasPaidTime,
+          reportHasMultipleTimezones
+        }}
       />
     </article>
   );

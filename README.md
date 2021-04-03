@@ -19,7 +19,6 @@
 * Make it as convenient as possible to enter time worked.
 * Minimum Viable Product (MVP) should have:
   * Continually update/display time worked for day, week, and month.
-  * Automatically display time worked for day, week, and month.
   * Allow user to set day and week cutoff.
   * Allow user to analyze arbitrary range of days.
   * Ability to separate multiple different jobs
@@ -78,7 +77,7 @@ This plan is not complete. Future steps will be expanded on in the plan before t
     * [x] Settings page (display and edit settings value schedules)
     * [ ] _Time page_
       * [x] Time Summary
-      * [ ] _Basics_
+      * [x] Basics
         * [x] General time entry
           * [x] Time segment general entry
           * [x] Track and display segments just added
@@ -97,13 +96,16 @@ This plan is not complete. Future steps will be expanded on in the plan before t
           * [ ] Inputs
           * [ ] Display (update regular display)
   * [x] Navbar navigation menu
-  
+  * [ ] Ensure at least bare minimum mobile responsiveness
+    * [ ] Ensure all features can be used on all screen sizes
+    * [ ] Ensure nothing looks broken or clearly in the wrong place w/ any screen size
 * [ ] Review code for bugs and code organization/readability
 * [ ] Work on additional features
   * [ ] Punchclock
-  * [ ] Add notes field to time segments & maybe also days and/or weeks
+  * [ ] Create (or improve existing) mobile friendly UI
   
 * Icebox:
+  * [ ] Add notes field to time segments & maybe also days and/or weeks
   * [ ] Pay periods (should be optional)
   * [ ] Mark time as finalized and/or paid, and maybe allow finalized time to be locked so it can't be changed
   * [ ] Add manager/supervisor account with priviledges to define job; link to employee account for employee self-reporting of hours; require manager to finalize.

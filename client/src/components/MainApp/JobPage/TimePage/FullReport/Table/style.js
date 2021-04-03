@@ -1,18 +1,14 @@
-export default function getStyle() {
+export * from '../style';
+
+const labelWeight = 600;
+
+export default function getStyle(styleProp) {
   return {
-    // propertiess commented out may be unnecessary
-    timesTh: {},
-    // durationTh: {},
-    // payRateTh: {},
-    // amountEarnedTh: {},
-    startTimeTd: {},
-    timeDashTd: {},
-    endTimeTd: {},
-    durationTd: {},
-    payRateTd: {},
-    amountEarnedTd: {},
-    // altTzStartTimeTd: {},
-    // altTzDashTd: {},
-    // altTzEndTimeTd: {}
+    table: {
+      backgroundColor: 'transparent',
+      ...styleProp
+    }
   };
 };
+
+export { labelWeight };
