@@ -1,6 +1,6 @@
 import React from 'react';
 import getStyle from './style';
-import AreaHeader from './AreaHeader';
+import AreaHeader from '../AreaHeader';
 import Day from './Day';
 import Totals from '../Totals';
 
@@ -16,16 +16,7 @@ function Week({
   reportHasPaidTime,
   reportHasMultipleTimezones
 }) {
-
-  console.log('render Week\nweek\n', {
-    isPartial,
-    totals,
-    weekNumber,
-    dateRange,
-    days,
-    weekDocId
-  })
-
+  
   const style = getStyle();
 
   return (

@@ -1,6 +1,8 @@
 import { contentAreaDividerColor } from '../style';
 export * from '../style';
 
+const marginBetweenTableAreas = '1.2rem';
+
 export default function getStyle(styleProp) {
 
   const borderStyle = `3.4px solid ${contentAreaDividerColor}`;
@@ -16,3 +18,5 @@ export default function getStyle(styleProp) {
     }
   };
 };
+
+export { marginBetweenTableAreas };

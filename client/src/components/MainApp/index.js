@@ -57,11 +57,7 @@ class MainApp extends Component {
       if (match.isExact) {
         history.push(`${match.path}/${dashboardPathName}`);
       }
-    })
-    // .catch(() => {
-    //   userService.clearValue();
-    //   this.props.history.push('/');
-    // });
+    });
   };
 
   componentWillUnmount() {

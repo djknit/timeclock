@@ -1,4 +1,4 @@
-import { styles as headerStyles } from '../../../InnerAreaHeader';
+import { styles as headerStyles } from '../../InnerAreaHeader';
 
 const { getLabelTextEmHeight } = headerStyles;
 

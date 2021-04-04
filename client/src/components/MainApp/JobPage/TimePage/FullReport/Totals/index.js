@@ -2,7 +2,13 @@ import React from 'react';
 import getStyle from './style';
 
 function Totals({
-  totals
+  totals: {
+    paid,
+    unpaid,
+    byCurrency
+  },
+  reportHasPaidTime,
+  reportHasMultipleTimezones
 }) {
   
   return (

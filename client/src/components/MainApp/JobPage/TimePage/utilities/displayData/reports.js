@@ -81,7 +81,7 @@ function processWeek(
 
 function getProcessedRateAndCurrencyTotals(unprocessedEarningsByCurrency) {
   if (!unprocessedEarningsByCurrency) {
-    return { byRate: [], byCurrency: [] };
+    return { byCurrency: [] };
   }
   const totalsByCurrency = unprocessedEarningsByCurrency.map(
     ({ amount, currency, rates, totalTime }) => {
@@ -109,7 +109,7 @@ function processDay(
     segments: segments.map(processSegment),
     currency: settings.wage && settings.wage.currency,
     officialTimezone: settings.timezone,
-    areTimezonesDifferent: settings.timezone === sessionTimezone,
+    areTimezonesDifferent: settings.timezone !== sessionTimezone,
     reportTimezone: sessionTimezone,
     _id
   };
