@@ -33,7 +33,14 @@ function Week({
             }}
           />
         ))}
-        <Totals {...{ totals }} />
+        <Totals
+          {...{
+            totals,
+            reportHasPaidTime,
+            reportHasMultipleTimezones
+          }}
+          areaLabel={`Week ${weekNumber} Totals`}
+        />
       </main>
     </section>
   );

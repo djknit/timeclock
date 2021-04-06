@@ -1,44 +1,7 @@
-import {
-  getDateRangeInfo,
-  isWholeWeekInDateRange,
-  isPartialWeekInDateRange,
-  dates as dateUtils
-} from '../../../utilities';
+import { processTotals } from './totals';
 
-const { isDateInRange } = dateUtils;
+export { processWeeksForReport };
 
-export { processTimeForReport };
-
-
-function processTimeForReport(timeData, { dateRange } = {}) {
-  const { weeks, sessionTimezone } = timeData;
-  const hasDateRange = !!(dateRange && (dateRange.firstDate || dateRange.lastDate))
-  const weeksInRange = hasDateRange ? findWeeksInDateRange(weeks, dateRange) : weeks;
-  const rangeTotals = hasDateRange ? getDateRangeInfo(dateRange, weeks) : timeData;
-  // See below comment for description of result object (end of this file)
-  return {
-    ...processWeeksForReport(weeksInRange, sessionTimezone),
-    totals: processTotals(rangeTotals),
-    hasPaidTime: !!rangeTotals.earnings, // include rate & earnings columns throughout report if there is any paid time anywhere in reported time period
-  };
-}
-
-function findWeeksInDateRange(weeks, dateRange) {
-  let weeksInRange = [];
-  weeks.forEach(week => {
-    if (isWholeWeekInDateRange(dateRange, week)) {
-      weeksInRange.push(week);
-    }
-    else if (isPartialWeekInDateRange(dateRange, week)) {
-      weeksInRange.push({
-        ...week,
-        days: week.days.filter(({ date }) => isDateInRange(dateRange, date)),
-        isPartial: true
-      });
-    }
-  });
-  return weeksInRange;
-}
 
 function processWeeksForReport(unprocessedWeeks, sessionTimezone) {
   let hasMultipleTimezones = false; // same idea as earnings (see note in `processTimeForReport`)
@@ -48,14 +11,6 @@ function processWeeksForReport(unprocessedWeeks, sessionTimezone) {
     return processedWeek;
   });
   return { hasMultipleTimezones, weeks: processedWeeks };
-}
-
-function processTotals({ totalTime, earnings, unpaidTime }) {
-  return {
-    ...getProcessedRateAndCurrencyTotals(earnings),
-    unpaid: unpaidTime,
-    all: totalTime
-  };
 }
 
 function processWeek(
@@ -79,23 +34,6 @@ function processWeek(
   };
 }
 
-function getProcessedRateAndCurrencyTotals(unprocessedEarningsByCurrency) {
-  if (!unprocessedEarningsByCurrency) {
-    return { byCurrency: [] };
-  }
-  const totalsByCurrency = unprocessedEarningsByCurrency.map(
-    ({ amount, currency, rates, totalTime }) => {
-      return {
-        duration: totalTime,
-        amountEarned: amount,
-        currency,
-        byRate: getProcessedRateTotalsForCurrency({ currency, rates })
-      };
-    }
-  );
-  return { byCurrency: totalsByCurrency };
-}
-
 function processDay(
   { segments, earnings, date, settings, totalTime, _id },
   sessionTimezone
@@ -113,20 +51,6 @@ function processDay(
     reportTimezone: sessionTimezone,
     _id
   };
-}
-
-function getProcessedRateTotalsForCurrency({ currency, rates }) {
-  return rates.map(
-    ({ amountEarned, duration, isOvertime, rate }) => ({
-      duration,
-      amountEarned,
-      payRate: {
-        amount: rate,
-        isOvertime,
-        currency
-      }
-    })
-  );
 }
 
 function processSegment({ _id, duration, startTime, endTime, earnings }) {
@@ -156,24 +80,17 @@ function processSegment({ _id, duration, startTime, endTime, earnings }) {
 
 
 // RESULT OBJ FROM `processTimeForReport` DESCRIPTION
+    // * matches descriptions in other related files
 /* 
-  processed time data result should have the form:
-    {
-      weeks: [week],
-      totals,
-      hasPaidTime,
-      hasMultipleTimezones
-    }
-
-  `week`s have the form:
-    {
+  processed `week`s result should have the form:
+    [{
       isPartial,
       totals,
       weekNumber,
       dateRange,
       days: [day],
       weekDocId
-    }
+    }]
 
   `totals` for week and whole date range (but not day) have the form:
     {

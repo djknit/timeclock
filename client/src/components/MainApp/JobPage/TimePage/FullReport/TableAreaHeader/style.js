@@ -1,5 +1,3 @@
-import { marginBetweenTableAreas } from '../style';
-
 const headingStyleVars = {
   dividerHeight: '2px',
   labelEmFontSize: 1,
@@ -12,11 +10,6 @@ export default function getStyle() {
       textAlign: 'left',
       fontWeight: headingStyleVars.labelFontWeight,
       fontSize: '1.1em'
-    },
-    table: {
-      marginBottom: marginBetweenTableAreas,
-      marginLeft: 20,
-      marginRight: 0
     }
   };
 };

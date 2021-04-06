@@ -2,7 +2,7 @@ import React from 'react';
 import getStyle, { headingStyleVars } from './style';
 import InnerAreaHeader from '../../InnerAreaHeader';
 
-function Day({
+function TableAreaHeader({
   label
 }) {
 
@@ -18,4 +18,4 @@ function Day({
   );
 }
 
-export default Day;
+export default TableAreaHeader;

@@ -10,6 +10,7 @@ import Times from './Times';
 function Row({
   hasTimes,
   hasSecondTzCol,
+  hasSecondaryTzTimes,
   hasEarningCols,
   rowData: {
     times: {
@@ -30,7 +31,7 @@ function Row({
 
   const commonTimesAttrs = { dayDate: date };
 
-  const style = getStyle(styleProp);
+  const style = getStyle(styleProp, isFirstInGroup);
 
   return (
     <tr style={style.tr}>
@@ -61,7 +62,7 @@ function Row({
       )}
       {hasSecondTzCol && (
         <td style={hasTimes ? style.timesTd : style.lastColNoTimes}>
-          {hasTimes && (
+          {hasTimes && hasSecondaryTzTimes && (
             <Times {...jobTzTimes} {...commonTimesAttrs} />
           )}
         </td>
