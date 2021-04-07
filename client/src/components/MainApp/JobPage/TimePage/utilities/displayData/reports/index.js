@@ -48,6 +48,7 @@ function processTimeForReport(timeData, { dateRange } = {}) {
         byRate: [{ duration, payRate, amountEarned }],
         currency
       }],
+      paid, (duration)
       unpaid, (duration)
       all (duration)
     }

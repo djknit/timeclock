@@ -44,19 +44,3 @@ function Totals({
 }
 
 export default Totals;
-
-function getRowGroups({ totals, reportHasPaidTime }) {
-/* 
-  need: {
-    rows: [{ rowLabel, duration, amountEarned, payRate }] 
-  }
-
-  If payRate is null but report has some paid time, include headings and null value signifiers for rate and earnings in table
-
-*/
-  if (!(totals.paid && totals.paid.durationInMsec > 0)) {
-    return [{
-      rows: [{ rowLabel: ''  }]
-    }];
-  }
-}
