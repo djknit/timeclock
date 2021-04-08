@@ -1,14 +1,11 @@
 import React from 'react';
 import getStyle from './style';
+import { getTotalsRowGroups } from '../utilities';
 import TableAreaHeader from '../TableAreaHeader';
 import Table from '../Table';
 
 function Totals({
-  totals: {
-    paid,
-    unpaid,
-    byCurrency
-  },
+  totals,
   areaLabel = "Totals",
   reportHasPaidTime,
   reportHasMultipleTimezones
@@ -19,26 +16,14 @@ function Totals({
   return (
     <>
       <TableAreaHeader label={areaLabel} />
-      {/* <Table
+      <Table
         hasTimes={false}
         hasSecondTzCol={reportHasMultipleTimezones}
         hasSecondaryTzTimes={false}
         hasEarningCols={reportHasPaidTime}
-        rowGroups={[
-          {
-            rows: segments,
-            hasTimes: false,
-          },
-          {
-            rows: [{
-              rowLabel: 'Day Total',
-              ...totals
-            }],
-            hasTimes: false,
-          }
-        ]}
+        rowGroups={getTotalsRowGroups({ totals, reportHasPaidTime })}
         style={style.table}
-      /> */}
+      />
     </>
   ); 
 }

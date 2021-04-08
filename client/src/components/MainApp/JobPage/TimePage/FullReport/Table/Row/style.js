@@ -39,9 +39,12 @@ export default function getStyle(styleProp, isFirstRowInGroup) {
     lastColNoTimes: {
       ...allTdStyle
     },
-    amountEarnedTdNoEarnings: {
+    amountEarnedTdUnpaid: {
       ...allTdStyle,
       textAlign: 'center'
-    }
+    },
+    payRateTdUnpaid: {
+      ...numAmountTdStyle
+    },
   };
 };

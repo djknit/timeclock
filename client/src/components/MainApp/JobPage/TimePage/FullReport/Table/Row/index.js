@@ -47,18 +47,29 @@ function Row({
         {formatDurationForReportTable(duration)}
       </td>
       {hasEarningCols && (
-        <>
-          <td style={style.payRateTd}>
-            {formatPayRateForReportTable(payRate)}
-          </td>
-          {amountEarned ? (
+        payRate ? (
+          <>
+            <td style={style.payRateTd}>
+              {formatPayRateForReportTable(payRate)}
+            </td>
             <td style={style.amountEarnedTd}>
               {formatAmountEarnedForReportTable(amountEarned)}
             </td>
-          ) : (
-            <td style={style.amountEarnedTdNoEarnings}> &mdash; </td>
-          )}
-        </>
+          </>
+        ) : (
+          <>
+            <td style={style.payRateTdUnpaid}>
+              {payRate === null && (
+                <> &mdash; </>
+              )}
+            </td>
+            <td style={style.amountEarnedTdUnpaid}>
+              {amountEarned === null && (
+                <> &mdash; </>
+              )} 
+            </td>
+          </>
+        )
       )}
       {hasSecondTzCol && (
         <td style={hasTimes ? style.timesTd : style.lastColNoTimes}>
