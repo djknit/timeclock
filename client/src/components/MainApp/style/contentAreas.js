@@ -17,15 +17,15 @@ const contentAreasGridStyles = {
     verticalAlign: 'top',
     textAlign: 'left'
   },
-  columnContentArea(widthPercent, useColumns, isLeftCol) {
+  columnContentArea(widthPercent, useColumns, isLeftCol, isLastContentOnPage) {
     if (!useColumns) {
       return {
         width: '100%',
-        marginBottom: mainAreaPadding
+        marginBottom: isLastContentOnPage ? 0 : mainAreaPadding
       };
     }
     const columnStyles = {
-      width: `calc(${widthPercent}% - ${mainAreaPadding / 2}px)`,
+      width: `calc(${widthPercent}% - (${mainAreaPadding} / 2))`,
       display: 'inline-block',
       verticalAlign: 'top',
       textAlign: 'center'

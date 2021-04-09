@@ -9,7 +9,7 @@ export default function getStyle(additionalStyle) {
       minHeight: 40,
       backgroundColor: contentAreaBgColor,
       ...shadow(8),
-      borderRadius: '.4%',
+      borderRadius: '0.16rem',
       ...additionalStyle
     }
   };

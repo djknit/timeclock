@@ -14,7 +14,7 @@ function processWeeksForReport(unprocessedWeeks, sessionTimezone) {
 }
 
 function processWeek(
-  { weekNumber, days, isPartial, earnings, totalTime, firstDate, lastDate, unpaidTime, weekDocId },
+  { weekNumber, days, isPartial, earnings, totalTime, firstDate, lastDate, paidTime, unpaidTime, weekDocId },
   sessionTimezone
 ) {
   let hasMultipleTimezones = false;
@@ -25,7 +25,7 @@ function processWeek(
   });
   return {
     isPartial,
-    totals: processTotals({ totalTime, earnings, unpaidTime }),
+    totals: processTotals({ totalTime, earnings, unpaidTime, paidTime }),
     weekNumber,
     dateRange: { firstDate, lastDate },
     days: processedDays,

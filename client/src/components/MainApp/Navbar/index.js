@@ -145,7 +145,7 @@ class _Navbar_needsDataAndPseudo extends Component {
 
     const isFullNavDisplayed = windowWidth >= minScreenWidthForFullDisp;
 
-    const style = getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState);
+    const style = getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState, windowWidth);
 
     const handleLinkClick = ({ target }) => {
       target.blur();

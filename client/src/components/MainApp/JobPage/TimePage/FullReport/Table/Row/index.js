@@ -47,7 +47,7 @@ function Row({
         {formatDurationForReportTable(duration)}
       </td>
       {hasEarningCols && (
-        payRate ? (
+        amountEarned ? (
           <>
             <td style={style.payRateTd}>
               {formatPayRateForReportTable(payRate)}

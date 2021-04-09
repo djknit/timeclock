@@ -21,8 +21,9 @@ export default function getStyle(windowWidth) {
     basics: {
       ...columnContentArea(basicsWidthPercent, useColumns, true),
     },
-    menu: {
+    settings: {
       ...columnContentArea(100 - basicsWidthPercent, useColumns, false),
+      marginBottom: 0
     }
   };
 };

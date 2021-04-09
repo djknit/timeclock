@@ -1,10 +1,11 @@
 export { processTotals };
 
 
-function processTotals({ totalTime, earnings, unpaidTime }) {
+function processTotals({ totalTime, earnings, unpaidTime, paidTime }) {
   return {
     ...getProcessedRateAndCurrencyTotals(earnings),
     unpaid: unpaidTime,
+    paid: paidTime,
     all: totalTime
   };
 }

@@ -10,9 +10,12 @@ function getTotalsRowGroups({
   },
   reportHasPaidTime
 }) {
-  
-  if (!reportHasPaidTime) {
-    return [getTotalTimeRowGroup(all)];
+
+  const hasPaidTime = isNonZero(paid);
+  const hasUnpaidTime = isNonZero(unpaid);
+
+  if (!reportHasPaidTime || (!hasPaidTime && !hasUnpaidTime)) {
+    return [getTotalTimeRowGroup(all, reportHasPaidTime)];
   }
 
   let rowGroups = [];
@@ -24,17 +27,17 @@ function getTotalsRowGroups({
     rowGroups.push(getCurrencyGrandTotalRowGroup(currencyTotals));
   }
 
-  if (isNonZero(unpaid)) {
+  if (hasUnpaidTime) {
     rowGroups.push(getUnpaidTotalRowGroup(unpaid));
   }
 
-  if ( // multiple currencies or both paid & unpaid
+  if (
     (byCurrency && byCurrency.length) > 1 ||
-    (isNonZero(paid) && isNonZero(unpaid))
+    (hasPaidTime && hasUnpaidTime)
   ) {
     rowGroups.push(getTotalTimeRowGroup(all));
   }
-console.log(rowGroups)
+
   return rowGroups;
 }
 
@@ -43,10 +46,11 @@ function isNonZero(durationInfo) {
   return (durationInfo && durationInfo.durationInMsec) > 0;
 }
 
-function getTotalTimeRowGroup(totalTime) {
+function getTotalTimeRowGroup(totalTime, hasNullEarnings) {
   return getRowGroupInfoObj([{
     duration: totalTime,
-    rowLabel: 'Total Time:'
+    rowLabel: 'Total Time',
+    amountEarned: hasNullEarnings ? null : undefined
   }]);
 }
 
@@ -62,7 +66,7 @@ function getRateTotalsRowGroup({ currency, byRate = [] }) {
 function getCurrencyGrandTotalRowGroup({ currency, duration, amountEarned, byRate = [] }) {
   return getRowGroupInfoObj([{
     duration,
-    rowLabel: `${currency} Totals:`,
+    rowLabel: `${currency} Total`,
     amountEarned,
     payRate: byRate.length === 1 ? byRate[0].payRate : undefined
   }]);
@@ -71,12 +75,12 @@ function getCurrencyGrandTotalRowGroup({ currency, duration, amountEarned, byRat
 function getUnpaidTotalRowGroup(unpaidTime) {
   return getRowGroupInfoObj([{
     duration: unpaidTime,
-    rowLabel: 'Total Unpaid Time:',
+    rowLabel: 'Total Unpaid Time',
     amountEarned: null,
     payRate: null
   }]);
 }
 
-function getRowGroupInfoObj(rows) { // for totals only
+function getRowGroupInfoObj(rows) { // for totals tables only
   return { rows, hasTimes: false };
 }

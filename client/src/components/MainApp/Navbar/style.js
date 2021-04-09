@@ -1,3 +1,4 @@
+import { isWindowWide } from '../utilities';
 import { calculateStyleForPseudoClassState } from '../../higherOrder';
 import { headingFontFam, shadow, secondaryBackgroundColor } from '../style';
 
@@ -32,12 +33,27 @@ const interactiveNavElVarStyles = {
   }
 };
 
-export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState) {
+// * * * 
+  /*
+TO DO:
+
+  Figure out why dropdowns && navitems are so wide now!
+
+*/
+
+export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState, windowWidth) {
   const overflowingText = {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
+    maxWidth: '100%',
+    // display: 'inline-block'
   };
+  
+  const jobLabelMaxWidth = '148px';
+  const currentJobLabelMaxWidth = '140px';
+  console.log('windowWidth\n', windowWidth)
+  console.log('isWindowWide\n', isWindowWide(windowWidth))
 
   return {
     nav: {
@@ -74,11 +90,11 @@ export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudo
     },
     jobLabel: {
       ...overflowingText,
-      maxWidth: 148
+      maxWidth: isWindowWide(windowWidth) ? `min(${jobLabelMaxWidth}, 100%)` : '100%'
     },
     currentJobLabel: {
       ...overflowingText,
-      maxWidth: 140
+      maxWidth: isWindowWide(windowWidth) ? `min(${currentJobLabelMaxWidth}, 100%)` : '100%'
     },
     settingLabel: {
       paddingLeft: 28

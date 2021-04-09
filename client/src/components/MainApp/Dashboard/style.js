@@ -17,7 +17,8 @@ export default function getStyle(windowWidth) {
       ...columnContentArea(accountWidthPercent, useColumns, true)
     },
     jobs: {
-      ...columnContentArea(100 - accountWidthPercent, useColumns, false)
+      ...columnContentArea(100 - accountWidthPercent, useColumns, false),
+      marginBottom: 0
     }
   };
 };
