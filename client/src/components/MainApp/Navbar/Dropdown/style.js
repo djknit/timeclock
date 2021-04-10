@@ -1,6 +1,6 @@
-import { backgroundColor, navShadow, depressedItemShadow } from '../style';
+import { backgroundColor, navShadow } from '../style';
 
-export default function getStyle(isFullNavDisplayed, isDropdownActive) {
+export default function getStyle(isFullNavDisplayed, isDropdownActive, arrowStyleProp) {
 
   let dropdown = {
     backgroundColor,
@@ -9,7 +9,8 @@ export default function getStyle(isFullNavDisplayed, isDropdownActive) {
   let ddLinkArrow = {
     display: 'inline-block',
     position: 'relative',
-    fontSize: '0.8em'
+    fontSize: '0.8em',
+    ...arrowStyleProp
   };
   
   if (isFullNavDisplayed) {

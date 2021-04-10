@@ -1,4 +1,4 @@
-import { isWindowWide } from '../utilities';
+import { isFullNavDisplayed } from '../utilities';
 import { calculateStyleForPseudoClassState } from '../../higherOrder';
 import { headingFontFam, shadow, secondaryBackgroundColor } from '../style';
 
@@ -6,7 +6,6 @@ const textColor = '#ffffff';
 const backgroundColor = secondaryBackgroundColor;
 
 const navShadow = shadow(7);
-const depressedItemShadow = shadow(2, undefined, undefined, true);
 
 const _navElFocusStyle = {
   color: '#f7f7f7',
@@ -25,7 +24,7 @@ const interactiveNavElVarStyles = {
   active: {
     color: textColor,
     backgroundColor: 'rgba(255, 255, 255, .07)',
-    ...depressedItemShadow
+    ...shadow(2, undefined, undefined, true)
   },
   tabFocus: {
     ..._navElFocusStyle,
@@ -33,13 +32,6 @@ const interactiveNavElVarStyles = {
   }
 };
 
-// * * * 
-  /*
-TO DO:
-
-  Figure out why dropdowns && navitems are so wide now!
-
-*/
 
 export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState, windowWidth) {
   const overflowingText = {
@@ -47,13 +39,11 @@ export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudo
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     maxWidth: '100%',
-    // display: 'inline-block'
+    display: 'inline-block'
   };
   
   const jobLabelMaxWidth = '148px';
   const currentJobLabelMaxWidth = '140px';
-  console.log('windowWidth\n', windowWidth)
-  console.log('isWindowWide\n', isWindowWide(windowWidth))
 
   return {
     nav: {
@@ -90,11 +80,14 @@ export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudo
     },
     jobLabel: {
       ...overflowingText,
-      maxWidth: isWindowWide(windowWidth) ? `min(${jobLabelMaxWidth}, 100%)` : '100%'
+      maxWidth: isFullNavDisplayed(windowWidth) ? jobLabelMaxWidth : '100%'
     },
     currentJobLabel: {
       ...overflowingText,
-      maxWidth: isWindowWide(windowWidth) ? `min(${currentJobLabelMaxWidth}, 100%)` : '100%'
+      maxWidth: isFullNavDisplayed(windowWidth) ? currentJobLabelMaxWidth : 'calc(100% - 2em)' // the `2em` is space for arrow. May need changed if arrow changes
+    },
+    currentJobDropdownArrow: {
+      verticalAlign: 'text-top'
     },
     settingLabel: {
       paddingLeft: 28
@@ -112,4 +105,4 @@ export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudo
   };
 };
 
-export { textColor, backgroundColor, navShadow, depressedItemShadow, interactiveNavElVarStyles };
+export { textColor, backgroundColor, navShadow, interactiveNavElVarStyles };

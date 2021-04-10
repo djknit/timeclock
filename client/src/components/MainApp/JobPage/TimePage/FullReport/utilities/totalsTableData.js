@@ -14,10 +14,6 @@ function getTotalsRowGroups({
   const hasPaidTime = isNonZero(paid);
   const hasUnpaidTime = isNonZero(unpaid);
 
-  if (!reportHasPaidTime || (!hasPaidTime && !hasUnpaidTime)) {
-    return [getTotalTimeRowGroup(all, reportHasPaidTime)];
-  }
-
   let rowGroups = [];
 
   for (const currencyTotals of byCurrency) {
@@ -27,15 +23,15 @@ function getTotalsRowGroups({
     rowGroups.push(getCurrencyGrandTotalRowGroup(currencyTotals));
   }
 
-  if (hasUnpaidTime) {
+  if (reportHasPaidTime && hasUnpaidTime) {
     rowGroups.push(getUnpaidTotalRowGroup(unpaid));
   }
 
-  if (
-    (byCurrency && byCurrency.length) > 1 ||
-    (hasPaidTime && hasUnpaidTime)
-  ) {
-    rowGroups.push(getTotalTimeRowGroup(all));
+  if (!reportHasPaidTime || byCurrency.length > 1 || hasPaidTime === hasUnpaidTime) {
+    rowGroups.push(getTotalTimeRowGroup(
+      all,
+      reportHasPaidTime && !hasPaidTime && !hasUnpaidTime
+    ));
   }
 
   return rowGroups;
