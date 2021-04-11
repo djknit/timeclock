@@ -10,6 +10,7 @@ import Times from './Times';
 function Row({
   hasTimes,
   hasSecondTzCol,
+  hasSecondaryTzTimes,
   hasEarningCols,
   rowData: {
     times: {
@@ -30,7 +31,7 @@ function Row({
 
   const commonTimesAttrs = { dayDate: date };
 
-  const style = getStyle(styleProp);
+  const style = getStyle(styleProp, isFirstInGroup);
 
   return (
     <tr style={style.tr}>
@@ -46,22 +47,33 @@ function Row({
         {formatDurationForReportTable(duration)}
       </td>
       {hasEarningCols && (
-        <>
-          <td style={style.payRateTd}>
-            {formatPayRateForReportTable(payRate)}
-          </td>
-          {amountEarned ? (
+        amountEarned ? (
+          <>
+            <td style={style.payRateTd}>
+              {formatPayRateForReportTable(payRate)}
+            </td>
             <td style={style.amountEarnedTd}>
               {formatAmountEarnedForReportTable(amountEarned)}
             </td>
-          ) : (
-            <td style={style.amountEarnedTdNoEarnings}> &mdash; </td>
-          )}
-        </>
+          </>
+        ) : (
+          <>
+            <td style={style.payRateTdUnpaid}>
+              {payRate === null && (
+                <> &mdash; </>
+              )}
+            </td>
+            <td style={style.amountEarnedTdUnpaid}>
+              {amountEarned === null && (
+                <> &mdash; </>
+              )} 
+            </td>
+          </>
+        )
       )}
       {hasSecondTzCol && (
         <td style={hasTimes ? style.timesTd : style.lastColNoTimes}>
-          {hasTimes && (
+          {hasTimes && hasSecondaryTzTimes && (
             <Times {...jobTzTimes} {...commonTimesAttrs} />
           )}
         </td>

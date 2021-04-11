@@ -10,10 +10,13 @@ function Dropdown({
   children,
   label,
   disabled,
-  tabIndex
+  tabIndex,
+  styles: {
+    arrow: arrowStyleProp
+  } = {}
 }) {
 
-  const style = getStyle(isFullNavDisplayed, isActive);
+  const style = getStyle(isFullNavDisplayed, isActive, arrowStyleProp);
 
   let containerClassName = 'navbar-item has-dropdown is-hoverable';
   if (isActive) containerClassName += ' is-active';

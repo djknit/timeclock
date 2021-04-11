@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatMyDate } from '../../utilities';
 export * from '../../utilities';
+export * from './totalsTableData';
 
 export { getWeekDateRangeText };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import getStyle, { headerStyleVars } from './style';
-import { getWeekDateRangeText, XtSp } from '../../utilities';
-import InnerAreaHeader from '../../../InnerAreaHeader';
+import { getWeekDateRangeText, XtSp } from '../utilities';
+import InnerAreaHeader from '../../InnerAreaHeader';
 
 function WeekHeader({
   isPartial,

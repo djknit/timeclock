@@ -54,6 +54,7 @@ function submitFactory(hasCountdown, scrollOptions) {
       );
     })
     .catch(err => {
+      if (err && err.is401) return;
       const _err = err || {};
       let { response } = _err;
       if (response && this.processErrorResponse) this.processErrorResponse(response);

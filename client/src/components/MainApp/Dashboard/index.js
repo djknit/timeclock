@@ -19,10 +19,11 @@ class _Dashboard_needsData extends Component {
       accountEditingModalOpenerFactory,
       accountPropDeletingModalOpenerFactory,
       areAnyModalsOpen,
-      getJobPagePath
+      getJobPagePath,
+      windowWidth
     } = this.props;
 
-    const style = getStyle(this.props.windowWidth);
+    const style = getStyle(windowWidth);
 
     return (
       <>

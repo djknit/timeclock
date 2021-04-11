@@ -13,7 +13,7 @@ export default function getStyle(
 
   if (isInline) {
     groupStyle.display = 'inline-block';
-    groupStyle.marginRight = groupStyle.marginLeft = '0.5em'
+    groupStyle.marginRight = groupStyle.marginLeft = '0.5em';
   }
   else if (align === 'center' || align === 'right') {
     groupStyle.justifyContent = (

@@ -1,10 +1,10 @@
 import React from 'react';
+import getStyle from './style';
 import { getColorClass, getSizeClass } from '../utilities';
 
 export { default as TagGroup } from './TagGroup';
 
 function Tag({
-  children,
   theme,
   size,
   style: styleProp,
@@ -14,14 +14,14 @@ function Tag({
   const colorClass = getColorClass(theme);
   const sizeClass = getSizeClass(size);
 
+  const style = getStyle(styleProp);
+
   return (
     <span
       className={`tag ${colorClass} ${sizeClass}`}
-      style={styleProp}
+      style={style.tag}
       {...attrs}
-    >
-      {children}
-    </span>
+    />
   );
 }
 

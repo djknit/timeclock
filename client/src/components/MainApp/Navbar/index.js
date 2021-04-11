@@ -4,15 +4,15 @@ import getStyle from './style';
 import {
   isLoggedInService, profileService, userService, jobsService, currentJobService, windowWidthService
 } from '../../../data';
-import { api, promiseToSetState, getClickableElAttrs } from '../utilities';
+import {
+  api, promiseToSetState, getClickableElAttrs, isFullNavDisplayed as getIsFullNavDisplayed
+} from '../utilities';
 import NavItem from './NavItem';
 import Dropdown from './Dropdown';
 import WelcomeAndLogout from './WelcomeAndLogout';
 import { addData, addPseudoPseudoClasses } from '../../higherOrder';
 
 const menuId = 'navbar-menu';
-const minScreenWidthForFullDisp = 1024; // matches Bulma
-
 const getJobSettingNamesObj = (settingName, propName) => ({ settingName, propName });
 const jobSettingNamesAndPropNames = [
   getJobSettingNamesObj('Timezone', 'timezone'),
@@ -95,7 +95,7 @@ class _Navbar_needsDataAndPseudo extends Component {
   componentDidUpdate() {
     if (!this.state.useDefaultDropdownActivity) return;
     const { windowWidth, currentJob } = this.props;
-    const isFullNavDisplayed = windowWidth >= minScreenWidthForFullDisp;
+    const isFullNavDisplayed = getIsFullNavDisplayed(windowWidth);
     const shouldJobsDropBeActive = !isFullNavDisplayed && !currentJob;
     const shouldCurrentJDBeActive = !isFullNavDisplayed && !!currentJob;
     if (
@@ -143,9 +143,9 @@ class _Navbar_needsDataAndPseudo extends Component {
     const getJobSubpagePath = subpath => `${currentJobPath}/${subpath}`;
     const currentJobSettingsPath = getJobSubpagePath(jobPageSubpaths.settingsPage);
 
-    const isFullNavDisplayed = windowWidth >= minScreenWidthForFullDisp;
+    const isFullNavDisplayed = getIsFullNavDisplayed(windowWidth);
 
-    const style = getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState);
+    const style = getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState, windowWidth);
 
     const handleLinkClick = ({ target }) => {
       target.blur();
@@ -248,6 +248,7 @@ class _Navbar_needsDataAndPseudo extends Component {
                     Job: {currentJob.name}
                   </span>
                 }
+                styles={{ arrow: style.currentJobDropdownArrow }}
               >
                 <NavItem destinationPath={currentJobPath} {...commonNavItemAttrs} matchExactPath>
                   Home

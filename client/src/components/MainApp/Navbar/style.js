@@ -1,3 +1,4 @@
+import { isFullNavDisplayed } from '../utilities';
 import { calculateStyleForPseudoClassState } from '../../higherOrder';
 import { headingFontFam, shadow, secondaryBackgroundColor } from '../style';
 
@@ -5,7 +6,6 @@ const textColor = '#ffffff';
 const backgroundColor = secondaryBackgroundColor;
 
 const navShadow = shadow(7);
-const depressedItemShadow = shadow(2, undefined, undefined, true);
 
 const _navElFocusStyle = {
   color: '#f7f7f7',
@@ -24,7 +24,7 @@ const interactiveNavElVarStyles = {
   active: {
     color: textColor,
     backgroundColor: 'rgba(255, 255, 255, .07)',
-    ...depressedItemShadow
+    ...shadow(2, undefined, undefined, true)
   },
   tabFocus: {
     ..._navElFocusStyle,
@@ -32,12 +32,18 @@ const interactiveNavElVarStyles = {
   }
 };
 
-export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState) {
+
+export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState, windowWidth) {
   const overflowingText = {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
+    maxWidth: '100%',
+    display: 'inline-block'
   };
+  
+  const jobLabelMaxWidth = '148px';
+  const currentJobLabelMaxWidth = '140px';
 
   return {
     nav: {
@@ -74,11 +80,14 @@ export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudo
     },
     jobLabel: {
       ...overflowingText,
-      maxWidth: 148
+      maxWidth: isFullNavDisplayed(windowWidth) ? jobLabelMaxWidth : '100%'
     },
     currentJobLabel: {
       ...overflowingText,
-      maxWidth: 140
+      maxWidth: isFullNavDisplayed(windowWidth) ? currentJobLabelMaxWidth : 'calc(100% - 2em)' // the `2em` is space for arrow. May need changed if arrow changes
+    },
+    currentJobDropdownArrow: {
+      verticalAlign: 'text-top'
     },
     settingLabel: {
       paddingLeft: 28
@@ -96,4 +105,4 @@ export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudo
   };
 };
 
-export { textColor, backgroundColor, navShadow, depressedItemShadow, interactiveNavElVarStyles };
+export { textColor, backgroundColor, navShadow, interactiveNavElVarStyles };

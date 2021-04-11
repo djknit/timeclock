@@ -4,9 +4,10 @@ function setOnApiUnauthFxn(onApiUnauthorized) {
   _onApiUnauthorized = onApiUnauthorized;
 }
 
-function catchApiUnauthorized(err) {
+function catchApiUnauthorized(err = {}) {
   if (err && err.response && err.response.status === 401 && _onApiUnauthorized) {
     _onApiUnauthorized();
+    err.is401 = true;
   }
   throw err;
 }

@@ -18,6 +18,10 @@ function isWindowWide(windowWidth) {
   return windowWidth >= 769;
 }
 
+function isFullNavDisplayed(windowWidth) {
+  return windowWidth >= 1024; // matches Bulma
+}
+
 function roundNumToNDecimalDigits(numToRound, numDecDigs /* (n) */) {
   // source: https://www.jacklmoore.com/notes/rounding-in-javascript/
   const roundedScaledNum = Math.round(`${numToRound}e${numDecDigs}`);
@@ -44,6 +48,7 @@ export {
   api,
   capitalizeFirstLetter,
   isWindowWide,
+  isFullNavDisplayed,
   roundNumToNDecimalDigits,
   guessUserTimezone,
   findItemInArray
