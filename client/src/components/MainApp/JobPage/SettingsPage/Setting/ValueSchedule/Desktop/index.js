@@ -1,9 +1,9 @@
 import React from 'react';
 import getStyle from './style';
-import Button from '../../../../../Button';
-import SettingValueDisplay from '../../../SettingValueDisplay';
+import Button from '../../../../../../Button';
+import SettingValueDisplay from '../../../../SettingValueDisplay';
 
-function ValueSchedule({
+function DesktopSchedule({
   valueSchedule,
   toggleEditValueModal,
   toggleDeleteValueModal,
@@ -95,4 +95,4 @@ function ValueSchedule({
   );
 }
 
-export default ValueSchedule;
+export default DesktopSchedule;

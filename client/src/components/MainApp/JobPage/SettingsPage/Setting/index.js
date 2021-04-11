@@ -58,7 +58,7 @@ class _Setting_needsData extends Component {
       job,
       settingName,
       settingDisplayName,
-      style,
+      style: styleProp,
       areAnyModalsOpen,
       windowWidth,
     } = this.props;
@@ -73,28 +73,26 @@ class _Setting_needsData extends Component {
 
     const valueSchedule = preprocessScheduleForDisplay(job.settings[settingName], settingName);
 
-    const completeStyle = getStyle(style);
+    const style = getStyle(styleProp, windowWidth);
 
     const jobId = job._id.toString();
+    const commonAttrs = { settingName, areAnyModalsOpen, windowWidth, valueSchedule };
     const commonModalAttrs = {
-      settingName,
+      ...commonAttrs,
       settingDisplayName,
       jobId,
-      windowWidth,
-      valueSchedule,
-      areAnyModalsOpen,
       entryToEditId,
       setEntryToEditId
     };
 
     return (
       <>
-        <ContentArea style={completeStyle.contentArea}>
-          <ContentAreaTitle style={completeStyle.areaTitle} {...{ areAnyModalsOpen }}>
+        <ContentArea style={style.contentArea}>
+          <ContentAreaTitle style={style.areaTitle} {...{ areAnyModalsOpen }}>
             {settingDisplayName} Value Schedule
           </ContentAreaTitle>
           <Button
-            styles={completeStyle.addValBtn}
+            styles={style.addValBtn}
             theme="primary"
             onClick={() => toggleAddUpdateModal(true)}
             allowTabFocus={!areAnyModalsOpen}
@@ -102,11 +100,7 @@ class _Setting_needsData extends Component {
             <i className="fas fa-plus" /> Add Value
           </Button>
           <ValueSchedule
-            {...{
-              valueSchedule,
-              settingName,
-              areAnyModalsOpen
-            }}
+            {...commonAttrs}
             toggleEditValueModal={toggleEditUpdateModal}
             toggleChangeDateModal={toggleChangeDateUpdateModal}
             toggleDeleteValueModal={toggleDeleteUpdateModal}
