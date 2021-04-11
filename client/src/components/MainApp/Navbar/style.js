@@ -1,4 +1,4 @@
-import { isFullNavDisplayed } from '../utilities';
+import { isFullNavDisplayed as getIsFullNavDisplayed} from '../utilities';
 import { calculateStyleForPseudoClassState } from '../../higherOrder';
 import { headingFontFam, shadow, secondaryBackgroundColor } from '../style';
 
@@ -32,8 +32,13 @@ const interactiveNavElVarStyles = {
   }
 };
 
+export default function getStyle(
+  brandItemInnerHeight, totalHeight, burgerPseudoState, windowWidth, isMenuActive
+) {
+  const isFullNavDisplayed = getIsFullNavDisplayed(windowWidth);
+  const jobLabelMaxWidth = '148px';
+  const currentJobLabelMaxWidth = '140px';
 
-export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudoState, windowWidth) {
   const overflowingText = {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
@@ -42,17 +47,17 @@ export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudo
     display: 'inline-block'
   };
   
-  const jobLabelMaxWidth = '148px';
-  const currentJobLabelMaxWidth = '140px';
+  let menu = { backgroundColor };
+  if (!isFullNavDisplayed) {
+    Object.assign(menu, getNavbarMenuMobileStyle(isMenuActive));
+  }
 
   return {
     nav: {
       backgroundColor,
       ...navShadow
     },
-    menu: {
-      backgroundColor
-    },
+    menu,
     brandTextItem: {
       paddingLeft: 2
     },
@@ -80,11 +85,11 @@ export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudo
     },
     jobLabel: {
       ...overflowingText,
-      maxWidth: isFullNavDisplayed(windowWidth) ? jobLabelMaxWidth : '100%'
+      maxWidth: isFullNavDisplayed ? jobLabelMaxWidth : '100%'
     },
     currentJobLabel: {
       ...overflowingText,
-      maxWidth: isFullNavDisplayed(windowWidth) ? currentJobLabelMaxWidth : 'calc(100% - 2em)' // the `2em` is space for arrow. May need changed if arrow changes
+      maxWidth: isFullNavDisplayed ? currentJobLabelMaxWidth : 'calc(100% - 2em)' // the `2em` is space for arrow. May need changed if arrow changes
     },
     currentJobDropdownArrow: {
       verticalAlign: 'text-top'
@@ -104,5 +109,16 @@ export default function getStyle(brandItemInnerHeight, totalHeight, burgerPseudo
     }
   };
 };
+
+function getNavbarMenuMobileStyle(isActive) { // matches Bulma exactly, except solves discrepancy in Bulma media queries affecting 1023px wide window
+  let style = {
+    boxShadow: '0 8px 16px rgb(10 10 10 / 10%)',
+    padding: '0.5rem 0'
+  };
+  if (isActive) {
+    Object.assign(style, { display: 'block' });
+  }
+  return style;
+}
 
 export { textColor, backgroundColor, navShadow, interactiveNavElVarStyles };

@@ -70,10 +70,10 @@ This plan is not complete. Future steps will be expanded on in the plan before t
     * [x] Add welcome message to display instead of jobs table when user has no jobs
   * [x] Job creation
   * [ ] _Job page_
-    * [ ] Job dashboard
+    * [x] Job dashboard
       * [x] Job basics display and edit
       * [x] Settings summaries and links to settings
-      * [ ] Time summary and links
+      * [ ] ~~Time summary and links~~ (Link done. Moving the rest out of MVP.)
     * [x] Settings page (display and edit settings value schedules)
     * [ ] _Time page_
       * [x] Time Summary
@@ -85,25 +85,29 @@ This plan is not complete. Future steps will be expanded on in the plan before t
         * [x] Session timezone info and management
       * [x] Allow delete time segment
       * [x] Allow edit time segment
-      * [ ] Time details by weeks/days and corresponding time entry
+      * [ ] ~~Time details by weeks/days and corresponding time entry~~ (Combine w/ report)
       * [ ] _Full report of time data_
         * [ ] _Regular display_
         * [ ] PDF or printer-friendly version
         * [ ] Arbitrary (user defined) time period (default is all time)
           * [ ] Period inputs
           * [ ] Utility function to get arbitrary period data
-        * [ ] Let user define how much info to include
-          * [ ] Inputs
-          * [ ] Display (update regular display)
+        * [ ] ~~Let user define how much info to include~~ (Not MVP)
   * [x] Navbar navigation menu
-  * [ ] Ensure at least bare minimum mobile responsiveness
-    * [ ] Ensure all features can be used on all screen sizes
-    * [ ] Ensure nothing looks broken or clearly in the wrong place w/ any screen size
+  * [ ] _Ensure at least bare minimum mobile responsiveness_
+    * [ ] _Ensure all features can be used on all screen sizes_
+    * [ ] _Ensure nothing looks broken or clearly in the wrong place w/ any screen size_
 * [ ] Review code for bugs and code organization/readability
 * [ ] Work on additional features
   * [ ] Punchclock
   * [ ] Create (or improve existing) mobile friendly UI
-  
+  * [ ] Add time section to job dashboard
+    * [ ] Summary
+    * [ ] Basic actions such as general entry
+  * [ ] Let user define how much info to include in time report
+    * [ ] Inputs
+    * [ ] Display (update regular display)
+
 * Icebox:
   * [ ] Add notes field to time segments & maybe also days and/or weeks
   * [ ] Pay periods (should be optional)
