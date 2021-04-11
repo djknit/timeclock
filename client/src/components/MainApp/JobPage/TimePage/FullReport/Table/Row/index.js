@@ -10,6 +10,7 @@ import Times from './Times';
 function Row({
   hasTimes,
   hasSecondTzCol,
+  hasSecondaryTzTimes,
   hasEarningCols,
   rowData: {
     times: {
@@ -23,40 +24,56 @@ function Row({
     // _id, // segment id; only defined for rows that represent segments; not currently needed.
     style: styleProp
   },
-  isTotal,
+  // isTotal,
   isFirstInGroup,
   date
 }) {
 
   const commonTimesAttrs = { dayDate: date };
 
-  const style = getStyle(styleProp);
+  const style = getStyle(styleProp, isFirstInGroup);
 
   return (
     <tr style={style.tr}>
       <td style={hasTimes ? style.timesTd : style.firstColNoTimes}>
-        {hasTimes ? (
+        {(hasTimes && (
           <Times {...sessTzTimes} {...commonTimesAttrs} />
-        ) : (
+        )) ||
+        (rowLabel && (
           <>{rowLabel}:</>
-        )}
+        ))}
       </td>
       <td style={style.durationTd}>
         {formatDurationForReportTable(duration)}
       </td>
       {hasEarningCols && (
-        <>
-          <td style={style.payRateTd}>
-            {formatPayRateForReportTable(payRate)}
-          </td>
-          <td style={style.amountEarnedTd}>
-            {formatAmountEarnedForReportTable(amountEarned)}
-          </td>
-        </>
+        amountEarned ? (
+          <>
+            <td style={style.payRateTd}>
+              {formatPayRateForReportTable(payRate)}
+            </td>
+            <td style={style.amountEarnedTd}>
+              {formatAmountEarnedForReportTable(amountEarned)}
+            </td>
+          </>
+        ) : (
+          <>
+            <td style={style.payRateTdUnpaid}>
+              {payRate === null && (
+                <> &mdash; </>
+              )}
+            </td>
+            <td style={style.amountEarnedTdUnpaid}>
+              {amountEarned === null && (
+                <> &mdash; </>
+              )} 
+            </td>
+          </>
+        )
       )}
       {hasSecondTzCol && (
         <td style={hasTimes ? style.timesTd : style.lastColNoTimes}>
-          {hasTimes && (
+          {hasTimes && hasSecondaryTzTimes && (
             <Times {...jobTzTimes} {...commonTimesAttrs} />
           )}
         </td>

@@ -10,8 +10,16 @@ function Table({
   hasEarningCols,
   date,
   style: styleProp,
-  ...propsForTheadOnly
+  hasSecondaryTzTimes: hasSecondTzTimesProp,
+  primaryTimezone,
+  secondaryTimezone
 }) {
+
+  const hasSecondaryTzTimes = (
+    hasSecondTzTimesProp === undefined ?
+    primaryTimezone !== secondaryTimezone :
+    hasSecondTzTimesProp
+  );
 
   const style = getStyle(styleProp);
 
@@ -21,9 +29,11 @@ function Table({
         {...{
           hasTimes,
           date,
-          ...propsForTheadOnly,
+          primaryTimezone,
+          secondaryTimezone,
+          hasEarningCols,
           hasSecondTzCol,
-          hasEarningCols
+          hasSecondaryTzTimes
         }}
       />
       <tbody>
@@ -31,7 +41,7 @@ function Table({
           (
             {
               rows,
-              isTotals,
+              // isTotals,
               hasTimes: groupHasTimes = hasTimes
             },
             index
@@ -42,9 +52,10 @@ function Table({
                 rows,
                 hasSecondTzCol,
                 hasEarningCols,
-                isTotals,
-                date
-              }}  
+                // isTotals,
+                date,
+                hasSecondaryTzTimes
+              }}
               hasTimes={groupHasTimes}
             />
           )

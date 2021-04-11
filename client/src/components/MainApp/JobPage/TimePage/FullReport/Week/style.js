@@ -1,7 +1,5 @@
 export * from '../style';
 
-const marginBetweenDays = '1.2rem';
-
 export default function getStyle() {
   
   return {
@@ -11,5 +9,3 @@ export default function getStyle() {
     }
   };
 };
-
-export { marginBetweenDays };

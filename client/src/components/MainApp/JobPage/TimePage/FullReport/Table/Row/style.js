@@ -1,8 +1,12 @@
 import { labelWeight, contentAreaDividerColor } from '../style';
 
-export default function getStyle(styleProp) {
+export default function getStyle(styleProp, isFirstRowInGroup) {
+
+  const borderTopPxWidth = isFirstRowInGroup ? 1.5 : 0.7;
+
   const allTdStyle = {
-    borderColor: contentAreaDividerColor
+    borderColor: contentAreaDividerColor,
+    borderWidth: `${borderTopPxWidth}px 0 0`
   };
 
   const numAmountTdStyle = {
@@ -34,6 +38,13 @@ export default function getStyle(styleProp) {
     },
     lastColNoTimes: {
       ...allTdStyle
-    }
+    },
+    amountEarnedTdUnpaid: {
+      ...allTdStyle,
+      textAlign: 'center'
+    },
+    payRateTdUnpaid: {
+      ...numAmountTdStyle
+    },
   };
 };

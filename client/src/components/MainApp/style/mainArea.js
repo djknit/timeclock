@@ -1,3 +1,3 @@
-const mainAreaPadding = 20;
+const mainAreaPadding = '20px';
 
 export { mainAreaPadding };

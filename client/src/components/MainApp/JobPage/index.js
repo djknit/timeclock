@@ -58,6 +58,7 @@ class _JobPage_needsData extends Component {
         currentJobService.setValue(res.data);
       })
       .catch(err => {
+        if (err && err.is401) return;
         this.setState({
           isLoading: false,
           hasProblem: true,

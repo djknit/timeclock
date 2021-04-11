@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { userService } from '../../data';
+import { userService, windowWidthService } from '../../data';
 import { api, modalManagement, setOnApiUnauthFxn } from './utilities';
 import getStyle from './style';
 import Navbar from './Navbar';
@@ -10,6 +10,7 @@ import NotFoundPage from '../NotFound';
 import NewJobModal from './NewJobModal';
 import EditAccountModal from './EditAccountModal';
 import DeleteAccountPropModal from './DeleteAccountPropModal';
+import { addData } from '../higherOrder';
 
 const {
   createModalInfo, addModalsStateAndMethods, reportModalsClosedFor, extractModalsResources
@@ -23,7 +24,7 @@ const modalsInfo = [
 
 const dashboardPathName = 'dashboard';
 
-class MainApp extends Component {
+class _MainApp_needsData extends Component {
   constructor(props) {
     super(props);
     this.setNavHeight = this.setNavHeight.bind(this);
@@ -57,11 +58,7 @@ class MainApp extends Component {
       if (match.isExact) {
         history.push(`${match.path}/${dashboardPathName}`);
       }
-    })
-    // .catch(() => {
-    //   userService.clearValue();
-    //   this.props.history.push('/');
-    // });
+    });
   };
 
   componentWillUnmount() {
@@ -74,6 +71,7 @@ class MainApp extends Component {
       history,
       match,
       areAnyModalsOpen,
+      windowWidth
     } = this.props;
     const { navHeight, accountPropToEditName } = this.state;
 
@@ -82,7 +80,7 @@ class MainApp extends Component {
     const toggleEditAccountModal = modalTogglers.editAccount;
     const toggleDeleteAccountPropModal = modalTogglers.deleteAccountProp;
     const toggleNewJobModal = modalTogglers.newJob;
-    const style = getStyle(navHeight);
+    const style = getStyle(navHeight, windowWidth);
 
     const buildPath = subpath => `${match.path}/${subpath}`;
 
@@ -194,5 +192,7 @@ class MainApp extends Component {
     );
   };
 }
+
+const MainApp = addData(_MainApp_needsData, 'windowWidth', windowWidthService);
 
 export default MainApp;

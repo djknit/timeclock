@@ -9,6 +9,7 @@ function InnerAreaHeader({
   styleVariables: { // destructuring to assist text editor autofill
     backgroundColor,
     labelEmFontSize,
+    labelFontWeight,
     dividerColor,
     dividerHeight
   } = {},
@@ -17,7 +18,10 @@ function InnerAreaHeader({
   isInSection
 }) {
 
-  const style = getStyle(styleProp, { backgroundColor, labelEmFontSize, dividerColor, dividerHeight });
+  const style = getStyle(
+    styleProp,
+    { backgroundColor, labelEmFontSize, dividerColor, dividerHeight, labelFontWeight }
+  );
 
   return (
     <Container style={style.div} {...{ isInSection }}>

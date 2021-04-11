@@ -10,7 +10,8 @@ function Thead({
   secondaryTzLabel,
   date,
   hasSecondTzCol,
-  hasEarningCols
+  hasEarningCols,
+  hasSecondaryTzTimes
 }) {
 
   let firstColLabel, lastColLabel;
@@ -49,7 +50,9 @@ function Thead({
         )}
         {hasSecondTzCol && (
           <th style={style.timesTh}>
-            {lastColLabel}
+            {hasSecondaryTzTimes && (
+              lastColLabel
+            )}
           </th>
         )}
       </tr>

@@ -3,7 +3,6 @@ import Row from '../Row';
 
 function RowsGroup({
   rows,
-  isTotals,
   ...otherProps
 }) {
 
@@ -15,7 +14,6 @@ function RowsGroup({
           rowData,
           ...otherProps
         }}
-        isTotal={isTotals}
         isFirstInGroup={index === 0}
       />
     )

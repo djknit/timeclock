@@ -1,8 +1,8 @@
 import React from 'react';
-import getStyle, { headingStyleVars } from './style';
+import getStyle from './style';
 import { formatMyDate } from '../../utilities';
+import TableAreaHeader from '../../TableAreaHeader';
 import Table from '../../Table';
-import InnerAreaHeader from '../../../InnerAreaHeader';
 
 function Day({
   day: {
@@ -23,15 +23,11 @@ function Day({
   
   return (
     <>
-      <InnerAreaHeader
-        label={formatMyDate(date)}
-        style={style.heading}
-        ranking={3}
-        styleVariables={headingStyleVars}
-      />
+      <TableAreaHeader label={formatMyDate(date)} />
       <Table
-        hasTimes
+        hasTimes={segments.length > 0}
         hasSecondTzCol={reportHasMultipleTimezones}
+        hasSecondaryTzTimes={areTimezonesDifferent}
         hasEarningCols={reportHasPaidTime}
         primaryTimezone={reportTimezone}
         secondaryTimezone={officialTimezone}
@@ -42,7 +38,7 @@ function Day({
           {
             rows: segments,
             hasTimes: true,
-            isTotals: false
+            // isTotals: false
           },
           {
             rows: [{
@@ -50,7 +46,6 @@ function Day({
               ...totals
             }],
             hasTimes: false,
-            isTotals: true
           }
         ]}
         style={style.table}

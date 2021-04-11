@@ -52,7 +52,7 @@ class JobDash extends Component {
           />
           <Settings
             disabled={areAnyModalsOpen}
-            style={style.menu}
+            style={style.settings}
             settings={job.settings}
             {...{
               buildSettingsSubPath,

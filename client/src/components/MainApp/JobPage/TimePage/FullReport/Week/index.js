@@ -1,6 +1,6 @@
 import React from 'react';
 import getStyle from './style';
-import AreaHeader from './AreaHeader';
+import AreaHeader from '../AreaHeader';
 import Day from './Day';
 import Totals from '../Totals';
 
@@ -16,7 +16,7 @@ function Week({
   reportHasPaidTime,
   reportHasMultipleTimezones
 }) {
-
+  
   const style = getStyle();
 
   return (
@@ -33,7 +33,14 @@ function Week({
             }}
           />
         ))}
-        <Totals {...{ totals }} />
+        <Totals
+          {...{
+            totals,
+            reportHasPaidTime,
+            reportHasMultipleTimezones
+          }}
+          areaLabel={`Week ${weekNumber} Totals`}
+        />
       </main>
     </section>
   );

@@ -8,6 +8,7 @@ export default function getStyle(
   {
     backgroundColor = contentAreaBgColor,
     labelEmFontSize = defaultLabelEmFontSize,
+    labelFontWeight = 'bold',
     dividerColor = contentAreaDividerColor,
     dividerHeight = '1px'
   } = {}
@@ -31,7 +32,9 @@ export default function getStyle(
       paddingRight: 10,
       textAlign: 'left',
       fontSize: `${labelEmFontSize}em`,
-      fontWeight: 'bold'
+      fontWeight: labelFontWeight,
+      lineHeight,
+      // verticalAlign: 'top'
     },
     hr: {
       height: dividerHeight,

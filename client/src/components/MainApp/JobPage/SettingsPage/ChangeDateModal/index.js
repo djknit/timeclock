@@ -124,7 +124,7 @@ class ChangeDateModal extends Component {
           formId
         }}
         infoMessages={[
-          `To change the date on which this ${lowCaseSettingName} vaue takes effect, enter the new date below.`
+          `To change the date on which this ${lowCaseSettingName} value takes effect, enter the new date below.`
         ]}
         successMessages={[
           `You successfully changed the start date for this ${lowCaseSettingName} value.`,
