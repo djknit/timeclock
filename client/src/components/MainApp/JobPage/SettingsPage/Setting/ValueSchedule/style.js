@@ -1,6 +1,23 @@
 import { dashContentBtnSpecs, adjustBtnSpecs, getBtnStyleFromSpecs } from '../style';
+export * from '../style';
 
-export default function getStyle(isWage) {
+function getSchedEntryBtnStyles(sizeRatio) {
+  return adjustBtnSpecs(dashContentBtnSpecs, sizeRatio);
+}
+
+const constantSchedStyles = {
+  table: {
+    width: '100%',
+    textAlign: 'center',
+    backgroundColor: 'transparent'
+  },
+  td: {
+    verticalAlign: 'top',
+    textAlign: 'left'
+  }
+};
+
+export default function getStyle() {
   const btnSpecs = adjustBtnSpecs(dashContentBtnSpecs, 1.1);
   
   const td = {
@@ -46,4 +63,9 @@ export default function getStyle(isWage) {
       }
     }
   };
+};
+
+export {
+  getSchedEntryBtnStyles,
+  constantSchedStyles
 };

@@ -104,7 +104,8 @@ class _JobPage_needsData extends Component {
     const commonRouteAttributes = {
       job,
       parentPath: match.url,
-      areAnyModalsOpen
+      areAnyModalsOpen,
+      windowWidth
     };
 
     return (
@@ -129,8 +130,7 @@ class _JobPage_needsData extends Component {
                 <TimePage
                   {...{
                     ...props,
-                    ...commonRouteAttributes,
-                    windowWidth
+                    ...commonRouteAttributes
                   }}
                 />
               )}
@@ -149,7 +149,6 @@ class _JobPage_needsData extends Component {
                     jobSettingsPath,
                     timePagePath,
                     dashboardPath,
-                    windowWidth,
                     jobSettingsPageSubpaths
                   }}
                 />

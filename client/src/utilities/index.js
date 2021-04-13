@@ -19,8 +19,6 @@ function isWindowWide(windowWidth) {
 }
 
 function isFullNavDisplayed(windowWidth) {
-  console.log('windowWidth\n', windowWidth)
-  console.log('isFullNavDisplayed\n', windowWidth >= 1024)
   return windowWidth >= 1024;
 }
 
