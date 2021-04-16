@@ -1,10 +1,6 @@
 import { dashContentBtnSpecs, adjustBtnSpecs, getBtnStyleFromSpecs } from '../style';
 export * from '../style';
 
-function getSchedEntryBtnStyles(sizeRatio) {
-  return adjustBtnSpecs(dashContentBtnSpecs, sizeRatio);
-}
-
 const constantSchedStyles = {
   table: {
     width: '100%',
@@ -66,6 +62,5 @@ export default function getStyle() {
 };
 
 export {
-  getSchedEntryBtnStyles,
   constantSchedStyles
 };

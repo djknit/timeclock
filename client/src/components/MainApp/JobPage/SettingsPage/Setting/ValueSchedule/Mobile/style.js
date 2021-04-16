@@ -1,4 +1,4 @@
-import { constantSchedStyles, getSchedEntryBtnStyles } from '../style';
+import { constantSchedStyles } from '../style';
 
 export default function getStyle(isWage) {
   
@@ -32,7 +32,6 @@ export default function getStyle(isWage) {
     buttonsTd: {
       ...td,
       width: '50.575%' // needs ~440px
-    },
-    button: getSchedEntryBtnStyles(1.1)
+    }
   };
 };

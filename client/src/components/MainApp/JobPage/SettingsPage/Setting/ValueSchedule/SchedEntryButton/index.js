@@ -1,4 +1,6 @@
 import React from 'react';
+import getStyle from './style';
+import Button from '../../../../../../Button';
 
 function SchedEntryButton({
   text,
@@ -7,11 +9,14 @@ function SchedEntryButton({
   isRemove,
   schedEntryId,
   areAnyModalsOpen,
-  styles = {}
+  sizeRatio = 1.1
 }) {
+
+  const style = getStyle(sizeRatio);
+  console.log('sched entry btn styles prop\n')
   return (
     <Button
-      {...styles}
+      style={style.button}
       theme={isRemove ? 'danger' : 'primary'}
       onClick={() => toggle(true, schedEntryId)}
       allowTabFocus={!areAnyModalsOpen}

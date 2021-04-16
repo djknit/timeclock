@@ -1,6 +1,7 @@
 import React from 'react';
 import getStyle from './style';
 import Button from '../../../../../../Button';
+import SchedEntryButton from '../SchedEntryButton';
 import SettingValueDisplay from '../../../../SettingValueDisplay';
 
 function MobileSchedule({
@@ -14,18 +15,18 @@ function MobileSchedule({
 
   const style = getStyle(settingName === 'wage');
 
-  function SchedEntryButton({ text, toggle, iconClass, isRemove, schedEntryId }) {
-    return (
-      <Button
-        styles={style.button}
-        theme={isRemove ? 'danger' : 'primary'}
-        onClick={() => toggle(true, schedEntryId)}
-        allowTabFocus={!areAnyModalsOpen}
-      >
-        <i className={iconClass} />&ensp;{text}
-      </Button>
-    );
-  }
+  // function SchedEntryButton({ text, toggle, iconClass, isRemove, schedEntryId }) {
+  //   return (
+  //     <Button
+  //       styles={style.button}
+  //       theme={isRemove ? 'danger' : 'primary'}
+  //       onClick={() => toggle(true, schedEntryId)}
+  //       allowTabFocus={!areAnyModalsOpen}
+  //     >
+  //       <i className={iconClass} />&ensp;{text}
+  //     </Button>
+  //   );
+  // }
 
   return (
     <table style={style.table} className="table">
