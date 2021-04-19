@@ -48,6 +48,7 @@ class _JobPage_needsData extends Component {
   };
 
   componentDidMount() {
+    console.log('job page mounted')
     const { job, match } = this.props;
     const { jobId } = match.params;
     if (!job || job._id !== jobId) {
@@ -74,6 +75,7 @@ class _JobPage_needsData extends Component {
   };
 
   render() {
+
     const {
       job,
       match,
@@ -134,7 +136,7 @@ class _JobPage_needsData extends Component {
                   }}
                 />
               )}
-            />,
+            />
             <Route
               exact
               path={jobDashPath}

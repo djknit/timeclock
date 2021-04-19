@@ -7,7 +7,7 @@ export default function getStyle(isWage) {
     whiteSpace: 'nowrap'
   };
 
-  const dateTdWidth = '13.793%'; // needs ~120px
+  const dateTdWidth = '13.793%'; // needs ~120px (estimated based on current conditions. largest possible text width depends on text, font size/style)
   const dateTd = {
     ...td,
     width: dateTdWidth
@@ -23,7 +23,7 @@ export default function getStyle(isWage) {
     dateTdNoDate: {
       ...dateTd,
       textAlign: 'center',
-      paddingRight: `calc(${dateTdWidth} - 100px + .75em)` // (td width) - (text width) + (regular td padding)
+      paddingRight: `calc(${dateTdWidth} - 100px + 0.75em)` // (td width) - (text width) + (regular td paddingLeft) // text width is estimated (heading text width)
     },
     valueTd: {
       ...td,

@@ -14,6 +14,7 @@ const completeConstants = {
     add: getIconClassName('plus'),
     edit: getIconClassName('edit'),
     delete: getIconClassName('trash-alt'),
+    changeDate: getIconClassName('exchange-alt'),
     settings: getIconClassName('cog'),
     time: getIconClassName('clock'),
     view: getIconClassName('eye'),

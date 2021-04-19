@@ -9,11 +9,12 @@ function SchedEntryButton({
   isRemove,
   schedEntryId,
   areAnyModalsOpen,
-  sizeRatio = 1.1
+  sizeRatio = 1.1,
+  style: styleProp
 }) {
 
-  const style = getStyle(sizeRatio);
-  console.log('sched entry btn styles prop\n')
+  const style = getStyle(sizeRatio, styleProp);
+
   return (
     <Button
       style={style.button}

@@ -7,13 +7,28 @@ import { addCollapsing, addData, addPseudoPseudoClasses } from '../../../../high
 class _Wage_needsCollapsingAndDataAndPseudo extends Component {
   constructor(props) {
     super(props);
+    this.reportWidth = this.reportWidth.bind(this);
+    this.state = {
+      detailsWidth: undefined
+    };
+  };
+  
+  reportWidth() {
+    const { props, state, setState } = this;
+    const detailsWidth = props.sectionToggle.containerWidth;
+    if (props.setWidth && detailsWidth !== state.detailsWidth) {
+      setState({ detailsWidth });
+      props.setWidth(detailsWidth);
+    }
   };
 
   componentDidMount() {
+    this.reportWidth();
     this.props.sectionToggle.setHeight()
   };
 
   componentDidUpdate(prevProps) {
+    this.reportWidth();
     const { windowWidth, sectionToggle } = this.props;
     if (windowWidth !== prevProps.windowWidth) {
       sectionToggle.setHeight();
@@ -29,9 +44,9 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
       pseudoHandlers,
       disabled,
       label,
-      hasP,
+      P,
       pStyle,
-      detailsMarginTop
+      detailsMarginTop = '0.4em'
     } = this.props;
 
     const processedValue = processWageValueForDisplay(value);
@@ -64,13 +79,9 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
 
     return (
       <>
-        {hasP ? (
-          <p style={style.p}>
-            {basics}
-          </p>
-        ) : (
-          basics
-        )}
+        <P style={style.p}>  {/* style only applied if `hasP` is true-ish in parent */}
+          {basics}
+        </P>
         <div ref={sectionToggle.containerRef} style={style.detailsArea}>
           <p style={style.detailsPNotLast}>
             <strong style={style.valueLabel}>Rate:</strong>

@@ -13,6 +13,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
   const _isExpandedInitially = isExpandedInitially || false;
   const initialState = {
     containerHeight: undefined,
+    containerWidth: undefined,
     isExpanded: _isExpandedInitially,
     isAnimationOn: false,
     hasBeenExpanded: _isExpandedInitially,
@@ -50,6 +51,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       return (!this.state.containerHeight) ? (
         this.promiseToSetState({
           containerHeight: this.containerRef.current.scrollHeight,
+          containerWidth: this.containerRef.current.scrollWidth,
           isMoving: false
         })
       ) : ( // if height already set, clear and then set
