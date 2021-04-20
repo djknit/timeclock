@@ -1,4 +1,4 @@
-import { constantSchedStyles, getSchedEntryBtnStyles } from '../style';
+import { constantSchedStyles } from '../style';
 
 export default function getStyle(isWage) {
   
@@ -23,16 +23,19 @@ export default function getStyle(isWage) {
     dateTdNoDate: {
       ...dateTd,
       textAlign: 'center',
-      paddingRight: `calc(${dateTdWidth} - 100px + .75em)` // (td width) - (text width) + (regular td padding)
+      paddingRight: `calc(${dateTdWidth} - 100px + 0.75em)` // (td width) - (text width) + (regular td paddingLeft) // text width is estimated (heading text width)
     },
     valueTd: {
       ...td,
-      width: '35.632%' // wage needs ~310px
+      width: '35.632%', // wage needs ~310px
+      position: 'relative'
     },
     buttonsTd: {
       ...td,
       width: '50.575%' // needs ~440px
     },
-    button: getSchedEntryBtnStyles(1.1)
+    buttonNotLast: {
+      marginRight: '0.5rem'
+    }
   };
 };

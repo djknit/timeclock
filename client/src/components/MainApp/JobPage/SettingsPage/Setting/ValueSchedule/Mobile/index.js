@@ -1,7 +1,10 @@
 import React from 'react';
 import getStyle from './style';
-import Button from '../../../../../../Button';
+import { constants } from '../../../utilities';
+import SchedEntryButton from '../SchedEntryBtn';
 import SettingValueDisplay from '../../../../SettingValueDisplay';
+
+const { iconClassNames } = constants;
 
 function MobileSchedule({
   valueSchedule,
@@ -13,19 +16,6 @@ function MobileSchedule({
 }) {
 
   const style = getStyle(settingName === 'wage');
-
-  function SchedEntryButton({ text, toggle, iconClass, isRemove, schedEntryId }) {
-    return (
-      <Button
-        styles={style.button}
-        theme={isRemove ? 'danger' : 'primary'}
-        onClick={() => toggle(true, schedEntryId)}
-        allowTabFocus={!areAnyModalsOpen}
-      >
-        <i className={iconClass} />&ensp;{text}
-      </Button>
-    );
-  }
 
   return (
     <table style={style.table} className="table">
@@ -59,14 +49,15 @@ function MobileSchedule({
                     settingName,
                     value
                   }}
-                  detailsMarginTop=".4em"
                 />
               </td>
               <td style={style.buttonsTd}>
                 <SchedEntryButton
                   text="Edit Value"
                   toggle={toggleEditValueModal}
-                  iconClass="fas fa-edit"
+                  iconClass={iconClassNames.edit}
+                  {...{ areAnyModalsOpen }}
+                  style={index !== 0 && style.buttonNotLast}
                   schedEntryId={_id}
                 />
                 {index !== 0 && (
@@ -74,14 +65,17 @@ function MobileSchedule({
                     <SchedEntryButton
                       text="Change Date"
                       toggle={toggleChangeDateModal}
-                      iconClass="fas fa-exchange-alt"
+                      iconClass={iconClassNames.changeDate}
+                      {...{ areAnyModalsOpen }}
                       schedEntryId={_id}
+                      style={style.buttonNotLast}
                     />
                     <SchedEntryButton
                       text="Remove Value"
                       toggle={toggleDeleteValueModal}
-                      iconClass="fas fa-trash-alt"
+                      iconClass={iconClassNames.delete}
                       isRemove
+                      {...{ areAnyModalsOpen }}
                       schedEntryId={_id}
                     />
                   </>

@@ -74,6 +74,7 @@ class _JobPage_needsData extends Component {
   };
 
   render() {
+
     const {
       job,
       match,
@@ -134,7 +135,7 @@ class _JobPage_needsData extends Component {
                   }}
                 />
               )}
-            />,
+            />
             <Route
               exact
               path={jobDashPath}

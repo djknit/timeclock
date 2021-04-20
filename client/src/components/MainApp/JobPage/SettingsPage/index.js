@@ -7,7 +7,6 @@ import PageTitle from '../../PageTitle';
 import ContentArea from '../../ContentArea';
 import Landing from './Landing';
 import Setting from './Setting';
-import All from './All';
 
 class SettingsPage extends Component {
   constructor(props) {
@@ -61,62 +60,55 @@ class SettingsPage extends Component {
 
     const commonRouteAttrs = { job, areAnyModalsOpen, windowWidth };
 
-    return job && job.settings ? (
-      <>
-        <Switch>
-          {childRoutes.map(
-            RouteInfo => (
-              <Route
-                path={RouteInfo.path}
-                render={props => (
-                  <>
-                    <PageTitle crumbChain={RouteInfo.crumbChain} {...{ areAnyModalsOpen }}/>
-                    {RouteInfo.settingPropName ? (
-                      <Setting
-                        {...commonRouteAttrs}
-                        settingName={RouteInfo.settingPropName}
-                        settingDisplayName={RouteInfo.pageName}
-                      />
-                    ) : (
-                      <RouteInfo.PageComp
-                        {...commonRouteAttrs}
-                      />
-                    )}
-                  </>
-                )}
-                key={RouteInfo.path}
-              />
-            )
-          )}
-          <Route
-            path={thisPath}
-            render={props => (
-              <>
-                <PageTitle {...{ crumbChain, areAnyModalsOpen }} />
-                <Landing
-                  {...{
-                    childRoutes,
-                    ...props
-                  }}
-                />
-              </>
-            )}
-          />
-        </Switch>
-      </>
-    ) : (
-      <>
-        <PageTitle>JOB</PageTitle>
-        <ContentArea>
-          <Notification theme="info">
-            <NotificationText>Retrieving data...</NotificationText>
-            <ProgressBar
-              theme="primary"
-              max={100}
+    return (
+      <Switch>
+        {childRoutes.map(
+          RouteInfo => (
+            <Route
+              path={RouteInfo.path}
+              render={props => (
+                <>
+                  <PageTitle crumbChain={RouteInfo.crumbChain} {...{ areAnyModalsOpen }}/>
+                  {(!RouteInfo.settingPropName && (
+                    <RouteInfo.PageComp {...commonRouteAttrs} />
+                  )) || (job && job.settings && (
+                    <Setting
+                      {...commonRouteAttrs}
+                      settingName={RouteInfo.settingPropName}
+                      settingDisplayName={RouteInfo.pageName}
+                    />
+                  )) || (
+                    <ContentArea>
+                      <Notification theme="info">
+                        <NotificationText>Retrieving data...</NotificationText>
+                        <ProgressBar
+                          theme="primary"
+                          max={100}
+                        />
+                      </Notification>
+                    </ContentArea>
+                  )}
+                </>
+              )}
+              key={RouteInfo.path}
             />
-          </Notification>
-        </ContentArea>
-      </>
+          )
+        )}
+        <Route
+          path={thisPath}
+          render={props => (
+            <>
+              <PageTitle {...{ crumbChain, areAnyModalsOpen }} />
+              <Landing
+                {...{
+                  childRoutes,
+                  ...props
+                }}
+              />
+            </>
+          )}
+        />
+      </Switch>
     );
   };
 }

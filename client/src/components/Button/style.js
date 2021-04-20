@@ -20,20 +20,3 @@ export default function getStyle(
     }
   };
 };
-
-
-// function getBackgroundColorStyles(colorTheme = '') {
-//   let processedTheme;
-//   const themeWords = colorTheme.split(' ');
-//   let i = -1;
-//   while (!processedTheme && ++i < themeWords.length) {
-//     if (themeWords[i] !== 'light') processedTheme = themeWords[i];
-//   }
-//   if (colorTheme.includes('light') && themeWords.length > 1) processedTheme += 'Light';
-//   let dynamicBgColorsForTheme = dynamicBgColors[processedTheme] || dynamicBgColors.light;
-//   let bgColorStyles = {};
-//   for (const pseudoClass in dynamicBgColorsForTheme) {
-//     bgColorStyles[pseudoClass] = { backgroundColor: dynamicBgColorsForTheme[pseudoClass] };
-//   }
-//   return bgColorStyles;
-// }
