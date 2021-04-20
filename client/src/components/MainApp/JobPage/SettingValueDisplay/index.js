@@ -6,36 +6,29 @@ import Wage from './Wage';
 class SettingValueDisplay extends Component {
   constructor(props) {
     super(props);
-    this.setWidth = this.setWidth.bind(this);
     this.state = {
       width: undefined
     };
   };
 
-  setWidth(width) {
-    this.setState({ width });
-  };
-
   render() {
-    const { setWidth } = this;
     const {
       settingName,
       value,
       disabled,
       labelStyle,
       hasP,
-      pStyle,
+      pStyle: pStyleProp,
       label,
       detailsMarginTop,
       shouldTrackWidth // only applies to wage
     } = this.props;
     const { width } = this.state;
 
-    if (width && pStyle) {
-      pStyle.width = width;
-    }
+    const pStyle = Object.assign({}, pStyleProp, width && { width });
+    const isWage = settingName === 'wage';
 
-    const isWage = settingName === 'wage'
+    // const setWidth = _width => this.setState({ width: _width });
 
     const style = getStyle(labelStyle);
 
@@ -57,7 +50,7 @@ class SettingValueDisplay extends Component {
             disabled,
             P,
             pStyle,
-            setWidth,
+            hasP,
             label,
             detailsMarginTop,
             shouldTrackWidth
@@ -81,3 +74,5 @@ class SettingValueDisplay extends Component {
 };
 
 export default SettingValueDisplay;
+
+/* NOTE: parent must have relative postition for wage dropdown to work properly */

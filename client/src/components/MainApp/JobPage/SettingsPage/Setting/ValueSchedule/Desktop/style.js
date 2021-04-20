@@ -27,7 +27,8 @@ export default function getStyle(isWage) {
     },
     valueTd: {
       ...td,
-      width: '35.632%' // wage needs ~310px
+      width: '35.632%', // wage needs ~310px
+      position: 'relative'
     },
     buttonsTd: {
       ...td,

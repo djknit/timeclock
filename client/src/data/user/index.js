@@ -22,10 +22,11 @@ const userService = dataServiceFactory({
     return { ...profileInfo, jobs, currentJob };
   },
   setFunction: user => {
+    if (isChangingUser(user)) currentJobService.clearValue();
+    else currentJobService._emit(); // to make num subservice responses equal num child services
     isLoggedInService.setValue(true);
     profileService.setValue(user);
     jobsService.setValue(user.jobs);
-    if (currentJobService.getValue()) currentJobService.clearValue();
   },
   clearFunction: () => {
     isLoggedInService.setValue(false);
@@ -45,3 +46,17 @@ export {
   jobsService,
   currentJobService
 };
+
+
+function isChangingUser(newUserData) {
+  return (
+    state.isLoggedIn &&
+    (
+      !newUserData ||
+      (
+        newUserData.username !== state.profileInfo.username &&
+        newUserData.email !== state.profileInfo.email
+      )
+    )
+  );
+}

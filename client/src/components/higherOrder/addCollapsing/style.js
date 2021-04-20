@@ -1,101 +1,77 @@
-import { constants } from './utilities';
 import './style.css'; // CSS file contains all @keyframes definitions for animations used in this file
 
-const { collapsingAnimationDurationInSecs } = constants;
-
-const universalToggleAnimationProps = {
-  animationDuration: `${collapsingAnimationDurationInSecs}s`,
-  animationFillMode: 'forwards',
-  WebkitAnimationFillMode: 'forwards'
+const flippedArrowProps = {
+  MozTransform: 'scale(1, -1)',
+  WebkitTransform: 'scale(1, -1)',
+  OTransform: 'scale(1, -1)',
+  MsTransform: 'scale(1, -1)',
+  transform: 'scale(1, -1)'
 };
 
-function styleGetterFactory(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated, isMoving) {
-  const _isIconAnimated = isToggleIconAnimated !== false; // (default to true when param is undefined)
-  const sectionToggleAnimationProps = (
-    isAnimationOn ?
-    {
-      animationName: isExpanded ? 'flip-down' : 'flip-up',
-      ...universalToggleAnimationProps
-    } :
-    {}
+export default function getStyle(
+  containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated = true, isMoving, animationDurInSecs
+) {
+
+  const getCommonAnimationProps = animationNames => ({
+    animationName: animationNames[isExpanded ? 0 : 1],
+    animationDuration: `${animationDurInSecs}s`,
+    animationFillMode: 'forwards',
+    WebkitAnimationFillMode: 'forwards'
+  });
+  const getAnimatedElStyle = (animationNames, styleForAnimateOff) => (
+    isAnimationOn ? getCommonAnimationProps(animationNames) : styleForAnimateOff
   );
-
-  const flippedArrowProps = (
-    (!isAnimationOn && !isExpanded) ?
-    {
-      MozTransform: 'scale(1, -1)',
-      WebkitTransform: 'scale(1, -1)',
-      OTransform: 'scale(1, -1)',
-      MsTransform: 'scale(1, -1)',
-      transform: 'scale(1, -1)'
-    } :
-    {}
-  );
-
-  let togglerStyle = (
-    _isIconAnimated ?
-    { ...sectionToggleAnimationProps, ...flippedArrowProps } :
-    {}
-  );
-
-  let openerTextStyle = (
-    isAnimationOn ?
-    {
-      animationName: isExpanded ? 'fade-out' : 'fade-in',
-      ...universalToggleAnimationProps
-    } :
-    {
-      opacity: isExpanded ? 0 : 1
-    }
-  );
-
-  let closerTextStyle = (
-    isAnimationOn ?
-    {
-      animationName: isExpanded ? 'fade-in' : 'fade-out',
-      ...universalToggleAnimationProps
-    } :
-    {
-      opacity: isExpanded ? 1 : 0
-    }
-  );
-
-  if (!isMoving) {
-    togglerStyle.cursor = openerTextStyle.cursor = closerTextStyle.cursor = 'pointer';
-  };
-
+  const ctrlElCommonStyle = !isMoving && { cursor: 'pointer' };
 
   return {
-    container: getSectionContentStyle(containerHeight, isExpanded, isAnimationOn),
-    toggle: togglerStyle,
-    openerText: openerTextStyle,
-    closerText: closerTextStyle
+    container: {
+      ...getAnimatedElStyle(
+        ['open', 'close'],
+        {
+          height: containerHeight || 'auto',
+          overflow: 'hidden',
+          ...(
+            !isExpanded && (
+              containerHeight ? ({
+                display: 'none'
+              }) : ({
+                position: 'absolute',
+                opacity: 0,
+                zIndex: 0
+              })
+            )
+          )
+        }
+      ),
+      height: containerHeight || 'auto',
+      overflow: 'hidden'
+    },
+    openerText: {
+      ...getAnimatedElStyle(
+        ['fade-out', 'fade-in'],
+        { opacity: isExpanded ? 0 : 1 }
+      ),
+      ...ctrlElCommonStyle
+    },
+    closerText: {
+      ...getAnimatedElStyle(
+        ['fade-in', 'fade-out'],
+        { opacity: isExpanded ? 1 : 0 }
+      ),
+      ...ctrlElCommonStyle
+    },
+    toggle: {
+      ...(
+        isToggleIconAnimated &&
+        getAnimatedElStyle(
+          ['flip-down', 'flip-up'],
+          { ...(!isExpanded && flippedArrowProps) }
+        )
+      ),
+      ...ctrlElCommonStyle
+    },
+    containerParent: {  // can't be used in some places w/ current structure. needs manually set in parent components in those cases
+      ...(!containerHeight && { position: 'relative' })
+    }
   };
 };
-
-function getSectionContentStyle(heightState, isExpanded, isAnimationOn) {
-  let variableStyles;
-  if (!isAnimationOn && !isExpanded) {
-    variableStyles = heightState ?
-    { display: 'none' } :
-    {
-      position: 'absolute',
-      opacity: 0,
-      zIndex: 0
-    };
-  }
-  else if (isAnimationOn) {
-    variableStyles = {
-      animationName: isExpanded ? 'open' : 'close',
-      ...universalToggleAnimationProps
-    };
-  }
-  else variableStyles = {};
-  return {
-    height: heightState || 'auto',
-    overflow: 'hidden',
-    ...variableStyles
-  };
-}
-
-export default styleGetterFactory;

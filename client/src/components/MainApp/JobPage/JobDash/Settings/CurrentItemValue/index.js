@@ -29,3 +29,5 @@ function CurrentItemValueDisplay({
 }
 
 export default CurrentItemValueDisplay;
+
+/* NOTE: parent must have relative postition for wage dropdown to work properly */

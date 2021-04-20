@@ -44,11 +44,14 @@ function SettingsArea({
         settingsLabelsAndPropNames.map(
           ({ label, propName }, index) => (
             <div
-              style={
-                index === settingsLabelsAndPropNames.length - 1 ?
-                style.lastAreaHasBtns :
-                style.areaNotLastHasBtns
-              }
+              style={{
+                ...(
+                  index === settingsLabelsAndPropNames.length - 1 ?
+                  style.lastAreaHasBtns :
+                  style.areaNotLastHasBtns
+                ),
+                ...style.settingValueArea
+              }}
               key={label}
             >
               <p style={style.areaLabel}>
