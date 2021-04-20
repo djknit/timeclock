@@ -13,6 +13,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
   const _isExpandedInitially = isExpandedInitially || false;
   const initialState = {
     containerHeight: undefined,
+    containerWidth: undefined,
     isExpanded: _isExpandedInitially,
     isAnimationOn: false,
     hasBeenExpanded: _isExpandedInitially,
@@ -44,12 +45,14 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
     };
 
     setHeight() {
-      if (!this.containerRef.current) {
+      const containerEl = this.containerRef.current;
+      if (!containerEl) {
         return this.promiseToSetState({ isMoving: false });
       };
       return (!this.state.containerHeight) ? (
         this.promiseToSetState({
-          containerHeight: this.containerRef.current.scrollHeight,
+          containerHeight: containerEl.scrollHeight,
+          containerWidth: containerEl.scrollWidth,
           isMoving: false
         })
       ) : ( // if height already set, clear and then set
@@ -88,7 +91,7 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
         });
         setTimeout(
           () => resolve(this.promiseToSetState({ isMoving: false })),
-          collapsingAnimationDurationInSecs * 1000
+          (this.props.animationDurationInSecs || collapsingAnimationDurationInSecs) * 1000
         );
       });
     };
@@ -123,10 +126,14 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       const {
         containerRef, setHeight, clearHeight, toggle, setIsExpanded, reset, linkParentOrChild, pauseAnimation
       } = this;
+      const { animationDurationInSecs = collapsingAnimationDurationInSecs } = this.props;
+      const {
+        containerHeight, isExpanded, isAnimationOn, hasBeenExpanded, isMoving, containerWidth
+      } = this.state;
 
-      const { containerHeight, isExpanded, isAnimationOn, hasBeenExpanded, isMoving } = this.state;
-
-      const styles = getStyle(containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated, isMoving);
+      const styles = getStyle(
+        containerHeight, isExpanded, isAnimationOn, isToggleIconAnimated, isMoving, animationDurationInSecs
+      );
 
       const propsToPass = {
         ...this.props,
@@ -143,7 +150,8 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
           reset,
           isMoving,
           linkParentOrChild,
-          pauseAnimation
+          pauseAnimation,
+          containerWidth
         }
       };
 

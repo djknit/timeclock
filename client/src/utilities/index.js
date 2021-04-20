@@ -19,7 +19,7 @@ function isWindowWide(windowWidth) {
 }
 
 function isFullNavDisplayed(windowWidth) {
-  return windowWidth >= 1024; // matches Bulma
+  return windowWidth >= 1024;
 }
 
 function roundNumToNDecimalDigits(numToRound, numDecDigs /* (n) */) {

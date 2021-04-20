@@ -12,6 +12,9 @@ export default function getStyle(additionalStyle) {
       ...itemAreaStyles.areaHasBtnsText,
       fontSize: '1.15em',
       fontWeight: 'bold'
+    },
+    settingValueArea: {
+      position: 'relative' // needed for wage dropdown sizing on narrower screens
     }
   };
 };
