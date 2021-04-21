@@ -30,17 +30,15 @@ export default function getStyle(
         {
           height: containerHeight || 'auto',
           overflow: 'hidden',
-          ...(
-            !isExpanded && (
-              containerHeight ? ({
-                display: 'none'
-              }) : ({
-                position: 'absolute',
-                opacity: 0,
-                zIndex: 0
-              })
-            )
-          )
+          ...(!isExpanded && (
+            containerHeight ? ({
+              display: 'none'
+            }) : ({
+              position: 'absolute',
+              opacity: 0,
+              zIndex: 0
+            })
+          ))
         }
       ),
       height: containerHeight || 'auto',

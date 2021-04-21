@@ -12,7 +12,6 @@ const childDataServices = {
 let state = { isCurrentJobSet: false };
 
 function setCurrentJob(jobData) {
-  console.log('set current job')
   state.isCurrentJobSet = true;
   timeService._setJobSetTime(jobData.weeks);
   basicsService.setValue(jobData);
@@ -31,7 +30,6 @@ const currentJobService = dataServiceFactory({
   },
   setFunction: setCurrentJob,
   clearFunction: () => {
-    console.error(new Error('clear current job'))
     state.isCurrentJobSet = false;
     basicsService.clearValue();
     settingsService.clearValue();
