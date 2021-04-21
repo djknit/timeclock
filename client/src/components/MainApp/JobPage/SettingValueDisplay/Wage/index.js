@@ -5,30 +5,11 @@ import { windowWidthService } from '../../../../../data';
 import { addCollapsing, addData, addPseudoPseudoClasses } from '../../../../higherOrder';
 
 class _Wage_needsCollapsingAndDataAndPseudo extends Component {
-  constructor(props) {
-    super(props);
-    this.reportWidth = this.reportWidth.bind(this);
-    this.state = {
-      detailsWidth: undefined
-    };
-  };
-  
-  reportWidth() {
-    const { props, state, setState } = this;
-    const detailsWidth = props.sectionToggle.containerWidth;
-    if (props.setWidth && detailsWidth !== state.detailsWidth) {
-      setState({ detailsWidth });
-      props.setWidth(detailsWidth);
-    }
-  };
-
   componentDidMount() {
-    this.reportWidth();
     this.props.sectionToggle.setHeight()
   };
 
   componentDidUpdate(prevProps) {
-    this.reportWidth();
     const { windowWidth, sectionToggle } = this.props;
     if (windowWidth !== prevProps.windowWidth) {
       sectionToggle.setHeight();
@@ -42,16 +23,19 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
       value,
       pseudoState,
       pseudoHandlers,
-      disabled,
       label,
-      P,
+      labelStyle,
+      disabled,
+      hasP,
       pStyle,
-      detailsMarginTop = '0.4em'
+      detailsMarginTop
     } = this.props;
 
     const processedValue = processWageValueForDisplay(value);
 
-    const style = getStyle(sectionToggle.styles, pseudoState, pStyle, detailsMarginTop);
+    const style = getStyle(
+      sectionToggle, pseudoState, pStyle, detailsMarginTop, labelStyle,
+    );
 
     const basics = (
       <>
@@ -79,9 +63,11 @@ class _Wage_needsCollapsingAndDataAndPseudo extends Component {
 
     return (
       <>
-        <P style={style.p}>  {/* style only applied if `hasP` is true-ish in parent */}
-          {basics}
-        </P>
+        {hasP ? (
+          <p style={style.basicsP} children={basics} />
+        ) : (
+          <span style={style.basicsSpan} children={basics} />
+        )}
         <div ref={sectionToggle.containerRef} style={style.detailsArea}>
           <p style={style.detailsPNotLast}>
             <strong style={style.valueLabel}>Rate:</strong>
