@@ -4,7 +4,7 @@ import { bulmaFormBlack, bulmaFormBlue } from '../../../../../AppStyle';
 export default function getStyle(
   sectionToggle, togglerPseudoState, pStyle, detailsPaddingTop, labelStyle
 ) {
-  const { style: toggleStyles, containerWidth: ddWidth } = sectionToggle;
+  const { styles: toggleStyles, containerWidth: ddWidth } = sectionToggle;
   const { isActive, isHovered, isFocused } = togglerPseudoState;
 
   const isTogglerBlack = isActive || isHovered || isFocused;

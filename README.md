@@ -89,15 +89,18 @@ This plan is not complete. Future steps will be expanded on in the plan before t
       * [ ] _Full report of time data_
         * [ ] _Regular display_
         * [ ] PDF or printer-friendly version
-        * [ ] Arbitrary (user defined) time period (default is all time)
-          * [ ] Period inputs
-          * [ ] Utility function to get arbitrary period data
+        * [ ] ~~Arbitrary (user defined) time period (default is all time)~~ (Not MVP)
         * [ ] ~~Let user define how much info to include~~ (Not MVP)
   * [x] Navbar navigation menu
   * [ ] _Ensure at least bare minimum mobile responsiveness_
     * [ ] _Ensure all features can be used on all screen sizes_
     * [ ] _Ensure nothing looks broken or clearly in the wrong place w/ any screen size_
-* [ ] Review code for bugs and code organization/readability
+* [ ] Review code for bugs and code organization/readability (Ongoing)
+* [ ] Develop and/or finish developing the most important remaining front-end features for a more complete MVP
+  * [ ] User defined time period (default is all time) for full report
+    * [ ] Period inputs
+    * [ ] Utility function to get arbitrary period data
+  * [ ] User preference for AM/PM or 24hr times setting at user level and/or job level
 * [ ] Work on additional features
   * [ ] Punchclock
   * [ ] Create (or improve existing) mobile friendly UI
