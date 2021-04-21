@@ -18,7 +18,7 @@ class Reports extends Component {
     const style = getStyle(styleProp);
     
     return (
-      <ContentArea title="View Time Details" style={style.contentArea}>
+      <ContentArea title="Details" style={style.contentArea}>
         <FullReport
           {...{ processedTimeData }}
         />

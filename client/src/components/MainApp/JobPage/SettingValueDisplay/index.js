@@ -15,29 +15,22 @@ class SettingValueDisplay extends Component {
     const {
       settingName,
       value,
-      disabled,
-      labelStyle,
-      hasP,
-      pStyle: pStyleProp,
       label,
-      detailsMarginTop,
-      shouldTrackWidth // only applies to wage
+      labelStyle,
+      disabled,
+      hasP,
+      pStyle,
+      detailsMarginTop = '0.4em'
     } = this.props;
-    const { width } = this.state;
 
-    const pStyle = Object.assign({}, pStyleProp, width && { width });
     const isWage = settingName === 'wage';
-
-    // const setWidth = _width => this.setState({ width: _width });
 
     const style = getStyle(labelStyle);
 
     function P({ children }) {
-      return hasP ? (
-        <p style={pStyle || {}}>
-          {children}
-        </p>
-      ) : (
+      return (
+        hasP ?
+        (<p style={pStyle} {...{ children }} />) :
         children
       );
     }
@@ -45,15 +38,13 @@ class SettingValueDisplay extends Component {
     return (
       (isWage && value) ? (
         <Wage
-          value={value}
           {...{
-            disabled,
-            P,
-            pStyle,
-            hasP,
+            value,
             label,
-            detailsMarginTop,
-            shouldTrackWidth
+            disabled,
+            hasP,
+            pStyle,
+            detailsMarginTop
           }}
         />
       ) : (

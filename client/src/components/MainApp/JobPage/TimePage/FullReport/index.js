@@ -5,7 +5,8 @@ import Totals from './Totals';
 
 function FullReport({
   processedTimeData,
-  style: styleProp
+  style: styleProp,
+  dateRange
 }) {
 
   console.log('processedTimeData\n', processedTimeData);
@@ -44,6 +45,7 @@ function FullReport({
           reportHasPaidTime,
           reportHasMultipleTimezones
         }}
+        areaLabel={!dateRange && 'Job Totals'}
       />
     </article>
   );

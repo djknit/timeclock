@@ -1,13 +1,17 @@
 import { valueLabel } from '../style';
 import { bulmaFormBlack, bulmaFormBlue } from '../../../../../AppStyle';
 
-export default function getStyle(toggleStyles, togglerPseudoState, pStyle, detailsPaddingTop) {
+export default function getStyle(
+  sectionToggle, togglerPseudoState, pStyle, detailsPaddingTop, labelStyle
+) {
+  const { styles: toggleStyles, containerWidth: ddWidth } = sectionToggle;
+  const { isActive, isHovered, isFocused } = togglerPseudoState;
+
+  const isTogglerBlack = isActive || isHovered || isFocused;
   const detailsToggleSizeRatio = .7;
   const detailsTogglePaddingLeft = 10;
 
-  const { isActive, isHovered, isFocused } = togglerPseudoState;
-  const isTogglerBlack = isActive || isHovered || isFocused;
-
+  const basicsTopLevelEl = ddWidth && { minWidth: ddWidth };
   const detailsP = {
     ...pStyle,
     paddingTop: 0,
@@ -28,7 +32,14 @@ export default function getStyle(toggleStyles, togglerPseudoState, pStyle, detai
   };
 
   return {
-    p: pStyle,
+    basicsP: {
+      ...pStyle,
+      ...basicsTopLevelEl
+    },
+    basicsSpan: {
+      ...basicsTopLevelEl,
+      display: 'inline-block'
+    },
     detailsToggler: {
       display: 'inline-block',
       position: 'relative',
@@ -51,7 +62,10 @@ export default function getStyle(toggleStyles, togglerPseudoState, pStyle, detai
       position: 'absolute',
       left: detailsTogglePaddingLeft
     },
-    valueLabel: { ...valueLabel },
+    valueLabel: {
+      ...valueLabel,
+      ...labelStyle
+    },
     detailsArea: {
       ...toggleStyles.container,
       textAlign: 'left',

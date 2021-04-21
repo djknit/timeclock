@@ -7,7 +7,7 @@ export default function getStyle(additionalLabelStyle) {
   return {
     valueLabel: {
       ...valueLabel,
-      ...(additionalLabelStyle || {})
+      ...(additionalLabelStyle)
     }
   };
 };
