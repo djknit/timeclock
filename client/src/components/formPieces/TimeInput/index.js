@@ -60,6 +60,8 @@ function TimeInput({
       {...{
         label,
         sublabel,
+        helpText,
+        problemMessages,
         fieldToLabelRatio
       }}
       inputId={hourInputId}
@@ -119,14 +121,14 @@ function TimeInput({
           24 Hr.
         </label>
       </div>
-      {problemMessages && problemMessages.map(
+      {/* {problemMessages && problemMessages.map(
         msg => (
           <p className="help is-danger" key={msg}>{msg}</p>
         )
       )}
       {helpText && (
         <p className="help">{helpText}</p>
-      )}
+      )} */}
     </BoxInputFrame>
   );
 }

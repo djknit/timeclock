@@ -44,6 +44,7 @@ function RadioInput({
       {...{
         label,
         sublabel,
+        helpText,
         isInline,
         fieldToLabelRatio
       }}
@@ -66,9 +67,9 @@ function RadioInput({
           {option.label}
         </label>
       ))}
-      {helpText && (
+      {/* {helpText && (
         <p className="help">{helpText}</p>
-      )}
+      )} */}
     </BoxInputFrame>
   );
 }

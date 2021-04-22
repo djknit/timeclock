@@ -46,7 +46,8 @@ function CurrencyInput({
         inputId,
         sublabel,
         isInline,
-        fieldToLabelRatio
+        fieldToLabelRatio,
+        helpText
       }}
       hasIcon={currencySymbol ? 'left' : false}
     >
@@ -80,9 +81,9 @@ function CurrencyInput({
           </span>
         ))}
       </div>
-      {helpText && (
+      {/* {helpText && (
         <p className="help">{helpText}</p>
-      )}
+      )} */}
     </BoxInputFrame>
   );
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import getStyle from './style';
 import Control from './Control';
 import Label from './Label';
+import FieldMessages from './Messages';
 import { windowWidthService } from '../../../data';
 import { addData } from '../../higherOrder';
 
@@ -17,7 +18,8 @@ function _BoxInputFrame_needsData({
   windowWidth,
   selectedRadioInput,
   fieldToLabelRatio,
-  helpText
+  helpText,
+  problemMessages
   // isLastChild // Will be needed if bottom margin is changed from Bulma style.
 }) {
 
@@ -41,9 +43,11 @@ function _BoxInputFrame_needsData({
 
   const controlAttrs = { isRadio, hasIcon, windowWidth };
 
-  const helpTextHtml = helpText && (
-    <p className="help">{helpText}</p>
-  );
+  // const helpTextHtml = helpText && (
+  //   <p className="help" style={style.helpText}>
+  //     {helpText}
+  //   </p>
+  // );
 
   return isInline ? (
     <div
@@ -58,7 +62,7 @@ function _BoxInputFrame_needsData({
           <Control isInline {...controlAttrs}>
             {children}
           </Control>
-          {helpTextHtml}
+          <FieldMessages {...{ helpText, problemMessages }} />
         </div>
       </div>
     </div>
@@ -68,11 +72,11 @@ function _BoxInputFrame_needsData({
       <Control {...controlAttrs}>
         {children}
       </Control>
-      {helpTextHtml}
+      <FieldMessages {...{ helpText, problemMessages }} />
     </div>
   );
 }
 
-const BoxInputFrame = addData(_BoxInputFrame_needsData, 'windowWidth', windowWidthService);
+const BoxInputFrame = addData(_BoxInputFrame_needsData, 'windowWidth', windowWidthService); // Should maybe get as props instead to minimize event listeners. Would improve performance?
 
 export default BoxInputFrame;

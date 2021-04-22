@@ -97,7 +97,12 @@ This plan is not complete. Future steps will be expanded on in the plan before t
     * [ ] _Ensure nothing looks broken or clearly in the wrong place w/ any screen size_
       * [ ] Complete mobile version of job settings value schedule display
       * [ ] Modify full time report for mobile screen size
+      * [ ] _Fix form small screen issues_
+        * [ ] _On time inputs, `is24hr` inputs overlap rest of field_
+        * [ ] Indents not appearing on mobile (all fields aligned to left edge of form)
+
 * [ ] Review code for bugs and code organization/readability (Ongoing)
+
 * [ ] Develop and/or finish developing the most important remaining front-end features for a more complete MVP
   * [ ] Improve full report
     * [ ] Add buttons to edit time throughout report where convenient for user
@@ -106,6 +111,7 @@ This plan is not complete. Future steps will be expanded on in the plan before t
       * [ ] Utility function to get arbitrary period data
     * [ ] PDF or printer friendly version
   * [ ] User preference for AM/PM or 24hr times setting at user level and/or job level
+
 * [ ] Work on additional features
   * [ ] Punchclock
   * [ ] Create (or improve existing) mobile friendly UI

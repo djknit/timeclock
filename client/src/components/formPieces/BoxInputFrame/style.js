@@ -19,6 +19,9 @@ export default function(styles, windowWidth, fieldToLabelRatio = 5.8, isInline) 
       {}
     ),
     ...styles,
-    label: { ...labelStyles, ...additionalLabelStyles }
+    label: { ...labelStyles, ...additionalLabelStyles },
+    helpText: {
+      textAlign: 'left'
+    }
   };
 };

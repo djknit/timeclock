@@ -9,13 +9,15 @@ import {
 } from './utilities';
 import BoxInputFrame from '../BoxInputFrame';
 
+const defaultHelpText = 'Hint: You probably don\'t need a custom day cutoff unless you work late nights. If you begin in the evening and work past midnight, you can adjust the day cutoff so that your shift is not split across two days.';
+
 function DayCutoffInput({
   propName,
   sectionName,
   value,
   changeHandlerFactory,
   label,
-  helpText,
+  helpText = defaultHelpText,
   hasProblem,
   problems,
   formId,
@@ -34,7 +36,6 @@ function DayCutoffInput({
   const is24hrInputsName = getInputId(formId, 'is24hr', inputNamePrefix);
 
   const _label = label || 'Day Cutoff:';
-  const _helpText = helpText || 'Hint: You probably don\'t need a custom day cutoff unless you work late nights. If you begin in the evening and work past midnight, you can adjust the day cutoff so that your shift is not split across two days.';
   let cutoffDisplay = getCutoffDisplayValue(value);
   const {
     problems: completeProblems,
@@ -59,7 +60,9 @@ function DayCutoffInput({
       inputId={hoursInputId}
       {...{
         isInline,
-        fieldToLabelRatio
+        fieldToLabelRatio,
+        problemMessages,
+        helpText
       }}
       styles={inputFrameStyles}
     >
@@ -147,14 +150,14 @@ function DayCutoffInput({
           24 Hr.
         </label>
       </div>
-      {problemMessages && problemMessages.length > 0 && problemMessages.map(
+      {/* {problemMessages && problemMessages.length > 0 && problemMessages.map(
         msg => (
           <p className="help is-danger" key="msg">{msg}</p>
         )
       )}
-      {_helpText &&
-        <p className="help">{_helpText}</p>
-      }
+      {helpText &&
+        <p className="help">{helpText}</p>
+      } */}
     </BoxInputFrame>
   );
 }
