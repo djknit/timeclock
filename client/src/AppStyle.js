@@ -12,6 +12,8 @@ const sectionHeadingFontFam = 'Averia Serif Libre, IM Fell English, serif';
 const footerHeight = 50;
 const appMinWidth = 350;
 
+const allExceptFooterMinHeight = `calc(100vh - ${footerHeight}px)`;
+
 const bulmaFormBlue = '#3273dc';
 const bulmaFormBlack = '#363636';
 
@@ -73,8 +75,9 @@ export default function getStyle() {
       textAlign: 'center'
     },
     allExceptFooter: {
-      minHeight: `calc(100vh - ${footerHeight}px)`,
-      ...shadow(7)
+      minHeight: allExceptFooterMinHeight,
+      ...shadow(7),
+      minWidth: '100%'
     }
   };
 };
@@ -85,6 +88,7 @@ export {
   headingFontFam,
   sectionHeadingFontFam,
   footerHeight,
+  allExceptFooterMinHeight,
   appMinWidth,
   bulmaFormBlue,
   bulmaFormBlack,

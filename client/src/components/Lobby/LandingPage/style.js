@@ -1,39 +1,66 @@
-import { headingFontFam } from '../../../AppStyle';
+import { headingFontFam, allExceptFooterMinHeight, appMinWidth } from '../../../AppStyle';
+
+const innerContainerPaddingTop = 20;
+const logoMaxPxHeight = 350;
+const imgWidthToHeightRatio = 622 / 350; // depends on image dimensions
+
+const outerContainerMinHeight = (
+  `calc((0.9 * ${allExceptFooterMinHeight}) - ${2 * innerContainerPaddingTop}px)`
+);
+
+let mobileButtonStyle = {
+  height: 'auto',
+  lineHeight: 1
+};
+mobileButtonStyle.paddingTop = mobileButtonStyle.paddingBottom = '0.5em';
+mobileButtonStyle.paddingLeft = mobileButtonStyle.paddingRight = '0.75em';
 
 export default function getStyle(windowWidth) {
-  const buttonsAreaXPadding = windowWidth > 700 ? '25%' : '10%';
 
-  // const buttonStyles = {
-  //   focus: {
-  //     backgroundColor: '#e7e7e7'
-  //   },
-  //   active: {
-  //     backgroundColor: '#f8f8f8'
-  //   }
-  // };
+  let buttonStyle = { margin: '8px' };
+  if (windowWidth < 408) Object.assign(buttonStyle, mobileButtonStyle);
 
   return {
-    container: {
+    outerContainer: {
+      display: 'table-cell',
+      verticalAlign: 'middle',
+      textAlign: 'center',
+      minWidth: appMinWidth,
+      width: '100vw',
+      minHeight: outerContainerMinHeight,
+      height: outerContainerMinHeight
+    },
+    innerContainer: {
+      width: '100%',
+      display: 'inline-block',
       paddingTop: 20
     },
     heading: {
-      fontSize: 'calc(26px + 3vw)',
+      fontSize: getHeadingFontSize(windowWidth),
       fontFamily: headingFontFam,
       color: '#303030',
       fontWeight: 'bold'
     },
     logo: {
-      maxWidth: '70%',
-      maxHeight: 350
+      maxWidth: '100%',
+      maxHeight: logoMaxPxHeight
     },
     buttonsArea: {
-      padding: `20px ${buttonsAreaXPadding} 0`
+      maxWidth: logoMaxPxHeight * imgWidthToHeightRatio,
+      margin: 'auto',
+      display: 'flex',
+      justifyContent: 'space-evenly'
     },
-    leftButton: {
-      innate: { marginRight: 'calc(24% - 40px)' },
-    },
-    rightButton: {
-      
-    }
+    leftButton: buttonStyle,
+    rightButton: buttonStyle
   };
 };
+
+
+function getHeadingFontSize(windowWidth) { // created to replicate original val "calc(36px + 4vw)" but w/ max value 80px
+  const pxContribution = 36, vwContribution = 5, maxPxVal = 80;
+  return Math.min(
+    pxContribution + (vwContribution * (windowWidth / 100)),
+    maxPxVal
+  );
+}
