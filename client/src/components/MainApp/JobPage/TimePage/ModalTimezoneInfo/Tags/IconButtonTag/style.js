@@ -1,11 +1,7 @@
-export default function getStyle(styleProp, isTagGroupEngaged) {
-
+export default function getStyle(styleProp) {
   return {
     tag: {
       ...styleProp
-    },
-    button: {
-      // fontSize: isTagGroupEngaged ? '0. em' : undefined
     }
   };
 };

@@ -81,9 +81,6 @@ function CurrencyInput({
           </span>
         ))}
       </div>
-      {/* {helpText && (
-        <p className="help">{helpText}</p>
-      )} */}
     </BoxInputFrame>
   );
 }

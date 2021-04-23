@@ -67,9 +67,6 @@ function TextInput({
           <i className={iconClass}></i>
         </span>
       }
-      {/* {helpText &&
-        <p className="help">{helpText}</p>
-      } */}
     </BoxInputFrame>
   );
 }

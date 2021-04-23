@@ -12,12 +12,6 @@ function TagGroup({
 }) {
 
   let className = 'tags has-addons';
-  // if (align === 'center') {
-  //   // className += ' has-text-centered';
-  // }
-  // if (align && align !== 'center') {
-  //   className += ` has-text-${align}`
-  // }
   if (size) {
     className += ` are-${size}`;
   }

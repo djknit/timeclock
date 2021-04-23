@@ -41,13 +41,7 @@ function _BoxInputFrame_needsData({
   fieldAttributes.style = style.field;
   const labelAttributes = { ...labelProps, isRadio, selectedRadioInput };
 
-  const controlAttrs = { isRadio, hasIcon, windowWidth };
-
-  // const helpTextHtml = helpText && (
-  //   <p className="help" style={style.helpText}>
-  //     {helpText}
-  //   </p>
-  // );
+  const controlAttrs = { isRadio, hasIcon, windowWidth, style: style.control };
 
   return isInline ? (
     <div

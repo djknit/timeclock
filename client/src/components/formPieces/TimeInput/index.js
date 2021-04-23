@@ -67,42 +67,44 @@ function TimeInput({
       inputId={hourInputId}
       styles={style}
     >
-      <input
-        id={hourInputId}
-        className={_getFullClassName('input no-spin', problems.hour)}
-        type="number"
-        value={hour || hour === 0 ? hour : ''}
-        onChange={changeHandlerFactory(propName, true, inputProcessorFactory('hour'), 'hour')}
-        disabled={!isActive}
-        ref={inputRef}
-        placeholder="Hr"
-        style={style.hoursInput}
-      />
-      <span style={style.colon}>:</span>
-      <input
-        className={_getFullClassName('input no-spin', problems.minute)}
-        type="number"
-        value={minute || minute === 0 ? minute : ''}
-        onChange={changeHandlerFactory(propName, true, inputProcessorFactory('minute'), 'minute')}
-        disabled={!isActive}
-        placeholder="min"
-        style={style.minutesInput}
-      />
-      {!is24hr && (
-        <div
-          className={_getFullClassName('select', problems.amPm)}
-          style={style.amPmInput}
-        >
-          <select
-            value={amPm}
-            onChange={changeHandlerFactory(propName, true, inputProcessorFactory('amPm'), 'amPm')}
-            disabled={!isActive}
+      <div style={style.mainInputGroup}>
+        <input
+          id={hourInputId}
+          className={_getFullClassName('input no-spin', problems.hour)}
+          type="number"
+          value={hour || hour === 0 ? hour : ''}
+          onChange={changeHandlerFactory(propName, true, inputProcessorFactory('hour'), 'hour')}
+          disabled={!isActive}
+          ref={inputRef}
+          placeholder="Hr"
+          style={style.hoursInput}
+        />
+        <span style={style.colon}>:</span>
+        <input
+          className={_getFullClassName('input no-spin', problems.minute)}
+          type="number"
+          value={minute || minute === 0 ? minute : ''}
+          onChange={changeHandlerFactory(propName, true, inputProcessorFactory('minute'), 'minute')}
+          disabled={!isActive}
+          placeholder="min"
+          style={style.minutesInput}
+        />
+        {!is24hr && (
+          <div
+            className={_getFullClassName('select', problems.amPm)}
+            style={style.amPmInput}
           >
-            <option value="am">AM</option>
-            <option value="pm">PM</option>
-          </select>
-        </div>
-      )}
+            <select
+              value={amPm}
+              onChange={changeHandlerFactory(propName, true, inputProcessorFactory('amPm'), 'amPm')}
+              disabled={!isActive}
+            >
+              <option value="am">AM</option>
+              <option value="pm">PM</option>
+            </select>
+          </div>
+        )}
+      </div>
       <div style={style.is24hrInputGroup}>
         <label className="radio">
           <input
@@ -121,14 +123,6 @@ function TimeInput({
           24 Hr.
         </label>
       </div>
-      {/* {problemMessages && problemMessages.map(
-        msg => (
-          <p className="help is-danger" key={msg}>{msg}</p>
-        )
-      )}
-      {helpText && (
-        <p className="help">{helpText}</p>
-      )} */}
     </BoxInputFrame>
   );
 }

@@ -68,9 +68,6 @@ function DateInput({
         {...(datePickerProps || {})}
         openToDate={openToDate && getDate(openToDate)}
       />
-      {/* {helpText &&
-        <p className="help">{helpText}</p>
-      } */}
     </BoxInputFrame>
   );
 }

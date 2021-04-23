@@ -21,6 +21,11 @@ const timeInputStyles = {
   },
   amPmInput: {
     marginLeft: '0.5rem'
+  },
+  control: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
   }
 };
 

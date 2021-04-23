@@ -1,7 +1,9 @@
-export default function getStyle(styleProp) {
+export default function getStyle(styleProp, styleVars = {}) {
+  const {
+    tagLineHeight = 1.5, // default matches Bulma
+    tagEmHeight = 2, // Must be greater than lineHeight. Default matches Bulma.
+  } = styleVars;
   
-  const tagLineHeight = 1.5; // matches Bulma
-  const tagEmHeight = 2; // Matches Bulma. Must be greater than lineHeight.
   const tagYPadding = `${(tagEmHeight - tagLineHeight) / 2}em` 
 
   return {
@@ -9,7 +11,7 @@ export default function getStyle(styleProp) {
       maxWidth: '100%',
       whiteSpace: 'normal',
       overflowWrap: 'break-word',
-      height: 'auto',
+      height: `${tagEmHeight}em`, // redundant when tag has text; needed otherwise
       lineHeight: tagLineHeight,
       paddingTop: tagYPadding,
       paddingBottom: tagYPadding,

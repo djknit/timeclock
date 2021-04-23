@@ -2,6 +2,9 @@ import { timeInputStyles } from '../style';
 
 export default function getStyle(labelStyle, fieldStyle) {
   return {
+    mainInputGroup: {
+      display: 'inline-block'
+    },
     hoursInput: {
       width: '3.5em',
       textAlign: 'right'
@@ -15,9 +18,8 @@ export default function getStyle(labelStyle, fieldStyle) {
     ...timeInputStyles,
     is24hrInputGroup: {
       display: 'inline-block',
-      position: 'absolute',
-      right: 0,
-      paddingTop: '0.375rem' // copied from `DayCutoffInput`; not sure where num comes from.
+      paddingTop: '0.5rem',
+      paddingLeft: '1em'
     },
     is24hrInput: {
       marginRight: 5

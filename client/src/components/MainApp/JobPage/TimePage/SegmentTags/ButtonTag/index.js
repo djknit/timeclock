@@ -22,17 +22,17 @@ function _ButtonTag_needsPseudo({
 
   const handleClick = !disabled ? clickHandlerProp : undefined;
 
-  const style = getStyle(themeProp, pseudoState);
+  const style = getStyle(themeProp, pseudoState, styleProp);
 
   return (
     <Tag
       {...{ theme }}
-      style={{ ...style.tag, ...styleProp }}
+      style={style.tag}
       {...getClickableElAttrs(handleClick, disabled)}
       {...pseudoHandlers}
     >
       {iconName && (
-        <i className={`fas fa-${iconName}`} />
+        <i className={`fas fa-${iconName}`} style={style.icon} />
       )}
       {children}
     </Tag>

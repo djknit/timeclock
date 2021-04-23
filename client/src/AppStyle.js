@@ -10,6 +10,7 @@ const secondaryBackgroundColor = '#6141D1';
 const headingFontFam = 'Averia Serif Libre, Alice, IM Fell English, Overlock, serif, Times';
 const sectionHeadingFontFam = 'Averia Serif Libre, IM Fell English, serif';
 const footerHeight = 50;
+const appMinWidth = 350;
 
 const bulmaFormBlue = '#3273dc';
 const bulmaFormBlack = '#363636';
@@ -68,7 +69,7 @@ export default function getStyle() {
     wholeApp: {
       backgroundColor: mainBackgroundColor,
       minHeight: '100vh',
-      minWidth: 350,
+      minWidth: appMinWidth,
       textAlign: 'center'
     },
     allExceptFooter: {
@@ -84,6 +85,7 @@ export {
   headingFontFam,
   sectionHeadingFontFam,
   footerHeight,
+  appMinWidth,
   bulmaFormBlue,
   bulmaFormBlack,
   dynamicBgColors,

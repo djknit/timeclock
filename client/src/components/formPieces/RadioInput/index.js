@@ -67,9 +67,6 @@ function RadioInput({
           {option.label}
         </label>
       ))}
-      {/* {helpText && (
-        <p className="help">{helpText}</p>
-      )} */}
     </BoxInputFrame>
   );
 }
