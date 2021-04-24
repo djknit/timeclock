@@ -23,33 +23,32 @@ function _BoxInputFrame_needsData({
   // isLastChild // Will be needed if bottom margin is changed from Bulma style.
 }) {
 
-  // no need for inline when there is no label (probably)
-  if (label === undefined) isInline = false;
-
   const style = getStyle(styles, windowWidth, fieldToLabelRatio, isInline);
 
-  const labelProps = { style: style.label, label, inputId, sublabel };
-
-  let fieldAttributes = (
-    isRadio ?
-    {
+  const fieldAttrs = {
+    style: style.field,
+    ...(isRadio && {
       role: 'group',
       'aria-label': `${label} ${sublabel || ''}`
-    } :
-    {}
-  );
-  fieldAttributes.style = style.field;
-  const labelAttributes = { ...labelProps, isRadio, selectedRadioInput };
-
+    })
+  };
+  const labelAttrs = {
+    label,
+    sublabel,
+    inputId,
+    isRadio,
+    selectedRadioInput,
+    style: style.label
+  };
   const controlAttrs = { isRadio, hasIcon, windowWidth, style: style.control };
 
   return isInline ? (
     <div
       className="field is-horizontal"
-      {...fieldAttributes}
+      {...fieldAttrs}
     >
       <div className="field-label is-normal" style={style.fieldLabel}>
-        <Label {...labelAttributes} />
+        <Label {...labelAttrs} />
       </div>
       <div className="field-body" style={style.subSectionFieldBody}>
         <div className="field">
@@ -61,8 +60,8 @@ function _BoxInputFrame_needsData({
       </div>
     </div>
   ) : (
-    <div className="field" {...fieldAttributes}>
-      <Label {...labelAttributes} />
+    <div className="field" {...fieldAttrs}>
+      <Label {...labelAttrs} />
       <Control {...controlAttrs}>
         {children}
       </Control>

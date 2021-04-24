@@ -59,8 +59,12 @@ export default function getStyle(windowWidth) {
 
 function getHeadingFontSize(windowWidth) { // created to replicate original val "calc(36px + 4vw)" but w/ max value 80px
   const pxContribution = 36, vwContribution = 5, maxPxVal = 80;
-  return Math.min(
-    pxContribution + (vwContribution * (windowWidth / 100)),
-    maxPxVal
+  return windowWidth ? (
+    Math.min(
+      pxContribution + (vwContribution * (windowWidth / 100)),
+      maxPxVal
+    )
+  ) : (
+    `calc(${pxContribution}px + ${vwContribution}vw)`
   );
 }
