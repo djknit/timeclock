@@ -3,7 +3,10 @@ import { formatMyDate } from '../../utilities';
 export * from '../../utilities';
 export * from './totalsTableData';
 
-export { getWeekDateRangeText };
+export {
+  getWeekDateRangeText,
+  getNumTablesInReport
+};
 
 
 function getWeekDateRangeText({ dateRange } = {}, isString) {
@@ -19,4 +22,15 @@ function getWeekDateRangeText({ dateRange } = {}, isString) {
   ) : (
     <>{firstDateText}&nbsp;&ndash;&nbsp;{lastDateText}</>
   );
+}
+
+function getNumTablesInReport(timeDataProcessedForReport) {
+  if (!timeDataProcessedForReport || !timeDataProcessedForReport.weeks) {
+    return;
+  }
+  let totalNumberOfTables = 1; // 1 grand totals table
+  timeDataProcessedForReport.weeks.forEach(({ days }) => {
+    totalNumberOfTables += (days.length + 1); // 1 table for each day and 1 week totals table
+  });
+  return totalNumberOfTables;
 }

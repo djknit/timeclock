@@ -2,22 +2,48 @@ import { labelWeight, contentAreaDividerColor } from '../style';
 
 const bottomBorderWidth = '1.5px';
 
-export default function getStyle() {
+export default function getStyle(styleProp, colWidths = {}) {
   const th = {
     fontWeight: labelWeight,
     border: `${bottomBorderWidth} solid ${contentAreaDividerColor}`,
     borderWidth: `0 0 ${bottomBorderWidth}`
   };
 
+  const numAmountTh = {
+    ...th,
+    textAlign: 'right'
+  };
+
   return {
-    th,
-    timesTh: {
-      textAlign: 'center',
-      ...th
+    tr: {
+      ...styleProp
     },
-    numAmountColTh: {
+    timesTh: {
+      ...th,
+      textAlign: 'center',
+      width: colWidths.times
+    },
+    firstColNoTimes: {
+      ...th,
       textAlign: 'right',
-      ...th
+      fontWeight: labelWeight,
+      width: colWidths.times
+    },
+    durationTh: {
+      ...numAmountTh,
+      width: colWidths.duration
+    },
+    payRateTh: {
+      ...numAmountTh,
+      width: colWidths.payRate
+    },
+    amountEarnedTh: {
+      ...numAmountTh,
+      width: colWidths.amountEarned
+    },
+    secondaryTzTimesTh: {
+      width: colWidths.secondaryTzTimes
     }
   };
 };
+

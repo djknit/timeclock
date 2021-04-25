@@ -9,14 +9,16 @@ function Day({
     date,
     totals,
     segments,
-    currency,
     officialTimezone,
     areTimezonesDifferent,
     reportTimezone,
-    _id
+    // _id
   },
   reportHasMultipleTimezones,
-  reportHasPaidTime
+  reportHasPaidTime,
+  registerColWidthsGetter,
+  unregisterColWidthsGetter,
+  tableColWidths: colWidths
 }) {
 
   const style = getStyle();
@@ -32,13 +34,15 @@ function Day({
         primaryTimezone={reportTimezone}
         secondaryTimezone={officialTimezone}
         {...{
-          date
+          date,
+          registerColWidthsGetter,
+          unregisterColWidthsGetter,
+          colWidths
         }}
         rowGroups={[
           {
             rows: segments,
             hasTimes: true,
-            // isTotals: false
           },
           {
             rows: [{

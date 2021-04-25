@@ -8,14 +8,25 @@ function Totals({
   totals,
   areaLabel = "Totals",
   reportHasPaidTime,
-  reportHasMultipleTimezones
+  reportHasMultipleTimezones,
+  registerColWidthsGetter,
+  unregisterColWidthsGetter,
+  tableColWidths: colWidths,
+  isReportTotals
 }) {
 
-  const style = getStyle();
+  console.log('TOTALS. > > >, Report totals?', isReportTotals);
+
+  const style = getStyle(isReportTotals);
   
   return (
     <>
-      <TableAreaHeader label={areaLabel} />
+      <TableAreaHeader
+        label={areaLabel}
+        style={style.areaHeader}
+        {...{ isReportTotals }}
+        isTotals
+      />
       <Table
         hasTimes={false}
         hasSecondTzCol={reportHasMultipleTimezones}
@@ -23,6 +34,11 @@ function Totals({
         hasEarningCols={reportHasPaidTime}
         rowGroups={getTotalsRowGroups({ totals, reportHasPaidTime })}
         style={style.table}
+        {...{
+          colWidths,
+          registerColWidthsGetter,
+          unregisterColWidthsGetter
+        }}
       />
     </>
   ); 

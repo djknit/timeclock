@@ -83,7 +83,7 @@ This plan is not complete. Future steps will be expanded on in the plan before t
           * [x] Track and display segments just added
         * [x] Create recently added segments similarly to just added from general entry
         * [x] Session timezone info and management
-      * [x] Allow delete time segment
+      * [x] Allow delete time segment 
       * [x] Allow edit time segment
       * [ ] ~~Time details by weeks/days and corresponding time entry~~ (Combine w/ report)
       * [x] Full report of time data
@@ -114,6 +114,7 @@ This plan is not complete. Future steps will be expanded on in the plan before t
 
 * [ ] Work on additional features
   * [ ] Punchclock
+  * [ ] Add special handling for the edge-case situation where a time-change (ex. daylight savings beginning or end) occurs during a work shift. Likewise if any time is recorded both before and after the time-change on the same day.
   * [ ] Create (or improve existing) mobile friendly UI
   * [ ] Add time section to job dashboard
     * [ ] Summary

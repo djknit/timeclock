@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 import getStyle from './style';
-import AreaHeader from '../AreaHeader';
+import AreaHeader from './AreaHeader';
 import Day from './Day';
 import Totals from '../Totals';
 
@@ -11,17 +11,27 @@ function Week({
     weekNumber,
     dateRange,
     days,
-    weekDocId
+    // weekDocId
   },
   reportHasPaidTime,
-  reportHasMultipleTimezones
+  reportHasMultipleTimezones,
+  registerColWidthsGetter,
+  unregisterColWidthsGetter,
+  tableColWidths
 }) {
-  
+
   const style = getStyle();
 
   return (
     <section>
-      <AreaHeader {...{ isPartial, weekNumber, dateRange }} />
+      <AreaHeader
+        {...{
+          isPartial,
+          weekNumber,
+          dateRange
+        }}
+        style={style.areaHeader}
+      />
       <main style={style.areaBody}>
         {days.map(day => (
           <Day
@@ -29,7 +39,10 @@ function Week({
             {...{
               day,
               reportHasPaidTime,
-              reportHasMultipleTimezones
+              reportHasMultipleTimezones,
+              registerColWidthsGetter,
+              unregisterColWidthsGetter,
+              tableColWidths
             }}
           />
         ))}
@@ -37,13 +50,15 @@ function Week({
           {...{
             totals,
             reportHasPaidTime,
-            reportHasMultipleTimezones
+            reportHasMultipleTimezones,
+            registerColWidthsGetter,
+            tableColWidths
           }}
           areaLabel={`Week ${weekNumber} Totals`}
         />
       </main>
     </section>
   );
-}
+};
 
 export default Week;

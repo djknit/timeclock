@@ -1,19 +1,24 @@
 import React from 'react';
-import getStyle, { headingStyleVars } from './style';
+import getStyle, { getHeaderStyleVars } from './style';
 import InnerAreaHeader from '../../InnerAreaHeader';
 
 function TableAreaHeader({
-  label
+  label,
+  isReportTotals,
+  isTotals,
+  style: styleProp,
+  styleVars: styleVarsProp
 }) {
 
-  const style = getStyle();
+  const style = getStyle(isReportTotals, styleProp);
+  const headerStyleVars = getHeaderStyleVars(isTotals, styleVarsProp);
   
   return (
     <InnerAreaHeader
       {...{ label }}
-      style={style.heading}
+      style={style.header}
       ranking={3}
-      styleVariables={headingStyleVars}
+      styleVariables={headerStyleVars}
     />
   );
 }
