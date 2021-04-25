@@ -6,7 +6,7 @@ import InnerAreaHeader from '../../../InnerAreaHeader';
 function WeekHeader({
   isPartial,
   weekNumber,
-  dateRange,
+  dateRange
 }) {
   
   const dateRangeDispTxt = getWeekDateRangeText({ dateRange });

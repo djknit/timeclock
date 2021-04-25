@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import getStyle from './style';
 import AreaHeader from './AreaHeader';
 import Day from './Day';
@@ -20,6 +20,14 @@ function Week({
   tableColWidths
 }) {
 
+  const commonTableAttrs = {
+    reportHasPaidTime,
+    reportHasMultipleTimezones,
+    registerColWidthsGetter,
+    unregisterColWidthsGetter,
+    tableColWidths
+  };
+
   const style = getStyle();
 
   return (
@@ -30,30 +38,18 @@ function Week({
           weekNumber,
           dateRange
         }}
-        style={style.areaHeader}
       />
       <main style={style.areaBody}>
         {days.map(day => (
           <Day
             key={day._id}
-            {...{
-              day,
-              reportHasPaidTime,
-              reportHasMultipleTimezones,
-              registerColWidthsGetter,
-              unregisterColWidthsGetter,
-              tableColWidths
-            }}
+            {...commonTableAttrs}
+            {...{ day }}
           />
         ))}
         <Totals
-          {...{
-            totals,
-            reportHasPaidTime,
-            reportHasMultipleTimezones,
-            registerColWidthsGetter,
-            tableColWidths
-          }}
+          {...commonTableAttrs}
+          {...{ totals }}
           areaLabel={`Week ${weekNumber} Totals`}
         />
       </main>

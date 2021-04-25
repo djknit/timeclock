@@ -6,6 +6,9 @@ const {
 
 export default function getStyle() {
   return {
+    header: {
+      fontSize: '1.1em'
+    },
     table: {
       marginBottom: marginBetweenAreas,
       marginLeft: tableLeftPxMargin,

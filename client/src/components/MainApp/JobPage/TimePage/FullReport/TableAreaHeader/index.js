@@ -19,6 +19,7 @@ function TableAreaHeader({
       style={style.header}
       ranking={3}
       styleVariables={headerStyleVars}
+      isInSection={isReportTotals}
     />
   );
 }

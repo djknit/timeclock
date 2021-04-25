@@ -15,12 +15,10 @@ function Totals({
   isReportTotals
 }) {
 
-  console.log('TOTALS. > > >, Report totals?', isReportTotals);
-
   const style = getStyle(isReportTotals);
   
   return (
-    <>
+    <Container {...{ isReportTotals }}>
       <TableAreaHeader
         label={areaLabel}
         style={style.areaHeader}
@@ -40,8 +38,20 @@ function Totals({
           unregisterColWidthsGetter
         }}
       />
-    </>
+    </Container>
   ); 
 }
 
 export default Totals;
+
+
+function Container({
+  isReportTotals,
+  ...props
+}) {
+  return isReportTotals ? (
+    <section {...props} />
+  ) : (
+    props.children
+  );
+}

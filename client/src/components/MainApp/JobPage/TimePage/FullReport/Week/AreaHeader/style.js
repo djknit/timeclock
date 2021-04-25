@@ -20,14 +20,12 @@ const headerStyleVars = {
 };
 
 export default function getStyle(isPartialWeek) {
-  let areaHeader = {
-    ...topLevelAreaHeaderStyle,
-    marginBottom: isPartialWeek ? 0 :'0.8rem',
-    ...(isPartialWeek && { paddingBottom: `${partialNoteLineHeight}em` } ) // matches note height as defined below including asterisk
-  };
-
   return {
-    areaHeader,
+    areaHeader: {
+      ...topLevelAreaHeaderStyle,
+      marginBottom: isPartialWeek ? 0 :'0.8rem',
+      ...(isPartialWeek && { paddingBottom: `${partialNoteLineHeight}em` } ) // matches note height as defined below including asterisk
+    },
     primaryLabel: {
       whiteSpace: 'nowrap',
       fontWeight: 600,

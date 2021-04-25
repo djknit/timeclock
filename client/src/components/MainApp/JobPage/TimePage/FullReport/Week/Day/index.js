@@ -25,7 +25,7 @@ function Day({
   
   return (
     <>
-      <TableAreaHeader label={formatMyDate(date)} />
+      <TableAreaHeader label={formatMyDate(date)} style={style.header} />
       <Table
         hasTimes={segments.length > 0}
         hasSecondTzCol={reportHasMultipleTimezones}

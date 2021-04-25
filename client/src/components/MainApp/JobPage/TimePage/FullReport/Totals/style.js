@@ -5,7 +5,6 @@ const {
 } = tableAreaStyleVars;
 
 export default function getStyle(isReportTotals) {
-  console.log('get totals table style\n  >>>> "topLevelAreaHeaderStyle":\n', topLevelAreaHeaderStyle)
   let style = {
     table: {
       marginBottom: marginBetweenAreas,
@@ -15,7 +14,6 @@ export default function getStyle(isReportTotals) {
   };
   if (isReportTotals) {
     style.table.marginLeft += bLevelAreaLeftPxPadding;
-    style.table.marginRight += bLevelAreaLeftPxPadding;
     style.areaHeader = topLevelAreaHeaderStyle;
   }
   return style;
