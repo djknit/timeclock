@@ -50,7 +50,8 @@ function DateInput({
         sublabel,
         isInline,
         inputId,
-        fieldToLabelRatio
+        fieldToLabelRatio,
+        helpText
       }}
       styles={style}
     >
@@ -67,9 +68,6 @@ function DateInput({
         {...(datePickerProps || {})}
         openToDate={openToDate && getDate(openToDate)}
       />
-      {helpText &&
-        <p className="help">{helpText}</p>
-      }
     </BoxInputFrame>
   );
 }

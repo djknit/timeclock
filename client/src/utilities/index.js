@@ -15,7 +15,7 @@ function capitalizeFirstLetter(string) {
 }
 
 function isWindowWide(windowWidth) {
-  return windowWidth >= 769;
+  return windowWidth >= 769; // Matches Bulma cutoff for horizontal forms and probably other things
 }
 
 function isFullNavDisplayed(windowWidth) {

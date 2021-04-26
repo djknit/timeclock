@@ -21,6 +21,22 @@ const timeInputStyles = {
   },
   amPmInput: {
     marginLeft: '0.5rem'
+  },
+  control: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+  },
+  mainInputGroup: {
+    display: 'inline-block'
+  },
+  is24hrInputGroup: {
+    display: 'inline-block',
+    paddingTop: '0.5rem',
+    paddingLeft: '1em'
+  },
+  is24hrInput: {
+    marginRight: 5
   }
 };
 

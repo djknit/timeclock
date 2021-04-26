@@ -1,17 +1,32 @@
-const headingStyleVars = {
-  dividerHeight: '2px',
-  labelEmFontSize: 1,
-  labelFontWeight: 600
-};
+import { topLevelAreaHeaderStyle, topLevelAreaHeaderStyleVars } from '../style';
 
-export default function getStyle() {
+const { lineHeight } = topLevelAreaHeaderStyleVars;
+const normalHeadingFontWeight = 600;
+
+export default function getStyle(isReportTotals, styleProp) {
+  let { fontWeight = normalHeadingFontWeight } = topLevelAreaHeaderStyle;
+  if (isReportTotals) fontWeight += 100;
   return {
-    heading: {
+    header: {
       textAlign: 'left',
-      fontWeight: headingStyleVars.labelFontWeight,
-      fontSize: '1.1em'
+      fontWeight,
+      ...(isReportTotals && topLevelAreaHeaderStyle),
+      ...styleProp
     }
   };
 };
 
-export { headingStyleVars };
+export { getHeaderStyleVars };
+
+
+function getHeaderStyleVars(isTotals, styleVarsProp) {
+  let labelFontWeight = normalHeadingFontWeight;
+  if (isTotals) labelFontWeight += 100;
+  return {
+    dividerHeight: '2px',
+    labelEmFontSize: 1,
+    labelFontWeight,
+    lineHeight,
+    ...styleVarsProp
+  };
+}

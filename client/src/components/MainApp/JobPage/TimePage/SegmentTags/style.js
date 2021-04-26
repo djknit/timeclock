@@ -1,11 +1,6 @@
-import { calculateStyleForPseudoClassState } from '../../../../higherOrder';
-import { dynamicBgColors, shadow } from '../style';
+export { calculateStyleForPseudoClassState } from '../../../../higherOrder';
+export * from '../style';
 
 export default function getStyle() {
-
-  return {
-    
-  };
+  return {};
 };
-
-export { dynamicBgColors, shadow, calculateStyleForPseudoClassState };

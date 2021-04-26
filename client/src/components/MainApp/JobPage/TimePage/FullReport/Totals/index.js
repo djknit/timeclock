@@ -8,14 +8,23 @@ function Totals({
   totals,
   areaLabel = "Totals",
   reportHasPaidTime,
-  reportHasMultipleTimezones
+  reportHasMultipleTimezones,
+  registerWidthsGetter,
+  unregisterWidthsGetter,
+  tableColWidths: colWidths,
+  isReportTotals
 }) {
 
-  const style = getStyle();
+  const style = getStyle(isReportTotals);
   
   return (
-    <>
-      <TableAreaHeader label={areaLabel} />
+    <Container {...{ isReportTotals }}>
+      <TableAreaHeader
+        label={areaLabel}
+        style={style.areaHeader}
+        {...{ isReportTotals }}
+        isTotals
+      />
       <Table
         hasTimes={false}
         hasSecondTzCol={reportHasMultipleTimezones}
@@ -23,9 +32,26 @@ function Totals({
         hasEarningCols={reportHasPaidTime}
         rowGroups={getTotalsRowGroups({ totals, reportHasPaidTime })}
         style={style.table}
+        {...{
+          colWidths,
+          registerWidthsGetter,
+          unregisterWidthsGetter
+        }}
       />
-    </>
+    </Container>
   ); 
 }
 
 export default Totals;
+
+
+function Container({
+  isReportTotals,
+  ...props
+}) {
+  return isReportTotals ? (
+    <section {...props} />
+  ) : (
+    props.children
+  );
+}

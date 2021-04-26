@@ -37,6 +37,7 @@ function selectInput({
         label,
         inputId,
         sublabel,
+        helpText,
         isInline,
         fieldToLabelRatio
       }}
@@ -75,9 +76,6 @@ function selectInput({
         <span className="icon is-small is-left">
           <i className={iconClass}></i>
         </span>
-      }
-      {helpText &&
-        <p className="help">{helpText}</p>
       }
     </BoxInputFrame>
   );

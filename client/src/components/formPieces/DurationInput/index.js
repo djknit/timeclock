@@ -59,6 +59,8 @@ function DurationInput({
       {...{
         label,
         sublabel,
+        problemMessages,
+        helpText,
         isInline,
         fieldToLabelRatio
       }}
@@ -85,14 +87,6 @@ function DurationInput({
         placeholder="min"
         style={style.minutesInput}
       />
-      {problemMessages && problemMessages.map(
-        msg => (
-          <p className="help is-danger" key={msg}>{msg}</p>
-        )
-      )}
-      {helpText &&
-        <p className="help">{helpText}</p>
-      }
     </BoxInputFrame>
   );
 }

@@ -6,21 +6,14 @@ export default function getStyle(labelStyle, fieldStyle) {
       width: '3.5em',
       textAlign: 'right'
     },
+    ...timeInputStyles,
     field: {
+      ...timeInputStyles.field,
       ...fieldStyle
     },
     label: {
+      ...timeInputStyles.label,
       ...labelStyle
     },
-    ...timeInputStyles,
-    is24hrInputGroup: {
-      display: 'inline-block',
-      position: 'absolute',
-      right: 0,
-      paddingTop: '0.375rem' // copied from `DayCutoffInput`; not sure where num comes from.
-    },
-    is24hrInput: {
-      marginRight: 5
-    }
   };
 };

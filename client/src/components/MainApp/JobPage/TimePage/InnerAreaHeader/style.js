@@ -1,7 +1,7 @@
 import { contentAreaBgColor, contentAreaDividerColor } from '../style';
 
 const defaultLabelEmFontSize = 1.15;
-const lineHeight = 1.5;
+const defaultLineHeight = 1.5;
 
 export default function getStyle(
   styleProp,
@@ -10,18 +10,21 @@ export default function getStyle(
     labelEmFontSize = defaultLabelEmFontSize,
     labelFontWeight = 'bold',
     dividerColor = contentAreaDividerColor,
-    dividerHeight = '1px'
+    dividerHeight = '1px',
+    lineHeight = defaultLineHeight
   } = {}
 ) {
 
-  const emTextHeight = getLabelTextEmHeight(labelEmFontSize);
+  const emTextHeight = getLabelTextEmHeight(labelEmFontSize, lineHeight);
+  const yPadding = `calc(${emTextHeight / 2}em - (${dividerHeight} / 2))`;
 
   return {
     div: {
       position: 'relative',
-      paddingTop: `${0.5 * emTextHeight}em`,
-      paddingBottom: `calc(${0.5 * emTextHeight}em - ${dividerHeight})`,
-      ...styleProp
+      paddingTop: yPadding,
+      paddingBottom: yPadding,
+      lineHeight,
+      ...styleProp,
     },
     text: {
       position: 'absolute',
@@ -33,8 +36,7 @@ export default function getStyle(
       textAlign: 'left',
       fontSize: `${labelEmFontSize}em`,
       fontWeight: labelFontWeight,
-      lineHeight,
-      // verticalAlign: 'top'
+      lineHeight
     },
     hr: {
       height: dividerHeight,
@@ -45,8 +47,12 @@ export default function getStyle(
   };
 };
 
-function getLabelTextEmHeight(emFontSize = defaultLabelEmFontSize) {
+export { getLabelTextEmHeight };
+
+
+function getLabelTextEmHeight(
+  emFontSize = defaultLabelEmFontSize,
+  lineHeight = defaultLineHeight
+) {
   return lineHeight * emFontSize;
 }
-
-export { getLabelTextEmHeight };

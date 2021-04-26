@@ -11,7 +11,10 @@ function Thead({
   date,
   hasSecondTzCol,
   hasEarningCols,
-  hasSecondaryTzTimes
+  hasSecondaryTzTimes,
+  colRefs,
+  colWidths,
+  style: styleProp
 }) {
 
   let firstColLabel, lastColLabel;
@@ -27,29 +30,29 @@ function Thead({
     );
   }
 
-  const style = getStyle();
+  const style = getStyle(styleProp, colWidths);
 
   return (
     <thead>
-      <tr>
-        <th style={style.timesTh}>
+      <tr style={style.tr}>
+        <th style={style.timesTh} ref={colRefs.times}>
           {firstColLabel}
         </th>
-        <th style={style.numAmountColTh}>
+        <th style={style.durationTh} ref={colRefs.duration}>
           Hours Worked
         </th>
         {hasEarningCols && (
           <>
-            <th style={style.numAmountColTh}>
+            <th style={style.payRateTh} ref={colRefs.payRate}>
               Pay Rate
             </th>
-            <th style={style.numAmountColTh}>
+            <th style={style.amountEarnedTh} ref={colRefs.amountEarned}>
               Amount Earned
             </th>
           </> 
         )}
         {hasSecondTzCol && (
-          <th style={style.timesTh}>
+          <th style={style.secondaryTzTimesTh} ref={colRefs.secondaryTzTimes}>
             {hasSecondaryTzTimes && (
               lastColLabel
             )}

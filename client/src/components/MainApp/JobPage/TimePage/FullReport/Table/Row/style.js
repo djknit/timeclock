@@ -1,16 +1,15 @@
-import { labelWeight, contentAreaDividerColor } from '../style';
+import { labelWeight, contentAreaDividerColor, cellXPadding, cellYPadding } from '../style';
 
-export default function getStyle(styleProp, isFirstRowInGroup) {
+export default function getStyle(styleProp, colWidths = {}, isFirstRowInGroup) {
 
   const borderTopPxWidth = isFirstRowInGroup ? 1.5 : 0.7;
-
-  const allTdStyle = {
+  const td = {
     borderColor: contentAreaDividerColor,
-    borderWidth: `${borderTopPxWidth}px 0 0`
+    borderWidth: `${borderTopPxWidth}px 0 0`,
+    padding: `${cellYPadding} ${cellXPadding}`
   };
-
-  const numAmountTdStyle = {
-    ...allTdStyle,
+  const numAmountTd = {
+    ...td,
     textAlign: 'right'
   };
 
@@ -19,32 +18,41 @@ export default function getStyle(styleProp, isFirstRowInGroup) {
       ...styleProp
     },
     timesTd: {
-      ...allTdStyle,
-      textAlign: 'center'
+      ...td,
+      textAlign: 'center',
+      width: colWidths.times
     },
     firstColNoTimes: {
-      ...allTdStyle,
+      ...td,
       textAlign: 'right',
-      fontWeight: labelWeight
+      fontWeight: labelWeight,
+      width: colWidths.times
     },
     durationTd: {
-      ...numAmountTdStyle
+      ...numAmountTd,
+      width: colWidths.duration
     },
     payRateTd: {
-      ...numAmountTdStyle
+      ...numAmountTd,
+      width: colWidths.payRate
     },
     amountEarnedTd: {
-      ...numAmountTdStyle
-    },
-    lastColNoTimes: {
-      ...allTdStyle
-    },
-    amountEarnedTdUnpaid: {
-      ...allTdStyle,
-      textAlign: 'center'
+      ...numAmountTd,
+      width: colWidths.amountEarned
     },
     payRateTdUnpaid: {
-      ...numAmountTdStyle
+      ...numAmountTd,
+      paddingRight: `calc(${cellXPadding} + 1.5em)`,
+      width: colWidths.payRate
+    },
+    amountEarnedTdUnpaid: {
+      ...numAmountTd,
+      paddingRight: `calc(${cellXPadding} + 0.75em)`,
+      width: colWidths.amountEarned
+    },
+    secondaryTzTimes: {
+      ...td,
+      width: colWidths.secondaryTzTimes
     },
   };
 };
