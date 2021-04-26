@@ -1,11 +1,12 @@
-import { labelWeight, contentAreaDividerColor } from '../style';
+import { labelWeight, contentAreaDividerColor, cellXPadding, cellYPadding } from '../style';
 
 export default function getStyle(styleProp, colWidths = {}, isFirstRowInGroup) {
 
   const borderTopPxWidth = isFirstRowInGroup ? 1.5 : 0.7;
   const td = {
     borderColor: contentAreaDividerColor,
-    borderWidth: `${borderTopPxWidth}px 0 0`
+    borderWidth: `${borderTopPxWidth}px 0 0`,
+    padding: `${cellYPadding} ${cellXPadding}`
   };
   const numAmountTd = {
     ...td,
@@ -40,13 +41,13 @@ export default function getStyle(styleProp, colWidths = {}, isFirstRowInGroup) {
       width: colWidths.amountEarned
     },
     payRateTdUnpaid: {
-      ...td,
-      // textAlign: 'center',
+      ...numAmountTd,
+      paddingRight: `calc(${cellXPadding} + 1.5em)`,
       width: colWidths.payRate
     },
     amountEarnedTdUnpaid: {
-      ...td,
-      // textAlign: 'center',
+      ...numAmountTd,
+      paddingRight: `calc(${cellXPadding} + 0.75em)`,
       width: colWidths.amountEarned
     },
     secondaryTzTimes: {

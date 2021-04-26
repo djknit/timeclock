@@ -1,4 +1,6 @@
-import { topLevelAreaHeaderStyle } from '../style';
+import { topLevelAreaHeaderStyle, topLevelAreaHeaderStyleVars } from '../style';
+
+const { lineHeight } = topLevelAreaHeaderStyleVars;
 const normalHeadingFontWeight = 600;
 
 export default function getStyle(isReportTotals, styleProp) {
@@ -18,16 +20,13 @@ export { getHeaderStyleVars };
 
 
 function getHeaderStyleVars(isTotals, styleVarsProp) {
-  const labelEmFontSize = 1;
-  const labelFontWeight = (
-    isTotals ?
-    topLevelAreaHeaderStyle.fontWeight + 100 :
-    normalHeadingFontWeight
-  );
+  let labelFontWeight = normalHeadingFontWeight;
+  if (isTotals) labelFontWeight += 100;
   return {
     dividerHeight: '2px',
-    labelEmFontSize,
+    labelEmFontSize: 1,
     labelFontWeight,
+    lineHeight,
     ...styleVarsProp
   };
 }

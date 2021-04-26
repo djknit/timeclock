@@ -1,4 +1,4 @@
-import { labelWeight, contentAreaDividerColor } from '../style';
+import { labelWeight, contentAreaDividerColor, cellXPadding, cellYPadding } from '../style';
 
 const bottomBorderWidth = '1.5px';
 
@@ -6,7 +6,8 @@ export default function getStyle(styleProp, colWidths = {}) {
   const th = {
     fontWeight: labelWeight,
     border: `${bottomBorderWidth} solid ${contentAreaDividerColor}`,
-    borderWidth: `0 0 ${bottomBorderWidth}`
+    borderWidth: `0 0 ${bottomBorderWidth}`,
+    padding: `${cellYPadding} ${cellXPadding}`
   };
 
   const numAmountTh = {

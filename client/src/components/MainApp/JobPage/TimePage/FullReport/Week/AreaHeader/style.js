@@ -2,7 +2,7 @@ import { styles as headerStyles } from '../../../InnerAreaHeader';
 import { topLevelAreaHeaderStyle, topLevelAreaHeaderStyleVars } from '../style';
 
 const { getLabelTextEmHeight } = headerStyles;
-const { containerEmFontSize } = topLevelAreaHeaderStyleVars;
+const { containerEmFontSize, lineHeight } = topLevelAreaHeaderStyleVars;
 
 const labelEmFontSize = 1;
 const sublabelFontSizeInContainerEm = 0.96; // fs of sublabel w/ respect to parent of label
@@ -11,7 +11,7 @@ const partialNoteLineHeight = 1.5;
 
 const sublabelEmFontSize = sublabelFontSizeInContainerEm / (containerEmFontSize * labelEmFontSize); // (w/ respect to label)
 const partialNoteEmFontSize = partialNoteFontSizeInContainerEm / containerEmFontSize;
-const labelEmHeight = getLabelTextEmHeight(labelEmFontSize);
+const labelEmHeight = getLabelTextEmHeight(labelEmFontSize, lineHeight);
 const labelFontSizeInPartialNoteEm = 1 / partialNoteEmFontSize; // fs of label w/ respect to partial note fs
 
 const headerStyleVars = {
@@ -38,7 +38,7 @@ export default function getStyle(isPartialWeek) {
       paddingLeft: '0.5em',
       display: 'inline-block',
       verticalAlign: 'top',
-      lineHeight: `${getLabelTextEmHeight(1 / sublabelEmFontSize)}em`
+      lineHeight: `${getLabelTextEmHeight((1 / sublabelEmFontSize), lineHeight)}em`
     },
     partialWeekNote: {
       display: 'inline-block',

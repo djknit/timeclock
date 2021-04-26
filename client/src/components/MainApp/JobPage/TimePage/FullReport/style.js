@@ -3,18 +3,22 @@ export * from '../style';
 
 const tableAreaStyleVars = {
   bLevelAreaLeftPxPadding: 20,
-  marginBetweenAreas: '1.2rem',
+  marginBetweenAreas: '1.5rem',
   tableLeftPxMargin: 20,
   tableRightPxMargin: 0
 };
-const topLevelAreaHeaderStyleVars = {
-  dividerHeight: '2.6px',
-  containerEmFontSize: 1.32
-};
-const topLevelAreaHeaderStyle = {
-  fontSize: `${topLevelAreaHeaderStyleVars.containerEmFontSize}em`,
-  fontWeight: 600
-};
+const getHeaderStyleAndStyleVars = (containerEmFontSize, dividerHeight) => ({
+  vars: { dividerHeight, containerEmFontSize, lineHeight: 1 },
+  style: { fontSize: `${containerEmFontSize}em` }
+});
+const {
+  vars: topLevelAreaHeaderStyleVars,
+  style: topLevelAreaHeaderStyle
+} = getHeaderStyleAndStyleVars(1.32, '2.6px');
+const {
+  vars: secondLevelHeaderStyleVars,
+  style: secondLevelHeaderStyle
+} = getHeaderStyleAndStyleVars(1.1);
 
 export default function getStyle(styleProp) {
 
@@ -35,5 +39,7 @@ export default function getStyle(styleProp) {
 export {
   tableAreaStyleVars,
   topLevelAreaHeaderStyle,
-  topLevelAreaHeaderStyleVars
+  topLevelAreaHeaderStyleVars,
+  secondLevelHeaderStyle,
+  secondLevelHeaderStyleVars
 };

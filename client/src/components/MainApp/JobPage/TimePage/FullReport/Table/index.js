@@ -20,7 +20,7 @@ class Table extends Component {
     let colWidths = {};
     for (const colName in this.colRefs) {
       const { current } = this.colRefs[colName];
-      colWidths[colName] = current && (current.clientWidth + 1);
+      colWidths[colName] = current && (current.clientWidth + 2);
     }
     return colWidths;
   };

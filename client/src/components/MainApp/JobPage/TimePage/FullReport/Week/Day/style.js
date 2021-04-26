@@ -1,4 +1,4 @@
-import { tableAreaStyleVars } from '../style';
+import { tableAreaStyleVars, secondLevelHeaderStyle } from '../style';
 
 const {
   marginBetweenAreas, tableLeftPxMargin, tableRightPxMargin
@@ -7,7 +7,7 @@ const {
 export default function getStyle() {
   return {
     header: {
-      fontSize: '1.1em'
+      ...secondLevelHeaderStyle
     },
     table: {
       marginBottom: marginBetweenAreas,
