@@ -1,68 +1,102 @@
-import React from 'react';
+import React, { Component } from 'react';
 import getStyle from './style';
 import Thead from './Head';
 import RowsGroup from './RowsGroup';
 
-function Table({
-  rowGroups,
-  hasTimes,
-  hasSecondTzCol,
-  hasEarningCols,
-  date,
-  style: styleProp,
-  hasSecondaryTzTimes: hasSecondTzTimesProp,
-  primaryTimezone,
-  secondaryTimezone
-}) {
+class Table extends Component {
+  constructor() {
+    super();
+    this.getWidths = this.getWidths.bind(this);
+    this.colRefs = {
+      times: React.createRef(),
+      duration: React.createRef(),
+      payRate: React.createRef(),
+      amountEarned: React.createRef(),
+      secondaryTzTimes: React.createRef(),
+    };
+    this.tableRef = React.createRef();
+  }
 
-  const hasSecondaryTzTimes = (
-    hasSecondTzTimesProp === undefined ?
-    primaryTimezone !== secondaryTimezone :
-    hasSecondTzTimesProp
-  );
+  getWidths() {
+    let widths = { columns: {} };
+    for (const colName in this.colRefs) {
+      const { current } = this.colRefs[colName];
+      widths.columns[colName] = current && current.clientWidth + 2;
+    }
+    const { current } = this.tableRef;
+    widths.table = current && current.clientWidth + 2;
+    return widths;
+  }
 
-  const style = getStyle(styleProp);
+  getTableWidth() {
+    
+  };
 
-  return (
-    <table className="table" style={style.table}>
-      <Thead
-        {...{
-          hasTimes,
-          date,
-          primaryTimezone,
-          secondaryTimezone,
-          hasEarningCols,
-          hasSecondTzCol,
-          hasSecondaryTzTimes
-        }}
-      />
-      <tbody>
-        {rowGroups.map(
-          (
-            {
-              rows,
-              // isTotals,
-              hasTimes: groupHasTimes = hasTimes
-            },
-            index
-          ) => (
-            <RowsGroup
-              key={index}
-              {...{
-                rows,
-                hasSecondTzCol,
-                hasEarningCols,
-                // isTotals,
-                date,
-                hasSecondaryTzTimes
-              }}
-              hasTimes={groupHasTimes}
-            />
-          )
-        )}
-      </tbody>
-    </table>
-  );
+  componentDidMount() {
+    this.props.registerWidthsGetter(this.getWidths);
+  }
+
+  componentWillUnmount() {
+    this.props.unregisterWidthsGetter(this.getWidths);
+  }
+
+  render() {
+    const {
+      rowGroups,
+      hasTimes,
+      hasSecondTzCol,
+      hasEarningCols,
+      date,
+      style: styleProp,
+      hasSecondaryTzTimes: hasSecondTzTimesProp,
+      primaryTimezone,
+      secondaryTimezone,
+      colWidths,
+    } = this.props;
+    const { colRefs, tableRef } = this;
+
+    const hasSecondaryTzTimes =
+      hasSecondTzTimesProp === undefined
+        ? primaryTimezone !== secondaryTimezone
+        : hasSecondTzTimesProp;
+
+    const commonAttrs = {
+      date,
+      hasEarningCols,
+      hasSecondTzCol,
+      colWidths,
+    };
+
+    const style = getStyle(styleProp, colWidths);
+
+    return (
+      <table className="table" style={style.table} ref={tableRef}>
+        <Thead
+          {...{
+            ...commonAttrs,
+            hasTimes,
+            primaryTimezone,
+            secondaryTimezone,
+            hasSecondaryTzTimes,
+            colRefs,
+          }}
+        />
+        <tbody>
+          {rowGroups.map(
+            ({ rows, hasTimes: groupHasTimes = hasTimes }, index) => (
+              <RowsGroup
+                key={index}
+                {...commonAttrs}
+                {...{ rows }}
+                hasTimes={groupHasTimes}
+                hasSecondaryTzTimes={groupHasTimes && hasSecondaryTzTimes}
+              />
+            )
+          )}
+        </tbody>
+      </table>
+    );
+  }
 }
 
 export default Table;

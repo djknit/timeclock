@@ -7,14 +7,12 @@ export default function getStyle(fieldStyle, fieldLabelStyle) {
   const displayHeight = `calc(2.5rem + ${2 * displayHeightAdjustment}px)`;
 
   return {
+    fieldLabel: fieldLabelStyle,
+    ...timeInputStyles,
     field: {
-      position: 'relative',
+      ...timeInputStyles.field,
       ...fieldStyle
     },
-    fieldLabel: {
-      ...fieldLabelStyle
-    },
-    ...timeInputStyles,
     cutoffDisplay: {
       display: 'inline-block',
       fontWeight: 400,
@@ -25,15 +23,6 @@ export default function getStyle(fieldStyle, fieldLabelStyle) {
       lineHeight: 1.3,
       paddingTop: '.375rem',
       marginLeft: 5
-    },
-    is24hrInputGroup: {
-      display: 'inline-block',
-      position: 'absolute',
-      right: 0,
-      paddingTop: '.375rem'
-    },
-    is24hrInput: {
-      marginRight: 5
     }
   };
 };

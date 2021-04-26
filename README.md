@@ -83,7 +83,7 @@ This plan is not complete. Future steps will be expanded on in the plan before t
           * [x] Track and display segments just added
         * [x] Create recently added segments similarly to just added from general entry
         * [x] Session timezone info and management
-      * [x] Allow delete time segment
+      * [x] Allow delete time segment 
       * [x] Allow edit time segment
       * [ ] ~~Time details by weeks/days and corresponding time entry~~ (Combine w/ report)
       * [x] Full report of time data
@@ -96,8 +96,13 @@ This plan is not complete. Future steps will be expanded on in the plan before t
     * [ ] _Ensure all features can be used on all screen sizes_ (do concurrently w/ next step)
     * [ ] _Ensure nothing looks broken or clearly in the wrong place w/ any screen size_
       * [ ] Complete mobile version of job settings value schedule display
-      * [ ] Modify full time report for mobile screen size
+      * [ ] _Modify full time report for mobile screen size_
+      * [x] Fix form small screen issues
+        * [x] `is24hr` inputs overlap rest of field on time inputs
+        * [x] Indents not appearing on mobile (all fields aligned to left edge of form)
+
 * [ ] Review code for bugs and code organization/readability (Ongoing)
+
 * [ ] Develop and/or finish developing the most important remaining front-end features for a more complete MVP
   * [ ] Improve full report
     * [ ] Add buttons to edit time throughout report where convenient for user
@@ -106,8 +111,10 @@ This plan is not complete. Future steps will be expanded on in the plan before t
       * [ ] Utility function to get arbitrary period data
     * [ ] PDF or printer friendly version
   * [ ] User preference for AM/PM or 24hr times setting at user level and/or job level
+
 * [ ] Work on additional features
   * [ ] Punchclock
+  * [ ] Add special handling for the edge-case situation where a time-change (ex. daylight savings beginning or end) occurs during a work shift. Likewise if any time is recorded both before and after the time-change on the same day.
   * [ ] Create (or improve existing) mobile friendly UI
   * [ ] Add time section to job dashboard
     * [ ] Summary

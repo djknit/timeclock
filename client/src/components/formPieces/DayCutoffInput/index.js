@@ -9,13 +9,17 @@ import {
 } from './utilities';
 import BoxInputFrame from '../BoxInputFrame';
 
+const defaultHelpText = (
+  'Hint: You probably don\'t need a custom day cutoff unless you work late nights. If you begin in the evening and work past midnight, you can adjust the day cutoff so that your shift is not split across two days.'
+);
+
 function DayCutoffInput({
   propName,
   sectionName,
   value,
   changeHandlerFactory,
   label,
-  helpText,
+  helpText = defaultHelpText,
   hasProblem,
   problems,
   formId,
@@ -34,7 +38,6 @@ function DayCutoffInput({
   const is24hrInputsName = getInputId(formId, 'is24hr', inputNamePrefix);
 
   const _label = label || 'Day Cutoff:';
-  const _helpText = helpText || 'Hint: You probably don\'t need a custom day cutoff unless you work late nights. If you begin in the evening and work past midnight, you can adjust the day cutoff so that your shift is not split across two days.';
   let cutoffDisplay = getCutoffDisplayValue(value);
   const {
     problems: completeProblems,
@@ -59,66 +62,70 @@ function DayCutoffInput({
       inputId={hoursInputId}
       {...{
         isInline,
-        fieldToLabelRatio
+        fieldToLabelRatio,
+        problemMessages,
+        helpText
       }}
-      styles={inputFrameStyles}
+      styles={style}
     >
-      <div className="select">
-        <select
-          id={hoursInputId}
-          className="select"
-          ref={inputRef}
-          value={hour}
-          onChange={changeHandlerFactory(propName, true, inputProcessorFactory('hour'))}
-          disabled={!isActive}
-        >
-          <option disabled value="">
-            Hr
-          </option>
-          {getHourOptions(is24hr).map(
-            option => (
-              parseInt(option.name) < 10 ?
-              <option value={option.value} key={option.value} style={style.selectOption}>
-                &nbsp;{option.name}
-              </option> :
-              <option value={option.value} key={option.value} style={style.selectOption}>
-                {option.name}
-              </option>
-            )
-          )}
-        </select>
-      </div>
-      <span style={style.colon}>:</span>
-      <input
-        className={`input no-spin${completeProblems.minute ? ' is-danger' : ''}`}
-        type="number"
-        value={(minute || minute === 0) ? minute : ''}
-        onChange={changeHandlerFactory(propName, true, inputProcessorFactory('minute'))}
-        disabled={!isActive}
-        placeholder="min"
-        style={style.minutesInput}
-      />
-      {!is24hr &&
-        <div className="select" style={style.amPmInput}>
+      <div style={style.mainInputGroup}>
+        <div className="select">
           <select
-            value={amPm}
-            onChange={changeHandlerFactory(propName, true, inputProcessorFactory('amPm'))}
+            id={hoursInputId}
+            className="select"
+            ref={inputRef}
+            value={hour}
+            onChange={changeHandlerFactory(propName, true, inputProcessorFactory('hour'))}
             disabled={!isActive}
           >
-            <option value="am">
-              AM
+            <option disabled value="">
+              Hr
             </option>
-            <option value="pm">
-              PM
-            </option>
+            {getHourOptions(is24hr).map(
+              option => (
+                parseInt(option.name) < 10 ?
+                <option value={option.value} key={option.value} style={style.selectOption}>
+                  &nbsp;{option.name}
+                </option> :
+                <option value={option.value} key={option.value} style={style.selectOption}>
+                  {option.name}
+                </option>
+              )
+            )}
           </select>
         </div>
-      }
-      {problemMessages.length === 0 &&
-        <div style={style.cutoffDisplay}>
-          {cutoffDisplay}
-        </div>
-      }
+        <span style={style.colon}>:</span>
+        <input
+          className={`input no-spin${completeProblems.minute ? ' is-danger' : ''}`}
+          type="number"
+          value={(minute || minute === 0) ? minute : ''}
+          onChange={changeHandlerFactory(propName, true, inputProcessorFactory('minute'))}
+          disabled={!isActive}
+          placeholder="min"
+          style={style.minutesInput}
+        />
+        {!is24hr &&
+          <div className="select" style={style.amPmInput}>
+            <select
+              value={amPm}
+              onChange={changeHandlerFactory(propName, true, inputProcessorFactory('amPm'))}
+              disabled={!isActive}
+            >
+              <option value="am">
+                AM
+              </option>
+              <option value="pm">
+                PM
+              </option>
+            </select>
+          </div>
+        }
+        {problemMessages.length === 0 &&
+          <div style={style.cutoffDisplay}>
+            {cutoffDisplay}
+          </div>
+        }
+      </div>
       <div style={style.is24hrInputGroup}>
         <label className="radio">
           <input
@@ -147,14 +154,6 @@ function DayCutoffInput({
           24 Hr.
         </label>
       </div>
-      {problemMessages && problemMessages.length > 0 && problemMessages.map(
-        msg => (
-          <p className="help is-danger" key="msg">{msg}</p>
-        )
-      )}
-      {_helpText &&
-        <p className="help">{_helpText}</p>
-      }
     </BoxInputFrame>
   );
 }

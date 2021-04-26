@@ -6,7 +6,7 @@ import DeleteSegmentModal from './DeleteSegmentModal';
 import EditSegmentModal from './EditSegmentModal';
 import RecentlyAddedModal from './RecentlyAddedModal';
 import SessionTimezoneModal from './SessionTimezoneModal';
-import Landing from './Landing';
+import Landing from './LandingPage';
 
 const {
   addModalsStateAndMethods, reportModalsClosedFor, extractModalsResources, createModalInfo

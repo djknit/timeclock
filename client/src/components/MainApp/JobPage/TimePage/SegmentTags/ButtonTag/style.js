@@ -1,6 +1,6 @@
 import { dynamicBgColors, calculateStyleForPseudoClassState, shadow } from '../../style';
 
-export default function getStyle(theme, pseudoState) {
+export default function getStyle(theme, pseudoState, styleProp) {
 
   const _tagNonInnateStyle = _shadowBlur => ({
     position: 'relative',
@@ -23,7 +23,11 @@ export default function getStyle(theme, pseudoState) {
     tag: {
       outline: 'none',
       cursor: 'pointer',
-      ...calculateStyleForPseudoClassState(pseudoClassStyles, pseudoState)
+      ...calculateStyleForPseudoClassState(pseudoClassStyles, pseudoState),
+      ...styleProp
+    },
+    icon: {
+      lineHeight: 'inherit'
     }
   };
 };

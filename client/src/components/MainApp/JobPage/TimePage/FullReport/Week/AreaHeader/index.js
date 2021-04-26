@@ -1,20 +1,19 @@
 import React from 'react';
 import getStyle, { headerStyleVars } from './style';
-import { getWeekDateRangeText, XtSp } from '../utilities';
-import InnerAreaHeader from '../../InnerAreaHeader';
+import { getWeekDateRangeText, XtSp } from '../../utilities';
+import InnerAreaHeader from '../../../InnerAreaHeader';
 
 function WeekHeader({
   isPartial,
   weekNumber,
-  dateRange,
+  dateRange
 }) {
+  
+  const dateRangeDispTxt = getWeekDateRangeText({ dateRange });
 
   const style = getStyle(isPartial);
   
-  const dateRangeDispTxt = getWeekDateRangeText({ dateRange });
-  
   let dateRangeAsterisk, grandchildren;
-  
   if (isPartial) {
     dateRangeAsterisk = <><XtSp />*</>;
     grandchildren = (

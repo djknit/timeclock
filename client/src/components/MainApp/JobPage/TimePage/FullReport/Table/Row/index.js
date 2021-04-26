@@ -24,14 +24,14 @@ function Row({
     // _id, // segment id; only defined for rows that represent segments; not currently needed.
     style: styleProp
   },
-  // isTotal,
   isFirstInGroup,
-  date
+  date,
+  colWidths
 }) {
 
   const commonTimesAttrs = { dayDate: date };
 
-  const style = getStyle(styleProp, isFirstInGroup);
+  const style = getStyle(styleProp, colWidths, isFirstInGroup);
 
   return (
     <tr style={style.tr}>
@@ -72,7 +72,7 @@ function Row({
         )
       )}
       {hasSecondTzCol && (
-        <td style={hasTimes ? style.timesTd : style.lastColNoTimes}>
+        <td style={style.secondaryTzTimes}>
           {hasTimes && hasSecondaryTzTimes && (
             <Times {...jobTzTimes} {...commonTimesAttrs} />
           )}

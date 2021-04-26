@@ -1,6 +1,7 @@
 export * from '../style';
 
 const labelWeight = 600;
+const cellXPadding = '0.75em', cellYPadding = '0.5em'; // matches Bulma
 
 export default function getStyle(styleProp) {
   return {
@@ -11,4 +12,4 @@ export default function getStyle(styleProp) {
   };
 };
 
-export { labelWeight };
+export { labelWeight, cellXPadding, cellYPadding };
