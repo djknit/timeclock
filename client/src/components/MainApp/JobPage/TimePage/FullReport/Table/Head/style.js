@@ -43,6 +43,7 @@ export default function getStyle(styleProp, colWidths = {}) {
       width: colWidths.amountEarned
     },
     secondaryTzTimesTh: {
+      ...th,
       width: colWidths.secondaryTzTimes
     }
   };

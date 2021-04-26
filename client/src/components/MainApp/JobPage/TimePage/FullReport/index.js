@@ -37,8 +37,8 @@ class FullReport extends Component {
   };
 
   setTableColWidths() {
-    if (this.state.fullReportColWidths) {
-      return this.setState({ fullReportColWidths: undefined }, this.setTableColWidths);
+    if (this.state.tableColWidths) {
+      return this.setState({ tableColWidths: undefined }, this.setTableColWidths);
     }
     let fullReportColWidths = {}; // (min col width is set to the largest width of all tables in report, so cols are big enough for all tables)
     for (const tableColsWidthGetter of this.state.colWidthsGetters) {
