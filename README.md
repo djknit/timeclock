@@ -96,10 +96,10 @@ This plan is not complete. Future steps will be expanded on in the plan before t
     * [ ] _Ensure all features can be used on all screen sizes_ (do concurrently w/ next step)
     * [ ] _Ensure nothing looks broken or clearly in the wrong place w/ any screen size_
       * [ ] Complete mobile version of job settings value schedule display
-      * [ ] Modify full time report for mobile screen size
-      * [ ] _Fix form small screen issues_
-        * [ ] _On time inputs, `is24hr` inputs overlap rest of field_
-        * [ ] Indents not appearing on mobile (all fields aligned to left edge of form)
+      * [ ] _Modify full time report for mobile screen size_
+      * [x] Fix form small screen issues
+        * [x] `is24hr` inputs overlap rest of field on time inputs
+        * [x] Indents not appearing on mobile (all fields aligned to left edge of form)
 
 * [ ] Review code for bugs and code organization/readability (Ongoing)
 

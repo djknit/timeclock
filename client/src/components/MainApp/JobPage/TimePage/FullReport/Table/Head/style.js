@@ -44,6 +44,7 @@ export default function getStyle(styleProp, colWidths = {}) {
     },
     secondaryTzTimesTh: {
       ...th,
+      textAlign: 'center',
       width: colWidths.secondaryTzTimes
     }
   };

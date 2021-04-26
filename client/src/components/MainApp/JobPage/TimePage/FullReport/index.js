@@ -8,65 +8,71 @@ import Totals from './Totals';
 class FullReport extends Component {
   constructor() {
     super();
-    this.registerColWidthsGetter = this.registerColWidthsGetter.bind(this);
-    this.unregisterColWidthsGetter = this.unregisterColWidthsGetter.bind(this);
-    this.setTableColWidths = this.setTableColWidths.bind(this);
+    this.registerWidthsGetter = this.registerWidthsGetter.bind(this);
+    this.unregisterWidthsGetter = this.unregisterWidthsGetter.bind(this);
+    this.setTableWidths = this.setTableWidths.bind(this);
     this.state = {
       tableColWidths: undefined,
-      colWidthsGetters: []
+      widthsGetters: [],
+      tableWidth: undefined
     };
   };
 
-  registerColWidthsGetter(widthsGetter) {
+  registerWidthsGetter(widthsGetter) {
     this.setState(
-      prevState => ({
-        colWidthsGetters: [ ...prevState.colWidthsGetters, widthsGetter ]
-      }),
+      prevState => ({ widthsGetters: [ ...prevState.widthsGetters, widthsGetter ] }),
       () => {
-        if (this.state.colWidthsGetters.length === getNumTablesInReport(this.props.processedTimeData)) {
-          this.setTableColWidths();
+        if (this.state.widthsGetters.length === getNumTablesInReport(this.props.processedTimeData)) {
+          this.setTableWidths();
         }
       }
     );
   };
 
-  unregisterColWidthsGetter(widthsGetter) {
+  unregisterWidthsGetter(widthsGetter) {
     this.setState(prevState => ({
-      colWidthsGetters: prevState.colWidthsGetters.filter(fxn => fxn !== widthsGetter)
+      widthsGetters: prevState.widthsGetters.filter(fxn => fxn !== widthsGetter)
     }));
   };
 
-  setTableColWidths() {
-    if (this.state.tableColWidths) {
-      return this.setState({ tableColWidths: undefined }, this.setTableColWidths);
+  setTableWidths() {
+/* NOTE:
+    Should probably measure and set col widths before measuring table width (requires an extra setState call)
+* * */
+    if (this.state.tableWidth || this.state.tableColWidths) {
+      return this.setState(
+        { tableColWidths: undefined, tableWidth: undefined },
+        this.setTableWidths
+      );
     }
-    let fullReportColWidths = {}; // (min col width is set to the largest width of all tables in report, so cols are big enough for all tables)
-    for (const tableColsWidthGetter of this.state.colWidthsGetters) {
-      const thisTableColWidths = tableColsWidthGetter();
-      Object.keys(thisTableColWidths).forEach(colName => {
-        if (
-          !fullReportColWidths[colName] ||
-          fullReportColWidths[colName] < thisTableColWidths[colName]
-        ) {
-          fullReportColWidths[colName] = thisTableColWidths[colName];
+    let tableColWidths = {}, tableWidth; // (min col width is set to the largest width of all tables in report, so cols are big enough for all tables)
+    this.state.widthsGetters
+    .map(getWidths => getWidths())
+    .forEach(({ table, columns }) => {
+      if (!tableWidth || table > tableWidth) {
+        tableWidth = table;
+      }
+      for (const colName of Object.keys(columns)) {
+        if (!tableColWidths[colName] || columns[colName] > tableColWidths[colName]) {
+          tableColWidths[colName] = columns[colName];
         }
-      });
-    }
-    this.setState({ tableColWidths: fullReportColWidths });
+      }
+    });
+    this.setState({ tableColWidths, tableWidth }, () => console.log(this.state));
   };
 
   componentDidMount() {
-    currentJobTimeService.subscribe(this.setTableColWidths);
-    windowWidthService.subscribe(this.setTableColWidths);
+    currentJobTimeService.subscribe(this.setTableWidths);
+    windowWidthService.subscribe(this.setTableWidths);
   };
 
   componentWillUnmount() {
-    currentJobTimeService.unsub(this.setTableColWidths);
-    windowWidthService.unsub(this.setTableColWidths);
+    currentJobTimeService.unsub(this.setTableWidths);
+    windowWidthService.unsub(this.setTableWidths);
   };
 
   render() {
-    const { registerColWidthsGetter, unregisterColWidthsGetter } = this;
+    const { registerWidthsGetter, unregisterWidthsGetter } = this;
     const { processedTimeData, dateRange, style: styleProp } = this.props;
     const { tableColWidths } = this.state;
   
@@ -87,8 +93,8 @@ class FullReport extends Component {
       reportHasPaidTime,
       reportHasMultipleTimezones,
       tableColWidths,
-      registerColWidthsGetter,
-      unregisterColWidthsGetter
+      registerWidthsGetter,
+      unregisterWidthsGetter
     };
   
     const style = getStyle(styleProp);

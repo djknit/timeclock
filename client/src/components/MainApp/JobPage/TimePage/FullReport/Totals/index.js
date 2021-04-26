@@ -9,8 +9,8 @@ function Totals({
   areaLabel = "Totals",
   reportHasPaidTime,
   reportHasMultipleTimezones,
-  registerColWidthsGetter,
-  unregisterColWidthsGetter,
+  registerWidthsGetter,
+  unregisterWidthsGetter,
   tableColWidths: colWidths,
   isReportTotals
 }) {
@@ -34,8 +34,8 @@ function Totals({
         style={style.table}
         {...{
           colWidths,
-          registerColWidthsGetter,
-          unregisterColWidthsGetter
+          registerWidthsGetter,
+          unregisterWidthsGetter
         }}
       />
     </Container>
