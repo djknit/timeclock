@@ -2,7 +2,8 @@ export default function getStyle(additionalStyle) {
 
   return {
     contentArea: {
-      ...additionalStyle
+      ...additionalStyle,
+      position: 'relative'
     }
   };
 };

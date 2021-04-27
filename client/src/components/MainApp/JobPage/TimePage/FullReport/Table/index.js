@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import getStyle from './style';
 import { getWidthOfEl } from './utilities';
-import Thead from './Head';
-import RowsGroup from './RowsGroup';
+import WidesSreen from './WideScreen';
 
 class Table extends Component {
   constructor() {
@@ -35,19 +34,13 @@ class Table extends Component {
 
   render() {
     const {
-      rowGroups,
-      hasTimes,
-      hasSecondTzCol,
-      hasEarningCols,
-      date,
       style: styleProp,
       hasSecondaryTzTimes: hasSecondTzTimesProp,
       primaryTimezone,
       secondaryTimezone,
-      colWidths,
-      tableRef
-    } = this.props;
-    const { colRefs } = this;
+      colWidths
+    } = this.props
+    const { tableRef, colRefs } = this;
 
     const hasSecondaryTzTimes = (
       hasSecondTzTimesProp === undefined ?
@@ -55,40 +48,17 @@ class Table extends Component {
       hasSecondTzTimesProp
     );
 
-    const commonAttrs = {
-      date,
-      hasEarningCols,
-      hasSecondTzCol,
-      colWidths,
-    };
-
     const style = getStyle(styleProp, colWidths);
 
     return (
       <table className="table" style={style.table} ref={tableRef}>
-        <Thead
+        <WidesSreen
+          {...this.props}
           {...{
-            ...commonAttrs,
-            hasTimes,
-            primaryTimezone,
-            secondaryTimezone,
-            hasSecondaryTzTimes,
             colRefs,
+            hasSecondaryTzTimes
           }}
         />
-        <tbody>
-          {rowGroups.map(
-            ({ rows, hasTimes: groupHasTimes = hasTimes }, index) => (
-              <RowsGroup
-                key={index}
-                {...commonAttrs}
-                {...{ rows }}
-                hasTimes={groupHasTimes}
-                hasSecondaryTzTimes={groupHasTimes && hasSecondaryTzTimes}
-              />
-            )
-          )}
-        </tbody>
       </table>
     );
   }

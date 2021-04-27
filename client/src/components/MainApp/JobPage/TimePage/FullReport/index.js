@@ -23,9 +23,7 @@ class FullReport extends Component {
     this.state = {
       colWidths: undefined,
       colWidthsGetters: [],
-      tableWidth: undefined,
-      wholeReportWidth: undefined,
-      extraWidth: undefined
+      otherWidths: undefined
     };
   };
 
@@ -47,8 +45,8 @@ class FullReport extends Component {
 
   setWidths() {
     const { props, state } = this;
-    if (state.tableWidth || state.colWidths || state.wholeReportWidth) {
-      return this.setStateThenWidth({ tableWidth: undefined, colWidths: undefined, wholeReportWidth: undefined });
+    if (state.colWidths || state.otherWidths) {
+      return this.setStateThenWidth({ colWidths: undefined, otherWidths: undefined });
     }
     if (state.colWidthsGetters.length === getNumTablesInReport(props.processedTimeData)) {
       this.setTableColWidths().then(this.setTableWidth).then(this.setWidthAvailable);
@@ -58,8 +56,7 @@ class FullReport extends Component {
   setTableColWidths() { // (col width is set to the largest width needed by any table so all tables can have same widths)
     let colWidths = {};
     this.state.colWidthsGetters.forEach(getTableColWidths => {
-      const tableColWidths = getTableColWidths()
-      for (const [colName, colWidth] of Object.entries(tableColWidths)) {
+      for (const [colName, colWidth] of Object.entries(getTableColWidths())) {
         colWidths[colName] = Math.max(colWidths[colName] || 0, colWidth);
       }
     });
@@ -71,8 +68,12 @@ class FullReport extends Component {
       // need wholeReport width minus any padding or table margin
     const tableWidth = getWidthOfEl(this.tableRef) + 1;
     const wholeReportWidth = getWidthOfEl(this.wholeReportRef) - 2;
-    const extraWidth = wholeReportWidth - tableWidth - pxWidthUnavailableToTables;
-    return new Promise(resolve => this.setState({ tableWidth, wholeReportWidth, extraWidth }, resolve));
+    let widths = {
+      table: getWidthOfEl(this.tableRef) + 1,
+      wholeReport: getWidthOfEl(this.wholeReportRef) - 2
+    };
+    widths.extra = widths.wholeReport - pxWidthUnavailableToTables - widths.table;
+    return new Promise(resolve => this.setState({ otherWidths: widths }, resolve));
   };
 
   componentDidMount() {
@@ -90,7 +91,7 @@ class FullReport extends Component {
       registerColWidthsGetter, unregisterColWidthsGetter, wholeReportRef, tableRef
     } = this;
     const { processedTimeData, dateRange, style: styleProp } = this.props;
-    const { colWidths, tableWidth } = this.state;
+    const { colWidths, tableWidth, otherWidths } = this.state;
 
     console.log('tableWidth\n', tableWidth)
   
@@ -113,7 +114,7 @@ class FullReport extends Component {
       unregisterColWidthsGetter
     };
   
-    const style = getStyle(styleProp);
+    const style = getStyle(styleProp, otherWidths);
   
     return (
       <article style={style.wholeReport} ref={wholeReportRef}>

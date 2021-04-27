@@ -1,5 +1,9 @@
-import { contentAreaDividerColor } from '../style';
+import { contentAreaDividerColor, contentAreaPadding } from '../style';
 export * from '../style';
+
+/*
+NOTE: the element containing this component must be positioned all styles to work
+*/
 
 const tableAreaStyleVars = {
   bLevelAreaLeftPxPadding: 20,
@@ -26,16 +30,28 @@ const {
   style: secondLevelTotalsHeaderStyle
 } = getHeaderStyleAndStyleVars((topLevelHeaderEmFontSize + 2 * secondLevelHeaderEmFontSize) / 3);
 
-export default function getStyle(styleProp) {
+export default function getStyle(styleProp, widths) {
 
   const borderStyle = `3.4px solid ${contentAreaDividerColor}`;
 
+  let wholeReport = {
+    borderTop: borderStyle,
+    borderBottom: borderStyle,
+  };
+
+  if (!widths) {
+    Object.assign(wholeReport, {
+      display: 'inline-block',
+      position: 'absolute',
+      left: contentAreaPadding,
+      minWidth: `calc(100% - ${2 * contentAreaPadding})`
+    });
+  }
+
+  Object.assign(wholeReport, styleProp);
+
   return {
-    wholeReport: {
-      borderTop: borderStyle,
-      borderBottom: borderStyle,
-      ...styleProp
-    },
+    wholeReport,
     reportTitle: {
       margin: '0.5em 0'
     }
