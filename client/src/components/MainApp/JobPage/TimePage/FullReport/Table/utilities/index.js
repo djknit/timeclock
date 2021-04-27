@@ -5,8 +5,8 @@ import {
   formatTime,
   formatMyDate,
   dates as dateUtils
-} from '../../../utilities';
-export * from '../../../utilities';
+} from '../../utilities';
+export * from '../../utilities';
 
 const { areDatesEquivalent } = dateUtils;
 

@@ -5,7 +5,8 @@ export * from './totalsTableData';
 
 export {
   getWeekDateRangeText,
-  getNumTablesInReport
+  getNumTablesInReport,
+  getWidthOfEl
 };
 
 
@@ -33,4 +34,8 @@ function getNumTablesInReport(timeDataProcessedForReport) {
     totalNumberOfTables += (days.length + 1); // 1 table for each day and 1 week totals table
   });
   return totalNumberOfTables;
+}
+
+function getWidthOfEl(elRef) {
+  return elRef && elRef.current && elRef.current.clientWidth;
 }

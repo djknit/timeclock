@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import getStyle from './style';
+import { getWidthOfEl } from './utilities';
 import Thead from './Head';
 import RowsGroup from './RowsGroup';
-
-const getElWidth = ({ current }) => current && current.clientWidth + 2;
 
 class Table extends Component {
   constructor() {
     super();
     this.getColWidths = this.getColWidths.bind(this);
-    this.getTableWidth = this.getTableWidth.bind(this);
     this.colRefs = {
       times: React.createRef(),
       duration: React.createRef(),
@@ -17,27 +15,22 @@ class Table extends Component {
       amountEarned: React.createRef(),
       secondaryTzTimes: React.createRef(),
     };
-    this.tableRef = React.createRef();
   }
 
   getColWidths() {
     let colWidths = {};
     for (const colName in this.colRefs) {
-      colWidths[colName] = getElWidth(this.colRefs[colName]);
+      colWidths[colName] = getWidthOfEl(this.colRefs[colName]) + 2;
     }
     return colWidths;
   };
 
-  getTableWidth() {
-    return getElWidth(this.tableRef);
-  };
-
   componentDidMount() {
-    this.props.registerWidthsGetters({ columns: this.getColWidths, table: this.getTableWidth });
+    this.props.registerColWidthsGetter(this.getColWidths);
   }
 
   componentWillUnmount() {
-    this.props.unregisterWidthsGetters(this.getTableWidth);
+    this.props.unregisterColWidthsGetter(this.getColWidths);
   }
 
   render() {
@@ -52,13 +45,15 @@ class Table extends Component {
       primaryTimezone,
       secondaryTimezone,
       colWidths,
+      tableRef
     } = this.props;
-    const { colRefs, tableRef } = this;
+    const { colRefs } = this;
 
-    const hasSecondaryTzTimes =
-      hasSecondTzTimesProp === undefined
-        ? primaryTimezone !== secondaryTimezone
-        : hasSecondTzTimesProp;
+    const hasSecondaryTzTimes = (
+      hasSecondTzTimesProp === undefined ?
+      primaryTimezone !== secondaryTimezone :
+      hasSecondTzTimesProp
+    );
 
     const commonAttrs = {
       date,

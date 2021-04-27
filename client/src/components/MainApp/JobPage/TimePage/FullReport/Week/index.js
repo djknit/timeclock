@@ -15,16 +15,16 @@ function Week({
   },
   reportHasPaidTime,
   reportHasMultipleTimezones,
-  registerWidthsGetters,
-  unregisterWidthsGetters,
+  registerColWidthsGetter,
+  unregisterColWidthsGetter,
   tableColWidths
 }) {
 
   const commonTableAttrs = {
     reportHasPaidTime,
     reportHasMultipleTimezones,
-    registerWidthsGetters,
-    unregisterWidthsGetters,
+    registerColWidthsGetter,
+    unregisterColWidthsGetter,
     tableColWidths
   };
 

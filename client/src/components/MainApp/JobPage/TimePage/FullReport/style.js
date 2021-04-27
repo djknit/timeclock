@@ -7,6 +7,7 @@ const tableAreaStyleVars = {
   tableLeftPxMargin: 20,
   tableRightPxMargin: 0
 };
+
 const getHeaderStyleAndStyleVars = (containerEmFontSize, dividerHeight) => ({
   vars: { dividerHeight, containerEmFontSize, lineHeight: 1 },
   style: { fontSize: `${containerEmFontSize}em` }
