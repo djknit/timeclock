@@ -3,10 +3,13 @@ import getStyle from './style';
 import Thead from './Head';
 import RowsGroup from './RowsGroup';
 
+const getElWidth = ({ current }) => current && current.clientWidth + 2;
+
 class Table extends Component {
   constructor() {
     super();
-    this.getWidths = this.getWidths.bind(this);
+    this.getColWidths = this.getColWidths.bind(this);
+    this.getTableWidth = this.getTableWidth.bind(this);
     this.colRefs = {
       times: React.createRef(),
       duration: React.createRef(),
@@ -17,27 +20,24 @@ class Table extends Component {
     this.tableRef = React.createRef();
   }
 
-  getWidths() {
-    let widths = { columns: {} };
+  getColWidths() {
+    let colWidths = {};
     for (const colName in this.colRefs) {
-      const { current } = this.colRefs[colName];
-      widths.columns[colName] = current && current.clientWidth + 2;
+      colWidths[colName] = getElWidth(this.colRefs[colName]);
     }
-    const { current } = this.tableRef;
-    widths.table = current && current.clientWidth + 2;
-    return widths;
-  }
+    return colWidths;
+  };
 
   getTableWidth() {
-    
+    return getElWidth(this.tableRef);
   };
 
   componentDidMount() {
-    this.props.registerWidthsGetter(this.getWidths);
+    this.props.registerWidthsGetters({ columns: this.getColWidths, table: this.getTableWidth });
   }
 
   componentWillUnmount() {
-    this.props.unregisterWidthsGetter(this.getWidths);
+    this.props.unregisterWidthsGetters(this.getTableWidth);
   }
 
   render() {

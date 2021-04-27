@@ -1,5 +1,5 @@
 import {
-  tableAreaStyleVars, topLevelAreaHeaderStyle, secondLevelHeaderStyle
+  tableAreaStyleVars, topLevelAreaHeaderStyle, secondLevelHeaderStyle, secondLevelTotalsHeaderStyle
 } from '../style';
 
 const {
@@ -15,6 +15,6 @@ export default function getStyle(isReportTotals) {
       marginLeft: _tableMarginLeft,
       marginRight: tableRightPxMargin
     },
-    areaHeader: isReportTotals ? topLevelAreaHeaderStyle : secondLevelHeaderStyle
+    areaHeader: isReportTotals ? topLevelAreaHeaderStyle : secondLevelTotalsHeaderStyle
   };
 };

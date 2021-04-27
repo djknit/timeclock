@@ -11,14 +11,19 @@ const getHeaderStyleAndStyleVars = (containerEmFontSize, dividerHeight) => ({
   vars: { dividerHeight, containerEmFontSize, lineHeight: 1 },
   style: { fontSize: `${containerEmFontSize}em` }
 });
+const topLevelHeaderEmFontSize = 1.32, secondLevelHeaderEmFontSize = 1.1;
 const {
   vars: topLevelAreaHeaderStyleVars,
   style: topLevelAreaHeaderStyle
-} = getHeaderStyleAndStyleVars(1.32, '2.6px');
+} = getHeaderStyleAndStyleVars(topLevelHeaderEmFontSize, '2.6px');
 const {
   vars: secondLevelHeaderStyleVars,
   style: secondLevelHeaderStyle
-} = getHeaderStyleAndStyleVars(1.1);
+} = getHeaderStyleAndStyleVars(secondLevelHeaderEmFontSize);
+const {
+  vars: secondLevelTotalsHeaderStyleVars,
+  style: secondLevelTotalsHeaderStyle
+} = getHeaderStyleAndStyleVars((topLevelHeaderEmFontSize + 2 * secondLevelHeaderEmFontSize) / 3);
 
 export default function getStyle(styleProp) {
 
@@ -41,5 +46,7 @@ export {
   topLevelAreaHeaderStyle,
   topLevelAreaHeaderStyleVars,
   secondLevelHeaderStyle,
-  secondLevelHeaderStyleVars
+  secondLevelHeaderStyleVars,
+  secondLevelTotalsHeaderStyle,
+  secondLevelTotalsHeaderStyleVars
 };

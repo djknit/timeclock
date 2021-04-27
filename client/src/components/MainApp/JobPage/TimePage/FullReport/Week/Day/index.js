@@ -16,8 +16,8 @@ function Day({
   },
   reportHasMultipleTimezones,
   reportHasPaidTime,
-  registerWidthsGetter,
-  unregisterWidthsGetter,
+  registerWidthsGetters,
+  unregisterWidthsGetters,
   tableColWidths: colWidths
 }) {
 
@@ -35,8 +35,8 @@ function Day({
         secondaryTimezone={officialTimezone}
         {...{
           date,
-          registerWidthsGetter,
-          unregisterWidthsGetter,
+          registerWidthsGetters,
+          unregisterWidthsGetters,
           colWidths
         }}
         rowGroups={[
