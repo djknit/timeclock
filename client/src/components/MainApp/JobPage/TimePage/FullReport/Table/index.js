@@ -38,7 +38,8 @@ class Table extends Component {
       hasSecondaryTzTimes: hasSecondTzTimesProp,
       primaryTimezone,
       secondaryTimezone,
-      colWidths
+      colWidths,
+      widthLevelIndex // which component is needed for screen size (0 is largest, then 1, etc.)
     } = this.props
     const { tableRef, colRefs } = this;
 

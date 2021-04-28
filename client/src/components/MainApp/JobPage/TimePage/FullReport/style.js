@@ -30,7 +30,7 @@ const {
   style: secondLevelTotalsHeaderStyle
 } = getHeaderStyleAndStyleVars((topLevelHeaderEmFontSize + 2 * secondLevelHeaderEmFontSize) / 3);
 
-export default function getStyle(styleProp, widths) {
+export default function getStyle(styleProp, areWidthsSet) {
 
   const borderStyle = `3.4px solid ${contentAreaDividerColor}`;
 
@@ -39,7 +39,7 @@ export default function getStyle(styleProp, widths) {
     borderBottom: borderStyle,
   };
 
-  if (!widths) {
+  if (!areWidthsSet) {
     Object.assign(wholeReport, {
       display: 'inline-block',
       position: 'absolute',
