@@ -5,7 +5,7 @@ import {
   formatPayRateForReportTable
 } from '../utilities';
 import getStyle from './style';
-import Times from './Times';
+import Times from '../../Times';
 
 function Row({
   hasTimes,

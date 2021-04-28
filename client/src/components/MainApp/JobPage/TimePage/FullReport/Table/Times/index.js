@@ -1,6 +1,6 @@
 import React from 'react';
 import getStyle, { getDateStyle } from './style';
-import { formatSegmentTimesForReportTable } from '../../utilities';
+import { formatSegmentTimesForReportTable } from '../utilities';
 
 function Times({
   dayDate,
@@ -15,9 +15,6 @@ function Times({
 
   return (
     <>
-      {/* <span style={style.startTime}>
-        {startTime.time}<DateDisplay date={startTime.date} />
-      </span> */}
       <TimeAndDateDisplay timeInfo={startTime} style={style.startTime} />
       &nbsp;&ndash;&nbsp;
       <TimeAndDateDisplay timeInfo={endTime} style={style.endTime} />

@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import Thead from './Head';
-import RowsGroup from './RowsGroup';
+import { getWidthOfEl } from './utilities';
+import WideScreen from './WideScreen';
+import MediumScreen from './MediumScreen';
+
+const mainComponentsByWidthLevel = [WideScreen, MediumScreen];
 
 class Table extends Component {
   constructor() {
     super();
-    this.getWidths = this.getWidths.bind(this);
+    this.getColWidths = this.getColWidths.bind(this);
     this.colRefs = {
       times: React.createRef(),
       duration: React.createRef(),
@@ -14,89 +17,77 @@ class Table extends Component {
       amountEarned: React.createRef(),
       secondaryTzTimes: React.createRef(),
     };
-    this.tableRef = React.createRef();
   }
 
-  getWidths() {
-    let widths = { columns: {} };
+  getColWidths() {
+    let colWidths = {};
     for (const colName in this.colRefs) {
-      const { current } = this.colRefs[colName];
-      widths.columns[colName] = current && current.clientWidth + 2;
+      colWidths[colName] = getWidthOfEl(this.colRefs[colName]) + 2;
     }
-    const { current } = this.tableRef;
-    widths.table = current && current.clientWidth + 2;
-    return widths;
-  }
-
-  getTableWidth() {
-    
+    return colWidths;
   };
 
   componentDidMount() {
-    this.props.registerWidthsGetter(this.getWidths);
+    this.props.registerColWidthsGetter(this.getColWidths);
   }
 
   componentWillUnmount() {
-    this.props.unregisterWidthsGetter(this.getWidths);
+    this.props.unregisterColWidthsGetter(this.getColWidths);
   }
 
   render() {
     const {
-      rowGroups,
-      hasTimes,
-      hasSecondTzCol,
-      hasEarningCols,
-      date,
       style: styleProp,
       hasSecondaryTzTimes: hasSecondTzTimesProp,
       primaryTimezone,
       secondaryTimezone,
       colWidths,
-    } = this.props;
-    const { colRefs, tableRef } = this;
+      widthLevel // which component is needed for screen size (0 is largest, then 1, etc.)
+    } = this.props
+    const { tableRef, colRefs } = this;
 
-    const hasSecondaryTzTimes =
-      hasSecondTzTimesProp === undefined
-        ? primaryTimezone !== secondaryTimezone
-        : hasSecondTzTimesProp;
+    const hasSecondaryTzTimes = (
+      hasSecondTzTimesProp === undefined ?
+      primaryTimezone !== secondaryTimezone :
+      hasSecondTzTimesProp
+    );
 
     const commonAttrs = {
-      date,
-      hasEarningCols,
-      hasSecondTzCol,
-      colWidths,
+      ...this.props,
+      colRefs,
+      hasSecondaryTzTimes
     };
 
     const style = getStyle(styleProp, colWidths);
 
     return (
       <table className="table" style={style.table} ref={tableRef}>
-        <Thead
+        {widthLevel === 0 && (
+          <WideScreen {...commonAttrs} />
+        ) || widthLevel === 1 && (
+          <MediumScreen {...commonAttrs} />
+        ) || (
+          <></>
+          )}
+        <TableContent
+          {...this.props}
           {...{
-            ...commonAttrs,
-            hasTimes,
-            primaryTimezone,
-            secondaryTimezone,
-            hasSecondaryTzTimes,
-            colRefs,
+            colRefs, 
+            hasSecondaryTzTimes
           }}
         />
-        <tbody>
-          {rowGroups.map(
-            ({ rows, hasTimes: groupHasTimes = hasTimes }, index) => (
-              <RowsGroup
-                key={index}
-                {...commonAttrs}
-                {...{ rows }}
-                hasTimes={groupHasTimes}
-                hasSecondaryTzTimes={groupHasTimes && hasSecondaryTzTimes}
-              />
-            )
-          )}
-        </tbody>
       </table>
     );
-  }
+  };
 }
 
 export default Table;
+
+
+function TableContent({ widthLevel, ...props }) {
+  const MainContentComponent = mainComponentsByWidthLevel[widthLevel];
+  return (
+    <MainContentComponent {...props} />
+  );
+}
+{ }
