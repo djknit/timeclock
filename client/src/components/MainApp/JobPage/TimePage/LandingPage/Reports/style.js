@@ -3,7 +3,8 @@ export default function getStyle(additionalStyle) {
   return {
     contentArea: {
       ...additionalStyle,
-      position: 'relative'
+      position: 'relative',
+      overflow: 'hidden'
     }
   };
 };

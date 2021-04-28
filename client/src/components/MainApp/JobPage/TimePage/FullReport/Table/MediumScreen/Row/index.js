@@ -36,7 +36,10 @@ function Row({
   return (
     <tr style={style.tr}>
       <td style={hasTimes ? style.timesTd : style.firstColNoTimes}>
-        {(hasTimes && (
+        {(hasTimes && hasSecondaryTzTimes && (
+          <Times {...sessTzTimes} {...commonTimesAttrs} />
+        )) ||
+        (hasTimes && hasSecondaryTzTimes && (
           <Times {...sessTzTimes} {...commonTimesAttrs} />
         )) ||
         (rowLabel && (

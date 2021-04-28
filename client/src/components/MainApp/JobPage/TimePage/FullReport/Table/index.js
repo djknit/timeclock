@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import getStyle from './style';
 import { getWidthOfEl } from './utilities';
-import WidesSreen from './WideScreen';
+import WideScreen from './WideScreen';
+import MediumScreen from './MediumScreen';
+
+const mainComponentsByWidthLevel = [WideScreen, MediumScreen];
 
 class Table extends Component {
   constructor() {
@@ -39,7 +42,7 @@ class Table extends Component {
       primaryTimezone,
       secondaryTimezone,
       colWidths,
-      widthLevelIndex // which component is needed for screen size (0 is largest, then 1, etc.)
+      widthLevel // which component is needed for screen size (0 is largest, then 1, etc.)
     } = this.props
     const { tableRef, colRefs } = this;
 
@@ -49,20 +52,42 @@ class Table extends Component {
       hasSecondTzTimesProp
     );
 
+    const commonAttrs = {
+      ...this.props,
+      colRefs,
+      hasSecondaryTzTimes
+    };
+
     const style = getStyle(styleProp, colWidths);
 
     return (
       <table className="table" style={style.table} ref={tableRef}>
-        <WidesSreen
+        {widthLevel === 0 && (
+          <WideScreen {...commonAttrs} />
+        ) || widthLevel === 1 && (
+          <MediumScreen {...commonAttrs} />
+        ) || (
+          <></>
+          )}
+        <TableContent
           {...this.props}
           {...{
-            colRefs,
+            colRefs, 
             hasSecondaryTzTimes
           }}
         />
       </table>
     );
-  }
+  };
 }
 
 export default Table;
+
+
+function TableContent({ widthLevel, ...props }) {
+  const MainContentComponent = mainComponentsByWidthLevel[widthLevel];
+  return (
+    <MainContentComponent {...props} />
+  );
+}
+{ }
