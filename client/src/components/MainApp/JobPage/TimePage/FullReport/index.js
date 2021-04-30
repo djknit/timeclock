@@ -89,8 +89,10 @@ class FullReport extends Component {
     const {
       registerColWidthsGetter, unregisterColWidthsGetter, wholeReportRef, tableRef
     } = this;
-    const { processedTimeData, dateRange, style: styleProp } = this.props;
-    const { colWidths, isSettingWidths } = this.state;
+    const {
+      processedTimeData, dateRange, style: styleProp
+    } = this.props;
+    const { colWidths, isSettingWidths, tableWidthLevel } = this.state;
 
     if (!processedTimeData) {
       return (<></>);
@@ -100,15 +102,18 @@ class FullReport extends Component {
       weeks,
       totals,
       hasPaidTime: reportHasPaidTime,
-      hasMultipleTimezones: reportHasMultipleTimezones
+      hasMultipleTimezones: reportHasMultipleTimezones,
+      ...otherTimeData
     } = processedTimeData;
 
     const commonTablesAttrs = {
-      reportHasPaidTime,
+      ...otherTimeData,
       reportHasMultipleTimezones,
-      tableColWidths: colWidths,
+      reportHasPaidTime,
+      tableColWidths: colWidths, 
       registerColWidthsGetter,
-      unregisterColWidthsGetter
+      unregisterColWidthsGetter,
+      tableWidthLevel
     };
   
     const style = getStyle(styleProp, isSettingWidths);

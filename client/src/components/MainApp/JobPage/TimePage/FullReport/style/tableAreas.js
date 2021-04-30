@@ -20,28 +20,41 @@ const getHeaderStyleAndVars = (containerEmFontSize, dividerHeight) => ({
   style: { fontSize: `${containerEmFontSize}em` }
 });
 
-const topEmFs = 1.32, _2ndEmFs = 1.1, lrgFsWt = 0.3; // lrgFsWt is wt. (in [0, 1]) for top level in weighted avg. heading font-size
+const topLvlHeaderEmFontSize = 1.32, _2ndLvlHeadEmFs = 1.1;
 const {
   vars: topLevelAreaHeaderStyleVars,
   style: topLevelAreaHeaderStyle
-} = getHeaderStyleAndVars(topEmFs, '2.6px');
+} = getHeaderStyleAndVars(topLvlHeaderEmFontSize, '4px');
 const {
   vars: secondLevelHeaderStyleVars,
   style: secondLevelHeaderStyle
-} = getHeaderStyleAndVars(_2ndEmFs);
+} = getHeaderStyleAndVars(_2ndLvlHeadEmFs, '2px');
+
+const lrgFsWt = 0.3; // `lrgFsWt` is weight (in [0, 1]) given to top level fs in weighted avg. heading font-size calc
+const _2ndLvlTotalsHeadEmFs = (lrgFsWt * topLvlHeaderEmFontSize) + ((1 - lrgFsWt) * _2ndLvlHeadEmFs);
+const _2ndLvlHeaderFsTotalsToRegRatio = _2ndLvlTotalsHeadEmFs / _2ndLvlHeadEmFs;
+const {
+  vars: topLevelTotalsHeaderStyleVars,
+  style: topLevelTotalsHeaderStyle
+} = getHeaderStyleAndVars(_2ndLvlHeaderFsTotalsToRegRatio * topLvlHeaderEmFontSize, '4.4px');
 const {
   vars: secondLevelTotalsHeaderStyleVars,
   style: secondLevelTotalsHeaderStyle
-} = getHeaderStyleAndVars((lrgFsWt * topEmFs) + ((1 - lrgFsWt) * _2ndEmFs));
+} = getHeaderStyleAndVars(_2ndLvlTotalsHeadEmFs, '2.8px');
+
+const largestDividerHeight = topLevelTotalsHeaderStyleVars.dividerHeight;
 
 export {
   tableAreaStyleVars,
   topLevelAreaHeaderStyle,
   topLevelAreaHeaderStyleVars,
+  topLevelTotalsHeaderStyle,
+  topLevelTotalsHeaderStyleVars,
   secondLevelHeaderStyle,
   secondLevelHeaderStyleVars,
   secondLevelTotalsHeaderStyle,
-  secondLevelTotalsHeaderStyleVars
+  secondLevelTotalsHeaderStyleVars,
+  largestDividerHeight
 };
 
 

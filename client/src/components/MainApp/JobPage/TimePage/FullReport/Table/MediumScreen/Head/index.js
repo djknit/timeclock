@@ -5,10 +5,12 @@ import { getTimezoneAbbreviation } from '../utilities';
 function Thead({
   hasTimes,
   primaryTimezone,
+  secondaryTimezone,
   primaryTzLabel,
   date,
   hasEarningCols,
   hasSecondaryTzTimes,
+  hasSecondTzCol,
   colRefs,
   colWidths,
   style: styleProp
@@ -38,6 +40,13 @@ function Thead({
               Amount Earned
             </th>
           </> 
+        )}
+        {hasSecondTzCol & (
+          <th style={style.secondaryTzTimesTh} ref={colRefs.secondaryTzTimes}>
+            {hasSecondaryTzTimes && (
+              `Times (${getTimezoneAbbreviation(secondaryTimezone, date)})`
+            )}
+          </th>
         )}
       </tr>
     </thead>

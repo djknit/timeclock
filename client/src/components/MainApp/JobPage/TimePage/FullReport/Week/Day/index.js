@@ -1,5 +1,5 @@
 import React from 'react';
-import getStyle from './style';
+import getStyle, { getHeaderStyleVars } from './style';
 import { formatMyDate } from '../../utilities';
 import TableAreaHeader from '../../TableAreaHeader';
 import Table from '../../Table';
@@ -16,16 +16,21 @@ function Day({
   },
   reportHasMultipleTimezones,
   reportHasPaidTime,
-  registerColWidthsGetter,
-  unregisterColWidthsGetter,
-  tableColWidths: colWidths
-}) {
+  tableWidthLevel,
+  tableColWidths,
+  ...otherProps
+}) { 
 
   const style = getStyle();
+  const headerStyleVars = getHeaderStyleVars();
   
   return (
     <>
-      <TableAreaHeader label={formatMyDate(date)} style={style.header} />
+      <TableAreaHeader
+        label={formatMyDate(date)}
+        style={style.header}
+        styleVars={headerStyleVars}
+      />
       <Table
         hasTimes={segments.length > 0}
         hasSecondTzCol={reportHasMultipleTimezones}
@@ -33,26 +38,21 @@ function Day({
         hasEarningCols={reportHasPaidTime}
         primaryTimezone={reportTimezone}
         secondaryTimezone={officialTimezone}
-        {...{
-          date,
-          registerColWidthsGetter,
-          unregisterColWidthsGetter,
-          colWidths
-        }}
+        {...{ date }}
+        {...otherProps}
         rowGroups={[
           {
             rows: segments,
             hasTimes: true,
           },
           {
-            rows: [{
-              rowLabel: 'Day Total',
-              ...totals
-            }],
+            rows: [{ rowLabel: 'Day Total', ...totals }],
             hasTimes: false,
           }
         ]}
         style={style.table}
+        widthLevel={tableWidthLevel}
+        colWidths={tableColWidths}
       />
     </>
   );

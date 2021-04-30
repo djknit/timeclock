@@ -1,19 +1,45 @@
 import React, { Component } from 'react';
 import getStyle from './style';
+import { currentJobTimeService } from '../../../../../../data';
 import { processTimeForReport } from '../../utilities';
 import ContentArea from '../../../../ContentArea';
 import FullReport from '../../FullReport';
 
 class Reports extends Component {
+  constructor(props) {
+    super(props);
+    this.getTimeDataState = this.getTimeDataState.bind(this);
+    this.setTimeDataState = this.setTimeDataState.bind(this);
+    this.state = {
+      ...this.getTimeDataState()
+    };
+  };
+
+  getTimeDataState() {
+    return { processedTimeData: processTimeForReport(this.props.job.time) };
+  };
+
+  setTimeDataState() {
+    this.setState(this.getTimeDataState());
+  };
+
+  componentDidMount() {
+    currentJobTimeService.subscribe(this.setTimeDataState);
+  };
+
+  componentWillUnmount() {
+    currentJobTimeService.unsub(this.setTimeDataState);
+  };
+  
   render() {
     const {
       style: styleProp,
       job,
-      windowWidth,
-      disabled
+      ...otherProps
     } = this.props;
+    const { processedTimeData } = this.state;
 
-    const processedTimeData = processTimeForReport(job.time);
+    console.log(processedTimeData)
 
     const style = getStyle(styleProp);
     
@@ -21,6 +47,7 @@ class Reports extends Component {
       <ContentArea title="Details" style={style.contentArea}>
         <FullReport
           {...{ processedTimeData }}
+          {...otherProps}
         />
       </ContentArea>
     );

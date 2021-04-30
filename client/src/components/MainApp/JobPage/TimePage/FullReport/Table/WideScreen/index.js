@@ -1,50 +1,35 @@
 import React from 'react';
-import getStyle from './style';
 import Thead from './Head';
 import RowsGroup from './RowsGroup';
 
-function Table({
+function WideScreenTableContent({
   rowGroups,
   hasTimes,
-  hasSecondTzCol,
-  hasEarningCols,
-  date,
-  style: styleProp,
-  hasSecondaryTzTimes: hasSecondTzTimesProp,
   primaryTimezone,
   secondaryTimezone,
   hasSecondaryTzTimes,
-  colWidths,
-  colRefs
+  colRefs,
+  ...otherProps
 }) {
-  
-  const commonAttrs = {
-    date,
-    hasEarningCols,
-    hasSecondTzCol,
-    colWidths,
-  };
-
-  const style = getStyle(styleProp, colWidths);
 
   return (
     <>
       <Thead
         {...{
-          ...commonAttrs,
           hasTimes,
           primaryTimezone,
           secondaryTimezone,
           hasSecondaryTzTimes,
           colRefs,
         }}
+        {...otherProps}
       />
       <tbody>
         {rowGroups.map(
           ({ rows, hasTimes: groupHasTimes = hasTimes }, index) => (
             <RowsGroup
               key={index}
-              {...commonAttrs}
+              {...otherProps}
               {...{ rows }}
               hasTimes={groupHasTimes}
               hasSecondaryTzTimes={groupHasTimes && hasSecondaryTzTimes}
@@ -56,4 +41,4 @@ function Table({
   );
 }
 
-export default Table;
+export default WideScreenTableContent;
