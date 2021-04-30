@@ -39,8 +39,6 @@ class Reports extends Component {
     } = this.props;
     const { processedTimeData } = this.state;
 
-    console.log(processedTimeData)
-
     const style = getStyle(styleProp);
     
     return (

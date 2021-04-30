@@ -1,6 +1,7 @@
 import React from 'react';
-import Thead from './Head';
-import RowsGroup from './RowsGroup';
+import Thead from '../Head';
+import RowsGroup from '../RowsGroup';
+import Row from './Row';
 
 function WideScreenTableContent({
   rowGroups,
@@ -31,6 +32,7 @@ function WideScreenTableContent({
               key={index}
               {...otherProps}
               {...{ rows }}
+              RowComponent={Row}
               hasTimes={groupHasTimes}
               hasSecondaryTzTimes={groupHasTimes && hasSecondaryTzTimes}
             />

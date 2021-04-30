@@ -1,14 +1,14 @@
 import React from 'react';
-import Row from '../Row';
 
 function RowsGroup({
   rows,
+  RowComponent,
   ...otherProps
 }) {
 
   return rows.map(
     (rowData, index) => (
-      <Row
+      <RowComponent
         key={index}
         {...{
           rowData,

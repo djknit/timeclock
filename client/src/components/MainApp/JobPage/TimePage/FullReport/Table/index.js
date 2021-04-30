@@ -43,12 +43,13 @@ class Table extends Component {
       secondaryTimezone,
       colWidths,
       widthLevel,
+      tableRef,
       ...otherProps
     } = this.props
     const {
       hasSecondaryTzTimes = primaryTimezone !== secondaryTimezone
     } = this.props;
-    const { tableRef, colRefs } = this;
+    const { colRefs } = this;
 
     const style = getStyle(styleProp, colWidths);
 

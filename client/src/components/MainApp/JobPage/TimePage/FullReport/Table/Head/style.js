@@ -1,4 +1,4 @@
-import { labelWeight, contentAreaDividerColor, cellXPadding, cellYPadding } from '../style';
+import { labelWeight, contentAreaDividerColor, cellXPadding, cellYPadding } from '../WideScreen/style';
 
 const bottomBorderWidth = '1.5px';
 

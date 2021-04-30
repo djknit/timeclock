@@ -1,28 +1,22 @@
 import React from 'react';
 import getStyle from './style';
-import Thead from './Head';
-import RowsGroup from './RowsGroup';
+import Thead from '../Head';
+import RowsGroup from '../RowsGroup';
+import Row from './Row';
 
 function Table({
   rowGroups,
   hasTimes,
-  hasSecondTzCol,
-  hasEarningCols,
-  date,
-  style: styleProp,
-  hasSecondaryTzTimes: hasSecondTzTimesProp,
   primaryTimezone,
   secondaryTimezone,
   hasSecondaryTzTimes,
-  colWidths,
-  colRefs
+  colRefs,
+  ...otherProps
 }) {
   
   const commonAttrs = {
-    date,
-    hasEarningCols,
-    hasSecondTzCol,
-    colWidths,
+    ...otherProps,
+    hasSecondTzCol: false
   };
 
   // const style = getStyle(styleProp, colWidths);
@@ -46,6 +40,7 @@ function Table({
               key={index}
               {...commonAttrs}
               {...{ rows }}
+              RowComponent={Row}
               hasTimes={groupHasTimes}
               hasSecondaryTzTimes={groupHasTimes && hasSecondaryTzTimes}
             />
