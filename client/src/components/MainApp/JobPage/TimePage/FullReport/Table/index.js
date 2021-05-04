@@ -5,6 +5,7 @@ import WideScreen from './WideScreen';
 import MediumScreen from './MediumScreen';
 
 const mainComponentsByWidthLevel = [WideScreen, MediumScreen];
+const numWidthLevels = mainComponentsByWidthLevel.length;
 
 class Table extends Component {
   constructor() {
@@ -41,7 +42,7 @@ class Table extends Component {
       style: styleProp,
       primaryTimezone,
       secondaryTimezone,
-      colWidths,
+      tableWidth,
       widthLevel,
       tableRef,
       ...otherProps
@@ -51,11 +52,11 @@ class Table extends Component {
     } = this.props;
     const { colRefs } = this;
 
-    const style = getStyle(styleProp, colWidths);
+    const style = getStyle(styleProp, tableWidth);
 
-    const TableContent = mainComponentsByWidthLevel[widthLevel] || (() => (<></>));
+    const TableContent = mainComponentsByWidthLevel[widthLevel];
 
-    return (
+    return TableContent && (
       <table className="table" style={style.table} ref={tableRef}>
         <TableContent
           {...otherProps}
@@ -63,7 +64,6 @@ class Table extends Component {
             primaryTimezone,
             secondaryTimezone,
             colRefs,
-            colWidths, 
             hasSecondaryTzTimes
           }}
         />
@@ -73,3 +73,5 @@ class Table extends Component {
 }
 
 export default Table;
+
+export { numWidthLevels };

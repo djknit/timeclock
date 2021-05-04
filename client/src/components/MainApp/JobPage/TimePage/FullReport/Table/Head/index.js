@@ -22,7 +22,7 @@ function Thead({
   if (hasTimes) {
     firstColLabel = (
       primaryTzLabel ||
-      `Times (${getTimezoneAbbreviation(primaryTimezone)})`
+      `Times (${getTimezoneAbbreviation(primaryTimezone, date)})`
     );
     lastColLabel = (
       secondaryTzLabel ||

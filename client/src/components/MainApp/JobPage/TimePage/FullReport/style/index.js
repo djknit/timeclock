@@ -7,7 +7,7 @@ export * from './tableAreas';
 NOTE: the element containing this component must be positioned for all styles to work
 */
 
-export default function getStyle(styleProp, isSettingWidths) {
+export default function getStyle(styleProp, isSettingWidths, tableWidth) {
 
   const borderStyle = `calc(${largestDividerHeight} * 1.16) solid ${contentAreaDividerColor}`;
 

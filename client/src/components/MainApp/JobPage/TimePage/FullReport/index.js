@@ -1,18 +1,23 @@
 import React, { Component } from 'react';
 import getStyle, { tableAreaStyleVars } from './style';
 import { currentJobTimeService, windowWidthService } from '../../../../../data';
-import { getNumTablesInReport, getWidthOfEl } from './utilities';
+import { getNumTablesInReport, getWidthOfEl, processTimeForReport } from './utilities';
+import { numWidthLevels } from './Table';
 import Week from './Week';
 import Totals from './Totals';
 
 const { pxWidthUnavailableToTables } = tableAreaStyleVars;
 
+function getTimeDataState() {
+  return { processedTimeData: processTimeForReport(currentJobTimeService.getValue()) };
+};
+
 class FullReport extends Component {
-  constructor() {
-    super();
-    this.setStateThenWidth = this.setStateThenWidth.bind(this);
+  constructor(props) {
+    super(props);
     this.registerColWidthsGetter = this.registerColWidthsGetter.bind(this);
     this.unregisterColWidthsGetter = this.unregisterColWidthsGetter.bind(this);
+    this.handleTimeDataChange = this.handleTimeDataChange.bind(this);
     this.setWidths = this.setWidths.bind(this);
     this.setTableColWidths = this.setTableColWidths.bind(this);
     this.ensureTableFits = this.ensureTableFits.bind(this);
@@ -20,35 +25,44 @@ class FullReport extends Component {
     this.tableRef = React.createRef();
     this.wholeReportRef = React.createRef();
     this.state = {
-      colWidths: undefined,
+      ...getTimeDataState(),
       colWidthsGetters: [],
-      otherWidths: undefined,
       isSettingWidths: false,
-      tableWidthLevel: 0
+      colWidths: undefined,
+      tableWidth: undefined,
+      tableWidthLevel: 0,
+      setWidthsTries: 0
     };
   };
 
-  setStateThenWidth(stateUpdatesArg) {
-    this.setState(stateUpdatesArg, this.setWidths);
-  };
-
   registerColWidthsGetter(getColWidthsForTable) {
-    this.setStateThenWidth(({ colWidthsGetters }) => ({
+    this.setState(({ colWidthsGetters }) => ({
       colWidthsGetters: [...colWidthsGetters, getColWidthsForTable]
     }));
   };
 
   unregisterColWidthsGetter(getColWidthsForTable) {
-    this.setStateThenWidth(({ colWidthsGetters }) => ({
+    this.setState(({ colWidthsGetters }) => ({
       colWidthsGetters: colWidthsGetters.filter(fxn => fxn !== getColWidthsForTable)
     }));
   };
 
+  handleTimeDataChange() {
+    this.setState(getTimeDataState(), this.setWidths);
+  };
+
   setWidths() {
-    const { props, state } = this;
-    if (state.colWidthsGetters.length !== getNumTablesInReport(props.processedTimeData)) return;
-    if (state.colWidths || state.otherWidths || !state.isSettingWidths) {
-      return this.setStateThenWidth({ colWidths: undefined, otherWidths: undefined, isSettingWidths: true });
+    const { state } = this;
+    let { setWidthsTries } = state;
+    if (++setWidthsTries > 6) {
+      return this.setState({ isSettingWidths: false, setWidthsTries: 0 });
+    }
+    const hasGetters = state.colWidthsGetters.length === getNumTablesInReport(state.processedTimeData);
+    if (state.colWidths || state.tableWidth || !state.isSettingWidths || !hasGetters) {
+      const stateUpdates = {
+        colWidths: undefined, tableWidth: undefined, isSettingWidths: true, setWidthsTries
+      };
+      return this.setState(stateUpdates, this.setWidths);
     }
     this.setTableColWidths().then(this.ensureTableFits);
   };
@@ -65,24 +79,27 @@ class FullReport extends Component {
 
   ensureTableFits() {
     const availableWidth = getWidthOfEl(this.wholeReportRef) - pxWidthUnavailableToTables - 3;
-    if (getWidthOfEl(this.tableRef) > availableWidth) {
-      return this.setStateThenWidth({ tableWidthLevel: this.state.tableWidthLevel + 1 });
+    let { tableWidthLevel } = this.state;
+    const tableWidth = getWidthOfEl(this.tableRef);
+    if (tableWidth > availableWidth && ++tableWidthLevel < numWidthLevels) {
+      return this.setState({ tableWidthLevel, setWidthsTries: 0 }, this.setWidths);
     }
-    this.setState({ isSettingWidths: false });
+    this.setState({ tableWidth, isSettingWidths: false, setWidthsTries: 0 });
   };
 
   resetWidths() {
-    return this.setStateThenWidth({ tableWidthLevel: 0 });
+    this.setState({ tableWidthLevel: 0 }, this.setWidths);
   };
 
   componentDidMount() {
-    currentJobTimeService.subscribe(this.setWidths);
+    this.setWidths();
     windowWidthService.subscribe(this.resetWidths);
+    currentJobTimeService.subscribe(this.handleTimeDataChange);
   };
 
   componentWillUnmount() {
-    currentJobTimeService.unsub(this.setWidths);
     windowWidthService.unsub(this.resetWidths);
+    currentJobTimeService.unsub(this.handleTimeDataChange);
   };
 
   render() {
@@ -90,9 +107,15 @@ class FullReport extends Component {
       registerColWidthsGetter, unregisterColWidthsGetter, wholeReportRef, tableRef
     } = this;
     const {
-      processedTimeData, dateRange, style: styleProp
+      dateRange, style: styleProp
     } = this.props;
-    const { colWidths, isSettingWidths, tableWidthLevel } = this.state;
+    const {
+      colWidths,
+      tableWidth,
+      isSettingWidths,
+      tableWidthLevel,
+      processedTimeData
+    } = this.state;
 
     if (!processedTimeData) {
       return (<></>);
@@ -113,10 +136,11 @@ class FullReport extends Component {
       tableColWidths: colWidths, 
       registerColWidthsGetter,
       unregisterColWidthsGetter,
-      tableWidthLevel
+      tableWidthLevel,
+      tableWidth
     };
   
-    const style = getStyle(styleProp, isSettingWidths);
+    const style = getStyle(styleProp, isSettingWidths, tableWidth);
   
     return (
       <article style={style.wholeReport} ref={wholeReportRef}>

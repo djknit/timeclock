@@ -6,9 +6,12 @@ import {
 } from '../utilities';
 import getStyle from './style';
 import Times from '../../Times';
+import TwoTzTimes from '../../TwoTzTimes';
 
 function Row({
   hasTimes,
+  primaryTimezone,
+  secondaryTimezone,
   hasSecondTzCol,
   hasSecondaryTzTimes,
   hasEarningCols,
@@ -37,9 +40,17 @@ function Row({
     <tr style={style.tr}>
       <td style={hasTimes ? style.timesTd : style.firstColNoTimes}>
         {(hasTimes && hasSecondaryTzTimes && (
-          <Times {...sessTzTimes} {...commonTimesAttrs} />
+          <TwoTzTimes
+            {...{
+              primaryTimezone,
+              secondaryTimezone
+            }}
+            primaryTimezoneTimes={sessTzTimes}
+            secondaryTimezoneTimes={jobTzTimes}
+            {...commonTimesAttrs}
+          />
         )) ||
-        (hasTimes && hasSecondaryTzTimes && (
+        (hasTimes && (
           <Times {...sessTzTimes} {...commonTimesAttrs} />
         )) ||
         (rowLabel && (

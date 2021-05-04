@@ -19,7 +19,12 @@ function Day({
   tableWidthLevel,
   tableColWidths,
   ...otherProps
-}) { 
+}) {
+
+  const segsRowGroups = (
+    (segments && segments.length > 0) ? [{ hasTimes: true, rows: segments }] : []
+  );
+  const totalsRowGroup = { hasTimes: false, rows: [{ rowLabel: 'Day Total', ...totals }] };
 
   const style = getStyle();
   const headerStyleVars = getHeaderStyleVars();
@@ -40,16 +45,7 @@ function Day({
         secondaryTimezone={officialTimezone}
         {...{ date }}
         {...otherProps}
-        rowGroups={[
-          {
-            rows: segments,
-            hasTimes: true,
-          },
-          {
-            rows: [{ rowLabel: 'Day Total', ...totals }],
-            hasTimes: false,
-          }
-        ]}
+        rowGroups={[ ...segsRowGroups, totalsRowGroup ]}
         style={style.table}
         widthLevel={tableWidthLevel}
         colWidths={tableColWidths}

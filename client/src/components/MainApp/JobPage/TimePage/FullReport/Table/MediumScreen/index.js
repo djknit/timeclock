@@ -1,5 +1,6 @@
 import React from 'react';
-import getStyle from './style';
+// import getStyle from './style';
+// import { getTimezoneAbbreviation } from './utilities';
 import Thead from '../Head';
 import RowsGroup from '../RowsGroup';
 import Row from './Row';
@@ -7,8 +8,6 @@ import Row from './Row';
 function Table({
   rowGroups,
   hasTimes,
-  primaryTimezone,
-  secondaryTimezone,
   hasSecondaryTzTimes,
   colRefs,
   ...otherProps
@@ -19,6 +18,7 @@ function Table({
     hasSecondTzCol: false
   };
 
+  const primaryTzLabel = hasTimes && hasSecondaryTzTimes && 'Times';
   // const style = getStyle(styleProp, colWidths);
 
   return (
@@ -27,10 +27,9 @@ function Table({
         {...{
           ...commonAttrs,
           hasTimes,
-          primaryTimezone,
-          secondaryTimezone,
           hasSecondaryTzTimes,
           colRefs,
+          primaryTzLabel
         }}
       />
       <tbody>
