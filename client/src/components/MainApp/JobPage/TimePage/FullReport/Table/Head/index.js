@@ -22,11 +22,11 @@ function Thead({
   if (hasTimes) {
     firstColLabel = (
       primaryTzLabel ||
-      `Times (${getTimezoneAbbreviation(primaryTimezone, date)})`
+      `Times (${getTimezoneAbbreviation(primaryTimezone, date, true)})`
     );
     lastColLabel = (
       secondaryTzLabel ||
-      `Job Timezone (${getTimezoneAbbreviation(secondaryTimezone, date)})`
+      `Job Timezone (${getTimezoneAbbreviation(secondaryTimezone, date, true)})`
     );
   }
 

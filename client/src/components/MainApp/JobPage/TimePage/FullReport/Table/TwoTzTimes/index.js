@@ -1,11 +1,8 @@
 import React from 'react';
 import getStyle from './style';
-import {
-  getTimezoneAbbreviation, getClickableElAttrs
-} from '../utilities';
+import { getClickableElAttrs } from '../utilities';
 import { addCollapsing, addPseudoPseudoClasses } from '../../../../../../higherOrder';
 import Times from '../Times';
-
 
 function _TwoTzTimes_needsCollapsingAndPseudo({
   dayDate,
@@ -26,15 +23,14 @@ function _TwoTzTimes_needsCollapsingAndPseudo({
       <Times
         {...primaryTimezoneTimes}
         {...{ dayDate }}
+        timezone={primaryTimezone}
       />
-      {getTimezoneAbbreviation(primaryTimezone)}
       <i
         className="fas fa-chevron-up"
         style={style.togglerArrow}
         {...pseudoHandlers}
         {...getClickableElAttrs(contentToggle.toggle, disabled)}
       />
-      <br />
       <span
         style={style.dropdownContainer}
         ref={contentToggle.containerRef}
@@ -42,8 +38,8 @@ function _TwoTzTimes_needsCollapsingAndPseudo({
         <Times
           {...secondaryTimezoneTimes}
           {...{ dayDate }}
+          timezone={secondaryTimezone}
         />
-        {getTimezoneAbbreviation(secondaryTimezone)}
       </span>
     </>
   );

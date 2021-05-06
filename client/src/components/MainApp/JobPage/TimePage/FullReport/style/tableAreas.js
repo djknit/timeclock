@@ -5,7 +5,7 @@ const widthVars = {
   bLevelAreaLeftPxPadding: _bLevelXPadding,
   bLevelAreaRightPxPadding: _bLevelXPadding,
   tableLeftPxMargin: 20,
-  tableRightPxMargin: 0
+  tableRightPxMargin: 10
 }
 const allUnusableWidths = [...Object.values(widthVars), (2 * contentAreaPadding)];
 

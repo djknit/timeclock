@@ -1,12 +1,15 @@
 export default function getStyle(togglerPseudoState, toggleStyles) {
   
+  const arrowWidth = '1em';
   
   return {
     togglerArrow: {
-      ...toggleStyles.toggle
+      ...toggleStyles.toggle,
+      width: arrowWidth,
+      verticalAlign: 'bottom'
     },
     dropdownContainer: {
-      display: 'inline-block',
+      display: 'block',
       ...toggleStyles.container
     }
   };

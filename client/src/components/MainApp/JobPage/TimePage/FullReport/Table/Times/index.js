@@ -1,9 +1,12 @@
 import React from 'react';
 import getStyle, { getDateStyle } from './style';
-import { formatSegmentTimesForReportTable } from '../utilities';
+import {
+  formatSegmentTimesForReportTable, getTimezoneAbbreviation
+} from '../utilities';
 
 function Times({
   dayDate,
+  timezone, // only include if using `TwoTzTimes` component
   ...unformattedTimes
 }) {
 
@@ -11,18 +14,23 @@ function Times({
     startTime, endTime
   } = formatSegmentTimesForReportTable(unformattedTimes, dayDate);
 
-  const style = getStyle();
+  const style = getStyle(timezone);
 
   return (
     <>
       <TimeAndDateDisplay timeInfo={startTime} style={style.startTime} />
       &nbsp;&ndash;&nbsp;
-      <TimeAndDateDisplay timeInfo={endTime} style={style.endTime} />
+      <TimeAndDateDisplay
+        timeInfo={endTime}
+        style={style.endTime}
+        {...{ timezone }}
+      />
     </>
   );
 }
 
 export default Times;
+
 
 function DateDisplay({ date }) { // already formatted date
   const style = getDateStyle();
@@ -33,10 +41,18 @@ function DateDisplay({ date }) { // already formatted date
   );
 }
 
-function TimeAndDateDisplay({ timeInfo, style }) {
+function TimeAndDateDisplay({ timeInfo, style, timezone }) {
+  const { date } = timeInfo;
+
+  const dateDisp = <DateDisplay {...{ date }} />;
+
+  const tzDisp = timezone && (
+    <>&nbsp;{getTimezoneAbbreviation(timezone, date, true)}</>
+  );
+
   return (
     <span {...{ style }}>
-      {timeInfo.time}<DateDisplay date={timeInfo.date} />
+      {timeInfo.time}{dateDisp}{tzDisp}
     </span>
   );
 }
