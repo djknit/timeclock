@@ -1,3 +1,5 @@
+import { getArrowStylesForPseudoClassState } from '../style';
+
 export default function getStyle(togglerPseudoState, toggleStyles) {
   
   const arrowWidth = '1em';
@@ -6,11 +8,13 @@ export default function getStyle(togglerPseudoState, toggleStyles) {
     togglerArrow: {
       ...toggleStyles.toggle,
       width: arrowWidth,
-      verticalAlign: 'bottom'
+      verticalAlign: 'bottom',
+      ...getArrowStylesForPseudoClassState(togglerPseudoState)
     },
     dropdownContainer: {
       display: 'block',
-      ...toggleStyles.container
+      ...toggleStyles.container,
+      paddingRight: arrowWidth
     }
   };
 };
