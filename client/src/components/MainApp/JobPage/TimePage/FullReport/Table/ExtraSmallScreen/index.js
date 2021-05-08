@@ -5,7 +5,7 @@ import Thead from '../Head';
 import RowsGroup from '../RowsGroup';
 import Row from './Row';
 
-function MediumWidthTableContent({
+function ExtraSmallWidthTableContent({
   rowGroups,
   hasTimes,
   hasSecondaryTzTimes,
@@ -50,4 +50,4 @@ function MediumWidthTableContent({
   );
 }
 
-export default MediumWidthTableContent;
+export default ExtraSmallWidthTableContent;
