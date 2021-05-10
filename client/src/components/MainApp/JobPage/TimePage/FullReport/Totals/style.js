@@ -1,5 +1,9 @@
 import {
-  tableAreaStyleVars, topLevelAreaHeaderStyle, secondLevelHeaderStyle
+  tableAreaStyleVars,
+  topLevelTotalsHeaderStyle,
+  topLevelTotalsHeaderStyleVars,
+  secondLevelTotalsHeaderStyle,
+  secondLevelTotalsHeaderStyleVars
 } from '../style';
 
 const {
@@ -11,10 +15,19 @@ export default function getStyle(isReportTotals) {
   if (isReportTotals) _tableMarginLeft += bLevelAreaLeftPxPadding;
   return {
     table: {
-      marginBottom: marginBetweenAreas,
+      marginBottom: !isReportTotals ? marginBetweenAreas : undefined,
       marginLeft: _tableMarginLeft,
       marginRight: tableRightPxMargin
     },
-    areaHeader: isReportTotals ? topLevelAreaHeaderStyle : secondLevelHeaderStyle
+    areaHeader: isReportTotals ? topLevelTotalsHeaderStyle : secondLevelTotalsHeaderStyle
   };
 };
+
+export { getHeaderStyleVars };
+
+
+function getHeaderStyleVars(isReportTotals) {
+  return {
+    ...(isReportTotals ? topLevelTotalsHeaderStyleVars : secondLevelTotalsHeaderStyleVars)
+  };
+}

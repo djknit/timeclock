@@ -1,5 +1,5 @@
 import React from 'react';
-import getStyle from './style';
+import getStyle, { getHeaderStyleVars } from './style';
 import { getTotalsRowGroups } from '../utilities';
 import TableAreaHeader from '../TableAreaHeader';
 import Table from '../Table';
@@ -9,13 +9,14 @@ function Totals({
   areaLabel = "Totals",
   reportHasPaidTime,
   reportHasMultipleTimezones,
-  registerWidthsGetter,
-  unregisterWidthsGetter,
   tableColWidths: colWidths,
-  isReportTotals
+  isReportTotals,
+  tableWidthLevel,
+  ...otherProps
 }) {
-
+  
   const style = getStyle(isReportTotals);
+  const headerStyleVars = getHeaderStyleVars(isReportTotals);
   
   return (
     <Container {...{ isReportTotals }}>
@@ -24,6 +25,7 @@ function Totals({
         style={style.areaHeader}
         {...{ isReportTotals }}
         isTotals
+        styleVars={headerStyleVars}
       />
       <Table
         hasTimes={false}
@@ -32,11 +34,9 @@ function Totals({
         hasEarningCols={reportHasPaidTime}
         rowGroups={getTotalsRowGroups({ totals, reportHasPaidTime })}
         style={style.table}
-        {...{
-          colWidths,
-          registerWidthsGetter,
-          unregisterWidthsGetter
-        }}
+        {...{ colWidths }}
+        widthLevel={tableWidthLevel}
+        {...otherProps}
       />
     </Container>
   ); 
@@ -52,6 +52,6 @@ function Container({
   return isReportTotals ? (
     <section {...props} />
   ) : (
-    props.children
+    <>{props.children}</>
   );
 }

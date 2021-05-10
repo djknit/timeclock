@@ -6,6 +6,7 @@ export default function getStyle(styleProp, colWidths = {}, isFirstRowInGroup) {
   const td = {
     borderColor: contentAreaDividerColor,
     borderWidth: `${borderTopPxWidth}px 0 0`,
+    whiteSpace: 'nowrap',
     padding: `${cellYPadding} ${cellXPadding}`
   };
   const numAmountTd = {

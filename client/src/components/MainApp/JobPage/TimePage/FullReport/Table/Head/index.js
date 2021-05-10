@@ -14,20 +14,21 @@ function Thead({
   hasSecondaryTzTimes,
   colRefs,
   colWidths,
-  style: styleProp
+  style: styleProp,
+  isTwoCol,
+  twoColValuesLabel = 'Values'
 }) {
 
   let firstColLabel, lastColLabel;
 
+  const _getTzAbbrev = _tzName => getTimezoneAbbreviation(_tzName, date, true);
+
   if (hasTimes) {
     firstColLabel = (
       primaryTzLabel ||
-      `Times (${getTimezoneAbbreviation(primaryTimezone)})`
+      (hasSecondaryTzTimes ? 'Times' : `Times ${_getTzAbbrev(primaryTimezone)}`)
     );
-    lastColLabel = (
-      secondaryTzLabel ||
-      `Job Timezone (${getTimezoneAbbreviation(secondaryTimezone, date)})`
-    );
+    lastColLabel = secondaryTzLabel || `Job Timezone (${_getTzAbbrev(secondaryTimezone)})`;
   }
 
   const style = getStyle(styleProp, colWidths);
@@ -39,7 +40,7 @@ function Thead({
           {firstColLabel}
         </th>
         <th style={style.durationTh} ref={colRefs.duration}>
-          Hours Worked
+          {isTwoCol ? twoColValuesLabel : 'Hours Worked'}
         </th>
         {hasEarningCols && (
           <>

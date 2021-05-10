@@ -1,24 +1,28 @@
 const mainLineHeight = 1.5; // matches parent elements. Defined here b/c it's needed for date span
 
-export default function getStyle() {
+export default function getStyle(timezone) {
   
-  const dateTextStyle = {
+  const timeAndDateStyle = {
     display: 'inline-block',
     lineHeight: mainLineHeight,
-    width: 104 // needs updated if other styles change. should replace w/ a calculation
+    width: '6.5em' // needs updated if other styles or content change. should maybe replace w/ a calculation?
   };
 
   return {
     startTime: {
-      ...dateTextStyle,
+      ...timeAndDateStyle,
       textAlign: 'right'
     },
     endTime: {
-      ...dateTextStyle,
-      textAlign: 'left'
+      ...timeAndDateStyle,
+      textAlign: 'left',
+      width: timezone ? `calc(${timeAndDateStyle.width} + 3.5em)` : timeAndDateStyle.width
     }
   };
 };
+
+export { getDateStyle };
+
 
 function getDateStyle() {
 
@@ -27,7 +31,7 @@ function getDateStyle() {
 
   const parentEmHeight = mainLineHeight * (1 / emFontSize);
   const thisEmHeight = lineHeight;
-  const yPadding = `${(parentEmHeight - thisEmHeight) / 2}em`;
+  const yPadding = `${(parentEmHeight - thisEmHeight) / 2}em`
 
   return {
     span: {
@@ -40,5 +44,3 @@ function getDateStyle() {
     }
   };
 }
-
-export { getDateStyle };
