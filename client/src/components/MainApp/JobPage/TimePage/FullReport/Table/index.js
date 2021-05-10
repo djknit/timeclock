@@ -5,6 +5,7 @@ import WideScreen from './WideScreen';
 import MediumScreen from './MediumScreen';
 
 const mainComponentsByWidthLevel = [WideScreen, MediumScreen];
+const numWidthLevels = mainComponentsByWidthLevel.length;
 
 class Table extends Component {
   constructor() {
@@ -21,8 +22,9 @@ class Table extends Component {
 
   getColWidths() {
     let colWidths = {};
-    for (const colName in this.colRefs) {
-      colWidths[colName] = getWidthOfEl(this.colRefs[colName]) + 2;
+    for (const [colName, colCellRef] of Object.entries(this.colRefs)) {
+      const measuredWidth = getWidthOfEl(colCellRef);
+      colWidths[colName] = measuredWidth && measuredWidth + 2;
     }
     return colWidths;
   };
@@ -36,43 +38,32 @@ class Table extends Component {
   }
 
   render() {
-    const {
+    const { 
       style: styleProp,
-      hasSecondaryTzTimes: hasSecondTzTimesProp,
       primaryTimezone,
       secondaryTimezone,
-      colWidths,
-      widthLevel // which component is needed for screen size (0 is largest, then 1, etc.)
+      tableWidth,
+      widthLevel,
+      tableRef,
+      ...otherProps
     } = this.props
-    const { tableRef, colRefs } = this;
+    const {
+      hasSecondaryTzTimes = primaryTimezone !== secondaryTimezone
+    } = this.props;
+    const { colRefs } = this;
 
-    const hasSecondaryTzTimes = (
-      hasSecondTzTimesProp === undefined ?
-      primaryTimezone !== secondaryTimezone :
-      hasSecondTzTimesProp
-    );
+    const style = getStyle(styleProp, tableWidth);
 
-    const commonAttrs = {
-      ...this.props,
-      colRefs,
-      hasSecondaryTzTimes
-    };
+    const TableContent = mainComponentsByWidthLevel[widthLevel];
 
-    const style = getStyle(styleProp, colWidths);
-
-    return (
+    return TableContent && (
       <table className="table" style={style.table} ref={tableRef}>
-        {widthLevel === 0 && (
-          <WideScreen {...commonAttrs} />
-        ) || widthLevel === 1 && (
-          <MediumScreen {...commonAttrs} />
-        ) || (
-          <></>
-          )}
         <TableContent
-          {...this.props}
+          {...otherProps}
           {...{
-            colRefs, 
+            primaryTimezone,
+            secondaryTimezone,
+            colRefs,
             hasSecondaryTzTimes
           }}
         />
@@ -83,11 +74,4 @@ class Table extends Component {
 
 export default Table;
 
-
-function TableContent({ widthLevel, ...props }) {
-  const MainContentComponent = mainComponentsByWidthLevel[widthLevel];
-  return (
-    <MainContentComponent {...props} />
-  );
-}
-{ }
+export { numWidthLevels };

@@ -5,7 +5,7 @@ import Thead from '../Head';
 import RowsGroup from '../RowsGroup';
 import Row from './Row';
 
-function MediumWidthTableContent({
+function SmallWidthTableContent({
   rowGroups,
   hasTimes,
   hasSecondaryTzTimes,
@@ -31,6 +31,7 @@ function MediumWidthTableContent({
           colRefs,
           primaryTzLabel
         }}
+        isTwoCol
       />
       <tbody>
         {rowGroups.map(
@@ -50,4 +51,4 @@ function MediumWidthTableContent({
   );
 }
 
-export default MediumWidthTableContent;
+export default SmallWidthTableContent;

@@ -1,4 +1,4 @@
-import { tableAreaStyleVars, secondLevelHeaderStyle } from '../style';
+import { tableAreaStyleVars, secondLevelHeaderStyle, secondLevelHeaderStyleVars } from '../style';
 
 const {
   marginBetweenAreas, tableLeftPxMargin, tableRightPxMargin
@@ -16,3 +16,10 @@ export default function getStyle() {
     }
   };
 };
+
+export { getHeaderStyleVars };
+
+
+function getHeaderStyleVars() {
+  return { ...secondLevelHeaderStyleVars };
+}

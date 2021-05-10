@@ -13,20 +13,8 @@ function Week({
     days,
     // weekDocId
   },
-  reportHasPaidTime,
-  reportHasMultipleTimezones,
-  registerColWidthsGetter,
-  unregisterColWidthsGetter,
-  tableColWidths
+  ...otherProps
 }) {
-
-  const commonTableAttrs = {
-    reportHasPaidTime,
-    reportHasMultipleTimezones,
-    registerColWidthsGetter,
-    unregisterColWidthsGetter,
-    tableColWidths
-  };
 
   const style = getStyle();
 
@@ -43,12 +31,12 @@ function Week({
         {days.map(day => (
           <Day
             key={day._id}
-            {...commonTableAttrs}
+            {...otherProps}
             {...{ day }}
           />
         ))}
         <Totals
-          {...commonTableAttrs}
+          {...otherProps}
           {...{ totals }}
           areaLabel={`Week ${weekNumber} Totals`}
         />

@@ -12,6 +12,7 @@ function Row({
   hasTimes,
   primaryTimezone,
   secondaryTimezone,
+  hasSecondTzCol,
   hasSecondaryTzTimes,
   hasEarningCols,
   rowData: {
@@ -83,6 +84,13 @@ function Row({
             </td>
           </>
         )
+      )}
+      {hasSecondTzCol && (
+        <td style={style.secondaryTzTimes}>
+          {hasTimes && hasSecondaryTzTimes && (
+            <Times {...jobTzTimes} {...commonTimesAttrs} />
+          )}
+        </td>
       )}
     </tr>
   );

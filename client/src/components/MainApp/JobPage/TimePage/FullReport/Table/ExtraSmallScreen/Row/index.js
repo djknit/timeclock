@@ -13,7 +13,7 @@ function Row({
   primaryTimezone,
   secondaryTimezone,
   hasSecondaryTzTimes,
-  hasEarningCols,
+  hasEarnings,
   rowData: {
     times: {
       sessionTimezone: sessTzTimes,
@@ -58,32 +58,29 @@ function Row({
       </td>
       <td style={style.durationTd}>
         {formatDurationForReportTable(duration)}
-      </td>
-      {hasEarningCols && (
-        amountEarned ? (
-          <>
+        {amountEarned && (
+          <i className="fas fa-chevron-up" onClick={() => {}} />
+        )}
+        {amountEarned ? (
+          <span style={style.valuesDropdownContainer} ref={''}>
             <td style={style.payRateTd}>
               {formatPayRateForReportTable(payRate)}
             </td>
             <td style={style.amountEarnedTd}>
               {formatAmountEarnedForReportTable(amountEarned)}
             </td>
-          </>
+          </span>
         ) : (
           <>
-            <td style={style.payRateTdUnpaid}>
-              {payRate === null && (
-                <> &mdash; </>
-              )}
-            </td>
-            <td style={style.amountEarnedTdUnpaid}>
-              {amountEarned === null && (
-                <> &mdash; </>
-              )} 
-            </td>
+            {/* {payRate === null && (
+              <> &mdash; </>
+            )}
+            {amountEarned === null && (
+              <> &mdash; </>
+            )}  */}
           </>
-        )
-      )}
+        )}
+      </td>
     </tr>
   );
 }
