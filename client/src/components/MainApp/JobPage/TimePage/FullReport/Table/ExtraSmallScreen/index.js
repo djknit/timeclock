@@ -39,6 +39,7 @@ function ExtraSmallWidthTableContent({
               key={index}
               {...commonAttrs}
               {...{ rows }}
+              hasEarningCols={false}
               RowComponent={Row}
               hasTimes={groupHasTimes}
               hasSecondaryTzTimes={groupHasTimes && hasSecondaryTzTimes}
