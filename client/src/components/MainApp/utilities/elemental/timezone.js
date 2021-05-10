@@ -20,8 +20,10 @@ function getTimezoneFullName(tzName) {
   return `${tzName} (${abbreviation})`;
 }
 
-function getTimezoneAbbreviation(zoneName, date) {
-  return moment.tz(date, zoneName).format('z');
+function getTimezoneAbbreviation(zoneName, date, isExtended) { // `isExtended` is only for zones whose abbrev is just the offset (eg. '-05')
+  const tzAbbrev = moment.tz(date, zoneName).format('z');
+  const isOffsetOnly = ['+', '-'].includes(tzAbbrev[0]);
+  return (isExtended && isOffsetOnly) ? `GMT${tzAbbrev}` : tzAbbrev;
 }
 
 export {

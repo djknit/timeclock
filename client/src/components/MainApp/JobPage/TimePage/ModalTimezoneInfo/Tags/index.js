@@ -17,7 +17,7 @@ function _Tags_needsPseudo({
   pseudoHandlers
 }) {
 
-  const tzAbbreviation = getTimezoneAbbreviation(sessionTimezone);
+  const tzAbbreviation = getTimezoneAbbreviation(sessionTimezone, undefined, true);
 
   const commonBtnTagAttrs = {
     disabled,

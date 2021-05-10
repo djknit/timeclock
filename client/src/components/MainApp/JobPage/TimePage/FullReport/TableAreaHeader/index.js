@@ -12,7 +12,7 @@ function TableAreaHeader({
 
   const style = getStyle(isReportTotals, styleProp);
   const headerStyleVars = getHeaderStyleVars(isTotals, styleVarsProp);
-  
+
   return (
     <InnerAreaHeader
       {...{ label }}
