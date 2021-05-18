@@ -63,12 +63,8 @@ function Row({
         )}
         {amountEarned ? (
           <span style={style.valuesDropdownContainer} ref={''}>
-            <td style={style.payRateTd}>
-              {formatPayRateForReportTable(payRate)}
-            </td>
-            <td style={style.amountEarnedTd}>
-              {formatAmountEarnedForReportTable(amountEarned)}
-            </td>
+            {formatPayRateForReportTable(payRate)}
+            {formatAmountEarnedForReportTable(amountEarned)}
           </span>
         ) : (
           <>

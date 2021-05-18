@@ -4,7 +4,8 @@ import {
   XtSp,
   formatTime,
   formatMyDate,
-  dates as dateUtils
+  dates as dateUtils,
+  getCurrencyAmountDisplay
 } from '../../utilities';
 export * from '../../utilities';
 
@@ -20,20 +21,29 @@ export {
 
 function formatDurationForReportTable(
   { durationInHours },
-  { decimalDigits = 3 } = {}
+  { decimalDigits = 3 } = {},
+  isSplit
 ) {
   const roundedDurationHrs = roundNumToNDecimalDigits(durationInHours, decimalDigits);
-  return `${roundedDurationHrs.toFixed(decimalDigits)} h`;
+  const strResult = `${roundedDurationHrs.toFixed(decimalDigits)} h`;
+  return isSplit ? strResult.split('.') : strResult;
 }
 
-function formatAmountEarnedForReportTable(amountVal) {
-  return amountVal && amountVal.display.standard;
+function formatAmountEarnedForReportTable(amountVal, isSplit) {
+  return amountVal && getCurrencyAmountDisplay(amountVal.raw, amountVal.currency, false, isSplit);
 }
 
-function formatPayRateForReportTable({ amount, /* isOvertime, currency */} = {}) {
-  return amount && (
-    <>{formatAmountEarnedForReportTable(amount)}&nbsp;/<XtSp/>h</>
-  );
+function formatPayRateForReportTable({ amount, /* isOvertime, currency */} = {}, isSplit) {
+  if (!amount) return amount;
+  const perHr = <>&nbsp;/<XtSp/>h</>;
+  let formattedAmount = formatAmountEarnedForReportTable(amount, isSplit);
+  if (Array.isArray(formattedAmount)) {
+    formattedAmount[1] = <>{formattedAmount[1]}{perHr}</>;
+  }
+  else {
+    formattedAmount = <>{formattedAmount}{perHr}</>;
+  }
+  return formattedAmount;
 }
 
 function formatSegmentTimesForReportTable({ startTime, endTime }, dayDate ) {
