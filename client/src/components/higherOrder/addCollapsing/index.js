@@ -121,6 +121,10 @@ function addCollapsing(ComponentToWrap, propName, isExpandedInitially, isToggleI
       return this.promiseToSetState({ ...initialState });
     };
 
+    componentDidMount() {
+      this.setHeight();
+    };
+
     render() {
 
       const {

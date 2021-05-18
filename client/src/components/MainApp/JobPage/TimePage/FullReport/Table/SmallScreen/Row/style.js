@@ -9,9 +9,9 @@ export default function getStyle(styleProp, colWidths = {}, isFirstRowInGroup) {
     whiteSpace: 'nowrap',
     padding: `${cellYPadding} ${cellXPadding}`
   };
-  const numAmountTd = {
-    ...td,
-    textAlign: 'right'
+
+  const amountValuePart = {
+    display: 'inline-block',
   };
 
   return {
@@ -29,31 +29,14 @@ export default function getStyle(styleProp, colWidths = {}, isFirstRowInGroup) {
       fontWeight: labelWeight,
       width: colWidths.times
     },
-    durationTd: {
-      ...numAmountTd,
-      width: colWidths.duration
-    },
-    payRateTd: {
-      ...numAmountTd,
-      width: colWidths.payRate
-    },
-    amountEarnedTd: {
-      ...numAmountTd,
-      width: colWidths.amountEarned
-    },
-    payRateTdUnpaid: {
-      ...numAmountTd,
-      paddingRight: `calc(${cellXPadding} + 1.5em)`,
-      width: colWidths.payRate
-    },
-    amountEarnedTdUnpaid: {
-      ...numAmountTd,
-      paddingRight: `calc(${cellXPadding} + 0.75em)`,
-      width: colWidths.amountEarned
-    },
-    secondaryTzTimes: {
+    amountsTd: {
       ...td,
-      width: colWidths.secondaryTzTimes
+      textAlign: 'right',
+      width: colWidths.amounts
     },
+    amountValueRightPart: {
+      ...amountValuePart,
+      textAlign: 'left',
+    }
   };
 };

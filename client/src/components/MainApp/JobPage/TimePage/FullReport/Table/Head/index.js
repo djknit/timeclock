@@ -26,7 +26,7 @@ function Thead({
   if (hasTimes) {
     firstColLabel = (
       primaryTzLabel ||
-      (hasSecondaryTzTimes ? 'Times' : `Times ${_getTzAbbrev(primaryTimezone)}`)
+      ((hasSecondaryTzTimes && !hasSecondTzCol) ? 'Times' : `Times (${_getTzAbbrev(primaryTimezone)})`)
     );
     lastColLabel = secondaryTzLabel || `Job Timezone (${_getTzAbbrev(secondaryTimezone)})`;
   }
