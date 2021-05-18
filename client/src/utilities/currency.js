@@ -3,9 +3,9 @@ import cc from 'currency-codes';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { XtSp } from './jsxPieces';
 
-function getCurrencyAmountInfo(rawAmount, currencyCode) {
+function getCurrencyAmountInfo(rawAmount, currencyCode, isSplit) {
   if (!rawAmount || !currencyCode) return null;
-  const numericDisplay = getCurrencyNumericDisplay(rawAmount, currencyCode);
+  const numericDisplay = getCurrencyNumericDisplay(rawAmount, currencyCode, isSplit);
   const standardDisplay = addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode);
   return {
     raw: rawAmount,
@@ -15,7 +15,8 @@ function getCurrencyAmountInfo(rawAmount, currencyCode) {
       short: addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode, true),
       standard: standardDisplay,
       long: <>{standardDisplay}&nbsp;{currencyCode}</>
-    }
+    },
+    currency: currencyCode
   };
 }
 
@@ -28,34 +29,33 @@ function getCurrencySymbol(currencyCode) {
   return getSymbolFromCurrency(currencyCode);
 }
 
-function getCurrencyNumericDisplay(amount, currencyCode) {
+function getCurrencyNumericDisplay(amount, currencyCode, isSplit) {
   const numDecimalDigits = getDecimalDigits(currencyCode || '');
-  return (
-    (numDecimalDigits || numDecimalDigits === 0) ?
-    amount.toFixed(numDecimalDigits) :
-    amount.toString()
-  );
+  const numAmountStr = amount.toFixed(numDecimalDigits);
+  return isSplit ? numAmountStr.split('.') : numAmountStr;
 }
 
 function addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode, isShort) {
   const currencySymbol = getCurrencySymbol(currencyCode);
+  if (!currencySymbol) return numericDisplay;
+  const preNumContent = <>{currencySymbol}{!isShort && <XtSp />}</>;
   return (
-    currencySymbol ?
-    <>{currencySymbol}{!isShort && <XtSp />}{numericDisplay}</> :
-    numericDisplay
+    Array.isArray(numericDisplay) ?
+    [<>{preNumContent}{numericDisplay[0]}</>, numericDisplay[1]] :
+    <>{preNumContent}{numericDisplay}</>
   );
 };
 
-function getCurrencyAmountDisplay(amount, currencyCode, isShort) {
+function getCurrencyAmountDisplay(amount, currencyCode, isShort, isSplit) {
   // const numDecimalDigits = getDecimalDigits(currencyCode || '');
-  const numericDisplay = getCurrencyNumericDisplay(amount, currencyCode);
+  const numericDisplay = getCurrencyNumericDisplay(amount, currencyCode, isSplit);
   return addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode, isShort);
 }
 
-function getCurrencyAmountDisplayAndRounded(amount, currencyCode) {
-  const numericDisplay = getCurrencyNumericDisplay(amount, currencyCode);
+function getCurrencyAmountDisplayAndRounded(amount, currencyCode, isSplit) {
+  const numericDisplay = getCurrencyNumericDisplay(amount, currencyCode, isSplit);
   return {
-    rounded: parseFloat(numericDisplay),
+    rounded: parseFloat(Array.isArray(numericDisplay) ? numericDisplay.join('.') : numericDisplay),
     display: addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode)
   };
 }

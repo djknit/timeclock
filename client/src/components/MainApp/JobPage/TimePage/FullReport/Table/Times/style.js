@@ -16,7 +16,7 @@ export default function getStyle(timezone) {
     endTime: {
       ...timeAndDateStyle,
       textAlign: 'left',
-      width: timezone ? `calc(${timeAndDateStyle.width} + 3.5em)` : timeAndDateStyle.width
+      width: timezone ? `calc(${timeAndDateStyle.width} + 4.5em)` : timeAndDateStyle.width
     }
   };
 };

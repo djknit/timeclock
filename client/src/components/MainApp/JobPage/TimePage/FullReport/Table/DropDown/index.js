@@ -11,6 +11,8 @@ function _DropdownForTd_needsCollapsingAndPseudo({
   disabled
 }) {
 
+  console.log('td dd contentToggle:\n ', contentToggle);
+
   const style = getStyle(pseudoState, contentToggle.styles);
 
   return (

@@ -15,11 +15,15 @@ function getTimeDataState() {
 class FullReport extends Component {
   constructor(props) {
     super(props);
-    this.registerColWidthsGetter = this.registerColWidthsGetter.bind(this);
-    this.unregisterColWidthsGetter = this.unregisterColWidthsGetter.bind(this);
+    this.methodsRegMgmtFactory = this.methodsRegMgmtFactory.bind(this);
+    this.registerColWidthsGetter = this.methodsRegMgmtFactory('colWidthsGetters', false).bind(this);
+    this.unregisterColWidthsGetter = this.methodsRegMgmtFactory('colWidthsGetters', true).bind(this);
+    this.registerAmountRightWidthGetter = this.methodsRegMgmtFactory('amountDispRightWidthGetters', false).bind(this);
+    this.unregisterAmountRightWidthGetter = this.methodsRegMgmtFactory('amountDispRightWidthGetters', true).bind(this);
     this.handleTimeDataChange = this.handleTimeDataChange.bind(this);
     this.setWidths = this.setWidths.bind(this);
     this.setTableColWidths = this.setTableColWidths.bind(this);
+    this.setAmountDispRightWidth = this.setAmountDispRightWidth.bind(this);
     this.ensureTableFits = this.ensureTableFits.bind(this);
     this.resetWidths = this.resetWidths.bind(this);
     this.tableRef = React.createRef();
@@ -27,24 +31,26 @@ class FullReport extends Component {
     this.state = {
       ...getTimeDataState(),
       colWidthsGetters: [],
+      amountDispRightWidthGetters: [],
       isSettingWidths: false,
       colWidths: undefined,
       tableWidth: undefined,
+      amountDispRightWidth: undefined,
       tableWidthLevel: 0,
       setWidthsTries: 0
     };
   };
 
-  registerColWidthsGetter(getColWidthsForTable) {
-    this.setState(({ colWidthsGetters }) => ({
-      colWidthsGetters: [...colWidthsGetters, getColWidthsForTable]
-    }));
-  };
-
-  unregisterColWidthsGetter(getColWidthsForTable) {
-    this.setState(({ colWidthsGetters }) => ({
-      colWidthsGetters: colWidthsGetters.filter(fxn => fxn !== getColWidthsForTable)
-    }));
+  methodsRegMgmtFactory(methodsArrName, isUnregister) {
+    return function registerOrUnregisterMethod(method) {
+      this.setState(prevState => ({
+        [methodsArrName]: (
+          isUnregister ?
+          prevState[methodsArrName].filter(fxn => fxn !== method) :
+          [...prevState[methodsArrName], method]
+        )
+      }));
+    };
   };
 
   handleTimeDataChange() {
@@ -58,13 +64,19 @@ class FullReport extends Component {
       return this.setState({ isSettingWidths: false, setWidthsTries: 0 });
     }
     const hasGetters = state.colWidthsGetters.length === getNumTablesInReport(state.processedTimeData);
-    if (state.colWidths || state.tableWidth || !state.isSettingWidths || !hasGetters) {
+    console.log('full report > hasGetters: ', hasGetters)
+    const hasAnyWidthsSet = state.colWidths || state.tableWidth || state.amountDispRightWidth;
+    if (hasAnyWidthsSet || !state.isSettingWidths || !hasGetters) {
       const stateUpdates = {
-        colWidths: undefined, tableWidth: undefined, isSettingWidths: true, setWidthsTries
+        colWidths: undefined, tableWidth: undefined, isSettingWidths: true, setWidthsTries, amountDispRightWidth: undefined
       };
       return this.setState(stateUpdates, this.setWidths);
     }
     this.setTableColWidths().then(this.ensureTableFits);
+  };
+
+  setAmountDispRightWidth() {
+
   };
 
   setTableColWidths() { // (col width is set to the largest width needed by any table so all tables can have same widths)

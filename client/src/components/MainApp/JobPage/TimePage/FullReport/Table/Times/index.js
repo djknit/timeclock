@@ -47,7 +47,7 @@ function TimeAndDateDisplay({ timeInfo, style, timezone }) {
   const dateDisp = <DateDisplay {...{ date }} />;
 
   const tzDisp = timezone && (
-    <>&nbsp;{getTimezoneAbbreviation(timezone, date, true)}</>
+    <>&nbsp;({getTimezoneAbbreviation(timezone, date, true)})</>
   );
 
   return (
