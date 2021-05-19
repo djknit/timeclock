@@ -31,11 +31,11 @@ class Row extends Component {
   };
 
   componentDidMount() {
-    this.props.registerColWidthsGetter(this.getAmountDispRightWidth);
+    // register amountDispRightWidth getter (when this feature is implemented)
   };
 
   componentWillUnmount() {
-    this.props.unregisterColWidthsGetter(this.getAmountDispRightWidth);
+    // unregister amountDispRightWidth getter (when this feature is implemented)
   };
 
   render() {
@@ -63,6 +63,7 @@ class Row extends Component {
       colWidths
     } = this.props;
     const { amountColRightRefs } = this;
+    // console.log('colWidths: ', colWidths)
 
     const commonTimesAttrs = { dayDate: date };
     

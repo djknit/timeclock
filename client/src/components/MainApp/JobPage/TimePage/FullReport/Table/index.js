@@ -12,7 +12,8 @@ class Table extends Component {
   constructor() {
     super();
     this.getColWidths = this.getColWidths.bind(this);
-    this.getAmountsColRightWidth = this.getAmountsColRightWidth.bind(this);
+    this.getSimpleColWidths = this.getSimpleColWidths.bind(this);
+    this.getValueColWidth = this.getValueColWidth.bind(this);
     this.colRefs = {
       times: React.createRef(),
       duration: React.createRef(),
@@ -21,12 +22,27 @@ class Table extends Component {
       secondaryTzTimes: React.createRef(),
     };
     this.state = {
-      getAmountWidthTries: 0,
-      amountsColRightWidthGetters: []
+      getValueColWidthTries: 0,
+      valueColWidthGetters: [],
+      valueColRightWidthGetters: []
     };
   };
 
   getColWidths() {
+    return new Promise(resolve => {
+      if (this.state.valueColWidthGetters.length > 0) {
+        this.getValueColWidth().then(valueColWidth => {
+          resolve({
+            value: valueColWidth,
+            ...this.getSimpleColWidths()
+          });
+        });
+      }
+      else resolve(this.getSimpleColWidths());
+    });
+  };
+
+  getSimpleColWidths() {
     let colWidths = {};
     for (const [colName, colCellRef] of Object.entries(this.colRefs)) {
       const measuredWidth = getWidthOfEl(colCellRef);
@@ -35,21 +51,21 @@ class Table extends Component {
     return colWidths;
   };
 
-  getAmountsColRightWidth() {
+  getValueColWidth() {
     let numRows = 0;
     this.props.rowGroups.forEach(({ rows }) => numRows += rows.length);
-    let { getAmountWidthTries } = this.state;
-    if (++getAmountWidthTries > 5) {
-      this.setState({ getAmountWidthTries: 0 });
+    let { getValueColWidthTries } = this.state;
+    if (++getValueColWidthTries > 5) {
+      this.setState({ getValueColWidthTries: 0 });
       return null;
     }
-    const hasGetters = this.state.amountsColRightWidthGetters.length === numRows;
+    const hasGetters = this.state.valueColWidthGetters.length === numRows;
     const hasAnyWidthsSet = this.props.colWidths || this.props.amountDispRightWidth;
     if (hasAnyWidthsSet || !hasGetters) {
-      return this.setState({ getAmountWidthTries }, );
+      return this.setState({ getValueColWidthTries }, this.getValueColWidth);
     }
     let width;
-    this.state.amountsColRightWidthGetters.forEach(getAmountRightWidth => {
+    this.state.valueColWidthGetters.forEach(getAmountRightWidth => {
       width = Math.max(getAmountRightWidth(), width || 0);
     });
   };

@@ -1,11 +1,13 @@
 import React from 'react';
 import { formatMyDate } from '../../utilities';
+import { getTotalsRowGroups } from './totalsTableData';
 export * from '../../utilities';
 export * from './totalsTableData';
 
 export {
   getWeekDateRangeText,
   getNumTablesInReport,
+  getNumTableRowsInReport,
   getWidthOfEl
 };
 
@@ -34,6 +36,20 @@ function getNumTablesInReport(timeDataProcessedForReport) {
     totalNumberOfTables += (days.length + 1); // 1 table for each day and 1 week totals table
   });
   return totalNumberOfTables;
+}
+
+function getNumTableRowsInReport(timeDataProcessedForReport) {
+  if (!timeDataProcessedForReport || !timeDataProcessedForReport.weeks) {
+    return;
+  }
+  let totalNumTableRows = getTotalsRowGroups(timeDataProcessedForReport.totals).length;
+  timeDataProcessedForReport.weeks.forEach(({ days, totals }) => {
+    totalNumTableRows += getTotalsRowGroups(totals).length;
+    days.forEach(({ segments }) => {
+      totalNumTableRows += (segments.length + 1); // 1 day total row
+    });
+  });
+  return totalNumTableRows;
 }
 
 function getWidthOfEl(elRef) {

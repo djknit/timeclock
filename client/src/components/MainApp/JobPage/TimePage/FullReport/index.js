@@ -23,7 +23,6 @@ class FullReport extends Component {
     this.handleTimeDataChange = this.handleTimeDataChange.bind(this);
     this.setWidths = this.setWidths.bind(this);
     this.setTableColWidths = this.setTableColWidths.bind(this);
-    this.setAmountDispRightWidth = this.setAmountDispRightWidth.bind(this);
     this.ensureTableFits = this.ensureTableFits.bind(this);
     this.resetWidths = this.resetWidths.bind(this);
     this.tableRef = React.createRef();
@@ -76,17 +75,24 @@ class FullReport extends Component {
   };
 
   setAmountDispRightWidth() {
-
+    
   };
 
   setTableColWidths() { // (col width is set to the largest width needed by any table so all tables can have same widths)
-    let colWidths = {};
-    this.state.colWidthsGetters.forEach(getTableColWidths => {
-      for (const [colName, colWidth] of Object.entries(getTableColWidths())) {
-        colWidths[colName] = Math.max(colWidths[colName] || 0, colWidth);
-      }
+    return new Promise(resolve => {
+      let colWidths = {};
+      let numResponsesNeeded = this.state.colWidthsGetters.length;
+      this.state.colWidthsGetters.forEach(getTableColWidths => {
+        getTableColWidths().then(tableColWidths => {
+          for (const [colName, colWidth] of Object.entries(tableColWidths)) {
+            colWidths[colName] = Math.max(colWidths[colName] || 0, colWidth);
+          }
+          if (--numResponsesNeeded === 0) {
+            this.setState({ colWidths }, resolve);
+          }
+        });
+      });
     });
-    return new Promise(resolve => this.setState({ colWidths }, resolve));
   };
 
   ensureTableFits() {
@@ -151,6 +157,8 @@ class FullReport extends Component {
       tableWidthLevel,
       tableWidth
     };
+
+    console.log('time data for report:\n ', processedTimeData)
   
     const style = getStyle(styleProp, isSettingWidths, tableWidth);
   
