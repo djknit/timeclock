@@ -31,6 +31,10 @@ export default function getStyle(styleProp, colWidths = {}) {
       fontWeight: labelWeight,
       width: colWidths.times
     },
+    valuesTh: {
+      ...numAmountTh,
+      width: colWidths.values
+    },
     durationTh: {
       ...numAmountTh,
       width: colWidths.duration

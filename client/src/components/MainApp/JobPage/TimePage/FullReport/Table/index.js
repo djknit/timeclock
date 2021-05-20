@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import getStyle from './style';
-import { getWidthOfEl } from './utilities';
+import { getWidthOfEl, methodsRegMgmtFactory } from './utilities';
 import WideScreen from './WideScreen';
 import MediumScreen from './MediumScreen';
 import SmallScreen from './SmallScreen';
@@ -11,30 +11,33 @@ const numWidthLevels = mainComponentsByWidthLevel.length;
 class Table extends Component {
   constructor() {
     super();
+    this.registerValueColWidthGetter = methodsRegMgmtFactory('valueDdWidthGetters', false).bind(this);
+    this.unregisterValueColWidthGetter = methodsRegMgmtFactory('valueDdWidthGetters', true).bind(this);
     this.getColWidths = this.getColWidths.bind(this);
     this.getSimpleColWidths = this.getSimpleColWidths.bind(this);
-    this.getValueColWidth = this.getValueColWidth.bind(this);
+    this.getValueDdWidths = this.getValueDdWidths.bind(this);
     this.colRefs = {
       times: React.createRef(),
       duration: React.createRef(),
+      values: React.createRef(),
       payRate: React.createRef(),
       amountEarned: React.createRef(),
       secondaryTzTimes: React.createRef(),
     };
     this.state = {
-      getValueColWidthTries: 0,
-      valueColWidthGetters: [],
-      valueColRightWidthGetters: []
+      getValueDdWidthsTries: 0,
+      valueDdWidthGetters: [],
+      // valueColRightWidthGetters: []
     };
   };
 
   getColWidths() {
     return new Promise(resolve => {
-      if (this.state.valueColWidthGetters.length > 0) {
-        this.getValueColWidth().then(valueColWidth => {
+      if (this.state.valueDdWidthGetters.length > 0) {
+        this.getValueDdWidths().then(dropdownWidth => {
           resolve({
-            value: valueColWidth,
-            ...this.getSimpleColWidths()
+            ...this.getSimpleColWidths(),
+            values: dropdownWidth
           });
         });
       }
@@ -51,22 +54,27 @@ class Table extends Component {
     return colWidths;
   };
 
-  getValueColWidth() {
-    let numRows = 0;
-    this.props.rowGroups.forEach(({ rows }) => numRows += rows.length);
-    let { getValueColWidthTries } = this.state;
-    if (++getValueColWidthTries > 5) {
-      this.setState({ getValueColWidthTries: 0 });
-      return null;
-    }
-    const hasGetters = this.state.valueColWidthGetters.length === numRows;
-    const hasAnyWidthsSet = this.props.colWidths || this.props.amountDispRightWidth;
-    if (hasAnyWidthsSet || !hasGetters) {
-      return this.setState({ getValueColWidthTries }, this.getValueColWidth);
-    }
-    let width;
-    this.state.valueColWidthGetters.forEach(getAmountRightWidth => {
-      width = Math.max(getAmountRightWidth(), width || 0);
+  getValueDdWidths() {
+    console.log('table > `getValueDdWidths`');
+    return new Promise(resolve => {
+      const { props, state } = this;
+      let { getValueDdWidthsTries } = state;
+      if (++getValueDdWidthsTries > 5) {
+        this.setState({ getValueDdWidthsTries: 0 });
+        return resolve(null);
+      }
+      let numRows = 0;
+      props.rowGroups.forEach(({ rows }) => numRows += rows.length);
+      const hasAllGetters = state.valueDdWidthGetters.length === numRows;
+      console.log('small screen table > has getters: ', hasAllGetters)
+      if (!hasAllGetters) {
+        return this.setState({ getValueDdWidthsTries }, this.getValueDdWidths);
+      }
+      let width;
+      state.valueDdWidthGetters.forEach(getValueDdWidth => {
+        width = Math.max(getValueDdWidth(), width || 0);
+      });
+      resolve(width);
     });
   };
 
@@ -91,7 +99,7 @@ class Table extends Component {
     const {
       hasSecondaryTzTimes = primaryTimezone !== secondaryTimezone
     } = this.props;
-    const { colRefs } = this;
+    const { colRefs, registerValueColWidthGetter, unregisterValueColWidthGetter } = this;
 
     const style = getStyle(styleProp, tableWidth);
 
@@ -106,6 +114,8 @@ class Table extends Component {
             secondaryTimezone,
             colRefs,
             hasSecondaryTzTimes,
+            registerValueColWidthGetter,
+            unregisterValueColWidthGetter
           }}
         />
       </table>

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import getStyle, { tableAreaStyleVars } from './style';
 import { currentJobTimeService, windowWidthService } from '../../../../../data';
-import { getNumTablesInReport, getWidthOfEl, processTimeForReport } from './utilities';
+import {
+  getNumTablesInReport, getWidthOfEl, processTimeForReport, methodsRegMgmtFactory
+} from './utilities';
 import { numWidthLevels } from './Table';
 import Week from './Week';
 import Totals from './Totals';
@@ -15,11 +17,10 @@ function getTimeDataState() {
 class FullReport extends Component {
   constructor(props) {
     super(props);
-    this.methodsRegMgmtFactory = this.methodsRegMgmtFactory.bind(this);
-    this.registerColWidthsGetter = this.methodsRegMgmtFactory('colWidthsGetters', false).bind(this);
-    this.unregisterColWidthsGetter = this.methodsRegMgmtFactory('colWidthsGetters', true).bind(this);
-    this.registerAmountRightWidthGetter = this.methodsRegMgmtFactory('amountDispRightWidthGetters', false).bind(this);
-    this.unregisterAmountRightWidthGetter = this.methodsRegMgmtFactory('amountDispRightWidthGetters', true).bind(this);
+    this.registerColWidthsGetter = methodsRegMgmtFactory('colWidthsGetters', false).bind(this);
+    this.unregisterColWidthsGetter = methodsRegMgmtFactory('colWidthsGetters', true).bind(this);
+    this.registerAmountRightWidthGetter = methodsRegMgmtFactory('amountDispRightWidthGetters', false).bind(this);
+    this.unregisterAmountRightWidthGetter = methodsRegMgmtFactory('amountDispRightWidthGetters', true).bind(this);
     this.handleTimeDataChange = this.handleTimeDataChange.bind(this);
     this.setWidths = this.setWidths.bind(this);
     this.setTableColWidths = this.setTableColWidths.bind(this);
@@ -40,19 +41,8 @@ class FullReport extends Component {
     };
   };
 
-  methodsRegMgmtFactory(methodsArrName, isUnregister) {
-    return function registerOrUnregisterMethod(method) {
-      this.setState(prevState => ({
-        [methodsArrName]: (
-          isUnregister ?
-          prevState[methodsArrName].filter(fxn => fxn !== method) :
-          [...prevState[methodsArrName], method]
-        )
-      }));
-    };
-  };
-
   handleTimeDataChange() {
+    console.log('handleTimeDataChange\n time data for report:\n  ', getTimeDataState().processedTimeData)
     this.setState(getTimeDataState(), this.setWidths);
   };
 
@@ -158,8 +148,6 @@ class FullReport extends Component {
       tableWidth
     };
 
-    console.log('time data for report:\n ', processedTimeData)
-  
     const style = getStyle(styleProp, isSettingWidths, tableWidth);
   
     return (

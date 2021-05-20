@@ -29,21 +29,26 @@ function formatDurationForReportTable(
   return isSplit ? strResult.split('.') : strResult;
 }
 
-function formatAmountEarnedForReportTable(amountVal, isSplit) {
-  return amountVal && getCurrencyAmountDisplay(amountVal.raw, amountVal.currency, false, isSplit);
+function formatAmountEarnedForReportTable(amountVal, isSplit, showOperator) {
+  if (!amountVal) return null;
+  let amountDisp = getCurrencyAmountDisplay(amountVal.raw, amountVal.currency, false, isSplit);
+  return getAmtDispWithOperator(amountDisp, '=', showOperator);
 }
 
-function formatPayRateForReportTable({ amount, /* isOvertime, currency */} = {}, isSplit) {
+function formatPayRateForReportTable(/* payRate val -> */{ amount } = {}, isSplit, showOperator) {
   if (!amount) return amount;
-  const perHr = <>&nbsp;/<XtSp/>h</>;
+  const _addPerHr = _val => (<>{_val}&nbsp;/<XtSp/>h</>);
   let formattedAmount = formatAmountEarnedForReportTable(amount, isSplit);
-  if (Array.isArray(formattedAmount)) {
-    formattedAmount[1] = <>{formattedAmount[1]}{perHr}</>;
-  }
-  else {
-    formattedAmount = <>{formattedAmount}{perHr}</>;
-  }
-  return formattedAmount;
+  if (!isSplit) formattedAmount = _addPerHr(formattedAmount);
+  else formattedAmount[1] = _addPerHr(formattedAmount[1]);
+  return getAmtDispWithOperator(formattedAmount, <>&times;</>, showOperator);
+}
+
+function getAmtDispWithOperator(valueDisp, operatorDisp, showOperator) {
+  if (!showOperator || !operatorDisp) return valueDisp;
+  if (Array.isArray(valueDisp)) valueDisp[0] = <>{operatorDisp}&nbsp;{valueDisp[0]}</>;
+  else valueDisp = <>{operatorDisp}&nbsp;{valueDisp}</>;
+  return valueDisp;
 }
 
 function formatSegmentTimesForReportTable({ startTime, endTime }, dayDate ) {

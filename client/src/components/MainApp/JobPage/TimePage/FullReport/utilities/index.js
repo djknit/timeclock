@@ -3,6 +3,7 @@ import { formatMyDate } from '../../utilities';
 import { getTotalsRowGroups } from './totalsTableData';
 export * from '../../utilities';
 export * from './totalsTableData';
+export * from './methodFactories';
 
 export {
   getWeekDateRangeText,

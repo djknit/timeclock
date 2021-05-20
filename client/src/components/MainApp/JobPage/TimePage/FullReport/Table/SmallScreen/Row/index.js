@@ -9,10 +9,12 @@ import getStyle from './style';
 import Times from '../../Times';
 import TwoTzTimes from '../../TwoTzTimes';
 import TdDropDown from '../../DropDown';
+import ValuesTdContent from './ValuesTdContent';
 
 class Row extends Component {
   constructor(props) {
     super(props);
+    // this.getValueColWidth = this.getValueColWidth.bind(this);
     this.getAmountDispRightWidth = this.getAmountDispRightWidth.bind(this);
     this.amountColRightRefs = {
       duration: React.createRef(),
@@ -20,6 +22,10 @@ class Row extends Component {
       amountEarned: React.createRef()
     };
   };
+
+  // getValueColWidth() {
+    
+  // }
 
   getAmountDispRightWidth() { // get max width of amounts past decimal so amounts can line up at decimal point
     let width;
@@ -31,10 +37,12 @@ class Row extends Component {
   };
 
   componentDidMount() {
+    // this.props.registerValueColWidthGetter(this.getValueColWidth);
     // register amountDispRightWidth getter (when this feature is implemented)
   };
 
   componentWillUnmount() {
+    // this.props.unregisterValueColWidthGetter(this.getValueColWidth);
     // unregister amountDispRightWidth getter (when this feature is implemented)
   };
 
@@ -60,7 +68,9 @@ class Row extends Component {
       },
       isFirstInGroup,
       date,
-      colWidths
+      colWidths,
+      registerValueColWidthGetter,
+      unregisterValueColWidthGetter
     } = this.props;
     const { amountColRightRefs } = this;
     // console.log('colWidths: ', colWidths)
@@ -97,14 +107,16 @@ class Row extends Component {
           ))}
         </td>
         <td style={style.amountsTd}>
-          <AmountValue rightRef={amountColRightRefs.duration} splitDisp={durationDisp} />
-          {(payRate || amountEarned) && (
-            <TdDropDown>
-              <AmountValue rightRef={amountColRightRefs.payRate} splitDisp={payRateDisp} />
-              {payRate && amountEarned && <br />}
-              <AmountValue rightRef={amountColRightRefs.amountEarned} splitDisp={amountEarnedDisp} />
-            </TdDropDown>
-          )}
+          <ValuesTdContent
+            {...{
+              duration,
+              payRate,
+              amountEarned
+            }}
+            registerDdWidthGetter={registerValueColWidthGetter}
+            unregisterDdWidthGetter={unregisterValueColWidthGetter}
+            valuesRightRefs={amountColRightRefs}
+          />
         </td>
       </tr>
     );
@@ -117,8 +129,7 @@ export default Row;
 function getAmountValComp(rightStyle) {
   return function AmountValue({
     rightRef,
-    splitDisp,
-    rightStyle
+    splitDisp
   }) {
   
     return splitDisp ? (

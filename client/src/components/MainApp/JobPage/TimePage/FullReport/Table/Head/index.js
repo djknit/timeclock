@@ -39,9 +39,15 @@ function Thead({
         <th style={style.timesTh} ref={colRefs.times}>
           {firstColLabel}
         </th>
-        <th style={style.durationTh} ref={colRefs.duration}>
-          {isTwoCol ? twoColValuesLabel : 'Hours Worked'}
-        </th>
+        {isTwoCol ? (
+          <th style={style.valuesTh} ref={colRefs.values}>
+            {twoColValuesLabel}
+          </th>
+        ) : (
+          <th style={style.durationTh} ref={colRefs.duration}>
+            Hours Worked
+          </th>
+        )}
         {hasEarningCols && (
           <>
             <th style={style.payRateTh} ref={colRefs.payRate}>
