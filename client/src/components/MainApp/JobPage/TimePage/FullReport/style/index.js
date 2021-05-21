@@ -33,3 +33,9 @@ export default function getStyle(styleProp, isSettingWidths, tableWidth) {
     }
   };
 };
+
+const tableCellXPadding = '0.75em';
+
+export {
+  tableCellXPadding
+};

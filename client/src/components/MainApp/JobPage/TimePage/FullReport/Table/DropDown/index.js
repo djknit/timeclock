@@ -6,36 +6,31 @@ import { addCollapsing, addPseudoPseudoClasses } from '../../../../../../higherO
 class _DropdownForTd_needsCollapsingAndPseudo extends Component {
   constructor(props) {
     super(props);
-    this.getDropdownContainerWidth = this.getDropdownContainerWidth.bind(this);
+    this.getDdContainerWidth = this.getDdContainerWidth.bind(this);
     this.state = {
-      getDdContainerWidthTries: 0
+      getWidthTries: 0
     };
   };
 
-  getDropdownContainerWidth() {
+  getDdContainerWidth() {
     return new Promise(resolve => {
-      let { getDdContainerWidthTries } = this.state;
-      if (++getDdContainerWidthTries > 5) {
-        return this.setState({ getDdContainerWidthTries: 0 }, resolve);
+      let { getWidthTries } = this.state;
+      if (++getWidthTries > 4) {
+        return this.setState({ getWidthTries: 0 }, resolve);
       }
       const { contentToggle } = this.props;
       if (!contentToggle || !contentToggle.containerWidth) {
-        return this.setState({ getDdContainerWidthTries }, this.getDropdownContainerWidth);
+        return this.setState({ getWidthTries }, this.getDdContainerWidth);
       }
       resolve(contentToggle.containerWidth);
     });
   };
   
   componentDidMount() {
-    if (!this.props.registerDdWidthGetter) return;
-    this.props.registerDdWidthGetter(this.getDropdownContainerWidth);
+    if (!this.props.registerWidthGetter) return;
+    this.props.registerWidthGetter(this.getDdContainerWidth);
   };
   
-  componentWillUnmount() {
-    if (!this.props.registerDdWidthGetter) return;
-    this.props.unregisterDdWidthGetter(this.getDropdownContainerWidth);
-  };
-
   render() {
   
     const {

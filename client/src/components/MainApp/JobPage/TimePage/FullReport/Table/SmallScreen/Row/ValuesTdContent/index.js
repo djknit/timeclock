@@ -10,6 +10,7 @@ function ValuesTdContent({
   duration,
   payRate,
   amountEarned,
+  registerDdWidthGetter,
   ...otherProps
 }) {
 
@@ -25,7 +26,7 @@ function ValuesTdContent({
     <>
       <AmountValue rightRef={valuesRightRefs.duration} splitDisp={durationDisp} />
       {(payRate || amountEarned) && (
-        <TdDropDown {...otherProps}>
+        <TdDropDown registerWidthGetter={registerDdWidthGetter} {...otherProps}>
           <AmountValue rightRef={valuesRightRefs.payRate} splitDisp={payRateDisp} />
           {payRate && amountEarned && <br />}
           <AmountValue rightRef={valuesRightRefs.amountEarned} splitDisp={amountEarnedDisp} />

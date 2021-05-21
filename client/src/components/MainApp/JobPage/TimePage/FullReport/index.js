@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import getStyle, { tableAreaStyleVars } from './style';
+import getStyle, { tableAreaStyleVars, tableCellXPadding } from './style';
 import { currentJobTimeService, windowWidthService } from '../../../../../data';
 import {
   getNumTablesInReport, getWidthOfEl, processTimeForReport, methodsRegMgmtFactory
@@ -78,6 +78,9 @@ class FullReport extends Component {
             colWidths[colName] = Math.max(colWidths[colName] || 0, colWidth);
           }
           if (--numResponsesNeeded === 0) {
+            colWidths.values = (
+              `max(${colWidths.values}px, calc(${colWidths.valuesDropdown}px + (2 * ${tableCellXPadding})))`
+            );
             this.setState({ colWidths }, resolve);
           }
         });

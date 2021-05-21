@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import getStyle from './style';
+import getStyle, { cellXPadding } from './style';
 import { getWidthOfEl, methodsRegMgmtFactory } from './utilities';
 import WideScreen from './WideScreen';
 import MediumScreen from './MediumScreen';
@@ -7,15 +7,16 @@ import SmallScreen from './SmallScreen';
 
 const mainComponentsByWidthLevel = [WideScreen, MediumScreen, SmallScreen];
 const numWidthLevels = mainComponentsByWidthLevel.length;
+const ddWidthGettersName = 'valueDdWidthGetters';
 
 class Table extends Component {
   constructor() {
     super();
-    this.registerValueColWidthGetter = methodsRegMgmtFactory('valueDdWidthGetters', false).bind(this);
-    this.unregisterValueColWidthGetter = methodsRegMgmtFactory('valueDdWidthGetters', true).bind(this);
+    this.registerValuesDdWidthGetter = methodsRegMgmtFactory(ddWidthGettersName, false).bind(this);
+    this.unregisterValuesDdWidthGetter = methodsRegMgmtFactory(ddWidthGettersName, true).bind(this);
     this.getColWidths = this.getColWidths.bind(this);
     this.getSimpleColWidths = this.getSimpleColWidths.bind(this);
-    this.getValueDdWidths = this.getValueDdWidths.bind(this);
+    this.getValuesDdWidths = this.getValuesDdWidths.bind(this);
     this.colRefs = {
       times: React.createRef(),
       duration: React.createRef(),
@@ -25,19 +26,22 @@ class Table extends Component {
       secondaryTzTimes: React.createRef(),
     };
     this.state = {
-      getValueDdWidthsTries: 0,
-      valueDdWidthGetters: [],
+      getValuesDdWidthsTries: 0,
+      [ddWidthGettersName]: [],
       // valueColRightWidthGetters: []
     };
   };
 
   getColWidths() {
+    // console.log('table > `getColWidths`');
     return new Promise(resolve => {
-      if (this.state.valueDdWidthGetters.length > 0) {
-        this.getValueDdWidths().then(dropdownWidth => {
+      if (this.state[ddWidthGettersName].length > 0) {
+        this.getValuesDdWidths().then(dropdownWidth => {
+          let colWidths = this.getSimpleColWidths();
+          // console.log('colWidths: > ', colWidths)
           resolve({
             ...this.getSimpleColWidths(),
-            values: dropdownWidth
+            valuesDropdown: dropdownWidth
           });
         });
       }
@@ -54,27 +58,34 @@ class Table extends Component {
     return colWidths;
   };
 
-  getValueDdWidths() {
-    console.log('table > `getValueDdWidths`');
+  getValuesDdWidths() {
+    console.log('table > `getValuesDdWidths`');
     return new Promise(resolve => {
-      const { props, state } = this;
-      let { getValueDdWidthsTries } = state;
-      if (++getValueDdWidthsTries > 5) {
-        this.setState({ getValueDdWidthsTries: 0 });
+      let { getValuesDdWidthsTries, [ddWidthGettersName]: widthGetters } = this.state;
+      if (++getValuesDdWidthsTries > 4) {
+        this.setState({ getValuesDdWidthsTries: 0 });
         return resolve(null);
       }
       let numRows = 0;
-      props.rowGroups.forEach(({ rows }) => numRows += rows.length);
-      const hasAllGetters = state.valueDdWidthGetters.length === numRows;
-      console.log('small screen table > has getters: ', hasAllGetters)
+      this.props.rowGroups.forEach(({ rows }) => numRows += rows.length);
+      const hasAllGetters = widthGetters.length === numRows;
       if (!hasAllGetters) {
-        return this.setState({ getValueDdWidthsTries }, this.getValueDdWidths);
+        console.log('wrong num getters')
+        return this.setState({ getValuesDdWidthsTries }, this.getValuesDdWidths);
       }
-      let width;
-      state.valueDdWidthGetters.forEach(getValueDdWidth => {
-        width = Math.max(getValueDdWidth(), width || 0);
+      let numResponsesNeeded = numRows, width;
+      widthGetters.forEach(getValuesDdWidth => {
+        getValuesDdWidth()
+        .then(ddWidth => {
+          console.log('valueDdWidth: ', ddWidth)
+          width = Math.max(ddWidth, width || 0);
+          if (--numResponsesNeeded === 0) {
+            this.setState({ getValuesDdWidthsTries: 0 });
+            resolve(width);
+          }
+        });
       });
-      resolve(width);
+      // resolve(width);
     });
   };
 
@@ -99,7 +110,7 @@ class Table extends Component {
     const {
       hasSecondaryTzTimes = primaryTimezone !== secondaryTimezone
     } = this.props;
-    const { colRefs, registerValueColWidthGetter, unregisterValueColWidthGetter } = this;
+    const { colRefs, registerValuesDdWidthGetter, unregisterValuesDdWidthGetter } = this;
 
     const style = getStyle(styleProp, tableWidth);
 
@@ -114,8 +125,8 @@ class Table extends Component {
             secondaryTimezone,
             colRefs,
             hasSecondaryTzTimes,
-            registerValueColWidthGetter,
-            unregisterValueColWidthGetter
+            registerValuesDdWidthGetter,
+            unregisterValuesDdWidthGetter
           }}
         />
       </table>
