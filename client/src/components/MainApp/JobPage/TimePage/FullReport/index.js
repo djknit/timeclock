@@ -42,7 +42,6 @@ class FullReport extends Component {
   };
 
   handleTimeDataChange() {
-    console.log('handleTimeDataChange\n time data for report:\n  ', getTimeDataState().processedTimeData)
     this.setState(getTimeDataState(), this.setWidths);
   };
 
@@ -53,7 +52,6 @@ class FullReport extends Component {
       return this.setState({ isSettingWidths: false, setWidthsTries: 0 });
     }
     const hasGetters = state.colWidthsGetters.length === getNumTablesInReport(state.processedTimeData);
-    console.log('full report > hasGetters: ', hasGetters)
     const hasAnyWidthsSet = state.colWidths || state.tableWidth || state.amountDispRightWidth;
     if (hasAnyWidthsSet || !state.isSettingWidths || !hasGetters) {
       const stateUpdates = {

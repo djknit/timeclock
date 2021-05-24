@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 // import getStyle from './style';
-// import { getTimezoneAbbreviation } from './utilities';
 import Thead from '../Head';
 import RowsGroup from '../RowsGroup';
 import Row from './Row';
@@ -8,19 +7,6 @@ import Row from './Row';
 class SmallWidthTableContent extends Component {
   constructor(props) {
     super(props);
-    this.getAmountsColRightWidth = this.getAmountsColRightWidth.bind(this);
-  };
-
-  getAmountsColRightWidth() {
-    let amountsColRightWidth;
-  };
-
-  componentDidMount() {
-    
-  };
-
-  componentWillUnmount() {
-    
   };
 
   render() {

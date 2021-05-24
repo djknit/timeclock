@@ -33,12 +33,9 @@ class Table extends Component {
   };
 
   getColWidths() {
-    // console.log('table > `getColWidths`');
     return new Promise(resolve => {
       if (this.state[ddWidthGettersName].length > 0) {
         this.getValuesDdWidths().then(dropdownWidth => {
-          let colWidths = this.getSimpleColWidths();
-          // console.log('colWidths: > ', colWidths)
           resolve({
             ...this.getSimpleColWidths(),
             valuesDropdown: dropdownWidth
@@ -59,41 +56,37 @@ class Table extends Component {
   };
 
   getValuesDdWidths() {
-    console.log('table > `getValuesDdWidths`');
     return new Promise(resolve => {
       let { getValuesDdWidthsTries, [ddWidthGettersName]: widthGetters } = this.state;
       if (++getValuesDdWidthsTries > 4) {
         this.setState({ getValuesDdWidthsTries: 0 });
         return resolve(null);
       }
-      let numRows = 0;
-      this.props.rowGroups.forEach(({ rows }) => numRows += rows.length);
-      const hasAllGetters = widthGetters.length === numRows;
-      if (!hasAllGetters) {
-        console.log('wrong num getters')
+      const numRows = this.props.rowGroups.reduce(((accum, { rows }) => accum + rows.length), 0);
+      if (widthGetters.length < numRows) {
         return this.setState({ getValuesDdWidthsTries }, this.getValuesDdWidths);
       }
-      let numResponsesNeeded = numRows, width;
+      let numResponsesNeeded = numRows, width = 0;
       widthGetters.forEach(getValuesDdWidth => {
         getValuesDdWidth()
         .then(ddWidth => {
-          console.log('valueDdWidth: ', ddWidth)
-          width = Math.max(ddWidth, width || 0);
+          width = Math.max(ddWidth || 0, width);
           if (--numResponsesNeeded === 0) {
             this.setState({ getValuesDdWidthsTries: 0 });
             resolve(width);
           }
         });
       });
-      // resolve(width);
     });
   };
 
   componentDidMount() {
+    if (!this.props.registerColWidthsGetter) return;
     this.props.registerColWidthsGetter(this.getColWidths);
   };
 
   componentWillUnmount() {
+    if (!this.props.unregisterColWidthsGetter) return;
     this.props.unregisterColWidthsGetter(this.getColWidths);
   };
 

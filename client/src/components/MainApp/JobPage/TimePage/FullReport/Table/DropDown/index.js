@@ -22,6 +22,7 @@ class _DropdownForTd_needsCollapsingAndPseudo extends Component {
       if (!contentToggle || !contentToggle.containerWidth) {
         return this.setState({ getWidthTries }, this.getDdContainerWidth);
       }
+      this.setState({ getWidthTries: 0 });
       resolve(contentToggle.containerWidth);
     });
   };
@@ -30,6 +31,11 @@ class _DropdownForTd_needsCollapsingAndPseudo extends Component {
     if (!this.props.registerWidthGetter) return;
     this.props.registerWidthGetter(this.getDdContainerWidth);
   };
+
+  componentWillUnmount() {
+    if (!this.props.unregisterWidthGetter) return;
+    this.props.unregisterWidthGetter(this.getDdContainerWidth);
+  }
   
   render() {
   
