@@ -12,10 +12,16 @@ module.exports = new Promise(function (resolve, reject) {
     schema.pre('update', setRunValidators);
   });
 
-  mongoose.connect(
-    MONGODB_URI,
-    { useNewUrlParser: true, autoIndex: false, useFindAndModify: false }
-  );
+  try {
+    mongoose.connect(
+      MONGODB_URI,
+      { useNewUrlParser: true, autoIndex: false, useFindAndModify: false }
+    );
+  } catch(e) {
+    console.log('DB connection failed > --');
+    console.error(e);
+    console.log('-- DB connection failed />');
+  }
   
   const db = mongoose.connection;
   db.on('error', function() {
