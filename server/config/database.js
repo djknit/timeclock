@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const MONGODB_URI = getAtlasDbUri(process.env) || 'mongodb://localhost/timeclock';
+const MONGODB_URI = getAtlasDbUri(process.env) || 'mongodb://127.0.0.1:27017';
 
 module.exports = new Promise(function (resolve, reject) {
 
