@@ -5,10 +5,10 @@
 ## Contents
 * [Links](#links)
 * [Project Goals](#project-goals)
-* [Action Plan](#action-plan)
 * [Project Features](#project-features)
 * [Technologies Used](#technologies-used)
 * [Instructions for Use](#instructions-for-use)
+* [Icebox](#icebox)
 * [Developer](#developer)
 
 ## Links
@@ -29,108 +29,20 @@
 * Get working MVP before adding optional features.
 * After MVP, add punchclock feature to allow user to "punch in" and "punch out" so that they don't have to write down their time and enter it later.
 
-## Action Plan
-Items in italics are currently being worked on.
-
-This plan is not complete. Future steps will be expanded on in the plan before they are developed. 
-
-* [x] Create bare-bones project structure and set up automatic deployment
-  * [x] Create repository; initialize node in repo; run create-react-app to create front-end structure.
-  * [x] Create express server and configure to serve front-end
-  * [x] Add configuration for Mongoose (MongoDB ODM)
-  * [x] Add Bash scripts (to package.json) needed for Heroku to install + build
-  * [x] Set up automatic deployment to Heroku from github repo.
-    * [x] Create 2 Heroku projects. Deploy ~~`dev`~~ `beta` branch to 1 project and `master` branch to another.
-    * [x] Provision database for both project.
-* [x] Develop back-end for all MVP features
-  * [x] Develop code necessary for user authentication.
-    * [x] Create User database model
-    * [x] Configure passport. Create controller functions needed to create account and login.
-    * [x] Create api routes and remaining controller functions needed for authentication.
-      * [x] Create account
-      * [x] Test login
-      * [x] Login and logout
-      * [x] Delete account
-      * [x] Edit account information
-  * [x] Develop code necessary for time management
-    * [x] Create job
-    * [x] Get jobs for user (basic info only)
-    * [x] Get individual job data (w/ all values populated)
-    * [x] Edit job information (`wage`, `dayCutoff`, `timezone`, and `weekBegins`)
-    * [x] Change job name
-    * [x] Add weeks and days
-    * [x] Add time segments
-    * [x] Delete time segments (individually by id and in bulk by date)
-    * [x] Delete job
-* [ ] _Develop front-end to complete MVP_
-  * [x] Landing page
-  * [x] Account creation & login
-  * [x] 404 page
-  * [x] Dashboard
-    * [x] Add welcome message to display instead of jobs table when user has no jobs
-  * [x] Job creation
-  * [x] Job page
-    * [x] Job dashboard
-      * [x] Job basics display and edit
-      * [x] Settings summaries and links to settings
-      * [ ] ~~Time summary and links~~ (Link done. Moving the rest out of MVP.)
-    * [x] Settings page (display and edit settings value schedules)
-    * [x] Time page
-      * [x] Time Summary
-      * [x] Basics
-        * [x] General time entry
-          * [x] Time segment general entry
-          * [x] Track and display segments just added
-        * [x] Create recently added segments similarly to just added from general entry
-        * [x] Session timezone info and management
-      * [x] Allow delete time segment 
-      * [x] Allow edit time segment
-      * [ ] ~~Time details by weeks/days and corresponding time entry~~ (Combine w/ report)
-      * [x] Full report of time data
-        * [x] Regular display
-        * [ ] ~~PDF or printer-friendly version~~ (Not MVP)
-        * [ ] ~~Arbitrary (user defined) time period (default is all time)~~ (Not MVP)
-        * [ ] ~~Let user define how much info to include~~ (Not MVP)
-  * [x] Navbar navigation menu
-  * [ ] _Ensure at least bare minimum mobile responsiveness_
-    * [ ] _Ensure all features can be used on all screen sizes_ (do concurrently w/ next step)
-    * [ ] _Ensure nothing looks broken or clearly in the wrong place w/ any screen size_
-      * [ ] Complete mobile version of job settings value schedule display
-      * [ ] _Modify full time report for mobile screen size_
-      * [x] Fix form small screen issues
-        * [x] `is24hr` inputs overlap rest of field on time inputs
-        * [x] Indents not appearing on mobile (all fields aligned to left edge of form)
-
-* [ ] Review code for bugs and code organization/readability (Ongoing)
-
-* [ ] Develop and/or finish developing the most important remaining front-end features for a more complete MVP
-  * [ ] Improve full report
-    * [ ] Add buttons to edit time throughout report where convenient for user
-    * [ ] User defined time period (default is all time) for full report
-      * [ ] Period inputs
-      * [ ] Utility function to get arbitrary period data
-    * [ ] PDF or printer friendly version
-  * [ ] User preference for AM/PM or 24hr times setting at user level and/or job level
-
-* [ ] Work on additional features
-  * [ ] Punchclock
-  * [ ] Add special handling for the edge-case situation where a time-change (ex. daylight savings beginning or end) occurs during a work shift. Likewise if any time is recorded both before and after the time-change on the same day.
-  * [ ] Create (or improve existing) mobile friendly UI
-  * [ ] Add time section to job dashboard
-    * [ ] Summary
-    * [ ] Basic actions such as general entry
-  * [ ] Let user define how much info to include in time report
-    * [ ] Inputs
-    * [ ] Display (update regular display)
-
-* Icebox:
-  * [ ] Add notes field to time segments & maybe also days and/or weeks
-  * [ ] Pay periods (should be optional)
-  * [ ] Mark time as finalized and/or paid, and maybe allow finalized time to be locked so it can't be changed
-  * [ ] Add manager/supervisor account with privileges to define job, and link manager account to employee account for employee self-reporting of hours. Require manager to finalize hours.
-
 ## Project Features
-(Coming soon...)
+* User authentication
+  - Uses Passport.js to manage login sessions
+  - User passwords are hashed using bcrypt before they are stored in the database.
+  - Login with either username or email address if account has both setup (only 1 of the 2 is required)
+  - All access to user data is restricted on the server side so that users are not able to access data that is not theirs using the API
+* Allows users to track time worked for one or more separate jobs, with no limit to the number of jobs allowed
+* Optional wage settings allow for earnings calculations.
+* Dynamic forms throughout the app allows for a simple form with the least number of inputs possible to be displayed to users initially, so the app is not unnecessarily complex, while still allowing options to edit every parameter possible in order to accommodate unique situations especially for more advanced users. Additional inputs are added to forms as needed when the user chooses to customize more parameters.
+* Users enter their time using a simple user friendly form.
+* Time and earnings are reported automatically by job as well as the totals from all of the user's jobs. Totals are reported by week, month, year, and all time by default.
+* All time entered can be viewed and edited by the user.
+* Support for practically all timezones and currencies, including situations where more than one is used on the user's account or even the same job if that situation arises.
+* The app is automatically deployed to Heroku from the master branch of the Github repo.
 
 ## Technologies Used
 #### Front End
@@ -152,7 +64,40 @@ This plan is not complete. Future steps will be expanded on in the plan before t
 * Currency-codes
 
 ## Instructions for Use
-(Coming soon...)
+Visit [daves-timeclock.herokuapp.com](https://daves-timeclock.herokuapp.com) to run the app.
+* On the landing page you can create an account or login.
+  * You must create an account to use the app
+  * The only information required to set up an account is a username OR email and a password.
+  * First time users, create a new account. You will be automatically logged in when the account is created.
+* In order to track your time, you must create a job. Click the "+ New" button under the jobs section of the dashboard page, and fill out the form to fit the job or activity that you are tracking time for.
+* You can navigate using the nav bar on the top of the page or by clicking through the links on the pages as well as breadcrumb items included with page heading.
+* Enter time spent on your "job" by visiting the time page for that job.
+* You may create unlimited jobs.
+* The settings for each job can be changed by selecting the job and then going to settings.
+
+## Icebox
+* [ ] Develop and/or finish developing the most important remaining front-end features for a more complete MVP
+  * [ ] Improve full report
+    * [ ] Add buttons to edit time throughout report where convenient for user
+    * [ ] User defined time period (default is all time) for full report
+      * [ ] Period inputs
+      * [ ] Utility function to get arbitrary period data
+    * [ ] PDF or printer friendly version
+  * [ ] User preference for AM/PM or 24hr times setting at user level and/or job level
+* [ ] Work on additional features
+  * [ ] Punchclock
+  * [ ] Add special handling for the edge-case situation where a time-change (ex. daylight savings beginning or end) occurs during a work shift. Likewise if any time is recorded both before and after the time-change on the same day.
+  * [ ] Create (or improve existing) mobile friendly UI
+  * [ ] Add time section to job dashboard
+    * [ ] Summary
+    * [ ] Basic actions such as general entry
+  * [ ] Let user define how much info to include in time report
+    * [ ] Inputs
+    * [ ] Display (update regular display)
+  * [ ] Add notes field to time segments & maybe also days and/or weeks
+  * [ ] Pay periods (should be optional)
+  * [ ] Mark time as finalized and/or paid, and maybe allow finalized time to be locked so it can't be changed
+  * [ ] Add manager/supervisor account with privileges to define job, and link manager account to employee account for employee self-reporting of hours. Require manager to finalize hours.
 
 ## Developer
 This project is developed and maintained by David Knittel. Any and all questions, comments, suggestions, or proposed contributions are welcome.
