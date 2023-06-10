@@ -32,7 +32,14 @@ function getCurrencySymbol(currencyCode) {
 function getCurrencyNumericDisplay(amount, currencyCode, isSplit) {
   const numDecimalDigits = getDecimalDigits(currencyCode || '');
   const numAmountStr = amount.toFixed(numDecimalDigits);
-  return isSplit ? numAmountStr.split('.') : numAmountStr;
+  let splitNumStr = numAmountStr.split('.');
+  splitNumStr[0] = addCommasToNumberString(splitNumStr[0]);
+  return isSplit ? splitNumStr : splitNumStr.join('.');
+}
+
+function addCommasToNumberString(numStr) {
+  // source: https://stackoverflow.com/questions/2901102/how-to-format-a-number-with-commas-as-thousands-separators#answer-2901298
+  return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode, isShort) {
@@ -44,7 +51,7 @@ function addCurrencySymbolToNumericDisplay(numericDisplay, currencyCode, isShort
     [<>{preNumContent}{numericDisplay[0]}</>, numericDisplay[1]] :
     <>{preNumContent}{numericDisplay}</>
   );
-};
+}
 
 function getCurrencyAmountDisplay(amount, currencyCode, isShort, isSplit) {
   // const numDecimalDigits = getDecimalDigits(currencyCode || '');
